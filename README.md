@@ -1,4 +1,4 @@
-# capstone-project
+# instructions
 
 //Cloning the project to your machine
 1. Click "Clone or Download"
