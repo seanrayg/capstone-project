@@ -1,4 +1,6 @@
-# instructions
+# how-to-do-this-shit
+
+INSTALL GIT
 
 //Cloning the project to your machine
 1. Click "Clone or Download"
