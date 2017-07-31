@@ -13,6 +13,7 @@
 2. "git status" - Shows the status of your project, if there's modified files, added files and deleted files
 
 <-- Commands to save the files in Github -->
+
 3. "git add -A" - Add all the files that you edited and ready them to be committed.
 4. "git commit -m "Some Comment Here" - Commit the changes in your files. NOTE: Comment is required
 5. "git push" - Finnaly to save them in github, use this command.
