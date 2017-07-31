@@ -27,7 +27,7 @@ class SessionsController extends Controller
 
 		if($boolHasEmail == 1){
 
-			
+			//I wrote a code here!
 
 		}
 
