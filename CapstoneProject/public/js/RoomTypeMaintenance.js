@@ -1,0 +1,171 @@
+//Global variables
+
+var cells;
+var RoomTypeInfo=[];
+
+//Modal functions
+
+function ShowModalAddRoomType(){
+    document.getElementById("DivModalAddRoomType").style.display = "block";
+}
+
+function HideModalAddRoomType(){
+    document.getElementById("DivModalAddRoomType").style.display = "none";
+    document.getElementById("RoomTypeForm").reset();
+    ResetInput();
+}
+ 
+function ShowModalEditRoomType(){
+    var TableChecker = CheckTable('#RoomTypeTable tr');
+    var TableChecker2 = CheckTable('#CottageTable tr');
+    if(TableChecker || TableChecker2){
+        ResetInput();
+  
+        document.getElementById("DivModalEditRoomType").style.display = "block";
+        
+        document.getElementById("OldRoomTypeCode").value = RoomTypeInfo[0];
+        document.getElementById("OldRoomTypeName").value = RoomTypeInfo[1];
+        document.getElementById("OldRoomRate").value = RoomTypeInfo[7];
+        
+        document.getElementById("EditRoomTypeCode").value = RoomTypeInfo[0];
+        document.getElementById("EditRoomTypeName").value = RoomTypeInfo[1];
+        document.getElementById("EditRoomCategory").value = RoomTypeInfo[2];
+        document.getElementById("EditRoomCapacity").value = RoomTypeInfo[3];
+        document.getElementById("EditNoOfBeds").value = RoomTypeInfo[4];
+        document.getElementById("EditNoOfBathrooms").value = RoomTypeInfo[5];
+        document.getElementById("EditRoomRate").value = RoomTypeInfo[7];
+        
+        if(RoomTypeInfo[8]!="N/A"){
+            document.getElementById("EditRoomDescription").value = RoomTypeInfo[8];
+        }
+        
+        if(RoomTypeInfo[6]=="Yes"){
+          document.getElementById("EditAirconditioned").checked = true;
+        }
+        
+        if(RoomTypeInfo[2]=="Cottage"){
+            document.getElementById("EditRoomPerks").style.display = "none";
+        }
+
+    }
+}
+
+function HideModalEditRoomType(){
+    document.getElementById("DivModalEditRoomType").style.display = "none";
+    document.getElementById("EditRoomTypeForm").reset();
+    ResetInput();
+}
+
+function ShowModalDeleteRoomType(){
+    var TableChecker = CheckTable('#RoomTypeTable tr');
+    var TableChecker2 = CheckTable("#CottageTable tr");
+    if(TableChecker || TableChecker2){
+        document.getElementById("DivModalDeleteRoomType").style.display = "block";
+        
+    }
+}
+
+function HideModalDeleteRoomType(){
+    document.getElementById("DivModalDeleteRoomType").style.display = "none";
+}
+
+//DELETE ROOM TYPE
+
+function DeleteRoomType(){
+    document.getElementById("d-RoomTypeID").value = RoomTypeInfo[0];
+    return true;
+}
+
+
+//Table Functions
+
+function run(event, sender){
+    event = event || window.event; 
+    var target = event.target || event.srcElement;
+    while (target && target.nodeName != 'TR') {
+        target = target.parentElement;
+    }
+    
+    cells = target.cells;
+    if (!cells.length || target.parentNode.nodeName == 'THEAD') {
+        return;
+    }
+    
+    RoomTypeInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML];
+}
+
+//misc
+
+function CheckCategory(field, action){
+    if(field.value == "Cottage"){
+        if(action == "add"){
+            document.getElementById("NoOfBeds").readOnly = true;
+            document.getElementById("NoOfBathrooms").readOnly = true;
+            document.getElementById("NoOfBeds").value = "0";
+            document.getElementById("NoOfBathrooms").value = "0";
+            document.getElementById("RoomAirconditioned").checked = false;
+            document.getElementById("RoomPerks").style.display = "none";
+            
+        }
+        if(action == "edit"){
+            document.getElementById("EditNoOfBeds").readOnly = true;
+            document.getElementById("EditNoOfBathrooms").readOnly = true;
+            document.getElementById("EditNoOfBeds").value = "0";
+            document.getElementById("EditNoOfBathrooms").value = "0";
+            document.getElementById("EditAirconditioned").checked = false;
+            document.getElementById("EditRoomPerks").style.display = "none";
+        }
+        
+    }
+    else{
+        if(action == "add"){
+            document.getElementById("NoOfBeds").readOnly = false;
+            document.getElementById("NoOfBathrooms").readOnly = false;
+            document.getElementById("NoOfBeds").value = "";
+            document.getElementById("NoOfBathrooms").value = "";
+            document.getElementById("RoomPerks").style.display = "block";
+        }
+         if(action == "edit"){
+            document.getElementById("EditNoOfBeds").readOnly = false;
+            document.getElementById("EditNoOfBathrooms").readOnly = false;
+             
+            if(RoomTypeInfo[6]=="Yes"){
+              document.getElementById("EditAirconditioned").checked = true;
+            }
+            
+            if(RoomTypeInfo[2] == "Cottage"){
+                document.getElementById("EditNoOfBeds").value = "";
+                document.getElementById("EditNoOfBathrooms").value = "";
+            }
+            else{
+                document.getElementById("EditNoOfBeds").value = RoomTypeInfo[4];
+                document.getElementById("EditNoOfBathrooms").value = RoomTypeInfo[5];
+            }
+            
+            document.getElementById("EditRoomPerks").style.display = "block";
+        }
+        
+    }
+}
+
+function AlterInput(field, dataType, holder){
+    if(document.getElementById("RoomCategory").value == "Cottage"){
+        ValidateInput(field, 'int2', holder);
+    }
+    else{
+        ValidateInput(field, dataType, holder);
+    }
+}
+
+
+window.onload = function(){
+    if(document.getElementById("RoomCategory").value == "Cottage"){
+        document.getElementById("RoomPerks").style.display = "none";
+    }
+    
+    if(document.getElementById("EditRoomCategory").value == "Cottage"){
+        document.getElementById("EditRoomPerks").style.display = "none";
+    }
+}
+
+
