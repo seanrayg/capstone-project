@@ -27,18 +27,14 @@ class SessionsController extends Controller
 
 		if($boolHasEmail == 1){
 
-			// Mail::raw('Email has been sent yey!', function($message) use ($CustomerEmail)
-			// {
-			// 	$message->subject('Email Verification');
-			// 	$message->to($CustomerEmail);
-			// });
-
 			Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
 	            $message->to($CustomerEmail);
-	            $message->subject('Verify Login');
+	            $message->subject('Please verify your login');
 	        });
 
 		}
+
+		return redirect('/Login');
 
 	}
 }
