@@ -70,13 +70,13 @@
                                 <span class="input-group-addon">
                                     <i class="now-ui-icons users_circle-08"></i>
                                 </span>
-                                <input name="CustomerEmail" type="email" class="form-control" placeholder="Email" required />
+                                <input id="CustomerEmail" name="CustomerEmail" type="email" class="form-control" placeholder="Email" required />
                             </div>
                             <div class="input-group form-group-no-border input-lg">
                                 <span class="input-group-addon">
                                     <i class="now-ui-icons ui-1_lock-circle-open"></i>
                                 </span>
-                                <input name="ReservationCode" type="text" placeholder="Reservation Code" class="form-control" minlength="1" maxlength="5" required />
+                                <input name="ReservationCode" type="text" placeholder="Transaction ID" class="form-control" required />
                             </div>
                         </div>
                         @include('layouts.errors')
@@ -133,26 +133,6 @@
             </div>
         </footer>
     </div>
-    <!-- Modal -->
-    <div id="myModal" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Modal Header</h4>
-          </div>
-          <div class="modal-body">
-            <p>Some text in the modal.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
 </body>
 <!--   Core JS Files   -->
 <script src="/js/core/jquery.3.2.1.min.js" type="text/javascript"></script>
@@ -166,5 +146,7 @@
 <script src="/js/plugins/bootstrap-datepicker.js" type="text/javascript"></script>
 <!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
 <script src="/js/now-ui-kit.js" type="text/javascript"></script>
+<!-- SessionsController js -->
+<script src="/js/SessionsController.js" type="text/javascript"></script>
 
 </html>

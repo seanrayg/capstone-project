@@ -7,7 +7,7 @@
 
         <div>
 
-            Your Login Code: {{ $LoginCode }}<br/>
+            Enter this code to login: {{ $LoginCode }}<br/>
 
         </div>
 

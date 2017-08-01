@@ -21,18 +21,18 @@ class SessionsController extends Controller
 		$CustomerEmail = $request->input('CustomerEmail');
 		$ReservationCode = $request->input('ReservationCode');
 
-		$LoginCode = str_random(5);
+		// $LoginCode = str_random(30);
 
-		$boolHasEmail = DB::table('tblCustomer')->where('strCustEmail', $CustomerEmail)->update(['strConfirmationCode' => $LoginCode]);
+		// $boolHasEmail = DB::table('tblCustomer')->where('strCustEmail', $CustomerEmail)->update(['strConfirmationCode' => $LoginCode]);
 
-		if($boolHasEmail == 1){
+		// if($boolHasEmail == 1){
 
-			Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
-	            $message->to($CustomerEmail);
-	            $message->subject('Please verify your login');
-	        });
+		// 	Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
+	 //            $message->to($CustomerEmail);
+	 //            $message->subject('Verify Login');
+	 //        });
 
-		}
+		// }
 
 		return redirect('/Login');
 
