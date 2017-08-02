@@ -79,9 +79,8 @@
                                 <input name="ReservationCode" type="text" placeholder="Transaction ID" class="form-control" required />
                             </div>
                         </div>
-                        @include('layouts.errors')
                         <div class="footer text-center">
-                            <button type="submit" class="btn btn-primary btn-round btn-lg btn-block">Continue</button>
+                            <button type="button" class="btn btn-primary btn-round btn-lg btn-block" onclick="ShowVerificationModal()">Continue</button>
                         </div>
                         <div class="pull-left">
                             <h6>
@@ -102,22 +101,22 @@
                 <nav>
                     <ul>
                         <li>
-                            <a href="https://www.creative-tim.com">
+                            <a href="#">
                                 Book a reservation
                             </a>
                         </li>
                         <li>
-                            <a href="http://presentation.creative-tim.com">
+                            <a href="#">
                                 FAQs
                             </a>
                         </li>
                         <li>
-                            <a href="http://blog.creative-tim.com">
+                            <a href="#">
                                 Contact Us
                             </a>
                         </li>
                         <li>
-                            <a href="https://github.com/creativetimofficial/now-ui-kit/blob/master/LICENSE.md">
+                            <a href="#">
                                 Forgot Reservation Code?
                             </a>
                         </li>
@@ -132,6 +131,51 @@
                 </div>
             </div>
         </footer>
+    </div>
+    
+    
+    <!-- Verification Modal -->
+    <div class="modal fade" id="ModalVerification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="close pull-left" data-dismiss="modal" aria-hidden="true" onclick="HideVerificationModal()">&times;</button>
+                </div>               
+            </div> 
+            <div class="row">
+                  <div class="col-md-12">
+                    <h6 class="text-center" id="ModalTitle"></h6>
+                  </div>
+              </div>
+              <br>
+              <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-7 text-center">
+                      <div class="form-group">
+                          <input type="text" placeholder="Verification Code" class="form-control" />
+                      </div>
+                  </div>
+                  <div class="col-md-3 text-center">
+                    <button type="button" class="btn btn-primary btn-simple">Submit</button>
+                  </div>
+              </div>
+              <br><br>
+              <div class="row">
+                <div class="col-md-12">
+                    <span class="text-center">
+                        <small>
+                            <p class="description-text">Did not receive any code? Please click </p><a class="text-primary description-text">here</a><p class="description-text"> to send the code again</p>
+                        </small>
+                    </span>
+                </div>
+              </div>
+              
+          </div>
+        </div>
+      </div>
     </div>
 </body>
 <!--   Core JS Files   -->
@@ -148,5 +192,8 @@
 <script src="/js/now-ui-kit.js" type="text/javascript"></script>
 <!-- SessionsController js -->
 <script src="/js/SessionsController.js" type="text/javascript"></script>
+<!-- Login Javascript --->
+<script src="/js/Login.js" type="text/javascript"></script>    
+
 
 </html>
