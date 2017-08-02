@@ -76,11 +76,11 @@
                                 <span class="input-group-addon">
                                     <i class="now-ui-icons ui-1_lock-circle-open"></i>
                                 </span>
-                                <input name="ReservationCode" type="text" placeholder="Reservation Code" class="form-control" required />
+                                <input name="Transaction ID" type="text" placeholder="Transaction ID" class="form-control" required />
                             </div>
                         </div>
                         <div class="footer text-center">
-                            <button type="button" class="btn btn-primary btn-round btn-lg btn-block" onclick="ShowVerificationModal()">Continue</button>
+                            <button type="button" class="btn btn-primary btn-round btn-lg btn-block" onclick="Login()">Continue</button>
                         </div>
                         <div class="pull-left">
                             <h6>
