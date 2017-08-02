@@ -1,4 +1,4 @@
-var ReservationID = "RESV5";
+var ReservationID = "RESV9";
 var ChosenRoomType = "";
 var ChosenRoom = "";
 var ChosenRowIndex;

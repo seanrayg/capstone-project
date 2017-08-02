@@ -118,7 +118,9 @@ class ReservationController extends Controller
                           'strCustEmail'=>$Email,
                           'strCustNationality'=>$Nationality,
                           'strCustGender'=>$Gender,
-                          'dtmCustBirthday'=>$Birthday);
+                          'dtmCustBirthday'=>$Birthday,
+                          'intCustomerConfirmed' => '0',
+                          'intCustStatus' => '1');
 
 
         DB::table('tblCustomer')->insert($CustomerData);
@@ -152,7 +154,7 @@ class ReservationController extends Controller
     }
     
     public function RandomString() {
-        $length = 6;
+        $length = 12;
         $token = "";
         $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $codeAlphabet.= "0123456789";
@@ -606,7 +608,9 @@ class ReservationController extends Controller
                           'strCustEmail'=>$Email,
                           'strCustNationality'=>$Nationality,
                           'strCustGender'=>$Gender,
-                          'dtmCustBirthday'=>$Birthday);
+                          'dtmCustBirthday'=>$Birthday,
+                          'intCustomerConfirmed' => '1',
+                          'intCustStatus' => '1');
 
 
         DB::table('tblCustomer')->insert($CustomerData);

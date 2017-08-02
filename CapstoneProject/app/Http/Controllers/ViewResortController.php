@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 
 class ViewResortController extends Controller
 {
+    
+    /*------------ROOMS--------------*/
     //
     public function ViewSelectedRooms($id){
         $ChosenRooms = $this->getReservedRooms($id);
@@ -108,6 +110,27 @@ class ViewResortController extends Controller
         
         
         return view('Rooms', compact('RoomDetails'));
+    }
+    
+    
+    /*---------------- CUSTOMERS ---------------*/
+    
+    //CUSTOMER NAV BAR
+    public function ViewCustomers(){
+        $CustomerDetails = DB::table('tblCustomer')
+                            ->where('intCustStatus', 1)
+                            ->get();
+        
+        foreach($CustomerDetails as $Customer){
+            if($Customer->strCustGender == "M"){
+                $Customer->strCustGender = "Male";
+            }
+            else{
+                $Customer->strCustGender = "Female";
+            }
+        }
+        
+        return view('Customers', compact('CustomerDetails'));
     }
     
     

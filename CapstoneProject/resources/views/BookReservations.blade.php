@@ -141,7 +141,7 @@
                             </div>
 
                             <br>
-                            <button type="button" class="btn btn-success pull-right" onclick="CheckInput()">Check Availability</button>
+                            <button type="button" class="btn btn-success pull-right" onclick="CheckInputDate()">Check Availability</button>
                             <div class="clearfix"></div>
 
                         </div>
@@ -174,104 +174,127 @@
                     <div class="col-sm-6">
                         <div class="card card-stats">
 
-                                    <div class="card-header" data-background-color="blue">
-                                        <i class="material-icons">bookmark</i>
-                                    </div>
-                                    <div class="card-content">
-                                        <div class="row">
-                                            <p class="category">Available</p>
-                                            <h5 class="title">Rooms</h5>
-                                        </div>   
-                                    </div>
-                                    <div class="card-content">
-                                        <table class="table" id="tblAvailableRooms" onclick="run(event, 'AvailableRooms')">
-                                            <thead class="text-info">
-                                                <th onclick="sortTable(0, 'tblAvailableRooms', 'string')">Room</th>
-                                                <th onclick="sortTable(1, 'tblAvailableRooms', 'int')">Capacity</th>
-                                                <th onclick="sortTable(2, 'tblAvailableRooms', 'double')">Rate per day</th>
-                                                <th onclick="sortTable(3, 'tblAvailableRooms', 'int')">Number of rooms left</th>
-                                            </thead>
-                                            <tbody>
+                            <div class="card-header" data-background-color="blue">
+                                <i class="material-icons">bookmark</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <p class="category">Available</p>
+                                    <h5 class="title">Rooms</h5>
+                                </div>   
+                            </div>
+                            <div class="card-content">
+                                <table class="table" id="tblAvailableRooms" onclick="run(event, 'AvailableRooms')">
+                                    <thead class="text-info">
+                                        <th onclick="sortTable(0, 'tblAvailableRooms', 'string')">Room</th>
+                                        <th onclick="sortTable(1, 'tblAvailableRooms', 'int')">Capacity</th>
+                                        <th onclick="sortTable(2, 'tblAvailableRooms', 'double')">Rate per day</th>
+                                        <th onclick="sortTable(3, 'tblAvailableRooms', 'int')">Number of rooms left</th>
+                                    </thead>
+                                    <tbody>
 
-                                            </tbody>
-                                        </table>
-               
-                                        <div class = "row">
-                                            <div class="col-xs-6">
-                                                <div class="form-group label-floating" id="TotalRoomsError">
-                                                    <label class="control-label">How many rooms?</label>
-                                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#TotalRoomsError')" onchange="ValidateInput(this, 'int', '#TotalRoomsError')" id="TotalRooms">
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-offset-2 col-xs-4">
-                                                <button type="button" class="btn btn-success pull-right" onclick="AddRoom()">Add</button>
-                                                <div class="clearfix"></div>
-                                            </div>
+                                    </tbody>
+                                </table>
+
+                                <div class = "row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group label-floating" id="TotalRoomsError">
+                                            <label class="control-label">How many rooms?</label>
+                                            <input type="text" class="form-control" onkeyup="CheckInput(this, 'AddRoomError', '#TotalRoomsError')" onchange="CheckInput(this, 'AddRoomError', '#TotalRoomsError')" id="TotalRooms">
                                         </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <p class="ElementError"></p>
-                                            </div>
-                                        </div>
-                                        
                                     </div>
+                                    <div class="col-xs-offset-2 col-xs-4">
+                                        <button type="button" class="btn btn-success pull-right" onclick="AddRoom()">Add</button>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ElementError" id="AddRoomError"></p>
+                                    </div>
+                                </div>
+
+                            </div>
 
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="card card-stats">
+                            <div class="card-header" data-background-color="blue">
+                                <i class="material-icons">beenhere</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <p class="category">Chosen</p>
+                                    <h5 class="title">Rooms</h5>
+                                </div> 
+                            </div>
+                            <div class="card-content">
+                                <table class="table" id="tblChosenRooms" onclick="run(event, 'ChosenRooms')">
+                                    <thead class="text-info">
+                                        <th onclick="sortTable(0, 'tblChosenRooms', 'string')">Name</th>
+                                        <th onclick="sortTable(0, 'tblChosenRooms', 'int')">Capacity</th>
+                                        <th onclick="sortTable(0, 'tblChosenRooms', 'double')">Rate per day</th>
+                                        <th onclick="sortTable(0, 'tblChosenRooms', 'int')">Quantity Availed</th>
+                                    </thead>
+                                    <tbody>
 
-                                    <div class="card-header" data-background-color="blue">
-                                        <i class="material-icons">beenhere</i>
+                                    </tbody>
+                                </table>
+                                
+                                <div class = "row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group label-floating" id="RemoveRoomsError">
+                                            <label class="control-label">How many rooms?</label>
+                                            <input type="text" class="form-control" onkeyup="CheckInput(this, 'RemoveRoomError', '#RemoveRoomsError')" onchange="CheckInput(this, 'RemoveRoomError', '#RemoveRoomsError')" id="TotalRemoveRooms">
+                                        </div>
                                     </div>
-                                    <div class="card-content">
-                                        <div class="row">
-                                            <p class="category">Chosen</p>
-                                            <h5 class="title">Rooms</h5>
-                                        </div> 
-                                    </div>
-                                    <div class="card-footer">
-                                        <table class="table" id="tblChosenRooms" onclick="run(event, 'ChosenRooms')">
-                                            <thead class="text-info">
-                                                <th onclick="sortTable(0, 'tblChosenRooms', 'string')">Name</th>
-                                                <th onclick="sortTable(0, 'tblChosenRooms', 'int')">Capacity</th>
-                                                <th onclick="sortTable(0, 'tblChosenRooms', 'double')">Rate per day</th>
-                                                <th onclick="sortTable(0, 'tblChosenRooms', 'int')">Quantity Availed</th>
-                                            </thead>
-                                            <tbody>
-
-                                            </tbody>
-                                        </table>
+                                    <div class="col-xs-offset-2 col-xs-4">
                                         <button type="button" class="btn btn-danger pull-right" onclick="RemoveRoom()">Remove</button>
                                         <div class="clearfix"></div>
                                     </div>
+                                </div>
 
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ElementError" id="RemoveRoomError"></p>
+                                    </div>
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
 
                 </div>
                 
                 <div class="row">
-                    <div class="col-md-5">
-                        <div class="alert alert-danger hide-on-click" style="display: none;">
-                            <div class="container-fluid">
-                              <div class="alert-icon">
-                                <i class="material-icons">warning</i>
-                              </div>
-                              <button type="button" class="close" aria-label="Close" onclick="HideAlert()">
-                                <span aria-hidden="true"><i class="material-icons">clear</i></span>
-                              </button>
-                              <p id="RoomErrorMessage"></p>
+            
+                    <div class="col-sm-5 pull-left">
+                        <div class="card card-stats">
+                            <div class="card-content">
+                                <div class="row">
+                                    <p class="paragraphText">Total Room Capacity:</p> <p class="paragraphText" id="TotalCapacity">0</p><br>
+                                    <p class="paragraphText">Total Number of Guests:</p> <p class="paragraphText" id="TotalGuests">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+
+                    <div class="col-sm-5 pull-right">
+                        <div class="card card-stats">
+                            <div class="card-content">
+                                <div class="row">
+                                    <p class="ErrorLabel" id="RoomError"></p>
+                                    <button type="button" class="btn btn-info pull-left" onclick="GoBack('#ReservationRoom','#ReservationDate','#RoomList','#DateList')">Change Dates</button>
+                                    <button type="button" class="btn btn-success pull-right" onclick="CheckRooms()">Continue</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
-                
-                
-                <button type="button" class="btn btn-info pull-left" onclick="GoBack('#ReservationRoom','#ReservationDate','#RoomList','#DateList')">Change Dates</button>
-                <button type="button" class="btn btn-success pull-right" onclick="CheckRooms()">Continue</button>
             </div>
 
             <div class="tab-pane" id="ReservationInfo">

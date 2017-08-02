@@ -9,7 +9,7 @@ var ChosenRoomsData = "";
 var BoatsUsed = "";
 var TotalCapacity = 0;
 var BoatList;
-
+var tempTotal = 0;
 
 /*---------- Modal controller -------*/
 
@@ -53,7 +53,7 @@ function HideModalNoMultipleBoats(){
 
 
 
-function CheckInput(){
+function CheckInputDate(){
     var CheckInDate = document.getElementById("CheckInDate");
     var CheckOutDate = document.getElementById("CheckOutDate");
     var NoOfKids = document.getElementById("NoOfKids");
@@ -307,7 +307,10 @@ function processBoat(data, TotalGuests){
 function getAvailableRooms(){
     var CheckInDate = document.getElementById("CheckInDate").value;
     var CheckOutDate = document.getElementById("CheckOutDate").value;
-    
+    var NoOfKids = document.getElementById("NoOfKids").value;
+    var NoOfAdults = document.getElementById("NoOfAdults").value;
+    var TotalGuests = parseInt(NoOfAdults) + parseInt(NoOfKids);
+    document.getElementById("TotalGuests").innerHTML = TotalGuests;
     $.ajax({
         type:'get',
         url:'/Reservation/Rooms',
@@ -364,7 +367,7 @@ function switchTab(GuestChoice){
 /*---------- ROOM TAB CONTROLLER --------------*/
 
 
-
+/*
 
 function CheckRooms(){
     var ErrorMessage = document.getElementById("RoomErrorMessage");
@@ -495,6 +498,226 @@ function RemoveRoom(){
     }
 }
 
+*/
+
+function CheckRooms(){
+    var ErrorMessage = document.getElementById("RoomError");
+    var NoOfKids = document.getElementById("NoOfKids").value;
+    var NoOfAdults = document.getElementById("NoOfAdults").value;
+    var TotalGuests = parseInt(NoOfKids) + parseInt(NoOfAdults);
+    var TotalRoomCapacity = 0;
+
+    $("#tblChosenRooms tr").each(function(){
+        if(($(this).find("td:nth-child(2)").text())!=""){
+            TotalRoomCapacity += (parseInt($(this).find("td:nth-child(2)").text()) * parseInt($(this).find("td:nth-child(4)").text()));
+        }
+    });
+    var rowCount = $('#tblChosenRooms >tbody >tr').length;
+    if(rowCount == 0){
+        ErrorMessage.innerHTML = "Please choose a room to reserve";
+    }
+    else if(!(TotalGuests <= TotalRoomCapacity)){
+        ErrorMessage.innerHTML = "Total number of guests exceeds total capacity of selected rooms!";
+    }
+    else{
+        ErrorMessage.innerHTML = "";
+        
+        $('.alert').hide();
+        $('#ReservationRoom').removeClass('active');
+        $('#RoomList').removeClass('active');
+        $('#InfoList').addClass('active');
+        $('#ReservationInfo').addClass('active');
+    }
+}
+
+//table row clicked
+
+$(document).ready(function(){
+    $('#tblAvailableRooms').on('click', 'tbody tr', function(){
+        HighlightRow(this);
+        AddRowIndex = $(this).index();
+    });
+    
+    $('#tblChosenRooms').on('click', 'tbody tr', function(){
+        HighlightRow(this);
+        RemoveRowIndex = $(this).index();
+    });
+    
+});
+
+function AddRoom(){
+    var TotalRooms = document.getElementById("TotalRooms").value;
+    var TableChecker = CheckTable('#tblAvailableRooms tr');
+    if(TableChecker){
+        document.getElementById("AddRoomError").innerHTML = "";
+        if(TotalRooms == ""){
+            $('#TotalRoomsError').addClass('has-warning');
+            document.getElementById("AddRoomError").innerHTML = "Please specify the number of rooms to avail";
+        }
+        else if(parseInt(TotalRooms) > parseInt(AvailableRooms[3])){
+           $('#TotalRoomsError').addClass('has-warning');
+            document.getElementById("AddRoomError").innerHTML = "Room Quantity exceeded total number of available rooms";
+        }
+        else if(!($('#TotalRoomsError').hasClass('has-warning'))){
+            var boolAddRoom = false;
+ 
+            $("#tblChosenRooms tr").each(function(){
+                   if($(this).find("td:first").text() == AvailableRooms[0]){
+                       var temp = parseInt($(this).find("td:nth-child(4)").text()) + parseInt(TotalRooms); 
+                       $(this).find("td:nth-child(4)").text(temp);
+                       boolAddRoom = false;
+                       tempTotal += parseInt(AvailableRooms[1]) * parseInt(TotalRooms);
+                       return false;
+                   }
+                   else{
+                       boolAddRoom = true;
+                   }
+            });
+            
+            if(boolAddRoom){
+                var tableRef = document.getElementById('tblChosenRooms').getElementsByTagName('tbody')[0];
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+                var newCell3  = newRow.insertCell(2);
+                var newCell4 = newRow.insertCell(3);
+
+                newCell1.innerHTML = AvailableRooms[0];
+                newCell2.innerHTML = AvailableRooms[1];
+                newCell3.innerHTML = AvailableRooms[2];
+                newCell4.innerHTML = TotalRooms;
+                
+                tempTotal += parseInt(AvailableRooms[1]) * parseInt(TotalRooms);
+            }
+            
+            $("#tblAvailableRooms tr").each(function(){
+                   if($(this).find("td:first").text() == AvailableRooms[0]){
+                       var temp = parseInt($(this).find("td:nth-child(4)").text()) - parseInt(TotalRooms);
+                       if(temp == 0){
+                           document.getElementById("tblAvailableRooms").deleteRow(AddRowIndex+1);
+                       }
+                       else{
+                           $(this).find("td:nth-child(4)").text(temp);
+                       }
+                       return false;
+                   }
+            });
+            
+            document.getElementById("TotalCapacity").innerHTML = tempTotal;
+            $('#tblAvailableRooms tr').removeClass("selected");
+            document.getElementById("TotalRooms").value = "";
+        }
+    }
+    
+    else{
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="Please choose a room";
+        }
+    }
+}
+
+function RemoveRoom(){
+    var TotalRooms = document.getElementById("TotalRemoveRooms").value;
+    var TableChecker = CheckTable('#tblChosenRooms tr');
+    if(TableChecker){
+        document.getElementById("RemoveRoomError").innerHTML = "";
+        if(TotalRooms == ""){
+            $('#RemoveRoomsError').addClass('has-warning');
+            document.getElementById("RemoveRoomError").innerHTML = "Please specify the number of rooms to avail";
+        }
+        else if(parseInt(TotalRooms) > parseInt(ChosenRooms[3])){
+           $('#RemoveRoomsError').addClass('has-warning');
+            document.getElementById("RemoveRoomError").innerHTML = "Room quantity exceeded!";
+        }
+        else if(!($('#RemoveRoomsError').hasClass('has-warning'))){
+            var boolRemoveRoom = false;
+ 
+            $("#tblAvailableRooms tr").each(function(){
+                   if($(this).find("td:first").text() == ChosenRooms[0]){
+                       var temp = parseInt($(this).find("td:nth-child(4)").text()) + parseInt(TotalRooms); 
+                       $(this).find("td:nth-child(4)").text(temp);
+                       tempTotal -= parseInt(ChosenRooms[1]) * parseInt(TotalRooms);
+                       boolRemoveRoom = false;
+                       return false;
+                   }
+                   else{
+                       boolRemoveRoom = true;
+                   }
+            });
+            
+            if(boolRemoveRoom){
+                var tableRef = document.getElementById('tblAvailableRooms').getElementsByTagName('tbody')[0];
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+                var newCell3  = newRow.insertCell(2);
+                var newCell4 = newRow.insertCell(3);
+
+                newCell1.innerHTML = ChosenRooms[0];
+                newCell2.innerHTML = ChosenRooms[1];
+                newCell3.innerHTML = ChosenRooms[2];
+                newCell4.innerHTML = TotalRooms;
+                
+                tempTotal -= parseInt(ChosenRooms[1]) * parseInt(TotalRooms);
+            }
+            
+            $("#tblChosenRooms tr").each(function(){
+                   if($(this).find("td:first").text() == ChosenRooms[0]){
+                       var temp = parseInt($(this).find("td:nth-child(4)").text()) - parseInt(TotalRooms);
+                       if(temp == 0){
+                           document.getElementById("tblChosenRooms").deleteRow(RemoveRowIndex+1);
+                       }
+                       else{
+                           $(this).find("td:nth-child(4)").text(temp);
+                       }
+                       return false;
+                   }
+            });
+            document.getElementById("TotalCapacity").innerHTML = tempTotal;
+            $('#tblChosenRooms tr').removeClass("selected");
+            document.getElementById("TotalRemoveRooms").value = "";
+        }
+    }
+    
+    else{
+        document.getElementById("RemoveRoomError").innerHTML = "Please choose a room";
+    }
+}
+
+//validates the input
+function CheckInput(field, errorHolder, holder){
+    inputError = CheckInteger(field.value);
+    if(inputError){
+        $(holder).addClass("has-warning");
+    }
+    else{
+        $(holder).removeClass("has-warning");
+    }
+    
+    if($(holder).hasClass("has-warning")){
+        document.getElementById(errorHolder).innerHTML = "Invalid input!";
+    }
+
+    else{
+        document.getElementById(errorHolder).innerHTML = "";
+    }
+}
+
+//check the value
+function CheckInteger(temp){
+    if(/^[0-9]*$/.test(temp) == false) {
+        return true;
+    }
+    else if(temp == 0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 
 
 

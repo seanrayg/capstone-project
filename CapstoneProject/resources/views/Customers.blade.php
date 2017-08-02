@@ -44,78 +44,20 @@
                             <th>Date of birth</th>
                         </thead>
                         <tbody>
+                            @foreach($CustomerDetails as $Customer)
                             <tr>
-                                <td>Customer ID</td>
-                                <td>Firstname</td>
-                                <td>Middlename</td>
-                                <td>Lastname</td>
-                                <td>Address</td>
-                                <td>Contact #</td>
-                                <td>Email</td>
-                                <td>Nationality</td>
-                                <td>Gender</td>
-                                <td>Date of birth</td>
+                                <td>{{$Customer->strCustomerID}}</td>
+                                <td>{{$Customer->strCustFirstName}}</td>
+                                <td>{{$Customer->strCustMiddleName}}</td>
+                                <td>{{$Customer->strCustLastName}}</td>
+                                <td>{{$Customer->strCustAddress}}</td>
+                                <td>{{$Customer->strCustContact}}</td>
+                                <td>{{$Customer->strCustEmail}}</td>
+                                <td>{{$Customer->strCustNationality}}</td>
+                                <td>{{$Customer->strCustGender}}</td>
+                                <td>{{Carbon\Carbon::parse($Customer->dtmCustBirthday)->format('M j, Y')}}</td>
                             </tr>
-                            <tr>
-                                <td>Customer ID</td>
-                                <td>Firstname</td>
-                                <td>Middlename</td>
-                                <td>Lastname</td>
-                                <td>Address</td>
-                                <td>Contact #</td>
-                                <td>Email</td>
-                                <td>Nationality</td>
-                                <td>Gender</td>
-                                <td>Date of birth</td>
-                            </tr>
-                            <tr>
-                                <td>Customer ID</td>
-                                <td>Firstname</td>
-                                <td>Middlename</td>
-                                <td>Lastname</td>
-                                <td>Address</td>
-                                <td>Contact #</td>
-                                <td>Email</td>
-                                <td>Nationality</td>
-                                <td>Gender</td>
-                                <td>Date of birth</td>
-                            </tr>
-                            <tr>
-                                <td>Customer ID</td>
-                                <td>Firstname</td>
-                                <td>Middlename</td>
-                                <td>Lastname</td>
-                                <td>Address</td>
-                                <td>Contact #</td>
-                                <td>Email</td>
-                                <td>Nationality</td>
-                                <td>Gender</td>
-                                <td>Date of birth</td>
-                            </tr>
-                            <tr>
-                                <td>Customer ID</td>
-                                <td>Firstname</td>
-                                <td>Middlename</td>
-                                <td>Lastname</td>
-                                <td>Address</td>
-                                <td>Contact #</td>
-                                <td>Email</td>
-                                <td>Nationality</td>
-                                <td>Gender</td>
-                                <td>Date of birth</td>
-                            </tr>
-                            <tr>
-                                <td>Customer ID</td>
-                                <td>Firstname</td>
-                                <td>Middlename</td>
-                                <td>Lastname</td>
-                                <td>Address</td>
-                                <td>Contact #</td>
-                                <td>Email</td>
-                                <td>Nationality</td>
-                                <td>Gender</td>
-                                <td>Date of birth</td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

@@ -76,7 +76,7 @@
                                 <span class="input-group-addon">
                                     <i class="now-ui-icons ui-1_lock-circle-open"></i>
                                 </span>
-                                <input name="ReservationCode" type="text" placeholder="Transaction ID" class="form-control" required />
+                                <input name="ReservationCode" type="text" placeholder="Reservation Code" class="form-control" required />
                             </div>
                         </div>
                         <div class="footer text-center">
