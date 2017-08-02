@@ -39,5 +39,6 @@ class SessionsController extends Controller
 	}
 
 	//I made a comment
+	//I made another comment
 
 }
