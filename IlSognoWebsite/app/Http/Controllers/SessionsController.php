@@ -37,4 +37,7 @@ class SessionsController extends Controller
 		return redirect('/Login');
 
 	}
+
+	//I made a comment
+
 }
