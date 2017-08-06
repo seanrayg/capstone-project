@@ -76,13 +76,13 @@
 @endif
 
 <div class="row">
-    <div class="col-md-3 dropdown">
+    <div class="col-md-4 dropdown">
         <a href="#" class="btn-simple dropdown-toggle" data-toggle="dropdown">
-        <h5 id="TitlePage">Room Maintenance</h5>
+        <h5 id="TitlePage">Room &amp; Cottage Maintenance</h5>
         <b class="caret"></b>
         </a>
         <ul class="dropdown-menu">
-            <li><a href="/Maintenance/RoomType">Room Type Maintenance</a></li>
+            <li><a href="/Maintenance/RoomType">Accomodation Maintenance</a></li>
             <li><a href="/Maintenance/Boat">Boat Maintenance</a></li>
             <li><a href="/Maintenance/Item">Item Maintenance</a></li>
             <li><a href="/Maintenance/Activity">Activity Maintenance</a></li>
@@ -94,49 +94,118 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="form-group label-floating">
-            <label class="control-label">Search Room</label>
-            <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('RoomTable', '2')">
-        </div>
-    </div>
-    <div class="col-md-6">
-        <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteRoom()"><i class="material-icons">delete</i> Delete</button>
-        <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditRoom()"><i class="material-icons">create</i> Edit</button>
-        <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddRoom()"><i class="material-icons">add</i> Add</button>
-    </div>             
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
+    <div class="col-lg-12 col-md-12">
+        
+        <div class="card card-nav-tabs">
             <div class="card-header" data-background-color="blue">
-                <h4 class="title">Rooms</h4>
-                <p class="category"></p>
-            </div>
-            <div class="card-content table-responsive scrollable-table" id="style-1">
-                <table class="table" id="RoomTable" onclick="run(event)">
-                    <thead class="text-primary">
-                        <th onclick="sortTable(0, 'RoomTable', 'string')">Room ID</th>
-                        <th onclick="sortTable(1, 'RoomTable', 'string')">Room Type</th>
-                        <th onclick="sortTable(2, 'RoomTable', 'string')">Room Name</th>
-                        <th onclick="sortTable(3, 'RoomTable', 'string')">Room Status</th>
-                    </thead>
-                    <tbody>
-                        @foreach ($Rooms as $Room)
-                        <tr onclick="HighlightRow(this)">
-                            <td>{{$Room -> strRoomID}}</td>
-                            <td>{{$Room -> strRoomType}}</td>
-                            <td>{{$Room -> strRoomName}}</td>
-                            <td>{{$Room -> strRoomStatus}}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="nav-tabs-navigation">
+                    <div class="nav-tabs-wrapper">
+                        <span class="nav-tabs-title">Accomodation:</span>
+                        <ul class="nav nav-tabs" data-tabs="tabs">     
+                            <li class="active" onclick="ResetTables('#CottageTable tbody tr')">
+                                <a href="#RoomType" data-toggle="tab">
+                                    <i class="material-icons">local_hotel</i>
+                                    Rooms
+                                <div class="ripple-container"></div></a>
+                            </li>
 
+                            <li class="" onclick="ResetTables('#RoomTable tbody tr')">
+                                <a href="#Cottage" data-toggle="tab">
+                                    <i class="material-icons">local_library</i>
+                                    Cottages
+                                <div class="ripple-container"></div></a>
+                            </li>        
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-content">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="RoomType">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Search Room</label>
+                                    <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('RoomTable', '2')">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteRoom()"><i class="material-icons">delete</i> Delete</button>
+                                <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditRoom()"><i class="material-icons">create</i> Edit</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddRoom()"><i class="material-icons">add</i> Add</button>
+                            </div>             
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
+                                <table class="table" id="RoomTable" onclick="run(event)">
+                                    <thead class="text-primary">
+                                        <th onclick="sortTable(0, 'RoomTable', 'string')">Room ID</th>
+                                        <th onclick="sortTable(1, 'RoomTable', 'string')">Room Type</th>
+                                        <th onclick="sortTable(2, 'RoomTable', 'string')">Room Name</th>
+                                        <th onclick="sortTable(3, 'RoomTable', 'string')">Room Status</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($Rooms as $Room)
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>{{$Room -> strRoomID}}</td>
+                                            <td>{{$Room -> strRoomType}}</td>
+                                            <td>{{$Room -> strRoomName}}</td>
+                                            <td>{{$Room -> strRoomStatus}}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                           
+                    </div>
+
+            <div class="tab-pane" id="Cottage">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Search Cottage</label>
+                                    <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('RoomTable', '2')">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteRoom()"><i class="material-icons">delete</i> Delete</button>
+                                <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditRoom()"><i class="material-icons">create</i> Edit</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddRoom()"><i class="material-icons">add</i> Add</button>
+                            </div>             
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
+                                <table class="table" id="CottageTable" onclick="run(event)">
+                                    <thead class="text-primary">
+                                        <th onclick="sortTable(0, 'CottageTable', 'string')">ID</th>
+                                        <th onclick="sortTable(1, 'CottageTable', 'string')">Cottage Type</th>
+                                        <th onclick="sortTable(2, 'CottageTable', 'string')">Cottage Name</th>
+                                        <th onclick="sortTable(3, 'CottageTable', 'string')">Cottage Status</th>
+                                    </thead>
+                                    <tbody>
+                                       @foreach ($Cottages as $Cottage)
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>{{$Cottage -> strRoomID}}</td>
+                                            <td>{{$Cottage -> strRoomType}}</td>
+                                            <td>{{$Cottage -> strRoomName}}</td>
+                                            <td>{{$Cottage -> strRoomStatus}}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                           
+                    </div>
             </div>
         </div>
     </div>
+        
+  </div>
 </div>
 
 @endsection
@@ -145,67 +214,66 @@
 <div id="DivModalAddRoom" class="modal">
     <div class="Modal-content">
         <div class="row">
-                    <div class="col-md-12">
-                            <div class="card card-stats">
+            <div class="col-md-12">
+                    <div class="card card-stats">
 
-                                    <div class="card-header" data-background-color="green">
-                                        <i class="material-icons">add</i>
-                                    </div>
-                                    <div class="card-content">
-                                        <p class="category"></p>
-                                        <h3 class="title">Add Room<span class="close" onclick="HideModalAddRoom()">X</span></h3>
-                                        <form id='RoomForm' onsubmit="return CheckForm()" method="post" action="/Maintenance/Room">
-                                            {{ csrf_field() }}
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group label-floating" id="EditRoomIDError">
-                                                        <label class="control-label">Room ID</label>
-                                                        @if((Session::has('duplicate_message')) || (count($errors) > 0))
-                                                        <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomIDError')" onchange="ValidateInput(this, 'string', '#EditRoomIDError')"  name="RoomID" value="{{old('RoomID')}}" required>
-                                                        @else
-                                                        <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomIDError')" onchange="ValidateInput(this, 'string', '#EditRoomIDError')"  name="RoomID" value="{{$RoomID}}" required>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class = "row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group label-floating">
-                                                        <label class="control-label">Room Type</label>
-                                                        <div class="selectBox">
-                                                            <select name="RoomType" value="{{old('RoomType')}}">
-                                                                @foreach ($RoomTypes as $RoomType)
-                                                                    <option>{{$RoomType}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                          </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group label-floating" id="EditRoomNameError">
-                                                        <label class="control-label">Room Name</label>
-                                                        <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomNameError')" onchange="ValidateInput(this, 'string', '#EditRoomNameError')" name="RoomName" value="{{old('RoomName')}}" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <p class="ErrorLabel"></p>
-                                                </div>
-                                            </div>
-
-                                            <button type="submit" class="btn btn-success pull-right">Save</button>
-                                            <div class="clearfix"></div>
-                                        </form>
-                                    </div>
-
+                            <div class="card-header" data-background-color="green">
+                                <i class="material-icons">add</i>
                             </div>
-                        </div>
+                            <div class="card-content">
+                                <p class="category"></p>
+                                <h3 class="title"><span class="close" onclick="HideModalAddRoom()">X</span></h3>
+                                <h3 class="title" id="AddModalTitle"></h3>
+                                <form id='RoomForm' onsubmit="return CheckForm()" method="post" action="/Maintenance/Room">
+                                    {{ csrf_field() }}
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-floating" id="EditRoomIDError">
+                                                <label class="control-label">ID</label>
+                                                @if((Session::has('duplicate_message')) || (count($errors) > 0))
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomIDError')" onchange="ValidateInput(this, 'string', '#EditRoomIDError')"  name="RoomID" value="{{old('RoomID')}}" required>
+                                                @else
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomIDError')" onchange="ValidateInput(this, 'string', '#EditRoomIDError')"  name="RoomID" value="{{$RoomID}}" required>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class = "row" id="RoomTypeHolder">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-floating">
+                                                <label class="control-label" id="AddSelectLabel"></label>
+                                                <div class="selectBox">
+                                                    <select name="RoomType" id="SelectRoomType" value="{{old('RoomType')}}">
+                                       
+                                                    </select>
+                                                  </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-floating" id="EditRoomNameError">
+                                                <label class="control-label">Name</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomNameError')" onchange="ValidateInput(this, 'string', '#EditRoomNameError')" name="RoomName" value="{{old('RoomName')}}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p class="ErrorLabel"></p>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success pull-right">Save</button>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+
+                    </div>
+                </div>
     </div>
   </div>
 </div>
@@ -222,7 +290,8 @@
                                     </div>
                                     <div class="card-content">
                                         <p class="category"></p>
-                                        <h3 class="title">Edit Room<span class="close" onclick="HideModalEditRoom()">X</span></h3>
+                                        <h3 class="title"><span class="close" onclick="HideModalEditRoom()">X</span></h3>
+                                        <h3 class="title" id="EditModalTitle"></h3>
                                         <form method="post" action="/Maintenance/Room/Edit" onsubmit="return CheckForm()" id="EditRoomForm">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="OldRoomID" id="OldRoomID" value="{{old('OldRoomID')}}">
@@ -230,7 +299,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group label-static" id="RoomIDError">
-                                                        <label class="control-label">Room ID</label>
+                                                        <label class="control-label">ID</label>
                                                         <input type="text" class="form-control" name="EditRoomID" id="EditRoomID" onkeyup="ValidateInput(this, 'string', '#RoomIDError')" onchange="ValidateInput(this, 'string', '#RoomIDError')" required>
                                                     </div>
                                                 </div>
@@ -238,15 +307,13 @@
 
                                             <div class = "row">
                                                 <div class="col-md-12">
-                                                    <div class="form-group label-static">
-                                                        <label class="control-label">Room Type</label>
+                                                    <div class="form-group label-floating">
+                                                        <label class="control-label" id="EditSelectLabel"></label>
                                                         <div class="selectBox">
-                                                            <select name="EditRoomType" id="EditRoomType">
-                                                            @foreach ($RoomTypes as $RoomType)
-                                                                <option>{{$RoomType}}</option>
-                                                            @endforeach
+                                                            <select name="EditRoomType" id="EditSelectRoomType" value="{{old('RoomType')}}">
+                                                   
                                                             </select>
-                                                        </div>
+                                                          </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -254,7 +321,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group label-static" id="RoomNameError">
-                                                        <label class="control-label">Room Name</label>
+                                                        <label class="control-label">Name</label>
                                                         <input type="text" class="form-control" name="EditRoomName" id="EditRoomName" onkeyup="ValidateInput(this, 'string', '#RoomNameError')" onchange="ValidateInput(this, 'string', '#RoomNameError')" required>
                                                     </div>
                                                 </div>
@@ -263,7 +330,7 @@
                                             <div class = "row">
                                                 <div class="col-md-12">
                                                     <div class="form-group label-static">
-                                                        <label class="control-label">Room Status</label>
+                                                        <label class="control-label">Status</label>
                                                         <div class="selectBox">
                                                             <select name="EditRoomStatus" id="EditRoomStatus">
                                                               <option>Available</option>
@@ -304,7 +371,8 @@
                         </div>
                         <div class="card-content">
                             <p class="category"></p>
-                            <h3 class="title">Delete Room?<span class="close" onclick="HideModalDeleteRoom()">X</span></h3>
+                            <h3 class="title"><span class="close" onclick="HideModalDeleteRoom()">X</span></h3>
+                            <h3 class="title" id="DeleteModalTitle"></h3>
                             <form method="post" action="/Maintenance/Room/Delete">
                                 {{ csrf_field() }}
                                 <input type="hidden" id="DeleteRoomID" name="DeleteRoomID" value="">

@@ -66,6 +66,17 @@ function ShowModalEditRoomType(){
         if(RoomTypeInfo[2]=="Cottage"){
             document.getElementById("EditRoomPerks").style.display = "none";
         }
+        else{
+            document.getElementById("EditRoomPerks").style.display = "block";
+        }
+        
+        if($('#RoomType').hasClass('active')){
+            document.getElementById("EditModalTitle").innerHTML = "Edit Room Type";
+        }
+        else if($('#Cottage').hasClass('active')){
+            document.getElementById("EditModalTitle").innerHTML = "Edit Cottage Type";
+
+        }
 
     }
 }
@@ -80,6 +91,13 @@ function ShowModalDeleteRoomType(){
     var TableChecker = CheckTable('#RoomTypeTable tr');
     var TableChecker2 = CheckTable("#CottageTable tr");
     if(TableChecker || TableChecker2){
+        if($('#RoomType').hasClass('active')){
+            document.getElementById("DeleteModalTitle").innerHTML = "Delete Room type?";
+        }
+        if($('#Cottage').hasClass('active')){
+            document.getElementById("DeleteModalTitle").innerHTML = "Delete Cottage type?";
+        }
+        
         document.getElementById("DivModalDeleteRoomType").style.display = "block";
         
     }
@@ -116,57 +134,10 @@ function run(event, sender){
 
 //misc
 
-function CheckCategory(field, action){
-    if(field.value == "Cottage"){
-        if(action == "add"){
-            document.getElementById("NoOfBeds").readOnly = true;
-            document.getElementById("NoOfBathrooms").readOnly = true;
-            document.getElementById("NoOfBeds").value = "0";
-            document.getElementById("NoOfBathrooms").value = "0";
-            document.getElementById("RoomAirconditioned").checked = false;
-            document.getElementById("RoomPerks").style.display = "none";
-            
-        }
-        if(action == "edit"){
-            document.getElementById("EditNoOfBeds").readOnly = true;
-            document.getElementById("EditNoOfBathrooms").readOnly = true;
-            document.getElementById("EditNoOfBeds").value = "0";
-            document.getElementById("EditNoOfBathrooms").value = "0";
-            document.getElementById("EditAirconditioned").checked = false;
-            document.getElementById("EditRoomPerks").style.display = "none";
-        }
-        
-    }
-    else{
-        if(action == "add"){
-            document.getElementById("NoOfBeds").readOnly = false;
-            document.getElementById("NoOfBathrooms").readOnly = false;
-            document.getElementById("NoOfBeds").value = "";
-            document.getElementById("NoOfBathrooms").value = "";
-            document.getElementById("RoomPerks").style.display = "block";
-        }
-         if(action == "edit"){
-            document.getElementById("EditNoOfBeds").readOnly = false;
-            document.getElementById("EditNoOfBathrooms").readOnly = false;
-             
-            if(RoomTypeInfo[6]=="Yes"){
-              document.getElementById("EditAirconditioned").checked = true;
-            }
-            
-            if(RoomTypeInfo[2] == "Cottage"){
-                document.getElementById("EditNoOfBeds").value = "";
-                document.getElementById("EditNoOfBathrooms").value = "";
-            }
-            else{
-                document.getElementById("EditNoOfBeds").value = RoomTypeInfo[4];
-                document.getElementById("EditNoOfBathrooms").value = RoomTypeInfo[5];
-            }
-            
-            document.getElementById("EditRoomPerks").style.display = "block";
-        }
-        
-    }
+function ResetTables(table){
+    $(table).removeClass("selected");
 }
+
 
 function AlterInput(field, dataType, holder){
     if(document.getElementById("RoomCategory").value == "Cottage"){
