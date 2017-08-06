@@ -9,14 +9,14 @@
 <div class="row">
                         
     <div class="col-lg-4">
-        <div class="card card-stats">
+        <div class="card card-stats" rel="tooltip" title="Maintain physical rooms and cottages in the resort">
             <a href="/Maintenance/Room">
                 <div class="card-header" data-background-color="red">
                     <i class="material-icons">local_hotel</i>
                 </div>
                 <div class="card-content">
                     <p class="category"></p>
-                    <h4 class="title">Rooms</h4>
+                    <h4 class="title">Rooms &amp; Cottages</h4>
                 </div>
                 <div class="card-footer">
                     <div class="stats">
@@ -29,13 +29,13 @@
 
     <div class="col-lg-4">
         <div class="card card-stats">
-            <a href="/Maintenance/RoomType">
+            <a href="/Maintenance/RoomType" rel="tooltip" title="Maintain descriptions of rooms and cottages in the resort">
                 <div class="card-header" data-background-color="green">
                     <i class="material-icons">home</i>
                 </div>
                 <div class="card-content">
                     <p class="category"></p>
-                    <h4 class="title">Room Type</h4>
+                    <h4 class="title">Accomodation</h4>
                 </div>
                 <div class="card-footer">
                     <div class="stats">
@@ -47,7 +47,7 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="card card-stats">
+        <div class="card card-stats" rel="tooltip" title="Maintain boats used in the resort">
             <a href="/Maintenance/Boat">
                 <div class="card-header" data-background-color="dark-blue">
                     <i class="material-icons">directions_boat</i>
@@ -70,7 +70,7 @@
 <div class="row">
 
     <div class="col-lg-4">
-        <div class="card card-stats">
+        <div class="card card-stats" rel="tooltip" title="Maintain fees in the resort">
             <a href="/Maintenance/Fee">
                 <div class="card-header" data-background-color="teal">
                     <i class="material-icons">local_atm</i>
@@ -90,7 +90,7 @@
 
     <div class="col-lg-4">
         <div class="card card-stats">
-            <a href="/Maintenance/Package">
+            <a href="/Maintenance/Package" rel="tooltip" title="Maintain packages offered by the resort">
                 <div class="card-header" data-background-color="orange">
                     <i class="material-icons">pages</i>
                 </div>
@@ -109,7 +109,7 @@
 
     <div class="col-lg-4">
         <div class="card card-stats">
-            <a href="/Maintenance/Activity">
+            <a href="/Maintenance/Activity" rel="tooltip" title="Maintain beach activities offered by the resort">
                 <div class="card-header" data-background-color="pink">
                     <i class="material-icons">map</i>
                 </div>
@@ -130,7 +130,7 @@
 <div class="row">
     <div class="col-lg-4">
         <div class="card card-stats">
-            <a href="/Maintenance/Item">
+            <a href="/Maintenance/Item" rel="tooltip" title="Maintain all the rental items in the resort">
                 <div class="card-header" data-background-color="purple">
                     <i class="material-icons">local_offer</i>
                 </div>
@@ -149,32 +149,13 @@
     
     <div class="col-lg-4">
         <div class="card card-stats">
-            <a href="/Maintenance/Operations">
+            <a href="/Maintenance/Operations" rel="tooltip" title="Maintain the operational date of the resort">
                 <div class="card-header" data-background-color="blue">
                     <i class="material-icons">today</i>
                 </div>
                 <div class="card-content">
                     <p class="category"></p>
                     <h4 class="title">Operation</h4>
-                </div>
-                <div class="card-footer">
-                    <div class="stats">
-                        <i class="material-icons text-danger"></i><a href="#pablo"></a>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-    
-    <div class="col-lg-4">
-        <div class="card card-stats">
-            <a href="/Maintenance/BoatPersonnel">
-                <div class="card-header" data-background-color="yellow">
-                    <i class="material-icons">rowing</i>
-                </div>
-                <div class="card-content">
-                    <p class="category"></p>
-                    <h4 class="title">Boat Personnel</h4>
                 </div>
                 <div class="card-footer">
                     <div class="stats">

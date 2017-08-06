@@ -1,12 +1,32 @@
 //Global variables
 
 var cells;
-var RoomTypeInfo=[];
+var RoomTypeInfo = [];
 
 //Modal functions
 
-function ShowModalAddRoomType(){
+function ShowModalAddRoomType() {
+    $('#RoomTypeForm').trigger("reset");
     document.getElementById("DivModalAddRoomType").style.display = "block";
+    if($('#RoomType').hasClass('active')){
+        document.getElementById("AddModalTitle").innerHTML = "Add Room Type";
+        document.getElementById("NoOfBeds").readOnly = false;
+        document.getElementById("NoOfBathrooms").readOnly = false;
+        document.getElementById("NoOfBeds").value = "";
+        document.getElementById("NoOfBathrooms").value = "";
+        document.getElementById("RoomPerks").style.display = "block";
+        document.getElementById("RoomCategory").value = "Room";
+    }
+    else if($('#Cottage').hasClass('active')){
+        document.getElementById("AddModalTitle").innerHTML = "Add Cottage Type";
+        document.getElementById("NoOfBeds").readOnly = true;
+        document.getElementById("NoOfBathrooms").readOnly = true;
+        document.getElementById("NoOfBeds").value = "0";
+        document.getElementById("NoOfBathrooms").value = "0";
+        document.getElementById("RoomAirconditioned").checked = false;
+        document.getElementById("RoomPerks").style.display = "none";
+        document.getElementById("RoomCategory").value = "Cottage";
+    }
 }
 
 function HideModalAddRoomType(){

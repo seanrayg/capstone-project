@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('WebpageTitle')
-    <title>Room Type Maintenance</title>
+    <title>Accomodation Maintenance</title>
 @endsection
 
 @section('scripts')
@@ -78,11 +78,11 @@
 <div class="row">
     <div class="col-md-3 dropdown">
         <a href="#" class="btn-simple dropdown-toggle" data-toggle="dropdown">
-        <h5 id="TitlePage">Room Type Maintenance</h5>
+        <h5 id="TitlePage">Accomodation Maintenace</h5>
         <b class="caret"></b>
         </a>
         <ul class="dropdown-menu">
-            <li><a href="/Maintenance/Room">Room Maintenance</a></li>
+            <li><a href="/Maintenance/Room">Room &amp; Cottage Maintenance</a></li>
             <li><a href="/Maintenance/Boat">Boat Maintenance</a></li>
             <li><a href="/Maintenance/Item">Item Maintenance</a></li>
             <li><a href="/Maintenance/Activity">Activity Maintenance</a></li>
@@ -95,13 +95,7 @@
 
 
 
-<div class="row">
-    <div class="col-md-6 pull-right">
-        <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteRoomType()"><i class="material-icons">delete</i> Delete</button>
-        <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditRoomType()"><i class="material-icons">create</i> Edit</button>
-        <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddRoomType()"><i class="material-icons">add</i> Add</button>
-    </div>
-</div>
+
 
 <div class="row">
     <div class="col-lg-12 col-md-12">
@@ -141,6 +135,14 @@
                                     <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('RoomTypeTable', '1')">
                                 </div>
                             </div>
+                            
+
+                            <div class="col-md-6 pull-right">
+                                <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteRoomType()"><i class="material-icons">delete</i> Delete</button>
+                                <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditRoomType()"><i class="material-icons">create</i> Edit</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddRoomType()"><i class="material-icons">add</i> Add</button>
+                            </div>
+
                         </div>
 
                         <div class="row">
@@ -182,10 +184,17 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group label-floating">
-                                    <label class="control-label">Search Cottage</label>
+                                    <label class="control-label">Search Cottage Type</label>
                                     <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('CottageTable', '1')">
                                 </div>
                             </div>
+                            
+                            <div class="col-md-6 pull-right">
+                                <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteRoomType()"><i class="material-icons">delete</i> Delete</button>
+                                <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditRoomType()"><i class="material-icons">create</i> Edit</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddRoomType()"><i class="material-icons">add</i> Add</button>
+                            </div>
+                            
                         </div>
 
                         <div class="row">
@@ -243,13 +252,15 @@
                                         </div>
                                         <div class="card-content">
                                             <p class="category"></p>
-                                            <h3 class="title">Add Room Type<span class="close" onclick="HideModalAddRoomType()">X</span></h3>
+                                            <h3 class="title"><span class="close" onclick="HideModalAddRoomType()">X</span></h3>
+                                            <h3 class="title" id="AddModalTitle"></h3>
+                                            
                                             <form method="POST" action="/Maintenance/RoomType" onsubmit="return CheckForm()" id="RoomTypeForm">
                                                 {{ csrf_field() }}
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="form-group label-floating" id="RoomTypeCodeError">
-                                                            <label class="control-label">Room Type Code</label>
+                                                            <label class="control-label">ID</label>
                                                             @if((Session::has('duplicate_message')) || (count($errors) > 0))
                                                             <input type="text" class="form-control" id="RoomTypeCode" onkeyup="ValidateInput(this, 'string', '#RoomTypeCodeError')" onchange="ValidateInput(this, 'string', '#RoomTypeCodeError')" name="RoomTypeCode" value="{{old('RoomTypeCode')}}" required>
                                                             @else
@@ -262,17 +273,17 @@
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="form-group label-floating" id="RoomTypeNameError">
-                                                            <label class="control-label">Room Type Name</label>
+                                                            <label class="control-label">Name</label>
                                                             <input type="text" class="form-control" id="RoomTypeName" onkeyup="ValidateInput(this, 'string', '#RoomTypeNameError')"
                                                             onchange="ValidateInput(this, 'string', '#RoomTypeNameError')" name="RoomTypeName" value="{{old('RoomTypeName')}}" required>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 
-                                                <div class = "row">
+                                                <div class = "row" style="display: none">
                                                     <div class="col-md-12">
                                                         <div class="form-group label-static">
-                                                            <label class="control-label">Room Category</label>
+                                                            <label class="control-label">Amenity Type</label>
                                                             <div class="selectBox">
                                                                 <select name="RoomCategory" id="RoomCategory" onchange="CheckCategory(this, 'add')">
                                                                   @if((count($errors) > 0) || (Session::has('duplicate_message')))
@@ -297,14 +308,14 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="form-group label-floating" id="RoomCapacityError">
-                                                            <label class="control-label">Room Capacity</label>
+                                                            <label class="control-label">Capacity</label>
                                                             <input type="text" class="form-control" id="RoomCapacity" onkeyup="ValidateInput(this, 'int', '#RoomCapacityError')"
                                                             onchange="ValidateInput(this, 'int', '#RoomCapacityError')" name="RoomCapacity" value="{{old('RoomCapacity')}}" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group label-floating" id="RoomRateError">
-                                                            <label class="control-label">Room Rate</label>
+                                                            <label class="control-label">Rate</label>
                                                             <input type="text" class="form-control" id="RoomRate" onkeyup="ValidateInput(this, 'double', '#RoomRateError')" onchange="ValidateInput(this, 'double', '#RoomRateError')" name="RoomRate" value="{{old('RoomRate')}}" id="RoomCapacity" required>
                                                         </div>
                                                     </div>
@@ -314,13 +325,13 @@
                                                     
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <div class="form-group label-static" rel="tooltip" title="field is only editable if the room category is 'room'" id="BedsError">
+                                                            <div class="form-group label-static" id="BedsError">
                                                                 <label class="control-label">Number of Beds</label>
                                                                 <input type="text" class="form-control" id="NoOfBeds" onkeyup="AlterInput(this, 'int', '#BedsError')" onchange="AlterInput(this, 'int', '#BedsError')" name="NoOfBeds" value="{{old('NoOfBeds')}}" required>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <div class="form-group label-static" rel="tooltip" title="field is only editable if the room category is 'room'" id="BathroomsError">
+                                                            <div class="form-group label-static" id="BathroomsError">
                                                                 <label class="control-label">Number of Bathrooms</label>
                                                                 <input type="text" class="form-control" id="NoOfBathrooms" onkeyup="ValidateInput(this, 'int2', '#BathroomsError')" onchange="ValidateInput(this, 'int2', '#BathroomsError')" name="NoOfBathrooms" value="{{old('NoOfBathrooms')}}" required>
                                                             </div>
@@ -345,7 +356,7 @@
                                                         <div class="form-group">
 
                                                             <div class="form-group label-floating">
-                                                                <label class="control-label"> Room Description</label>
+                                                                <label class="control-label">Description</label>
                                                                 <textarea class="form-control" rows="5" name="RoomDescription" value="{{old('RoomDescription')}}"></textarea>
                                                             </div>
                                                         </div>
@@ -372,131 +383,131 @@
 <div id="DivModalEditRoomType" class="modal">
         <div class="Modal-content">
             <div class="row">
-	                    <div class="col-md-12">
-                                <div class="card card-stats">
+                <div class="col-md-12">
+                    <div class="card card-stats">
 
-                                        <div class="card-header" data-background-color="blue">
-                                            <i class="material-icons">create</i>
+                        <div class="card-header" data-background-color="blue">
+                            <i class="material-icons">create</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title">Edit Room Type<span class="close" onclick="HideModalEditRoomType()">X</span></h3>
+                            <form method="post" action="/Maintenance/RoomType/Edit" id="EditRoomTypeForm" onsubmit="return CheckForm()">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="OldRoomTypeCode" id="OldRoomTypeCode" value="{{old('OldRoomTypeCode')}}">
+                                <input type="hidden" name="OldRoomTypeName" id="OldRoomTypeName" value="{{old('OldRoomTypeName')}}">
+                                <input type="hidden" name="OldRoomRate" id="OldRoomRate" value="{{old('OldRoomRate')}}">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="EditRoomTypeCodeError">
+                                            <label class="control-label">Room Type Code</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomTypeCodeError')" onchange="ValidateInput(this, 'string', '#EditRoomTypeCodeError')" id="EditRoomTypeCode" name="EditRoomTypeCode" value="{{old('EditRoomTypeCode')}}" required>
                                         </div>
-                                        <div class="card-content">
-                                            <p class="category"></p>
-                                            <h3 class="title">Edit Room Type<span class="close" onclick="HideModalEditRoomType()">X</span></h3>
-                                            <form method="post" action="/Maintenance/RoomType/Edit" id="EditRoomTypeForm" onsubmit="return CheckForm()">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" name="OldRoomTypeCode" id="OldRoomTypeCode" value="{{old('OldRoomTypeCode')}}">
-                                                <input type="hidden" name="OldRoomTypeName" id="OldRoomTypeName" value="{{old('OldRoomTypeName')}}">
-                                                <input type="hidden" name="OldRoomRate" id="OldRoomRate" value="{{old('OldRoomRate')}}">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group label-static" id="EditRoomTypeCodeError">
-                                                            <label class="control-label">Room Type Code</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomTypeCodeError')" onchange="ValidateInput(this, 'string', '#EditRoomTypeCodeError')" id="EditRoomTypeCode" name="EditRoomTypeCode" value="{{old('EditRoomTypeCode')}}" required>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group label-static" id="EditRoomTypeNameError">
-                                                            <label class="control-label">Room Type Name</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomTypeNameError')" onchange="ValidateInput(this, 'string', '#EditRoomTypeNameError')" id="EditRoomTypeName" name="EditRoomTypeName" value="{{old('EditRoomTypeName')}}" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class = "row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group label-static">
-                                                            <label class="control-label">Room Category</label>
-                                                            <div class="selectBox">
-                                                                <select name="EditRoomCategory" id="EditRoomCategory" onchange="CheckCategory(this, 'edit')">
-                                                                  @if((count($errors) > 0) || (Session::has('duplicate_message')))
-                                                                      @if(old('EditRoomCategory') == 'Cottage')
-                                                                          <option>Room</option>
-                                                                          <option selected>Cottage</option>
-                                                                      @else
-                                                                          <option>Room</option>
-                                                                          <option>Cottage</option>
-                                                                      @endif
-                                                                  @else
-                                                                      <option>Room</option>
-                                                                      <option>Cottage</option>
-                                                                  @endif
-                                                                </select>
-                                                              </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group label-static" id="EditRoomCapacityError">
-                                                            <label class="control-label">Room Capacity</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#EditRoomCapacityError')" onchange="ValidateInput(this, 'int', '#EditRoomCapacityError')" id="EditRoomCapacity" name="EditRoomCapacity" value="{{old('EditRoomCapacity')}}" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group label-static" id="EditRoomRateError">
-                                                            <label class="control-label">Room Rate</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#EditRoomRateError')" onchange="ValidateInput(this, 'double', '#EditRoomRateError')" id="EditRoomRate" name="EditRoomRate" value="{{old('EditRoomRate')}}" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div id="EditRoomPerks">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group label-static" id="EditBedsError">
-                                                                <label class="control-label">Number of Beds</label>
-                                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#EditBedsError')" onchange="ValidateInput(this, 'int', '#EditBedsError')" id="EditNoOfBeds" name="EditNoOfBeds" value="{{old('EditNoOfBeds')}}" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group label-static" id="EditBathroomsError">
-                                                                <label class="control-label">Number of Bathrooms</label>
-                                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#EditBathroomsError')" onchange="ValidateInput(this, 'int2', '#EditBathroomsError')" id="EditNoOfBathrooms" name="EditNoOfBathrooms" value="{{old('EditNoOfBathrooms')}}" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input type="checkbox" id="EditAirconditioned" name="EditAirconditioned">
-                                                                    Is the room airconditioned?
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-
-                                                            <div class="form-group label-static">
-                                                                <label class="control-label"> Room Description</label>
-                                                                <textarea class="form-control" id="EditRoomDescription" name="EditRoomDescription" value="{{old('EditRoomDescription')}}" rows="5"></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <p class="ErrorLabel"></p>
-                                                    </div>
-                                                </div>
-
-                                                <button type="submit" class="btn btn-info pull-right">Save Changes</button>
-                                                <div class="clearfix"></div>
-                                            </form>
-                                        </div>
+                                    </div>
 
                                 </div>
-                            </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="EditRoomTypeNameError">
+                                            <label class="control-label">Room Type Name</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditRoomTypeNameError')" onchange="ValidateInput(this, 'string', '#EditRoomTypeNameError')" id="EditRoomTypeName" name="EditRoomTypeName" value="{{old('EditRoomTypeName')}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Room Category</label>
+                                            <div class="selectBox">
+                                                <select name="EditRoomCategory" id="EditRoomCategory" onchange="CheckCategory(this, 'edit')">
+                                                  @if((count($errors) > 0) || (Session::has('duplicate_message')))
+                                                      @if(old('EditRoomCategory') == 'Cottage')
+                                                          <option>Room</option>
+                                                          <option selected>Cottage</option>
+                                                      @else
+                                                          <option>Room</option>
+                                                          <option>Cottage</option>
+                                                      @endif
+                                                  @else
+                                                      <option>Room</option>
+                                                      <option>Cottage</option>
+                                                  @endif
+                                                </select>
+                                              </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static" id="EditRoomCapacityError">
+                                            <label class="control-label">Room Capacity</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#EditRoomCapacityError')" onchange="ValidateInput(this, 'int', '#EditRoomCapacityError')" id="EditRoomCapacity" name="EditRoomCapacity" value="{{old('EditRoomCapacity')}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static" id="EditRoomRateError">
+                                            <label class="control-label">Room Rate</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#EditRoomRateError')" onchange="ValidateInput(this, 'double', '#EditRoomRateError')" id="EditRoomRate" name="EditRoomRate" value="{{old('EditRoomRate')}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="EditRoomPerks">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group label-static" id="EditBedsError">
+                                                <label class="control-label">Number of Beds</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#EditBedsError')" onchange="ValidateInput(this, 'int', '#EditBedsError')" id="EditNoOfBeds" name="EditNoOfBeds" value="{{old('EditNoOfBeds')}}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group label-static" id="EditBathroomsError">
+                                                <label class="control-label">Number of Bathrooms</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#EditBathroomsError')" onchange="ValidateInput(this, 'int2', '#EditBathroomsError')" id="EditNoOfBathrooms" name="EditNoOfBathrooms" value="{{old('EditNoOfBathrooms')}}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="EditAirconditioned" name="EditAirconditioned">
+                                                    Is the room airconditioned?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+
+                                            <div class="form-group label-static">
+                                                <label class="control-label"> Room Description</label>
+                                                <textarea class="form-control" id="EditRoomDescription" name="EditRoomDescription" value="{{old('EditRoomDescription')}}" rows="5"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel"></p>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-info pull-right">Save Changes</button>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
         </div>
       </div>
     </div>
