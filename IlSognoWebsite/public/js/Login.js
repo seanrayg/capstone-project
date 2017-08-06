@@ -2,7 +2,7 @@ function Login(){
 
 	$.ajaxSetup({
 		headers: {
-			'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}
 	});
 
@@ -16,14 +16,15 @@ function Login(){
         type: 'POST',
         url: '/Login',
         data: loginData,
-        dataType: 'json',
         success: function (data) {
-            alert('hehe');
-        },
-        error: function (data) {
-            
+            alert(data);
         }
+
     });
+
+    // $.post('postRequest', loginData, function(data){
+    //     alert(data);
+    // });
 
 }
 

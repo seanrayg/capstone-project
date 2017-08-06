@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>Login</title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
@@ -63,8 +64,7 @@
         <div class="container">
             <div class="col-md-4 content-center">
                 <div class="card card-login card-plain">
-                    <form class="form" method="POST" action="/Login">
-                        {{ csrf_field() }}
+                    <form class="form">
                         <div class="content">
                             <div class="input-group form-group-no-border input-lg">
                                 <span class="input-group-addon">
@@ -76,7 +76,7 @@
                                 <span class="input-group-addon">
                                     <i class="now-ui-icons ui-1_lock-circle-open"></i>
                                 </span>
-                                <input name="Transaction ID" type="text" placeholder="Transaction ID" class="form-control" required />
+                                <input id="TransactionID" name="TransactionID" type="text" placeholder="Transaction ID" class="form-control" required />
                             </div>
                         </div>
                         <div class="footer text-center">
@@ -190,9 +190,7 @@
 <script src="/js/plugins/bootstrap-datepicker.js" type="text/javascript"></script>
 <!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
 <script src="/js/now-ui-kit.js" type="text/javascript"></script>
-<!-- SessionsController js -->
-<script src="/js/SessionsController.js" type="text/javascript"></script>
-<!-- Login Javascript --->
+<!-- Login Javascript -->
 <script src="/js/Login.js" type="text/javascript"></script>    
 
 
