@@ -73,6 +73,13 @@ Route::get('/Maintenance/Fee', 'ViewController@ViewFees');
 Route::get('/Maintenance/BoatPersonnel', 'ViewController@ViewBoatPersonnel');
 
 
+//Room Maintenance AJAX
+
+Route::get('/Maintenance/Rooms/RoomTypes', 'ViewController@getRoomTypes');
+
+Route::get('/Maintenance/Rooms/CottageTypes', 'ViewController@getCottageTypes');
+
+
 //Package Maintenance
 
 Route::get('/Maintenance/Package/Add', 'ViewController@ViewAddPackage');

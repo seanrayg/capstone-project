@@ -73,22 +73,29 @@ class ViewController extends Controller
     }
       
     public function ViewRooms(){
-        
         $Rooms = DB::table('tblRoom as a')
             ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
             ->select('a.strRoomID',
                     'b.strRoomType',
                     'a.strRoomName',
                     'a.strRoomStatus')
-            ->where('a.strRoomStatus', '!=', 'deleted')
+            ->where([['a.strRoomStatus', '!=', 'deleted'],['b.intRoomTCategory', '=', '1']])
             ->orderBy('a.tmsCreated', 'desc')
             ->get();
         
-        $RoomTypes = DB::table('tblRoomType')->where('intRoomTDeleted', '1')->orderBy('strRoomType')->pluck('strRoomType');
-        
+        $Cottages = DB::table('tblRoom as a')
+            ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+            ->select('a.strRoomID',
+                    'b.strRoomType',
+                    'a.strRoomName',
+                    'a.strRoomStatus')
+            ->where([['a.strRoomStatus', '!=', 'deleted'],['b.intRoomTCategory', '=', '0']])
+            ->orderBy('a.tmsCreated', 'desc')
+            ->get();
+ 
         $RoomID = $this->SmartCounter('tblRoom', 'strRoomID');
     
-        return view('Maintenance.RoomMaintenance', compact('Rooms', 'RoomTypes', 'RoomID'));
+        return view('Maintenance.RoomMaintenance', compact('Rooms', 'RoomID', 'Cottages'));
     }
     
     public function ViewBoats(){
@@ -214,6 +221,23 @@ class ViewController extends Controller
         return view('Maintenance.FeeMaintenance', compact('Fees', 'FeeID'));
     }
     
+    
+    //Maintenance AJAX
+    
+    //get Room Types
+    
+    public function getRoomTypes(){
+        $RoomTypes = DB::table('tblRoomType')->where([['intRoomTDeleted', '1'],['intRoomTCategory', '1']])->orderBy('strRoomType')->pluck('strRoomType');
+        
+        return response()->json($RoomTypes);
+    }
+    
+    //get Cottage Types
+    public function getCottageTypes(){
+       $CottageTypes = DB::table('tblRoomType')->where([['intRoomTDeleted', '1'],['intRoomTCategory', '0']])->orderBy('strRoomType')->pluck('strRoomType');
+        
+        return response()->json($CottageTypes);
+    }
     
     
     //Package

@@ -20,7 +20,6 @@ class MaintenanceController extends Controller
     //Add Room Type
     
     public function storeRoomType(Request $req){
-        dd(Input::all());
         $UserInput = Input::all();
            $rules =  [
                 'RoomTypeCode' => 'unique:tblRoomType,strRoomTypeID',
@@ -29,16 +28,16 @@ class MaintenanceController extends Controller
             $validator = Validator::make($UserInput, $rules);
 
             if ($validator->fails()) {
-                return Redirect::to('/Maintenance/RoomType')->withInput()->withErrors($validator);
+                \Session::flash('duplicate_message','Accomodation ID is already taken. Please enter a new one to continue.');
+                    return redirect('Maintenance/RoomType')->withInput();
             }
-        
             else{
                 $tempRoomTypeName = trim($req->input('RoomTypeName'));
                 $RoomNameError = DB::table('tblRoomType')->where([['intRoomTDeleted', '1'],['strRoomType', $tempRoomTypeName]])->first();
                 
                 if($RoomNameError){
                     
-                    \Session::flash('duplicate_message','Room type name is already taken. Please enter a new one to continue.');
+                    \Session::flash('duplicate_message','Name is already taken. Please enter a new one to continue.');
                     return redirect('Maintenance/RoomType')->withInput();
                 }
                 
@@ -107,7 +106,7 @@ class MaintenanceController extends Controller
         
         DB::table('tblRoomRate')->insert($data);
         
-        \Session::flash('flash_message','Room Type successfully added.');
+        \Session::flash('flash_message','Successfully added.');
         
         return redirect('Maintenance/RoomType');
     }
@@ -164,7 +163,7 @@ class MaintenanceController extends Controller
 
             if($DuplicateError){
                 $DuplicateChecker = true;
-                $ErrorMessage = "Room Type Code/Room Type Name is already taken. Please enter a new one to continue.";
+                $ErrorMessage = "Accomodation ID/Name is already taken. Please enter a new one to continue.";
             }
             else{
                 $DuplicateError2 = DB::table('tblRoomType')
@@ -176,7 +175,7 @@ class MaintenanceController extends Controller
                 ->first();
                 if($DuplicateError2){
                     $DuplicateChecker = true;
-                    $ErrorMessage = "Room Type Code/Room Type Name is already taken. Please enter a new one to continue.";
+                    $ErrorMessage = "Accomodation ID/Name is already taken. Please enter a new one to continue.";
                 }
             }
         }
@@ -187,7 +186,7 @@ class MaintenanceController extends Controller
 
             if($DuplicateError){
                 $DuplicateChecker = true;
-                $ErrorMessage = "Room type code is already taken. Please enter a new one to continue.";
+                $ErrorMessage = "Accomodation ID is already taken. Please enter a new one to continue.";
             }
         }
         
@@ -199,7 +198,7 @@ class MaintenanceController extends Controller
 
             if($DuplicateError){
                 $DuplicateChecker = true;
-                $ErrorMessage = "Room type name is already taken. Please enter a new one to continue.";
+                $ErrorMessage = "Name is already taken. Please enter a new one to continue.";
             }
         }
         
@@ -248,7 +247,7 @@ class MaintenanceController extends Controller
             DB::table('tblRoomRate')->insert($data);
         }
         
-         \Session::flash('flash_message','Room Type successfully updated!');
+         \Session::flash('flash_message','Updated successfully!');
 
           return redirect('Maintenance/RoomType');
     }
@@ -281,7 +280,7 @@ class MaintenanceController extends Controller
                     ->where('strRoomTypeID', $RoomTypeCode)
                     ->update(['intRoomTDeleted' => '0']);
 
-                \Session::flash('flash_message','Room Type successfully deleted!');
+                \Session::flash('flash_message','Deleted successfully!');
 
                 return redirect('Maintenance/RoomType');
             }
@@ -913,7 +912,6 @@ class MaintenanceController extends Controller
     //Add Room
     
     public function storeRoom(Request $req){
-        
         $UserInput = Input::all();
            $rules =  [
                 'RoomID' => 'unique:tblRoom,strRoomID',
@@ -951,7 +949,7 @@ class MaintenanceController extends Controller
 
                     DB::table('tblRoom')->insert($data);
 
-                    \Session::flash('flash_message','Room successfully added.');
+                    \Session::flash('flash_message','Successfully added.');
 
                     return redirect('Maintenance/Room');
                 }
@@ -961,7 +959,6 @@ class MaintenanceController extends Controller
     //Check duplicate
     
     public function checkRoom(Request $req){
-        
         $OldRoomID = trim($req->input('OldRoomID'));
         $OldRoomName = trim($req->input('OldRoomName'));
         
@@ -1034,7 +1031,6 @@ class MaintenanceController extends Controller
     //Update Room
     
     public function updateRoom($OldRoomID, $RoomID, $RoomTypeID, $RoomStatus, $RoomName){
-        
         $DateToday = Carbon::now();
         $updateData = array("strRoomID" => $RoomID, 
                      'strRoomTypeID' => $RoomTypeID,
@@ -1046,7 +1042,7 @@ class MaintenanceController extends Controller
             ->update($updateData);
         
 
-         \Session::flash('flash_message','Room successfully updated!');
+         \Session::flash('flash_message','Successfully updated!');
 
           return redirect('Maintenance/Room');
 
@@ -1060,7 +1056,7 @@ class MaintenanceController extends Controller
             ->where('strRoomID', $RoomID)
             ->update(['strRoomStatus' => 'deleted']);
 
-        \Session::flash('flash_message','Room successfully deleted!');
+        \Session::flash('flash_message','Successfully deleted!');
 
         return redirect('Maintenance/Room');
     }

@@ -81,8 +81,8 @@
         <b class="caret"></b>
         </a>
         <ul class="dropdown-menu">
-            <li><a href="/Maintenance/Room">Room Maintenance</a></li>
-            <li><a href="/Maintenance/RoomType">Room Type Maintenance</a></li>
+            <li><a href="/Maintenance/Room">Room &amp; Cottage Maintenance</a></li>
+            <li><a href="/Maintenance/RoomType">Accomodation Maintenance</a></li>
             <li><a href="/Maintenance/Boat">Boat Maintenance</a></li>
             <li><a href="/Maintenance/Activity">Activity Maintenance</a></li>
             <li><a href="/Maintenance/Fee">Fee Maintenance</a></li>
