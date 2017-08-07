@@ -287,3 +287,6 @@ Route::get('/QueryReports', function () {
     return view('QueryReports');
 });
 
+// Query Report AJAX
+Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
+

@@ -20,7 +20,6 @@ class MaintenanceController extends Controller
     //Add Room Type
     
     public function storeRoomType(Request $req){
-        dd(Input::all());
         $UserInput = Input::all();
            $rules =  [
                 'RoomTypeCode' => 'unique:tblRoomType,strRoomTypeID',
@@ -1126,7 +1125,7 @@ class MaintenanceController extends Controller
         
         \Session::flash('flash_message','Fee successfully added.');
         
-        return redirect('Maintenance/Operations');
+        return redirect('Maintenance/Fee');
     }
     
     //Check Duplicate
@@ -1248,7 +1247,7 @@ class MaintenanceController extends Controller
 
         \Session::flash('flash_message','Fee successfully deleted!');
 
-        return redirect('Maintenance/Operations');
+        return redirect('Maintenance/Fee');
     }
     
     

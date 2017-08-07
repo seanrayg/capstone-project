@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('WebpageTitle')
-    <title>Operations Maintenance</title>
+    <title>Fee Maintenance</title>
 @endsection
 
 @section('scripts')

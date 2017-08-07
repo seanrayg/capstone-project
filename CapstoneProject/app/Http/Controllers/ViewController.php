@@ -213,9 +213,6 @@ class ViewController extends Controller
                 ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '!=', 'deleted']])
                 ->get();
 
-
-
-        
         $FeeID = $this->SmartCounter('tblFee', 'strFeeID');
         
         return view('Maintenance.FeeMaintenance', compact('Fees', 'FeeID'));
