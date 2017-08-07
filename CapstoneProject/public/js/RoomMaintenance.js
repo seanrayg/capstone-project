@@ -109,6 +109,14 @@ function LoadSelectBox(sender){
     }
 }
 
+function ShowModalGuestInfo(){
+    document.getElementById("DivModalGuestInfo").style.display = "block";
+}
+
+function HideModalGuestInfo(){
+    document.getElementById("DivModalGuestInfo").style.display = "none";
+}
+
 
 //MISC
 function run(event){

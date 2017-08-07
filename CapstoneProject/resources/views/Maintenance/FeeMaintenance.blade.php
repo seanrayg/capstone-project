@@ -29,6 +29,34 @@
     </div>
 @endif
 
+<!-- Delete Error -->
+@if(Session::has('error_message'))
+    <div class="row">
+        <div class="col-md-7 col-md-offset-5">
+            <div class="alert alert-danger hide-on-click">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">warning</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                   <ul>
+                       {{ Session::get('error_message') }}<br><br>
+                       <?php 
+                            $PackageFee = Session::get('PackageFee');
+                            foreach($PackageFee as $Fee){
+                                echo "<li>" .$Fee->strPackageName. "</li>";
+                            }
+                        ?>
+                   </ul>
+                   <a href="/Maintenance/Package"><button class="btn btn-simple pull-right" style="color: white">Manage Packages</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <!-- Duplicate Error -->
 @if(Session::has('duplicate_message'))
     <div class="row">

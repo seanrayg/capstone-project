@@ -50,6 +50,34 @@
     </div>
 @endif
 
+<!-- Delete Error -->
+@if(Session::has('error_message'))
+    <div class="row">
+        <div class="col-md-7 col-md-offset-5">
+            <div class="alert alert-danger hide-on-click">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">warning</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                   <ul>
+                       {{ Session::get('error_message') }}<br><br>
+                       <?php 
+                            $PackageItem = Session::get('PackageItem');
+                            foreach($PackageItem as $Item){
+                                echo "<li>" .$Item->strPackageName. "</li>";
+                            }
+                        ?>
+                   </ul>
+                   <a href="/Maintenance/Package"><button class="btn btn-simple pull-right" style="color: white">Manage Packages</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <!-- Misc Error -->
 @if (count($errors) > 0)
     <div class="row">
@@ -146,79 +174,79 @@
 <div id="DivModalAddItem" class="modal">
         <div class="Modal-content">
             <div class="row">
-	                    <div class="col-md-12">
-                                <div class="card card-stats">
+                <div class="col-md-12">
+                    <div class="card card-stats">
 
-                                        <div class="card-header" data-background-color="green">
-                                            <i class="material-icons">add</i>
+                        <div class="card-header" data-background-color="green">
+                            <i class="material-icons">add</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title">Add Item<span class="close" onclick="HideModalAddItem()">X</span></h3>
+                            <form id="ItemForm" onsubmit="return CheckForm()" method="post" action="/Maintenance/Item">
+                                {{ csrf_field() }}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-floating" id="ItemIDError">
+                                            <label class="control-label">Item ID</label>
+                                            @if((Session::has('duplicate_message')) || (count($errors) > 0))
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ItemIDError')" onchange="ValidateInput(this, 'string', '#ItemIDError')" name="ItemID" value="{{old('ItemID')}}" required>
+                                            @else
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ItemIDError')" onchange="ValidateInput(this, 'string', '#ItemIDError')" name="ItemID" value="{{$ItemID}}" required>
+                                            @endif
                                         </div>
-                                        <div class="card-content">
-                                            <p class="category"></p>
-                                            <h3 class="title">Add Item<span class="close" onclick="HideModalAddItem()">X</span></h3>
-                                            <form id="ItemForm" onsubmit="return CheckForm()" method="post" action="/Maintenance/Item">
-                                                {{ csrf_field() }}
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group label-floating" id="ItemIDError">
-                                                            <label class="control-label">Item ID</label>
-                                                            @if((Session::has('duplicate_message')) || (count($errors) > 0))
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ItemIDError')" onchange="ValidateInput(this, 'string', '#ItemIDError')" name="ItemID" value="{{old('ItemID')}}" required>
-                                                            @else
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ItemIDError')" onchange="ValidateInput(this, 'string', '#ItemIDError')" name="ItemID" value="{{$ItemID}}" required>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group label-floating" id="ItemNameError">
-                                                            <label class="control-label">Item Name</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ItemNameError')" onchange="ValidateInput(this, 'string', '#ItemNameError')" name="ItemName" value="{{old('ItemName')}}" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group label-floating" id="ItemQuantityError">
-                                                            <label class="control-label">Item Quantity</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#ItemQuantityError')" onchange="ValidateInput(this, 'int2', '#ItemQuantityError')" name="ItemQuantity" value="{{old('ItemQuantity')}}" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group label-floating" id="ItemRateError">
-                                                            <label class="control-label">Item Rate</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#ItemRateError')" onchange="ValidateInput(this, 'double', '#ItemRateError')" name="ItemRate" value="{{old('ItemRate')}}" required>
-                                                       </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-
-                                                            <div class="form-group label-floating">
-                                                                <label class="control-label">Item Description</label>
-                                                                <textarea class="form-control" name="ItemDescription" value="{{old('ItemDescription')}}" rows="5"></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-								                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <p class="ErrorLabel"></p>
-                                                    </div>
-                                                </div>
-
-                                                <button type="submit" class="btn btn-success pull-right">Save</button>
-                                                <div class="clearfix"></div>
-                                            </form>
-                                        </div>
-
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-floating" id="ItemNameError">
+                                            <label class="control-label">Item Name</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ItemNameError')" onchange="ValidateInput(this, 'string', '#ItemNameError')" name="ItemName" value="{{old('ItemName')}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group label-floating" id="ItemQuantityError">
+                                            <label class="control-label">Item Quantity</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#ItemQuantityError')" onchange="ValidateInput(this, 'int2', '#ItemQuantityError')" name="ItemQuantity" value="{{old('ItemQuantity')}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group label-floating" id="ItemRateError">
+                                            <label class="control-label">Item Rate</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#ItemRateError')" onchange="ValidateInput(this, 'double', '#ItemRateError')" name="ItemRate" value="{{old('ItemRate')}}" required>
+                                       </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+
+                                            <div class="form-group label-floating">
+                                                <label class="control-label">Item Description</label>
+                                                <textarea class="form-control" name="ItemDescription" value="{{old('ItemDescription')}}" rows="5"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel"></p>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-success pull-right">Save</button>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -227,78 +255,78 @@
     <div id="DivModalEditItem" class="modal">
         <div class="Modal-content">
             <div class="row">
-	                    <div class="col-md-12">
-                                <div class="card card-stats">
+                <div class="col-md-12">
+                    <div class="card card-stats">
 
-                                        <div class="card-header" data-background-color="blue">
-                                            <i class="material-icons">create</i>
+                        <div class="card-header" data-background-color="blue">
+                            <i class="material-icons">create</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title">Edit Item<span class="close" onclick="HideModalEditItem()">X</span></h3>
+                            <form id="EditItemForm" onsubmit="return CheckForm()" method="post" action="/Maintenance/Item/Edit">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="OldItemID" id="OldItemID" value = "{{old('OldItemID')}}">
+                                <input type="hidden" name="OldItemName" id="OldItemName" value = "{{old('OldItemName')}}">
+                                <input type="hidden" name="OldItemRate" id="OldItemRate" value = "{{old('OldItemRate')}}">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="EditItemIDError">
+                                            <label class="control-label">Item ID</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditItemIDError')" onchange="ValidateInput(this, 'string', '#EditItemIDError')" name="EditItemID" id="EditItemID" required>
                                         </div>
-                                        <div class="card-content">
-                                            <p class="category"></p>
-                                            <h3 class="title">Edit Item<span class="close" onclick="HideModalEditItem()">X</span></h3>
-                                            <form id="EditItemForm" onsubmit="return CheckForm()" method="post" action="/Maintenance/Item/Edit">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" name="OldItemID" id="OldItemID" value = "{{old('OldItemID')}}">
-                                                <input type="hidden" name="OldItemName" id="OldItemName" value = "{{old('OldItemName')}}">
-                                                <input type="hidden" name="OldItemRate" id="OldItemRate" value = "{{old('OldItemRate')}}">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group label-static" id="EditItemIDError">
-                                                            <label class="control-label">Item ID</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditItemIDError')" onchange="ValidateInput(this, 'string', '#EditItemIDError')" name="EditItemID" id="EditItemID" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group label-static" id="EditItemNameError">
-                                                            <label class="control-label">Item Name</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditItemNameError')" onchange="ValidateInput(this, 'string', '#EditItemNameError')" name="EditItemName" id="EditItemName" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group label-static" id="EditItemQuantityError">
-                                                            <label class="control-label">Item Quantity</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#EditItemQuantityError')" onchange="ValidateInput(this, 'int2', '#EditItemQuantityError')" name="EditItemQuantity" id="EditItemQuantity" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group label-static" id="EditItemRateError">
-                                                            <label class="control-label">Item Rate</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#EditItemRateError')" onchange="ValidateInput(this, 'double', '#EditItemRateError')" name="EditItemRate" id="EditItemRate" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-
-                                                            <div class="form-group label-static">
-                                                                <label class="control-label">Item Description</label>
-                                                                <textarea class="form-control" name="EditItemDescription" id="EditItemDescription" rows="5"></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-												<div class="row">
-                                                    <div class="col-md-12">
-                                                        <p class="ErrorLabel"></p>
-                                                    </div>
-                                                </div>
-
-                                                <button type="submit" class="btn btn-info pull-right">Save Changes</button>
-                                                <div class="clearfix"></div>
-                                            </form>
-                                        </div>
-
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="EditItemNameError">
+                                            <label class="control-label">Item Name</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditItemNameError')" onchange="ValidateInput(this, 'string', '#EditItemNameError')" name="EditItemName" id="EditItemName" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static" id="EditItemQuantityError">
+                                            <label class="control-label">Item Quantity</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#EditItemQuantityError')" onchange="ValidateInput(this, 'int2', '#EditItemQuantityError')" name="EditItemQuantity" id="EditItemQuantity" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static" id="EditItemRateError">
+                                            <label class="control-label">Item Rate</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#EditItemRateError')" onchange="ValidateInput(this, 'double', '#EditItemRateError')" name="EditItemRate" id="EditItemRate" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+
+                                            <div class="form-group label-static">
+                                                <label class="control-label">Item Description</label>
+                                                <textarea class="form-control" name="EditItemDescription" id="EditItemDescription" rows="5"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel"></p>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-info pull-right">Save Changes</button>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+
+                </div>
+            </div>
         </div>
       </div>
     </div>

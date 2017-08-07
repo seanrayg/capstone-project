@@ -53,6 +53,13 @@ function HideModalDeleteBoat(){
     document.getElementById("DivModalDeleteBoat").style.display = "none"; 
 }
 
+function ShowModalGuestInfo(){
+    document.getElementById("DivModalGuestInfo").style.display = "block";
+}
+
+function HideModalGuestInfo(){
+    document.getElementById("DivModalGuestInfo").style.display = "none";
+}
 
 function run(event){
     event = event || window.event; 

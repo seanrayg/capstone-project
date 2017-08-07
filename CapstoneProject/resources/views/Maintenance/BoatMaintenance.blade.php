@@ -53,6 +53,34 @@
     </div>
 @endif
 
+<!-- Delete Error -->
+@if(Session::has('error_message'))
+    <div class="row">
+        <div class="col-md-7 col-md-offset-5">
+            <div class="alert alert-danger hide-on-click">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">warning</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                   <ul>
+                       {{ Session::get('error_message') }}<br>
+                       <?php 
+                            $ReservedBoats = Session::get('ReservedBoats');
+                            foreach($ReservedBoats as $Detail){
+                                echo "<li>" .$Detail->Name. "</li>";
+                            }
+                        ?>
+                   </ul>
+                   <button class="btn btn-simple pull-right" style="color: white" onclick="ShowModalGuestInfo()">Show Guest Info</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 
 <!-- Misc Error -->
 @if (count($errors) > 0)
@@ -352,4 +380,64 @@
             </div>
         </div>
     </div>
+
+    @if(Session::has('error_message'))
+        <div id="DivModalGuestInfo" class="modal">
+            <div class="Modal-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="red">
+                                <i class="material-icons">account_box</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <p class="category"></p>
+                                    <h3 class="title"><span class="close" onclick="HideModalGuestInfo()">X</span></h3>
+                                    <h3 class="title" id="AddModalTitle"></h3>
+                                </div>
+
+                                <div class="row" style="font-family: Roboto">
+                                    <table class="table">
+                                        <thead class="text-primary">
+                                            <th>Guest Name</th>
+                                            <th>Contact Number</th>
+                                            <th>Email</th>
+                                            <th>Arrival Date</th>
+                                            <th>Departure Date</th>
+                                            <th>Pickup Time</th>
+                                            <th>Reservation Status</th> 
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                                $ReservedBoats = Session::get('ReservedBoats');
+                                                foreach($ReservedBoats as $Detail){
+                                                    echo "<tr>";
+                                                    echo "<td>" .$Detail->Name. "</td>";
+                                                    echo "<td>" .$Detail->strCustContact. "</td>";
+                                                    echo "<td>" .$Detail->strCustEmail. "</td>";
+                                                    echo "<td>" .Carbon\Carbon::parse($Detail -> dtmResDArrival)->format('M j, Y'). "</td>";
+                                                    echo "<td>" .Carbon\Carbon::parse($Detail -> dtmResDDeparture)->format('M j, Y'). "</td>";
+                                                    echo "<td>" .$Detail->PickUpTime. "</td>";
+                                                    echo "<td>" .$Detail->intResDStatus. "</td>";  
+                                                    echo "</tr>";
+                                                }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <br><br>
+                            </div>
+                            <div class="card-footer">
+                                <em class="description-text" style="font-family: Roboto">Please notify the guest using the given email/contact number before changing their boat(s)!</em>
+                                <br>
+                                <button type="submit" class="btn btn-danger pull-right" onclick="HideModalGuestInfo()">Cancel</button>
+                                <button type="submit" class="btn btn-success pull-right" rel="tooltip" title="Please notify the guest using the given email/contact number before changing their boat(s)!">Change Boat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+        </div>
+    @endif
 @endsection

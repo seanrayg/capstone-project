@@ -269,11 +269,9 @@ class MaintenanceController extends Controller
                                 ->join ('tblPackageRoom as b', 'a.strPackageID', '=' , 'b.strPackageRPackageID')
                                 ->where([['a.strPackageStatus', '!=', 'deleted'], ['b.strPackageRRoomTypeID', '=', $RoomTypeCode]])
                                 ->get();
-            if($ExistingPackage == null){
-                $ExistingPackage = DB::table('tblPackage as a')
-                                ->join ('tblPackageRoom as b', 'a.strPackageID', '=' , 'b.strPackageRPackageID')
-                                ->where([['a.strPackageStatus', '!=', 'deleted'], ['b.strPackageRRoomTypeID', '=', $RoomTypeCode]])
-                                ->get();
+            if(sizeof($ExistingPackage) > 0){
+                 \Session::flash('duplicate_message', 'Room Type is currently included in a package. Cannot delete room type!');
+                 return redirect('Maintenance/RoomType');
             }
             else{
                 DB::table('tblRoomType')
@@ -477,14 +475,54 @@ class MaintenanceController extends Controller
     //Delete Boat
     
     public function deleteBoat(Request $req){
-       $BoatID = trim($req->input('DeleteBoatID'));
-       DB::table('tblBoat')
-            ->where('strBoatID', $BoatID)
-            ->update(['strBoatStatus' => 'deleted']);
-    
-       \Session::flash('flash_message','Boat successfully deleted!');
+        $BoatID = trim($req->input('DeleteBoatID'));
+        
+        //Checks if the boat is reserved
+        $ReservedBoats = DB::table('tblReservationBoat as a')
+                                ->join ('tblReservationDetail as b', 'a.strResBReservationID', '=' , 'b.strReservationID')
+                                ->join ('tblCustomer as c', 'b.strResDCustomerID', '=' , 'c.strCustomerID')
+                                ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustLastName) AS Name'),
+                                        'c.strCustContact',
+                                        'c.strCustEmail',
+                                        'b.dtmResDArrival',
+                                        'b.dtmResDDeparture',
+                                        'b.intResDStatus',
+                                        DB::raw('b.dteResDBooking AS PickUpTime'))
+                                ->where('a.strResBBoatID', '=', $BoatID)
+                                ->where(function($query){
+                                    $query->where('b.intResDStatus', '=', '1')
+                                          ->orWhere('b.intResDStatus', '=', '2');
+                                })
+                                ->get();
+        
+        foreach($ReservedBoats as $Detail){
+            $tempArr = explode(" ", $Detail->dtmResDArrival);
+            $Detail->PickUpTime = date("g:i A", strtotime($tempArr[1]));
+            if($Detail->intResDStatus == 1){
+                $Detail->intResDStatus = "Floating Reservation";
+            }
+            else if($Detail->intResDStatus == 2){
+                $Detail->intResDStatus = "Confirmed Reservation";
+            }
+        }
+        
+        if(sizeof($ReservedBoats) > 0){
+            \Session::flash('error_message','Cannot delete boat. The boat is currently reserved by the following:');
+            \Session::flash('ReservedBoats', $ReservedBoats);
+            return redirect('Maintenance/Boat');  
+        }
+        else{
+            dd($ReservedBoats); 
+            dd($Input::all());
+            DB::table('tblBoat')
+                ->where('strBoatID', $BoatID)
+                ->update(['strBoatStatus' => 'deleted']);
 
-       return redirect('Maintenance/Boat');
+            \Session::flash('flash_message','Boat successfully deleted!');
+
+            return redirect('Maintenance/Boat');
+        }
+        
     }
     
     
@@ -673,13 +711,30 @@ class MaintenanceController extends Controller
     //Delete Item
     public function deleteItem(Request $req){
         $ItemID = trim($req->input('DeleteItemID'));
-        DB::table('tblItem')
+        
+        //checks if item is included in the package
+        $PackageItem = DB::table('tblPackage as a')
+                                ->join ('tblPackageItem as b', 'a.strPackageID', '=' , 'b.strPackageIPackageID')
+                                ->select('a.strPackageName')
+                                ->where([['a.strPackageStatus', '!=', 'deleted'], ['b.strPackageIItemID', '=', $ItemID]])
+                                ->get();
+        
+        //package is included
+        if(sizeof($PackageItem) > 0){
+            \Session::flash('error_message','Cannot delete rental item because it is currently included in these packages:');
+            \Session::flash('PackageItem', $PackageItem);
+            return redirect('Maintenance/Item');  
+        }
+        else{
+            DB::table('tblItem')
             ->where('strItemID', $ItemID)
             ->update(['intItemDeleted' => '0']);
 
-        \Session::flash('flash_message','Item successfully deleted!');
+            \Session::flash('flash_message','Item successfully deleted!');
 
-        return redirect('Maintenance/Item');
+            return redirect('Maintenance/Item');
+        }
+        
     }
     
     
@@ -894,14 +949,30 @@ class MaintenanceController extends Controller
     
     //delete activity
     public function deleteActivity(Request $req){
-       $ActivityID = trim($req->input('DeleteActivityID'));
-       DB::table('tblBeachActivity')
+        $ActivityID = trim($req->input('DeleteActivityID'));
+
+        //checks if item is included in the package
+        $PackageActivity = DB::table('tblPackage as a')
+                                ->join ('tblPackageActivity as b', 'a.strPackageID', '=' , 'b.strPackageAPackageID')
+                                ->select('a.strPackageName')
+                                ->where([['a.strPackageStatus', '!=', 'deleted'], ['b.strPackageABeachActivityID', '=', $ActivityID]])
+                                ->get();
+
+        //package is included
+        if(sizeof($PackageActivity) > 0){
+            \Session::flash('error_message','Cannot delete beach activity because it is currently included in these packages:');
+            \Session::flash('PackageActivity', $PackageActivity);
+            return redirect('Maintenance/Activity');  
+        }
+        else{
+            DB::table('tblBeachActivity')
             ->where('strBeachActivityID', $ActivityID)
             ->update(['strBeachAStatus' => 'deleted']);
-    
-       \Session::flash('flash_message','Beach Activity successfully deleted!');
 
-       return redirect('Maintenance/Activity');
+            \Session::flash('flash_message','Beach Activity successfully deleted!');
+
+            return redirect('Maintenance/Activity');
+        }
     }
     
     
@@ -1052,13 +1123,48 @@ class MaintenanceController extends Controller
     
     public function deleteRoom(Request $req){
         $RoomID = trim($req->input('DeleteRoomID'));
-        DB::table('tblRoom')
+        
+        //Checks if the room is reserved or checked in
+        $ReservationDetail = DB::table('tblReservationRoom as a')
+                                ->join ('tblReservationDetail as b', 'a.strResRReservationID', '=' , 'b.strReservationID')
+                                ->join ('tblCustomer as c', 'b.strResDCustomerID', '=' , 'c.strCustomerID')
+                                ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustLastName) AS Name'),
+                                        'c.strCustContact',
+                                        'c.strCustEmail',
+                                        'b.dtmResDArrival',
+                                        'b.dtmResDDeparture',
+                                        'b.intResDStatus')
+                                ->where('a.strResRRoomID', '=', $RoomID)
+                                ->where(function($query){
+                                    $query->where('b.intResDStatus', '!=', '3')
+                                          ->orWhere('b.intResDStatus', '!=', '5');
+                                })
+                                ->get();
+        foreach($ReservationDetail as $Detail){
+            if($Detail->intResDStatus == 1){
+                $Detail->intResDStatus = "Floating Reservation";
+            }
+            else if($Detail->intResDStatus == 2){
+                $Detail->intResDStatus = "Confirmed Reservation";
+            }
+            else if($Detail->intResDStatus == 4){
+                $Detail->intResDStatus = "Checked in";
+            }
+        }
+        if(sizeof($ReservationDetail) > 0){
+            \Session::flash('error_message','Cannot delete room. Rooms are currently being used/reserved by the following:');
+            \Session::flash('ReservationDetail', $ReservationDetail);
+            return redirect('Maintenance/Room');   
+        }
+        else{
+            DB::table('tblRoom')
             ->where('strRoomID', $RoomID)
             ->update(['strRoomStatus' => 'deleted']);
 
-        \Session::flash('flash_message','Successfully deleted!');
+            \Session::flash('flash_message','Successfully deleted!');
 
-        return redirect('Maintenance/Room');
+            return redirect('Maintenance/Room');
+        }
     }
     
     
@@ -1241,13 +1347,30 @@ class MaintenanceController extends Controller
     
     public function deleteFee(Request $req){
         $FeeID = trim($req->input('DeleteFeeID'));
-        DB::table('tblFee')
+
+        $PackageFee = DB::table('tblPackage as a')
+                            ->join ('tblPackageFee as b', 'a.strPackageID', '=' , 'b.strPackageFPackageID')
+                            ->select('a.strPackageName')
+                            ->where([['a.strPackageStatus', '!=', 'deleted'], ['b.strPackageFFeeID', '=', $FeeID]])
+                            ->get();
+        
+
+        //package is included
+        if(sizeof($PackageFee) > 0){
+        \Session::flash('error_message','Cannot delete fee because it is currently included in these packages:');
+        \Session::flash('PackageFee', $PackageFee);
+        return redirect('Maintenance/Fee');  
+        }
+        else{
+            DB::table('tblFee')
             ->where('strFeeID', $FeeID)
             ->update(['strFeeStatus' => 'deleted']);
 
-        \Session::flash('flash_message','Fee successfully deleted!');
+            \Session::flash('flash_message','Fee successfully deleted!');
 
-        return redirect('Maintenance/Fee');
+            return redirect('Maintenance/Fee');
+        }
+        
     }
     
     
