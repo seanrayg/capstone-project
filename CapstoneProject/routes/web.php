@@ -279,3 +279,11 @@ Route::get('/CheckIn/AvailableRooms', 'ViewResortController@getAvailableRooms');
 
 Route::post('/CheckIn/SaveRooms', 'ReservationController@saveChosenRooms');
 
+
+
+/*----------- REPORTS ----------------*/
+
+Route::get('/QueryReports', function () {
+    return view('QueryReports');
+});
+

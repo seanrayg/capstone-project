@@ -3,7 +3,7 @@ var RoomInfo=[];
 var RoomTypes = [];
 var CottageTypes = [];
 
-
+//MODAL CONTROLLER
 function ShowModalAddRoom(){
     if($('#RoomType').hasClass('active')){
         document.getElementById("AddModalTitle").innerHTML = "Add Room";
@@ -110,7 +110,7 @@ function LoadSelectBox(sender){
 }
 
 
-
+//MISC
 function run(event){
     event = event || window.event; 
     var target = event.target || event.srcElement;
@@ -157,4 +157,26 @@ window.onload = function(){
 
 function ResetTables(table){
     $(table).removeClass("selected");
+    document.getElementById("SearchBar").value = "";
+    SearchTable("RoomTable", "2");
+    document.getElementById("SearchBar2").value = "";
+    SearchTable2("CottageTable", "2");
+}
+
+function SearchTable2(TableID, rowNumber) {
+  var input, filter, table, tr, td, i;
+  input = document.getElementById("SearchBar2");
+  filter = input.value.toUpperCase();
+  table = document.getElementById(TableID);
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[rowNumber];
+    if (td) {
+      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
 }

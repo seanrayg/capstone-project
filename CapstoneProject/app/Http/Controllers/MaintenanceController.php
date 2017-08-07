@@ -20,6 +20,7 @@ class MaintenanceController extends Controller
     //Add Room Type
     
     public function storeRoomType(Request $req){
+        dd(Input::all());
         $UserInput = Input::all();
            $rules =  [
                 'RoomTypeCode' => 'unique:tblRoomType,strRoomTypeID',

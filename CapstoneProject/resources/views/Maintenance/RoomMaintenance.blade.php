@@ -168,7 +168,7 @@
                             <div class="col-md-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label">Search Cottage</label>
-                                    <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('RoomTable', '2')">
+                                    <input type="text" class="form-control" id="SearchBar2" onkeyup="SearchTable2('CottageTable', '2')">
                                 </div>
                             </div>
                             <div class="col-md-6">

@@ -5619,6 +5619,16 @@ th.activeHeader{
     width: 100%;
 }
 
+.icon-header{
+    margin-top: 20px; 
+    position:relative; 
+    top: calc(50% - 10px);
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
 /*@font-face {
    font-family: 'Material Icons';
    font-style: normal;
