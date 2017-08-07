@@ -39,6 +39,18 @@ Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
 Route::post('/Login', 'SessionsController@create');
 
+Route::get('/getRequest', function(){
+	if(Request::ajax()){
+		return "Get Request";
+	}
+});
+
+Route::post('/postRequest', function(){
+	if(Request::ajax()){
+		return "Post Request";
+	}
+});
+
 Route::get('/Logout', 'SessionsController@destroy');
 
 Route::get('/BookPackages', function () {
