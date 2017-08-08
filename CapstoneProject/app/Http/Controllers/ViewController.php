@@ -630,7 +630,19 @@ class ViewController extends Controller
                     ->where([['a.intResDStatus', '=', '1'], ['a.intWalkIn', '=', '0']])
                     ->get();
         
-        return view('Reservations', compact('FloatingReservations'));
+        $PaidReservations = DB::table('tblReservationDetail as a')
+                    ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                    ->select('a.strReservationID',
+                             DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                             'a.dtmResDArrival',
+                             'a.dtmResDDeparture',
+                             'b.strCustContact',
+                             'b.strCustEmail',
+                             'a.strReservationCode')
+                    ->where([['a.intResDStatus', '=', '2'], ['a.intWalkIn', '=', '0']])
+                    ->get();
+        
+        return view('Reservations', compact('FloatingReservations', 'PaidReservations'));
     }
     
     public function CancelReservation($ReservationID){

@@ -94,71 +94,28 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table">
+                                <table class="table" id="ConfirmedReservationTable">
                                     <thead class="text-primary">
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Arrival Date</th>
-                                        <th>Deparure Date</th>
-                                        <th>Pax</th>
-                                        <th>Contact Number</th>
-                                        <th>Email Address</th>
+                                        <th onclick="sortTable(0, 'ConfirmedReservationTable', 'string')">ID</th>
+                                        <th onclick="sortTable(1, 'ConfirmedReservationTable', 'string')">Name</th>
+                                        <th onclick="sortTable(2, 'ConfirmedReservationTable', 'string')">Arrival Date</th>
+                                        <th onclick="sortTable(3, 'ConfirmedReservationTable', 'string')">Deparure Date</th>
+                                        <th onclick="sortTable(4, 'ConfirmedReservationTable', 'string')">Contact Number</th>
+                                        <th onclick="sortTable(5, 'ConfirmedReservationTable', 'string')">Email Address</th>
+                                        <th onclick="sortTable(6, 'ConfirmedReservationTable', 'string')">Reservation Code</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Arrival Date</td>
-                                            <td>Deparure Date</td>
-                                            <td>Pax</td>
-                                            <td>Contact Number</td>
-                                            <td>Email Address</td>
+                                        @foreach($PaidReservations as $Reservation)
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>{{$Reservation -> strReservationID}}</td>
+                                            <td>{{$Reservation -> Name}}</td>
+                                            <td>{{Carbon\Carbon::parse($Reservation -> dtmResDArrival)->format('M j, Y')}}</td>
+                                            <td>{{Carbon\Carbon::parse($Reservation -> dtmResDDeparture)->format('M j, Y')}}</td>  
+                                            <td>{{$Reservation -> strCustContact}}</td> 
+                                            <td>{{$Reservation -> strCustEmail}}</td>
+                                            <td>{{$Reservation -> strReservationCode}}</td>
                                         </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Arrival Date</td>
-                                            <td>Deparure Date</td>
-                                            <td>Pax</td>
-                                            <td>Contact Number</td>
-                                            <td>Email Address</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Arrival Date</td>
-                                            <td>Deparure Date</td>
-                                            <td>Pax</td>
-                                            <td>Contact Number</td>
-                                            <td>Email Address</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Arrival Date</td>
-                                            <td>Deparure Date</td>
-                                            <td>Pax</td>
-                                            <td>Contact Number</td>
-                                            <td>Email Address</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Arrival Date</td>
-                                            <td>Deparure Date</td>
-                                            <td>Pax</td>
-                                            <td>Contact Number</td>
-                                            <td>Email Address</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Arrival Date</td>
-                                            <td>Deparure Date</td>
-                                            <td>Pax</td>
-                                            <td>Contact Number</td>
-                                            <td>Email Address</td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -276,6 +233,52 @@
     </div>
 </div>
 
+<div id="DivModalDepositSlip" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">local_atm</i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="title">Reservation Downpayment<span class="close" onclick="HideModalDepositSlip()">X</span></h3>
+                        <br><br>
+                        <img style="height: 400px; width: 640px" class="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalNoDepositSlip" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="red">
+                        <i class="material-icons">announcement</i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="title"><span class="close" onclick="HideModalNoDepositSlip()">X</span></h3>
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-md-12">
+                                <p class="paragraphText text-center">The Guest did not upload any deposit slip. Please verify the payment to continue.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button type="button" class="btn btn-sm btn-danger pull-left" onclick="#">Close</button>
+                            <button type="button" class="btn btn-sm btn-warning pull-right" onclick="#">Proceed without deposit slip</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="DivModalPaidReservation" class="modal">
     <div class="Modal-content">
         <div class="row">
@@ -292,19 +295,19 @@
                             <div class="col-md-1"></div>
                             <div class="col-md-11">
                                 <small><h4>Guest Information</h4></small>
-                                <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="i-Name"></p><br>
-                                <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="i-Address"></p><br>
-                                <p class="paragraphText text-primary">Contact Number:</p><p class="paragraphText" id="i-ContactNumber"></p><br>
-                                <p class="paragraphText text-primary">Email:</p><p class="paragraphText" id="i-Email"></p><br>
+                                <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="d-Name"></p><br>
+                                <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="d-Address"></p><br>
+                                <p class="paragraphText text-primary">Contact Number:</p><p class="paragraphText" id="d-ContactNumber"></p><br>
+                                <p class="paragraphText text-primary">Email:</p><p class="paragraphText" id="d-Email"></p><br>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-11">
                                 <small><h4>Bill Information</h4></small>
-                                <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="p-DateBooked"></p><br>
-                                <p class="paragraphText text-primary">Payment Due Date:</p><p class="paragraphText" id="p-PaymentDueDate"></p><br>
-                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="p-InitialBill"></p><br><br>
+                                <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="d-DateBooked"></p><br>
+                                <p class="paragraphText text-primary">Payment Due Date:</p><p class="paragraphText" id="d-PaymentDueDate"></p><br>
+                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="d-InitialBill"></p><br><br>
                             </div>
                         </div>
                         <div class="row">
@@ -317,8 +320,20 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-md btn-info pull-left" onclick="#">Show Desposit Slip</button>
-                        <button type="button" class="btn btn-md btn-success pull-right" onclick="#">Accept Downpayment</button>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="Col-md-6">
+                                <p class="ErrorLabel"></p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-md btn-info pull-left" onclick="ShowModalDepositSlip()">Show Desposit Slip</button>
+                        <button type="button" class="btn btn-md btn-success pull-right" onclick="ProcessDownPayment()">Accept Downpayment</button>
+                        
+                        <form method="post" action="/Reservation/Downpayment" id="DownpaymentForm">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="d-ReservationID" id="d-ReservationID" value = "">
+                            <input type="hidden" name="d-DownpaymentAmount" id="d-DownpaymentAmount" value = "">
+                        </form>
                         
                     </div>
                 </div>

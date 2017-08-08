@@ -1,5 +1,6 @@
 var PendingReservationInfo = [];
 var ActiveReservationInfo = [];
+var InitialBill = 0;
 
 function ShowModalReservationOptions(){
     document.getElementById("DivModalReservationOptions").style.display = "block";
@@ -38,12 +39,49 @@ function HideModalCancelReservation(){
 function ShowModalPaidReservation(){
     var TableChecker = CheckTable('#PendingReservationTable tr');
     if(TableChecker){
-        document.getElementById("DivModalPaidReservation").style.display = "block";
+        $.ajax({
+            type:'get',
+            url:'/Reservation/Info',
+            data:{id:PendingReservationInfo[0]},
+            success:function(data){
+                document.getElementById("d-Name").innerHTML = PendingReservationInfo[1];
+                document.getElementById("d-Address").innerHTML = data.ReservationInfo[0].strCustAddress;
+                document.getElementById("d-ContactNumber").innerHTML = PendingReservationInfo[6];
+                document.getElementById("d-Email").innerHTML = PendingReservationInfo[7];
+                document.getElementById("d-PaymentDueDate").innerHTML = PendingReservationInfo[3];
+                document.getElementById("d-DateBooked").innerHTML = PendingReservationInfo[2];
+                document.getElementById("d-InitialBill").innerHTML = data.InitialBill[0].dblPayAmount;
+                InitialBill = data.InitialBill[0].dblPayAmount;
+                document.getElementById("DivModalPaidReservation").style.display = "block";
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });  
     }
 }
 
 function HideModalPaidReservation(){
     document.getElementById("DivModalPaidReservation").style.display = "none";
+}
+
+function ShowModalDepositSlip(){
+    HideModalPaidReservation();
+    document.getElementById("DivModalDepositSlip").style.display = "block";
+}
+
+function HideModalDepositSlip(){
+    ShowModalPaidReservation();
+    document.getElementById("DivModalDepositSlip").style.display = "none";
+}
+
+function ShowModalNoDepositSlip(){
+    document.getElementById("DivModalNoDepositSlip").style.display = "block";
+}
+
+function HideModalNoDepositSlip(){
+    document.getElementById("DivModalNoDepositSlip").style.display = "none";
 }
 
 function getReservationInfo(){
@@ -172,4 +210,27 @@ function run(event, sender){
         //RoomTypeInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML];
     }
 
+}
+
+function ProcessDownPayment(){
+    if((!($(".form-group").hasClass("has-warning"))) && (document.getElementById("DownpaymentAmount").value != "")){
+        var DownPayment = parseInt(document.getElementById("DownpaymentAmount").value);
+        var RequiredAmount = Math.ceil(parseFloat(InitialBill) * .20);
+        if(DownPayment >= RequiredAmount){
+            /*--- Check here if there is an existing deposit slip ----*/
+            //HideModalPaidReservation();
+            //ShowModalNoDepositSlip();
+            
+            document.getElementById("d-ReservationID").value = PendingReservationInfo[0];
+            document.getElementById("d-DownpaymentAmount").value = DownPayment;
+            document.getElementById("DownpaymentForm").submit();
+        }
+        else{
+            $("#DownPaymentError").addClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Insufficient downpayment! Downpayment must be 20% of the initial bill (Php"+RequiredAmount+")";
+            }
+        }
+    }
 }

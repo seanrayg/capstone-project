@@ -23,6 +23,16 @@ class ReservationController extends Controller
         5 = Tapos na yung stay
     */
     
+            
+    /* Payment Type Code Reference
+        1 = Floating Reservation
+        2 = Paid Reservation
+        3 = Cancelled Reservation
+        4 = Checked in
+        5 = Checked out
+        6 = Other Bills
+    */
+    
     //Book Reservation
     
     public function addReservation(Request $req){
@@ -169,15 +179,6 @@ class ReservationController extends Controller
         if($BoatsUsed != null){
                $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);          
         }
-        
-        
-        /* Payment Type Code Reference
-            1 = Floating Reservation
-            2 = Paid Reservation
-            3 = Cancelled Reservation
-            4 = Checked in
-            5 = Checked out
-        */
         
         //Save Transaction
         $TransactionData = array('strPaymentID'=>$PaymentID,
@@ -504,6 +505,41 @@ class ReservationController extends Controller
         }
         
         \Session::flash('flash_message','Reservation successfully cancelled!');
+         return redirect('/Reservations');
+    }
+    
+    
+    //Save Downpayment
+    
+    public function saveDownPayment(Request $req){
+        $ReservationID = trim($req->input('d-ReservationID'));
+        $DownpaymentAmount = trim($req->input('d-DownpaymentAmount'));
+        
+        $DateToday = Carbon::now()->toDateString();
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$DownpaymentAmount,
+                              'strPayTypeID'=> 2,
+                              'dtePayDate'=>$DateToday);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        $updateData = array("intResDStatus" => "2");   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', $ReservationID)
+            ->update($updateData);
+        
+        \Session::flash('flash_message','Process successfully done!');
          return redirect('/Reservations');
     }
     

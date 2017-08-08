@@ -257,6 +257,9 @@ Route::get('/Reservation/Fees', 'ViewController@getReservationFees');
 
 Route::get('/Reservation/Info', 'ViewController@getReservationInfo');
 
+//Reservation Downpayment
+Route::post('/Reservation/Downpayment', 'ReservationController@saveDownpayment');
+
 
 
 /*---------------- WALK IN ------------------*/
