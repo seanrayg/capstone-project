@@ -623,3 +623,18 @@ function FillInitialBill(data){
     document.getElementById("GrandTotal").innerHTML = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
     
 }
+
+
+function SendInput(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    var GrandTotal = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
+    if(!($(holder).hasClass('has-warning'))){
+        var tempValue = parseInt(field.value);
+        var NewGrandTotal = GrandTotal + tempValue;
+        document.getElementById("GrandTotal").innerHTML = NewGrandTotal;
+    }
+    else{
+        document.getElementById("GrandTotal").innerHTML = GrandTotal;
+    }
+    
+}

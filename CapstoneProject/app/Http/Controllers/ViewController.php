@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Carbon\Carbon;
 
 class ViewController extends Controller
 {
@@ -603,20 +604,49 @@ class ViewController extends Controller
                         ->where([['a.intResDStatus', '=', '1'], ['a.intWalkIn', '=', '0']])
                         ->get();
         
+        $DateToday = Carbon::now()->toDateString();
+        
         foreach ($Reservations as $Reservation){
-            $tempResDBooking = explode(' ', $Reservation->dteResDBooking);
             $tempPaymentDueDate = explode(' ', $Reservation->PaymentDueDate);
-            $tempResDArrival = explode(' ', $Reservation->dtmResDArrival);
-            $tempResDDeparture = explode(' ', $Reservation->dtmResDDeparture);
-            
-            $Reservation->dteResDBooking = $tempResDBooking[0];
             $Reservation->PaymentDueDate = $tempPaymentDueDate[0];
-            $Reservation->dtmResDArrival = $tempResDArrival[0];
-            $Reservation->dtmResDDeparture = $tempResDDeparture[0];
+            
+            if(!($Reservation->PaymentDueDate >= $DateToday)){
+                $this->CancelReservation($Reservation->strReservationID);
+            }
             
         }
         
-        return view('Reservations', compact('Reservations'));
+       $FloatingReservations = DB::table('tblReservationDetail as a')
+                    ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                    ->select('a.strReservationID',
+                             DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                             'a.dteResDBooking',
+                             DB::raw('DATE_ADD(a.dteResDBooking, INTERVAL 7 DAY) AS PaymentDueDate'),
+                             'a.dtmResDArrival',
+                             'a.dtmResDDeparture',
+                             'b.strCustContact',
+                             'b.strCustEmail',
+                             'a.strReservationCode')
+                    ->where([['a.intResDStatus', '=', '1'], ['a.intWalkIn', '=', '0']])
+                    ->get();
+        
+        return view('Reservations', compact('FloatingReservations'));
+    }
+    
+    public function CancelReservation($ReservationID){
+        $updateData = array("intResDStatus" => "3");   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', $ReservationID)
+            ->update($updateData);
+        
+        $ChosenBoats = DB::table('tblReservationBoat')->where('strResBReservationID', "=", $ReservationID)->pluck('strResBBoatID');
+        if(count($ChosenBoats) != 0){
+            $updateBoatData = array("intBoatSStatus" => "0");
+            DB::table('tblBoatSchedule')
+                ->where('strBoatSReservationID', $ReservationID)
+                ->update($updateBoatData);
+        }
     }
     
     public function ViewReservationPackages(){

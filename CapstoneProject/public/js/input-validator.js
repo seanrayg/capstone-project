@@ -105,7 +105,10 @@ function CheckDouble(temp){
     if(/^-?\d*(\.\d+)?$/.test(temp) == false) {
         return true;
     }
-    else if(temp == 0){
+    else if(temp.charAt(0)=='-'){
+         return true;
+    }
+    else if(temp <= 0){
         return true;
     }
     else{

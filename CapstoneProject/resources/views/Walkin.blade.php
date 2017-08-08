@@ -467,6 +467,17 @@
                                             <p class="paragraphText">Total Adult Guests:</p> <p class="paragraphText" id="b-TotalAdults"></p><br>
                                             <p class="paragraphText">Entrance Fee:</p> <p class="paragraphText" id="EntranceFee"></p><br>
                                             <p class="paragraphText">Total Entrance Fee:</p> <p class="paragraphText" id="TotalEntranceFee"></p><br>
+                                            <small><h3 class="text-primary">Other Fees</h3></small>
+                                            <div class="row">
+                                                <div class="col-xs-6">
+                                                    <div class="form-group label-floating" id="OtherFeesError">
+                                                        <label class="control-label">Other Fees</label>
+                                                        <input type="text" class="form-control" onkeyup="SendInput(this, 'double', '#OtherFeesError')" onchange="SendInput(this, 'double', '#OtherFeesError')" id="OtherFees" value = "0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            
                                             <strong><p class="paragraphText">Total Miscellaneous Fee:</p> <p class="paragraphText" id="TotalMiscellaneousFee"></p></strong><br>
 
                                             <small><h3 class="text-primary">Grand Total</h3></small>
@@ -500,7 +511,7 @@
                     <input type="hidden" name="s-DateOfBirth" id="s-DateOfBirth" value = "">
                     <input type="hidden" name="s-Gender" id="s-Gender" value = "">
                     <input type="hidden" name="s-Remarks" id="s-Remarks" value = "">
-                    <button type="submit" class="btn btn-success pull-right">Book Reservation</button>
+                    <button type="button" class="btn btn-success pull-right" onclick="ProceedToPayment()">Proceed</button>
                 </form>
                 
             </div>

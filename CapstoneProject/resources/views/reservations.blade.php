@@ -6,7 +6,7 @@
 
 @section('scripts')
 <script src="/js/Reservations.js" type="text/javascript"></script>
-
+<script src="/js/input-validator.js" type="text/javascript"></script>
 @endsection
 
 
@@ -212,7 +212,7 @@
                                         <th onclick="sortTable(8, 'PendingReservationTable', 'string')">Code</th>
                                     </thead>
                                     <tbody>
-                                        @foreach($Reservations as $Reservation)
+                                        @foreach($FloatingReservations as $Reservation)
                                         <tr onclick="HighlightRow(this)">
                                             <td>{{$Reservation -> strReservationID}}</td>
                                             <td>{{$Reservation -> Name}}</td>
@@ -234,7 +234,7 @@
                                 <button type="button" class="btn btn-danger pull-right" onclick="ShowModalCancelReservation()"><i class="material-icons">highlight_off</i> Cancel</button>
                                 <button type="button" class="btn btn-primary pull-right" onclick="ShowModalReservationInfo()"><i class="material-icons">info</i> Info</button>
                                 <button type="button" class="btn btn-info pull-right" onclick="EditPendingReservation()"><i class="material-icons">create</i> Edit</button>
-                                <button type="button" class="btn btn-success pull-right" onclick="#"><i class="material-icons">check</i> Paid</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalPaidReservation()"><i class="material-icons">check</i> Paid</button>
                             </div> 
                         </div>  
                     </div>
@@ -251,28 +251,78 @@
 <div id="DivModalReservationOptions" class="modal">
     <div class="Modal-contentChoice">
         <div class="row">
-                    <div class="col-md-12">
-                            <div class="card card-stats">
-
-                            <div class="card-header" data-background-color="orange">
-                                <i class="material-icons">pages</i>
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">pages</i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="title">Avail a Package?</h3>
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <a href="/Reservation/Package"><button type="button" class="btn btn-success" onclick="#">Yes</button></a>
                             </div>
-                            <div class="card-content">
-                                <h3 class="title">Avail a Package?</h3>
-                                <br><br>
-                                <div class = "row">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-4">
-                                        <a href="/Reservation/Package"><button type="button" class="btn btn-success" onclick="#">Yes</button></a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="/BookReservations"><button type="button" class="btn btn-success" onclick="#">No</button></a>
-                                    </div>
-                                    <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <a href="/BookReservations"><button type="button" class="btn btn-success" onclick="#">No</button></a>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalPaidReservation" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <h3 class="title">Reservation Downpayment<span class="close" onclick="HideModalPaidReservation()">X</span></h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-11">
+                                <small><h4>Guest Information</h4></small>
+                                <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="i-Name"></p><br>
+                                <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="i-Address"></p><br>
+                                <p class="paragraphText text-primary">Contact Number:</p><p class="paragraphText" id="i-ContactNumber"></p><br>
+                                <p class="paragraphText text-primary">Email:</p><p class="paragraphText" id="i-Email"></p><br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-11">
+                                <small><h4>Bill Information</h4></small>
+                                <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="p-DateBooked"></p><br>
+                                <p class="paragraphText text-primary">Payment Due Date:</p><p class="paragraphText" id="p-PaymentDueDate"></p><br>
+                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="p-InitialBill"></p><br><br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-xs-6">
+                                <small><h4>Downpayment</h4></small>
+                                <div class="form-group label-floating" id="DownPaymentError">
+                                    <label class="control-label">Amount</label>
+                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#DownPaymentError')" onchange="ValidateInput(this, 'double', '#DownPaymentError')" id="DownpaymentAmount">
                                 </div>
                             </div>
                         </div>
+                        <button type="button" class="btn btn-md btn-info pull-left" onclick="#">Show Desposit Slip</button>
+                        <button type="button" class="btn btn-md btn-success pull-right" onclick="#">Accept Downpayment</button>
+                        
                     </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -280,70 +330,69 @@
 <div id="DivModalReservationInfo" class="modal">
     <div class="Modal-content">
         <div class="row">
-                    <div class="col-md-12">
-                            <div class="card card-stats">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="purple">
+                        <i class="material-icons">pages</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <h3 class="title">Reservation Info<span class="close" onclick="HideModalReservationInfo()">X</span></h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1"></div>
+                            <div class="col-xs-10">
+                                <small><h4>Reservation Info:</h4></small>
+                                <p class="paragraphText text-primary">Reservation ID:</p> <p class="paragraphText" id="i-ReservationID"></p><br>
+                                <p class="paragraphText text-primary">Reservation Code:</p> <p class="paragraphText" id="i-ReservationCode"></p><br>
+                                <p class="paragraphText text-primary">Check In Date:</p> <p class="paragraphText" id="i-CheckInDate"></p><br>
+                                <p class="paragraphText text-primary">Check Out Date:</p> <p class="paragraphText" id="i-CheckOutDate"></p><br>
+                                <p class="paragraphText text-primary">Pick Up Time:</p> <p class="paragraphText" id="i-PickUpTime"></p><br>
+                                <p class="paragraphText text-primary">Number of adult guests:</p> <p class="paragraphText" id="i-NoOfAdults"></p><br>
+                                <p class="paragraphText text-primary">Number of child guests:</p> <p class="paragraphText" id="i-NoOfKids"></p><br>
+                                <p class="paragraphText text-primary">Remarks:</p> <p class="paragraphText" id="i-Remarks"></p><br>
+                                <small><h4>Reserved Room(s):</h4></small>
+                                <div class="row"></div>
+                                <table class="table" id="tblChosenRooms" style="font-family: 'Roboto'">
+                                    <thead class="text-primary">
+                                        <th>Room</th>
+                                        <th>Quantity</th>
+                                    </thead>
+                                    <tbody>
 
-                            <div class="card-header" data-background-color="purple">
-                                <i class="material-icons">pages</i>
-                            </div>
-                            <div class="card-content">
-                                <div class="row">
-                                    <h3 class="title">Reservation Info<span class="close" onclick="HideModalReservationInfo()">X</span></h3>
-                                </div>
-                                <div class="row">
-                                        <div class="col-xs-1"></div>
-                                        <div class="col-xs-10">
-                                            <small><h4>Reservation Info:</h4></small>
-                                            <p class="paragraphText text-primary">Reservation ID:</p> <p class="paragraphText" id="i-ReservationID"></p><br>
-                                            <p class="paragraphText text-primary">Reservation Code:</p> <p class="paragraphText" id="i-ReservationCode"></p><br>
-                                            <p class="paragraphText text-primary">Check In Date:</p> <p class="paragraphText" id="i-CheckInDate"></p><br>
-                                            <p class="paragraphText text-primary">Check Out Date:</p> <p class="paragraphText" id="i-CheckOutDate"></p><br>
-                                            <p class="paragraphText text-primary">Pick Up Time:</p> <p class="paragraphText" id="i-PickUpTime"></p><br>
-                                            <p class="paragraphText text-primary">Number of adult guests:</p> <p class="paragraphText" id="i-NoOfAdults"></p><br>
-                                            <p class="paragraphText text-primary">Number of child guests:</p> <p class="paragraphText" id="i-NoOfKids"></p><br>
-                                            <p class="paragraphText text-primary">Remarks:</p> <p class="paragraphText" id="i-Remarks"></p><br>
-                                            <small><h4>Reserved Room(s):</h4></small>
-                                            <div class="row"></div>
-                                            <table class="table" id="tblChosenRooms" style="font-family: 'Roboto'">
-                                                <thead class="text-primary">
-                                                    <th>Room</th>
-                                                    <th>Quantity</th>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                </tbody>
-                                            </table><br><br>
-                                            <small><h4>Reserved Boat(s):</h4></small>
-                                            <div class="row"></div>
-                                            <table class="table" id="tblChosenBoats" style="font-family: 'Roboto'">
-                                                <thead class="text-primary">
-                                                    <th>Boat</th>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                </tbody>
-                                            </table><br><br>
-                                            <small><h4>Bill Information</h4></small>
-                                            <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="i-InitialBill"></p><br>
-                                            <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="i-DateBooked"></p><br>
-                                            <p class="paragraphText text-primary">Payment Due Date</p><p class="paragraphText" id="i-PaymentDueDate"></p><br><br>
-                                            <small><h4>Guest Information</h4></small>
-                                            <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="i-Name"></p><br>
-                                            <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="i-Address"></p><br>
-                                            <p class="paragraphText text-primary">Contact Number:</p><p class="paragraphText" id="i-ContactNumber"></p><br>
-                                            <p class="paragraphText text-primary">Email:</p><p class="paragraphText" id="i-Email"></p><br>
-                                            <p class="paragraphText text-primary">Age:</p><p class="paragraphText" id="i-Age"></p><br>
-                                            <p class="paragraphText text-primary">Gender:</p><p class="paragraphText" id="i-Gender"></p><br>
-                                            <p class="paragraphText text-primary">Nationality:</p><p class="paragraphText" id="i-Nationality"></p><br>
-                                            <br><br>
-                                            
-                                            <button type="button" class="btn btn-info pull-right" onclick="HideModalReservationInfo()">Close</button>
-                                            <div class="clearfix"></div>
-                                        </div>
-                                    </div>
+                                    </tbody>
+                                </table><br><br>
+                                <small><h4>Reserved Boat(s):</h4></small>
+                                <div class="row"></div>
+                                <table class="table" id="tblChosenBoats" style="font-family: 'Roboto'">
+                                    <thead class="text-primary">
+                                        <th>Boat</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table><br><br>
+                                <small><h4>Bill Information</h4></small>
+                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="i-InitialBill"></p><br>
+                                <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="i-DateBooked"></p><br>
+                                <p class="paragraphText text-primary">Payment Due Date</p><p class="paragraphText" id="i-PaymentDueDate"></p><br><br>
+                                <small><h4>Guest Information</h4></small>
+                                <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="i-Name"></p><br>
+                                <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="i-Address"></p><br>
+                                <p class="paragraphText text-primary">Contact Number:</p><p class="paragraphText" id="i-ContactNumber"></p><br>
+                                <p class="paragraphText text-primary">Email:</p><p class="paragraphText" id="i-Email"></p><br>
+                                <p class="paragraphText text-primary">Age:</p><p class="paragraphText" id="i-Age"></p><br>
+                                <p class="paragraphText text-primary">Gender:</p><p class="paragraphText" id="i-Gender"></p><br>
+                                <p class="paragraphText text-primary">Nationality:</p><p class="paragraphText" id="i-Nationality"></p><br>
+                                <br><br>
+
+                                <button type="button" class="btn btn-info pull-right" onclick="HideModalReservationInfo()">Close</button>
+                                <div class="clearfix"></div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -905,7 +905,6 @@ function FillInitialBill(data){
     
     
     GrandTotal = (diffDays * RentTotal) + (parseInt(NoOfAdults) * parseInt(EntranceFee)) + TransportationFee;
-    alert(GrandTotal);
 }
 
 

@@ -35,6 +35,17 @@ function HideModalCancelReservation(){
     document.getElementById("DivModalCancelReservation").style.display = "none";
 }
 
+function ShowModalPaidReservation(){
+    var TableChecker = CheckTable('#PendingReservationTable tr');
+    if(TableChecker){
+        document.getElementById("DivModalPaidReservation").style.display = "block";
+    }
+}
+
+function HideModalPaidReservation(){
+    document.getElementById("DivModalPaidReservation").style.display = "none";
+}
+
 function getReservationInfo(){
     $.ajax({
         type:'get',

@@ -17,6 +17,7 @@ class PaymentTypeSeeder extends Seeder
              array('strPaymentTypeID'=>'3','strPaymentType'=>'Initial Payment'),
              array('strPaymentTypeID'=>'4','strPaymentType'=>'Additional Bill'),
              array('strPaymentTypeID'=>'5','strPaymentType'=>'Additional Payment'),
+             array('strPaymentTypeID'=>'6','strPaymentType'=>'Other Bill')
         ));
     }
 }
