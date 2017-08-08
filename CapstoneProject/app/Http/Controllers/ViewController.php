@@ -683,8 +683,9 @@ class ViewController extends Controller
         $ReservationInfo = $this->getReservation($ReservationID);
         $ChosenRooms = $this->getReservedRooms($ReservationID);
         $ChosenBoats = $this->getReservedBoats($ReservationID);
+        $InitialBill = $this->getInitialBill($ReservationID);
      
-        return response()->json(['ReservationInfo' => $ReservationInfo, 'ChosenRooms' => $ChosenRooms, 'ChosenBoats' => $ChosenBoats]);
+        return response()->json(['ReservationInfo' => $ReservationInfo, 'ChosenRooms' => $ChosenRooms, 'ChosenBoats' => $ChosenBoats, 'InitialBill' => $InitialBill]);
     }
     
     
@@ -742,6 +743,15 @@ class ViewController extends Controller
         return $ChosenBoats;
     }
     
+    public function getInitialBill($ReservationID){
+        $InitialBill = DB::table('tblPayment')
+                            ->select('dblPayAmount')
+                            ->where([['strPayReservationID', "=", $ReservationID], ['strPayTypeID', '=', '1']])
+                            ->get();
+        
+        return $InitialBill;
+    }
+    
     public function ViewEditReservation($id){
         
         $ReservationInfo = $this->getReservation($id);
@@ -786,8 +796,12 @@ class ViewController extends Controller
     }
     
     public function fnGetAvailableRooms($ArrivalDate, $DepartureDate){
-        $Rooms = DB::select("SELECT b.strRoomType, c.dblRoomRate, b.intRoomTCapacity, COUNT(a.strRoomTypeID) as TotalRooms FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') OR (dtmResDArrival BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') AND NOT intResDStatus = 3))) AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) GROUP BY a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity");
-        
+        if($ArrivalDate != $DepartureDate){
+            $Rooms = DB::select("SELECT b.strRoomType, c.dblRoomRate, b.intRoomTCapacity, COUNT(a.strRoomTypeID) as TotalRooms FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') OR (dtmResDArrival BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') AND NOT intResDStatus = 3))) AND b.intRoomTCategory = 1 AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) GROUP BY a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity");
+        }
+        else{
+             $Rooms = DB::select("SELECT b.strRoomType, c.dblRoomRate, b.intRoomTCapacity, COUNT(a.strRoomTypeID) as TotalRooms FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') OR (dtmResDArrival BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') AND NOT intResDStatus = 3))) AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) GROUP BY a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity");
+        }
         return $Rooms;
     }
     

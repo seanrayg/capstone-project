@@ -352,7 +352,7 @@
                                             <div class="col-xs-4">
                                                 <div class="form-group label-floating" id="ContactError">
                                                     <label class="control-label">Contact Number</label>
-                                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#ContactError')" onchange="ValidateInput(this, 'int2', '#ContactError')" id="ContactNumber">
+                                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'contact', '#ContactError')" onchange="ValidateInput(this, 'contact', '#ContactError')" id="ContactNumber">
                                                 </div>
                                             </div>
                                             <div class="col-xs-4">
@@ -544,6 +544,7 @@
                     <input type="hidden" name="s-DateOfBirth" id="s-DateOfBirth" value = "">
                     <input type="hidden" name="s-Gender" id="s-Gender" value = "">
                     <input type="hidden" name="s-Remarks" id="s-Remarks" value = "">
+                    <input type="hidden" name="s-InitialBill" id="s-InitialBill" value = "">
                     <button type="submit" class="btn btn-success pull-right">Book Reservation</button>
                 </form>
                 

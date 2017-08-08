@@ -69,6 +69,7 @@ function getReservationInfo(){
             document.getElementById("i-Nationality").innerHTML = data.ReservationInfo[0].strCustNationality;
             document.getElementById("i-PaymentDueDate").innerHTML = PendingReservationInfo[3];
             document.getElementById("i-DateBooked").innerHTML = PendingReservationInfo[2];
+            document.getElementById("i-InitialBill").innerHTML = data.InitialBill[0].dblPayAmount;
             
             if(data.ReservationInfo[0].strCustGender == "M"){
                 document.getElementById("i-Gender").innerHTML = "Male";

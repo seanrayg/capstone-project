@@ -105,48 +105,47 @@ window.onload = function() {
     if(TitlePage == "Dashboard"){
         $("#SB-Dashboard").addClass("active");
     }
-
-    if(TitlePage.indexOf("Reservation") > -1){
+    else if(TitlePage.indexOf("Reservation") > -1){
         $("#SB-Reservations").addClass("active");
     }
 
-    if(TitlePage == "Walk in"){
+    else if(TitlePage == "Customers"){
+        $("#SB-Customers").addClass("active");
+    }
+    
+    else if(TitlePage == "Walk in"){
         $("#SB-Walkin").addClass("active");
     }
 
-    if(TitlePage == "Customers"){
-        $("#SB-Customers").addClass("active");
-    }
-
-    if(TitlePage == "Boat Schedule"){
+    else if(TitlePage == "Boat Schedule"){
         $("#SB-BoatSchedule").addClass("active");
     }
 
-    if(TitlePage == "Rooms"){
+    else if(TitlePage == "Rooms"){
         $("#SB-Rooms").addClass("active");
     }
 
-    if(TitlePage == "Item Rental"){
+    else if(TitlePage == "Item Rental"){
         $("#SB-ItemRental").addClass("active");
     }
 
-    if(TitlePage == "Activities"){
+    else if(TitlePage == "Activities"){
         $("#SB-Activities").addClass("active");
     }
 
-    if(TitlePage == "Payment"){
+    else if(TitlePage == "Payment"){
         $("#SB-Payment").addClass("active");
     }
 
-    if(TitlePage.indexOf("Maintenance") > -1){
+    else if(TitlePage.indexOf("Maintenance") > -1){
         $("#SB-Maintenance").addClass("active");
     }
 
-    if(TitlePage.indexOf("Package") > -1){
+    else if(TitlePage.indexOf("Package") > -1){
         $("#SB-Maintenance").addClass("active");
     }
 
-    if(TitlePage == "Reports"){
+    else if(TitlePage == "Reports"){
         $("#SB-Reports").addClass("active");
     }
 };

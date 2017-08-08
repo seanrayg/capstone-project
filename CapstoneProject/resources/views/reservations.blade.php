@@ -14,8 +14,8 @@
 <!-- Add success -->
 @if(Session::has('flash_message'))
     <div class="row">
-        <div class="col-md-5 col-md-offset-7">
-            <div class="alert alert-success hide-automatic">
+        <div class="col-md-6 col-md-offset-6">
+            <div class="alert alert-success">
                 <div class="container-fluid">
                   <div class="alert-icon">
                     <i class="material-icons">check</i>

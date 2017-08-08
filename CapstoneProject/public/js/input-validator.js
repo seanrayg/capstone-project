@@ -1,24 +1,32 @@
 function ValidateInput(field, variableType, holder){
     var inputError = false;
-
+ 
     if(variableType == "string"){
         inputError = CheckString(field.value);
     }
 
-    if(variableType == "int"){
+    else if(variableType == "int"){
         inputError = CheckInteger(field.value);
     }
 
-    if(variableType == "int2"){
+    else if(variableType == "int2"){
         inputError = CheckInteger2(field.value);
     }
 
-    if(variableType == "double"){
+    else if(variableType == "double"){
         inputError = CheckDouble(field.value);
     }
     
-    if(variableType == "string2"){
+    else if(variableType == "string2"){
         inputError = CheckString2(field.value);
+    }
+    
+    else if(variableType == "email"){
+        inputError = CheckEmail(field.value);
+    }
+    
+    else if(variableType = "contact"){
+        inputError = CheckContact(field.value);
     }
 
     if(inputError){
@@ -46,6 +54,22 @@ function ValidateInput(field, variableType, holder){
 
 
 // Validators
+
+function CheckContact(temp){
+    if(/^(09|\+639)\d{9}$/.test(temp) == false){
+        return true;
+    }
+    return false;
+    
+}
+
+function CheckEmail(temp){
+    if(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(temp) == false){
+        return false;
+    }
+    return true;
+}
+
 
 function CheckString(temp){
     if(/^[a-zA-Z0-9- ]*$/.test(temp) == false) {

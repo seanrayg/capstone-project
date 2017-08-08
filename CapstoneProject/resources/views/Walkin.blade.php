@@ -11,7 +11,7 @@
 @endsection
 
 @section('content')
-<h5 id="TitlePage">Book a Reservation</h5>
+<h5 id="TitlePage">Walk in</h5>
 <div class="row">
                           
   <div class="col-lg-2"></div>    
@@ -313,7 +313,7 @@
                                             <div class="col-xs-4">
                                                 <div class="form-group label-floating" id="ContactError">
                                                     <label class="control-label">Contact Number</label>
-                                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#ContactError')" onchange="ValidateInput(this, 'int2', '#ContactError')" id="ContactNumber">
+                                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'contact', '#ContactError')" onchange="ValidateInput(this, 'contact', '#ContactError')" id="ContactNumber">
                                                 </div>
                                             </div>
                                             <div class="col-xs-4">

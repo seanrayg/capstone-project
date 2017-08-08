@@ -10,7 +10,7 @@ var BoatsUsed = "";
 var TotalCapacity = 0;
 var BoatList;
 var tempTotal = 0;
-
+var GrandTotal = 0;
 /*---------- Modal controller -------*/
 
 function ShowModalAvailBoat(){
@@ -903,6 +903,9 @@ function FillInitialBill(data){
     
     document.getElementById("GrandTotal").innerHTML = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
     
+    
+    GrandTotal = (diffDays * RentTotal) + (parseInt(NoOfAdults) * parseInt(EntranceFee)) + TransportationFee;
+    alert(GrandTotal);
 }
 
 
@@ -985,7 +988,7 @@ function SaveReservation(){
     document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
     document.getElementById("s-Gender").value = document.getElementById("Gender").value;
     document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
-    
+    document.getElementById("s-InitialBill").value = GrandTotal;
     
     return true;
 }

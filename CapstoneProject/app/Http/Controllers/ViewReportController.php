@@ -467,6 +467,8 @@ class ViewReportController extends Controller
         return $Rooms;
     }
     
+    
+    // get Room Types
     public function getRoomTypes($IncludeDeleted){
         $GeneratedReport;
         if($IncludeDeleted == 1){

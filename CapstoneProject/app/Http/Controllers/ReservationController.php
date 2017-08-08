@@ -26,6 +26,7 @@ class ReservationController extends Controller
     //Book Reservation
     
     public function addReservation(Request $req){
+        
         // Prepares data to be saved
         $tempCheckInDate = trim($req->input('s-CheckInDate'));
         $tempCheckOutDate = trim($req->input('s-CheckOutDate'));
@@ -42,7 +43,7 @@ class ReservationController extends Controller
         $Contact = trim($req->input('s-Contact'));
         $Nationality = trim($req->input('s-Nationality'));
         $tempDateOfBirth = trim($req->input('s-DateOfBirth'));
-
+        $InitialBill = trim($req->input('s-InitialBill'));
         $tempDateOfBirth2 = explode('/', $tempDateOfBirth);
         $tempCheckInDate2 = explode('/', $tempCheckInDate);
         $tempCheckOutDate2 = explode('/', $tempCheckOutDate);
@@ -54,6 +55,7 @@ class ReservationController extends Controller
         $Gender;
         $Remarks;
         
+        //gets customer id
         $CustomerID = DB::table('tblCustomer')->pluck('strCustomerID')->first();
         if(!$CustomerID){
            $CustomerID = "CUST1";
@@ -78,12 +80,31 @@ class ReservationController extends Controller
         
         $PickUpTime2 = $tempPickUpTime2[0].":".$tempPickUpTime2[1].":".$tempPickUpTime2[2];
         
+        //gets reservation id
         $ReservationID = DB::table('tblReservationDetail')->pluck('strReservationID')->first();
         if(!$ReservationID){
             $ReservationID = "RESV1";
         }
         else{
             $ReservationID = $this->SmartCounter('tblReservationDetail', 'strReservationID');
+        }
+
+
+        if(($req->input('s-Remarks')) == null){
+            $Remarks = "N/A";
+        }
+        else{
+            $Remarks = trim($req->input('s-Remarks'));
+        }
+        
+        //gets payment id
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
         }
 
 
@@ -148,13 +169,31 @@ class ReservationController extends Controller
         if($BoatsUsed != null){
                $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);          
         }
-
-         \Session::flash('flash_message','Reservation successfully booked!');
+        
+        
+        /* Payment Type Code Reference
+            1 = Floating Reservation
+            2 = Paid Reservation
+            3 = Cancelled Reservation
+            4 = Checked in
+            5 = Checked out
+        */
+        
+        //Save Transaction
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$InitialBill,
+                              'strPayTypeID'=> 1,
+                              'dtePayDate'=>$DateBooked->toDateString());
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+         \Session::flash('flash_message','Reservation successfully booked! The reservation code of '. $FirstName . ' ' . $LastName . ' is ' . $ReservationCode.'.');
          return redirect('/Reservations');
     }
     
     public function RandomString() {
-        $length = 12;
+        $length = 6;
         $token = "";
         $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $codeAlphabet.= "0123456789";
