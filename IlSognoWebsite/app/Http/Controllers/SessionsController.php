@@ -11,53 +11,64 @@ class SessionsController extends Controller
 {
 	public function create(Request $request){
 
-		// $this->validate(request(), [
-
-		// 	'CustomerEmail' => 'required|email',
-		// 	'TransactionID' => 'required'
-
-		// ]);
-
-		// $CustomerEmail = $request->input('CustomerEmail');
-		// $ReservationCode = $request->input('ReservationCode');
-
-		// $LoginCode = str_random(5);
-
-		// $boolHasEmail = DB::table('tblCustomer')->where('strCustEmail', $CustomerEmail)->update(['strConfirmationCode' => $LoginCode]);
-
-		// if($boolHasEmail == 1){
-
-		// 	Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
-	 //            $message->to($CustomerEmail);
-	 //            $message->subject('Verify Login');
-	 //        });
-
-	 //        echo "hehe";
-
-		// }
-
-		$CustomerEmail = $_POST['CustomerEmail'];
-		$TransactionID = $_POST['TransactionID'];
-
 		if($request->isMethod('POST')){
+
+			$CustomerEmail = $_POST['CustomerEmail'];
+			$TransactionID = $_POST['TransactionID'];
 
 			$LoginCode = str_random(5);
 
-			$boolHasEmail = DB::table('tblCustomer')->where('strCustEmail', $CustomerEmail)->update(['strConfirmationCode' => $LoginCode]);
+			try {
 
-			if($boolHasEmail == 1){
+				$user = DB::table('tblCustomer as a')
+							->join('tblReservationDetail as b', 'a.strCustomerID', '=', 'b.strResDCustomerID')
+							->select('a.strCustEmail', 'b.strReservationCode')
+							->where('a.strCustEmail', '=', $CustomerEmail)
+							->first();
 
-				Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
-		            $message->to($CustomerEmail);
-		            $message->subject('Verify Login');
-		        });
+			} catch(\Illuminate\Database\QueryException $ex){ 
+				return $ex->getMessage();
+			}
 
-		        echo "hehe";
+			if(count($user)){
+
+				if($TransactionID == $user->strReservationCode){
+
+					DB::table('tblCustomer')
+						->where('strCustEmail', $CustomerEmail)
+						->update(['strConfirmationCode' => $LoginCode]);
+
+					// Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
+			  //           $message->to($CustomerEmail);
+			  //           $message->subject('Verify Login');
+			  //       });
+
+			        echo 1;
+
+				}else{
+
+					echo 2;
+
+				}
+
+			}else{
+
+				echo 2;
 
 			}
+
+		}//End of Request POST
+
+	}//End of Create Method
+
+	public function VerifyCode(Request $request){
+
+		if($request->isMethod('POST')){
+
+			$VerificationCode = $_POST['VerificationCode'];
 
 		}
 
 	}
 
-}
+}//End of Class

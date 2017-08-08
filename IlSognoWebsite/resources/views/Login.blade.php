@@ -15,6 +15,7 @@
     <!-- CSS Files -->
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/css/now-ui-kit.css" rel="stylesheet" />
+    <link href="/css/loader.css" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link href="/css/demo.css" rel="stylesheet" />
 </head>
@@ -66,6 +67,7 @@
                 <div class="card card-login card-plain">
                     <form class="form">
                         <div class="content">
+                            <div id="validation" class="input-group form-group-no-border input-lg"></div>
                             <div class="input-group form-group-no-border input-lg">
                                 <span class="input-group-addon">
                                     <i class="now-ui-icons users_circle-08"></i>
@@ -80,7 +82,8 @@
                             </div>
                         </div>
                         <div class="footer text-center">
-                            <button type="button" class="btn btn-primary btn-round btn-lg btn-block" onclick="Login()">Continue</button>
+                            <button id="login" type="button" class="btn btn-primary btn-round btn-lg btn-block" onclick="Login()">Continue</button>
+                            <div id="loader" class="loader" style="display: none"></div>
                         </div>
                         <div class="pull-left">
                             <h6>
@@ -151,17 +154,24 @@
                   </div>
               </div>
               <br>
-              <div class="row">
-                  <div class="col-md-1"></div>
-                  <div class="col-md-7 text-center">
-                      <div class="form-group">
-                          <input type="text" placeholder="Verification Code" class="form-control" />
+              <div id="VerificationCodeValidation" class="col-md-7 text-center" style="display: none; background-color: #ff6666; width: 50%; margin: 0 auto;">
+                Please enter your code
+              </div>
+              <br>
+              <form>
+                  <div class="row" id="inputs">
+                      <div class="col-md-1"></div>
+                      <div class="col-md-7 text-center">
+                          <div class="form-group">
+                              <input id="VerificationCode" type="text" placeholder="Verification Code" class="form-control" />
+                          </div>
+                      </div>
+                      <div class="col-md-3 text-center">
+                        <button type="button" class="btn btn-primary btn-simple" onclick="LoginCheckCode()">Submit</button>
                       </div>
                   </div>
-                  <div class="col-md-3 text-center">
-                    <button type="button" class="btn btn-primary btn-simple">Submit</button>
-                  </div>
-              </div>
+              </form>
+              <div id="loader2" class="loader" style="display: none"></div>
               <br><br>
               <div class="row">
                 <div class="col-md-12">
