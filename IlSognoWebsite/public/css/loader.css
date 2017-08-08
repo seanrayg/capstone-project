@@ -1,0 +1,18 @@
+.loader {
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid black; /* Black */
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	animation: spin 2s linear infinite;
+	position: absolute;
+	left: 50%;
+	top: 60%;
+	margin-left: -20px; /* -1 * image width / 2 */
+	margin-top: -20px; /* -1 * image height / 2 */
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}

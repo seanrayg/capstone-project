@@ -39,17 +39,7 @@ Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
 Route::post('/Login', 'SessionsController@create');
 
-Route::get('/getRequest', function(){
-	if(Request::ajax()){
-		return "Get Request";
-	}
-});
-
-Route::post('/postRequest', function(){
-	if(Request::ajax()){
-		return "Post Request";
-	}
-});
+Route::post('/Login/VerifyCode', 'SessionsController@VerifyCode');
 
 Route::get('/Logout', 'SessionsController@destroy');
 
