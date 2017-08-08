@@ -14,9 +14,7 @@
 use Illuminate\Support\Facades\Input;
 
 //Misc
-Route::get('/', function () {
-    return view('dashboard');
-});
+Route::get('/', 'ViewDashboardController@getDashboard');
 
 Route::get('/Walkin', function () {
     return view('Walkin');

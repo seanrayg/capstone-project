@@ -11,6 +11,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        // Initializes the database 
+        $this->call(PaymentTypeSeeder::class);
+        
+        //for verification
+        $this->command->info("Payment Type table seeded :)");
     }
 }
