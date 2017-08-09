@@ -5629,6 +5629,11 @@ th.activeHeader{
     cursor: pointer;
 }
 
+.no-padding{
+    padding: none;
+    margin-top: 25%;
+}
+
 /*@font-face {
    font-family: 'Material Icons';
    font-style: normal;

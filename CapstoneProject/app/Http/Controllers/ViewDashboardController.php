@@ -14,7 +14,7 @@ class ViewDashboardController extends Controller
         
         $PaymentTypes = DB::table('tblPaymentType')->get();
         if(sizeof($PaymentTypes) == 0){
-            Artisan::call('db:seed');
+            //Artisan::call('db:seed');
         }
         
         return view("Dashboard");

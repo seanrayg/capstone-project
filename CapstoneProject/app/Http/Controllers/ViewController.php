@@ -605,7 +605,7 @@ class ViewController extends Controller
                         ->get();
         
         $DateToday = Carbon::now()->toDateString();
-        
+
         foreach ($Reservations as $Reservation){
             $tempPaymentDueDate = explode(' ', $Reservation->PaymentDueDate);
             $Reservation->PaymentDueDate = $tempPaymentDueDate[0];
@@ -646,6 +646,7 @@ class ViewController extends Controller
     }
     
     public function CancelReservation($ReservationID){
+        
         $updateData = array("intResDStatus" => "3");   
         
         DB::table('tblReservationDetail')
