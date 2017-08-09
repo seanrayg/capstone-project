@@ -65,7 +65,29 @@ class SessionsController extends Controller
 
 		if($request->isMethod('POST')){
 
+			$CustomerEmail = $_POST['CustomerEmail'];
 			$VerificationCode = $_POST['VerificationCode'];
+
+			try {
+
+				$data = DB::table('tblCustomer')
+							->select('strConfirmationCode')
+							->where('strCustEmail', $CustomerEmail)
+							->first();
+
+			} catch(\Illuminate\Database\QueryException $ex){ 
+				return $ex->getMessage();
+			}
+
+			if($data->strConfirmationCode == $VerificationCode){
+
+				echo 1;
+
+			}else{
+
+				echo 2;
+
+			}
 
 		}
 

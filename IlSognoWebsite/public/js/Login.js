@@ -76,6 +76,7 @@ function LoginCheckCode(){
         $('#loader2').show();
         $('#VerificationCodeValidation').hide();
 
+        $CustomerEmail = $('#CustomerEmail').val();
         $VerificationCode = $('#VerificationCode').val();
 
         $.ajaxSetup({
@@ -89,16 +90,19 @@ function LoginCheckCode(){
             type: 'POST',
             url: '/Login/VerifyCode',
             data: {
+                CustomerEmail: $CustomerEmail,
                 VerificationCode: $VerificationCode
             },
             success: function(data) {
                 if(data == 1){
 
-                    alert('aaa');
+                    //Redirect here
+                    alert('code matched');
 
                 }else if(data == 2){
 
-                    
+                    $('#inputs').show();
+                    $('#loader2').hide();
 
                 }
             }
