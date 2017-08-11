@@ -747,5 +747,53 @@ class ReservationController extends Controller
          return redirect('/Rooms');
     }
     
+    public function addFees(Request $req){
+        $FeeName = trim($req->input('FeeName'));
+        $FeeAmount = trim($req->input('FeeAmount'));
+        $FeeID = $this->SmartCounter('tblFee', 'strFeeID');
+        $DateCreated = Carbon::now();
+        
+        $InactiveFees = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('a.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '=', 'Inactive'], ['strFeeName', '=', $FeeName]])
+                ->get();
+        
+   
+        if(sizeof($InactiveFees) == 0){
+            $data = array('strFeeID'=>$FeeID,
+                     'strFeeName'=>$FeeName,
+                     'strFeeStatus'=>'Active',
+                     'strFeeDescription'=>"N/A",
+                     'tmsCreated'=>$DateCreated);
+
+            DB::table('tblFee')->insert($data);
+
+            $dataAmount = array('strFeeID'=>$FeeID,
+                         'dblFeeAmount'=>$FeeAmount,
+                         'dtmFeeAmountAsOf'=>$DateCreated);
+
+            DB::table('tblFeeAmount')->insert($dataAmount);
+        }
+        else{
+            $updateData = array("strFeeStatus" => "Active");  
+            
+            DB::table('tblFee')
+            ->where('strFeeName', $FeeName)
+            ->update($updateData);
+            
+            $InactiveFeeID;
+            foreach($InactiveFees as $Fee){
+                $InactiveFeeID = $Fee->strFeeID;
+            }
+            
+            $dataAmount = array('strFeeID'=>$InactiveFeeID,
+                         'dblFeeAmount'=>$FeeAmount,
+                         'dtmFeeAmountAsOf'=>$DateCreated);
+
+            DB::table('tblFeeAmount')->insert($dataAmount);
+        }
+    }
+    
 
 }

@@ -6,7 +6,19 @@ var RemovedRows = "";
 var SelectedRooms = "";
 var ChosenRoomsData = "";
 var tempTotal = 0;
+var RemovedFees = [];
 
+
+//Modal Controller
+
+function ShowModalAddFee(){
+    FilterFee();
+    document.getElementById("DivModalAddFee").style.display = "block";
+}
+
+function HideModalAddFee(){
+    document.getElementById("DivModalAddFee").style.display = "none";
+}
 
 //MISC
 function run(event, sender){
@@ -624,8 +636,173 @@ function FillInitialBill(data){
     
 }
 
+function FilterFee(){
+    document.getElementById("FeeName").value = "";
+    document.getElementById("FeeAmount").value = "";
+    document.getElementById("FeeQuantity").value = "";
+    $(".form-group").removeClass('has-warning');
+    var x = document.getElementsByClassName("ErrorLabel");
+    for(var i = 0; i < x.length; i++){
+        x[i].innerText="";
+    }
+    var SelectedFee = document.getElementById("SelectFees").value;
+    if(SelectedFee == "Other"){
+        document.getElementById("OtherInput").style.display = "block";
+        document.getElementById("FeeAmount").readOnly = false;
+    }
+    else{
+        getFeeAmount();
+        document.getElementById("OtherInput").style.display = "none";
+    }
+}
 
-function SendInput(field, dataType, holder){
+function getFeeAmount(){
+    var SelectedFee = document.getElementById("SelectFees").value;
+    $.ajax({
+        type:'get',
+        url:'/Walkin/Fees',
+        data:{SelectedFee: SelectedFee},
+        success:function(data){
+            document.getElementById("FeeAmount").value = data[0].dblFeeAmount;
+            document.getElementById("FeeAmount").readOnly = true;
+        },
+        error:function(response){
+            console.log(response);
+            alert("error");
+        }
+    });   
+}
+
+function AddFee(){
+    var SelectedFee = document.getElementById("SelectFees").value;
+    var EmptyError = false;
+    var FeeName = "";
+    var FeeAmount;
+    var FeeQuantity;
+    if(SelectedFee == "Other"){
+        FeeName = document.getElementById("FeeName").value;
+        FeeAmount = document.getElementById("FeeAmount").value;
+        FeeQuantity = document.getElementById("FeeQuantity").value;
+        if(FeeName == "" || FeeAmount == "" || FeeQuantity == ""){
+            EmptyError = true;
+        }
+    }
+    else{
+        FeeAmount = document.getElementById("FeeAmount").value;
+        FeeQuantity = document.getElementById("FeeQuantity").value;
+        if(FeeQuantity == "" || FeeAmount == ""){
+            EmptyError = true;
+        }
+    }
+    
+    if(EmptyError){
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="All fields are required!";
+        }
+    }
+    else{
+        if(!($(".form-group").hasClass('has-warning'))){
+            var FeeExists = false;
+            for (var i=0; i<document.getElementById('SelectFees').options.length; i++){ 
+                if (document.getElementById('SelectFees').options[i].text == FeeName){ 
+                    FeeExists = true;
+                    break;
+                } 
+            }
+            if(!FeeExists){
+                var e = document.getElementById("SelectFees");
+                var tempFeeName = e.options[e.selectedIndex].value;
+                if(tempFeeName != "Other"){
+                    RemovedFees[RemovedFees.length] = document.getElementById("SelectFees").value;
+                    e.remove(e.selectedIndex);
+                }
+
+
+                var tableRef = document.getElementById('tblOtherFee').getElementsByTagName('tbody')[0];
+
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+                var newCell3 = newRow.insertCell(2);
+                var newCell4 = newRow.insertCell(3);
+                var newCell5 = newRow.insertCell(4);
+
+                if(SelectedFee == "Other"){
+                   newCell1.innerHTML = FeeName; 
+                }
+                else{
+                    newCell1.innerHTML = SelectedFee;
+                }
+         
+                newCell2.innerHTML = FeeAmount;
+                newCell3.innerHTML = FeeQuantity;
+                newCell4.innerHTML = parseInt(FeeAmount) * parseInt(FeeQuantity);
+                newCell5.innerHTML = "<button type='button' rel='tooltip' title='Remove' class='btn btn-danger btn-simple btn-xs' value='" +newCell1.innerHTML+ "' onclick='RemoveFee(this)'><i class='material-icons'>close</i></button>";
+                
+                var TotalMiscellaneousFee = parseInt(document.getElementById("TotalMiscellaneousFee").innerHTML);
+                TotalMiscellaneousFee = parseInt(TotalMiscellaneousFee) + parseInt(FeeAmount) * parseInt(FeeQuantity);
+                document.getElementById("TotalMiscellaneousFee").innerHTML = TotalMiscellaneousFee;
+                var GrandTotal = parseInt(document.getElementById("GrandTotal").innerHTML);
+                GrandTotal += parseInt(FeeAmount) * parseInt(FeeQuantity);
+                document.getElementById("GrandTotal").innerHTML = GrandTotal;
+
+                if(SelectedFee == "Other"){
+                    if(document.getElementById("CheckSaveFee").checked){
+
+                        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                        $.ajax({
+                            url: '/Walkin/AddFees',
+                            type: 'POST',
+                            data: {_token: CSRF_TOKEN,
+                                   FeeName: FeeName,
+                                   FeeAmount: FeeAmount},
+                            success: function (data) {
+                                
+                            },
+                            error:function(response){
+                                console.log(response);
+                                alert("error");
+                            }
+                        });
+                    }    
+                }
+
+                HideModalAddFee();  
+            }
+            
+            else{
+                var x = document.getElementsByClassName("ErrorLabel");
+                for(var i = 0; i < x.length; i++){
+                    x[i].innerText="Entered fee already exists!";
+                }
+            }
+        }
+    }
+}
+
+function RemoveFee(field){
+    $(document).on('click', 'button', function () {
+         var indexRow = this.parentNode.parentNode.rowIndex;
+         document.getElementById("tblOtherFee").deleteRow(indexRow);
+     });
+    var FeeFound = false;
+    for(var x = 0; x < RemovedFees.length; x++){
+        if(RemovedFees[x] == field.value){
+            FeeFound = true;
+            break;
+        }
+    }
+    
+    if(FeeFound){
+        document.getElementById("SelectFees").insertBefore(new Option(field.value, field.value), document.getElementById("SelectFees").firstChild);
+    }
+
+}
+
+
+/*function SendInput(field, dataType, holder){
     ValidateInput(field, dataType, holder);
     var GrandTotal = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
     if(!($(holder).hasClass('has-warning'))){
@@ -637,4 +814,4 @@ function SendInput(field, dataType, holder){
         document.getElementById("GrandTotal").innerHTML = GrandTotal;
     }
     
-}
+}*/

@@ -136,9 +136,29 @@ class ViewResortController extends Controller
     
     
     
+    /*------------------ WALK IN -----------------*/
     
+    public function ViewWalkIn(){
+        $Fees = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('a.strFeeName')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '=', 'Active']])
+                ->get();
+        
+        return view ('Walkin', compact('Fees'));
+    }
     
-    
+    //Get Fees AJAX
+    public function getFeeAmount(Request $req){
+        $FeeName = trim($req->input('SelectedFee'));
+        $FeeAmount = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('b.dblFeeAmount')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeName', '=', $FeeName]])
+                ->get();
+        
+        return response()->json($FeeAmount);
+    }
     
     
     

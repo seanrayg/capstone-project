@@ -1,6 +1,7 @@
 @extends('layout')
 
 @section('WebpageTitle')
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Walk in</title>
 @endsection
 
@@ -8,6 +9,7 @@
     <script src="/js/MainJavascript.js" type="text/javascript"></script>
     <script src="/js/Walkin.js" type="text/javascript"></script>
     <script src="/js/input-validator.js" type="text/javascript"></script>
+    
 @endsection
 
 @section('content')
@@ -59,7 +61,7 @@
 <div class="col-md-12">
     <div class="card card-nav-tabs transparent-background">
         <div class="tab-content">
-            <div class="tab-pane active" id="ReservationDate">
+            <div class="tab-pane" id="ReservationDate">
 
                 <div class="card-header" data-background-color="blue">
                     <h4 class="title">Reservation Dates</h4>
@@ -389,7 +391,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="ReservationBill">
+            <div class="tab-pane active" id="ReservationBill">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="card card-stats">
@@ -468,12 +470,21 @@
                                             <p class="paragraphText">Entrance Fee:</p> <p class="paragraphText" id="EntranceFee"></p><br>
                                             <p class="paragraphText">Total Entrance Fee:</p> <p class="paragraphText" id="TotalEntranceFee"></p><br>
                                             <small><h3 class="text-primary">Other Fees</h3></small>
+                                            <table class="table" id="tblOtherFee">
+                                                <thead class="text-primary">
+                                                    <th>Fee</th>
+                                                    <th>Amount</th>
+                                                    <th>Quantity</th>
+                                                    <th>Total</th>
+                                                    <th>Action</th>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                            </table><br><br>
                                             <div class="row">
                                                 <div class="col-xs-6">
-                                                    <div class="form-group label-floating" id="OtherFeesError">
-                                                        <label class="control-label">Other Fees</label>
-                                                        <input type="text" class="form-control" onkeyup="SendInput(this, 'double', '#OtherFeesError')" onchange="SendInput(this, 'double', '#OtherFeesError')" id="OtherFees" value = "0">
-                                                    </div>
+                                                    <button type="button" class="btn btn-success btn-sm pull-left" onclick="ShowModalAddFee()">Add Fee</button>
                                                 </div>
                                             </div>
                                             <br>
@@ -526,3 +537,91 @@
 </div>
 
 @endsection
+
+@section('modals')
+
+
+<div id="DivModalAddFee" class="modal">
+    <div class="Modal-content" style="max-width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">add</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title"><span class="close" onclick="HideModalAddFee()">X</span></h3>
+                            <h3 class="title">Add Fee</h3>
+                        </div>
+                        <div class = "row">
+                            <div class="col-md-12">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Fees</label>
+                                    <div class="selectBox">
+                                        <select id="SelectFees" onchange="FilterFee()">
+                                            @foreach($Fees as $Fee)
+                                                <option>{{$Fee->strFeeName}}</option>
+                                            @endforeach
+                                                <option>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="OtherInput" style="display: none">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group label-floating" id="FeeNameError">
+                                        <label class="control-label">Fee</label>
+                                        <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#FeeNameError')" onchange="ValidateInput(this, 'string', '#FeeNameError')" id="FeeName">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="checkbox">
+                                        <label rel="tooltip" title="Add this fee to the system for future use">
+                                            <input type="checkbox" id="CheckSaveFee">
+                                            Save this fee?
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group label-static" id="FeeAmountError">
+                                    <label class="control-label">Amount</label>
+                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#FeeAmountError')" onchange="ValidateInput(this, 'double', '#FeeAmountError')" id="FeeAmount">
+                                </div>
+                            </div>
+                        </div>
+                            
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group label-floating" id="FeeQuantityError">
+                                    <label class="control-label">Quantity</label>
+                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#FeeQuantityError')" onchange="ValidateInput(this, 'int', '#FeeQuantityError')" id="FeeQuantity">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="ErrorLabel"></p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success pull-right" onclick="AddFee()">Add Fee</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

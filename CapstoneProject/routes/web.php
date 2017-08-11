@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\Input;
 //Misc
 Route::get('/', 'ViewDashboardController@getDashboard');
 
-Route::get('/Walkin', function () {
-    return view('Walkin');
-});
+Route::get('/Walkin', 'ViewResortController@ViewWalkIn');
 
 Route::get('/Customers', 'ViewResortController@ViewCustomers');
 
@@ -266,6 +264,12 @@ Route::post('/Reservation/Downpayment', 'ReservationController@saveDownpayment')
 
 //Save Walk In
 Route::post('/Walkin/Add', 'ReservationController@addWalkIn');
+
+//get fee amount ajax
+Route::get('/Walkin/Fees', 'ViewResortController@getFeeAmount');
+
+//save new fees
+Route::post('Walkin/AddFees', 'ReservationController@addFees');
 
 
 /*------------- CHOOSE ROOMS ----------------*/
