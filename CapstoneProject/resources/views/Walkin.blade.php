@@ -61,7 +61,7 @@
 <div class="col-md-12">
     <div class="card card-nav-tabs transparent-background">
         <div class="tab-content">
-            <div class="tab-pane" id="ReservationDate">
+            <div class="tab-pane active" id="ReservationDate">
 
                 <div class="card-header" data-background-color="blue">
                     <h4 class="title">Reservation Dates</h4>
@@ -391,7 +391,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane active" id="ReservationBill">
+            <div class="tab-pane" id="ReservationBill">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="card card-stats">
@@ -505,7 +505,9 @@
                 </div>
                 
                 <button type="button" class="btn btn-info pull-left" onclick="GoBack('#ReservationBill', '#ReservationInfo', '#BillList', 'InfoList')">Back</button>
-                <form onsubmit="return SaveReservation()" method="post" action="/Walkin/Add">
+                <button type="button" class="btn btn-success pull-right" onclick="ShowModalPaymentChoice()">Proceed</button>
+                
+                <form method="post" action="/Walkin/Add" id="WalkInForm">
                     {{ csrf_field() }}
                     <input type="hidden" name="s-CheckInDate" id="s-CheckInDate" value = "">
                     <input type="hidden" name="s-CheckOutDate" id="s-CheckOutDate" value = "">
@@ -522,11 +524,14 @@
                     <input type="hidden" name="s-DateOfBirth" id="s-DateOfBirth" value = "">
                     <input type="hidden" name="s-Gender" id="s-Gender" value = "">
                     <input type="hidden" name="s-Remarks" id="s-Remarks" value = "">
-                    <button type="button" class="btn btn-success pull-right" onclick="ProceedToPayment()">Proceed</button>
+                    <input type="hidden" name="s-GrandTotal" id="s-GrandTotal" value = "">
+                    <input type="hidden" name="s-AmountTendered" id="s-AmountTendered" value = "">
+                    <input type="hidden" name="s-OtherFees" id="s-OtherFees" value = "">
+                    <input type="hidden" name="s-AddFees" id="s-AddFees" value = "">
                 </form>
                 
             </div>
-
+        
             
 
 
@@ -539,6 +544,34 @@
 @endsection
 
 @section('modals')
+
+<div id="DivModalPaymentChoice" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">pages</i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="title">Pay now?</h3>
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <button type="button" class="btn btn-success pull-left" onclick="ProcessPayment()">Yes, Pay now.</button>
+                            </div>
+                            <div class="col-md-5">
+                                <button type="button" class="btn btn-success pull-right" onclick="SaveTransaction()">Pay at Checkout</button>
+                            </div>
+                            <div class="col-md-1"></div>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div id="DivModalAddFee" class="modal">
@@ -619,6 +652,53 @@
                         <button type="button" class="btn btn-success pull-right" onclick="AddFee()">Add Fee</button>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalPayNow" class="modal">
+    <div class="Modal-content" style="max-width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">add</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title"><span class="close" onclick="HideModalPayNow()">X</span></h3>
+                            <h3 class="title">Payment</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11">
+                            <h5 class="paragraphText">Grand Total:</h5> <h5 class="paragraphText" id="p-GrandTotal"></h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <h5 class="paragraphText" style="margin-top: 30px">Amount Tendered:</h5><br>
+                        </div>
+                        <div class="col-xs-5">
+                            <div class="form-group label-floating" id="AmountTenderedError">
+                                <input type="text" class="form-control" onkeyup="SendInput(this, 'double', '#AmountTenderedError')" onchange="SendInput(this, 'double', '#AmountTenderedError')" id="AmountTendered" value = "0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11">
+                            <h5 class="paragraphText">Change:</h5> <h5 class="paragraphText" id="Change">0</h5><br>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-success pull-right" onclick="SaveReservation()">Continue</button>
                 </div>
             </div>
         </div>

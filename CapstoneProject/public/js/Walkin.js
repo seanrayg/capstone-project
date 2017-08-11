@@ -6,8 +6,9 @@ var RemovedRows = "";
 var SelectedRooms = "";
 var ChosenRoomsData = "";
 var tempTotal = 0;
+var FeeIndex;
 var RemovedFees = [];
-
+var Fees = []; // object of fees
 
 //Modal Controller
 
@@ -18,6 +19,22 @@ function ShowModalAddFee(){
 
 function HideModalAddFee(){
     document.getElementById("DivModalAddFee").style.display = "none";
+}
+
+function ShowModalPaymentChoice(){
+    document.getElementById("DivModalPaymentChoice").style.display = "block";
+}
+
+function HideModalPaymentChoice(){
+    document.getElementById("DivModalPaymentChoice").style.display = "none";
+}
+
+function ShowModalPayNow(){
+    document.getElementById("DivModalPayNow").style.display = "block";
+}
+
+function HideModalPayNow(){
+    document.getElementById("DivModalPayNow").style.display = "none";
 }
 
 //MISC
@@ -76,34 +93,53 @@ function GoBack(OldHolder, NewHolder, OldList, NewList){
 
 function SaveReservation(){
     //Get data from tables
-    var pacRooms = document.getElementById('tblChosenRooms'), cellsRooms = pacRooms.getElementsByTagName('td');
-    var pacRoomsCells = (document.getElementById('tblChosenRooms').getElementsByTagName("tr").length - 1) * 4;
+    if(document.getElementById("Change").innerHTML != "Insufficient Payment"){
+        var pacRooms = document.getElementById('tblChosenRooms'), cellsRooms = pacRooms.getElementsByTagName('td');
+        var pacRoomsCells = (document.getElementById('tblChosenRooms').getElementsByTagName("tr").length - 1) * 4;
 
-    var ChosenRooms = "";
-    for(var i = 0; i < pacRoomsCells; i += 4){             
-      ChosenRooms += cellsRooms[i].innerHTML + "-" + cellsRooms[i + 1].innerHTML + "-" + cellsRooms[i + 2].innerHTML  + "-" + cellsRooms[i + 3].innerHTML;  
-      if(!(i == (pacRoomsCells - 4))){                  
-          ChosenRooms += ",";                  
-      }          
+        var ChosenRooms = "";
+        for(var i = 0; i < pacRoomsCells; i += 4){             
+          ChosenRooms += cellsRooms[i].innerHTML + "-" + cellsRooms[i + 1].innerHTML + "-" + cellsRooms[i + 2].innerHTML  + "-" + cellsRooms[i + 3].innerHTML;  
+          if(!(i == (pacRoomsCells - 4))){                  
+              ChosenRooms += ",";                  
+          }     
+        }
+            
+        var pacFees = document.getElementById('tblOtherFee'), cellsFees = pacFees.getElementsByTagName('td');
+        var pacFeesCells = (document.getElementById('tblOtherFee').getElementsByTagName("tr").length - 1) * 5;
+
+        var ChosenFees = "";
+        for(var i = 0; i < pacFeesCells; i += 5){             
+          ChosenFees += cellsFees[i].innerHTML + "-" + cellsFees[i + 1].innerHTML + "-" + cellsFees[i + 2].innerHTML  + "-" + cellsFees[i + 3].innerHTML;  
+          if(!(i == (pacFeesCells - 5))){                  
+              ChosenFees += ",";                  
+          }          
+        }
+   
+        
+        document.getElementById("s-CheckInDate").value = document.getElementById("CheckInDate").value;
+        document.getElementById("s-CheckOutDate").value = document.getElementById("CheckOutDate").value;
+        document.getElementById("s-NoOfAdults").value = document.getElementById("NoOfAdults").value;
+        document.getElementById("s-NoOfKids").value = document.getElementById("NoOfKids").value;
+        document.getElementById("s-ChosenRooms").value = ChosenRooms;
+        document.getElementById("s-FirstName").value = document.getElementById("FirstName").value;
+        document.getElementById("s-MiddleName").value = document.getElementById("MiddleName").value;
+        document.getElementById("s-LastName").value = document.getElementById("LastName").value;
+        document.getElementById("s-Address").value = document.getElementById("Address").value;
+        document.getElementById("s-Contact").value = document.getElementById("ContactNumber").value;
+        document.getElementById("s-Email").value = document.getElementById("Email").value;
+        document.getElementById("s-Nationality").value = document.getElementById("Nationality").value;
+        document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
+        document.getElementById("s-Gender").value = document.getElementById("Gender").value;
+        document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
+        document.getElementById("s-OtherFees").value = ChosenFees;
+        document.getElementById("s-AddFees").value = JSON.stringify(Fees);
+        document.getElementById("s-GrandTotal").value = document.getElementById("p-GrandTotal").innerHTML;
+        document.getElementById("s-AmountTendered").value = document.getElementById("AmountTendered").value;
+
+        document.getElementById("WalkInForm").submit();
     }
     
-    document.getElementById("s-CheckInDate").value = document.getElementById("CheckInDate").value;
-    document.getElementById("s-CheckOutDate").value = document.getElementById("CheckOutDate").value;
-    document.getElementById("s-NoOfAdults").value = document.getElementById("NoOfAdults").value;
-    document.getElementById("s-NoOfKids").value = document.getElementById("NoOfKids").value;
-    document.getElementById("s-ChosenRooms").value = ChosenRooms;
-    document.getElementById("s-FirstName").value = document.getElementById("FirstName").value;
-    document.getElementById("s-MiddleName").value = document.getElementById("MiddleName").value;
-    document.getElementById("s-LastName").value = document.getElementById("LastName").value;
-    document.getElementById("s-Address").value = document.getElementById("Address").value;
-    document.getElementById("s-Contact").value = document.getElementById("ContactNumber").value;
-    document.getElementById("s-Email").value = document.getElementById("Email").value;
-    document.getElementById("s-Nationality").value = document.getElementById("Nationality").value;
-    document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
-    document.getElementById("s-Gender").value = document.getElementById("Gender").value;
-    document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
-    
-    return true;
 }
 
 /*------- Date Tab Controller ------*/
@@ -673,6 +709,14 @@ function getFeeAmount(){
     });   
 }
 
+$(document).ready(function(){
+        $('#tblOtherFee').on('click', 'tbody tr', function(){
+            FeeIndex = $(this).index();
+            RemoveFee($(this).find("td:first-child").text(), $(this).find("td:nth-child(4)").text());
+        });
+
+    });
+
 function AddFee(){
     var SelectedFee = document.getElementById("SelectFees").value;
     var EmptyError = false;
@@ -739,7 +783,7 @@ function AddFee(){
                 newCell2.innerHTML = FeeAmount;
                 newCell3.innerHTML = FeeQuantity;
                 newCell4.innerHTML = parseInt(FeeAmount) * parseInt(FeeQuantity);
-                newCell5.innerHTML = "<button type='button' rel='tooltip' title='Remove' class='btn btn-danger btn-simple btn-xs' value='" +newCell1.innerHTML+ "' onclick='RemoveFee(this)'><i class='material-icons'>close</i></button>";
+                newCell5.innerHTML = "<button type='button' rel='tooltip' title='Remove' class='btn btn-danger btn-simple btn-xs btn-remove' value='" +newCell1.innerHTML+ "'><i class='material-icons'>close</i></button>";
                 
                 var TotalMiscellaneousFee = parseInt(document.getElementById("TotalMiscellaneousFee").innerHTML);
                 TotalMiscellaneousFee = parseInt(TotalMiscellaneousFee) + parseInt(FeeAmount) * parseInt(FeeQuantity);
@@ -749,23 +793,10 @@ function AddFee(){
                 document.getElementById("GrandTotal").innerHTML = GrandTotal;
 
                 if(SelectedFee == "Other"){
-                    if(document.getElementById("CheckSaveFee").checked){
-
-                        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                        $.ajax({
-                            url: '/Walkin/AddFees',
-                            type: 'POST',
-                            data: {_token: CSRF_TOKEN,
-                                   FeeName: FeeName,
-                                   FeeAmount: FeeAmount},
-                            success: function (data) {
-                                
-                            },
-                            error:function(response){
-                                console.log(response);
-                                alert("error");
-                            }
-                        });
+                    if(document.getElementById("CheckSaveFee").checked){            
+                        Fees.push({
+                            FeeName: FeeName,
+                            FeeAmount: FeeAmount});
                     }    
                 }
 
@@ -782,36 +813,50 @@ function AddFee(){
     }
 }
 
-function RemoveFee(field){
-    $(document).on('click', 'button', function () {
-         var indexRow = this.parentNode.parentNode.rowIndex;
-         document.getElementById("tblOtherFee").deleteRow(indexRow);
-     });
+function RemoveFee(field, deductAmount){
     var FeeFound = false;
     for(var x = 0; x < RemovedFees.length; x++){
-        if(RemovedFees[x] == field.value){
+        if(RemovedFees[x] == field){
             FeeFound = true;
             break;
         }
     }
     
     if(FeeFound){
-        document.getElementById("SelectFees").insertBefore(new Option(field.value, field.value), document.getElementById("SelectFees").firstChild);
+        document.getElementById("SelectFees").insertBefore(new Option(field, field), document.getElementById("SelectFees").firstChild);
     }
+    
+    var TotalMiscellaneousFee = parseInt(document.getElementById("TotalMiscellaneousFee").innerHTML);
+    TotalMiscellaneousFee = parseInt(TotalMiscellaneousFee) - parseInt(deductAmount);
+    document.getElementById("TotalMiscellaneousFee").innerHTML = TotalMiscellaneousFee;
+    var GrandTotal = parseInt(document.getElementById("GrandTotal").innerHTML);
+    GrandTotal -= parseInt(deductAmount);
+    document.getElementById("GrandTotal").innerHTML = GrandTotal;
+    
+    document.getElementById("tblOtherFee").deleteRow(FeeIndex+1);
 
 }
 
+function ProcessPayment(){
+    HideModalPaymentChoice();
+    ShowModalPayNow();
+    document.getElementById("p-GrandTotal").innerHTML = document.getElementById("GrandTotal").innerHTML;
+}
 
-/*function SendInput(field, dataType, holder){
+
+function SendInput(field, dataType, holder){
     ValidateInput(field, dataType, holder);
-    var GrandTotal = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
+    var GrandTotal = document.getElementById("p-GrandTotal").innerHTML;
     if(!($(holder).hasClass('has-warning'))){
         var tempValue = parseInt(field.value);
-        var NewGrandTotal = GrandTotal + tempValue;
-        document.getElementById("GrandTotal").innerHTML = NewGrandTotal;
-    }
-    else{
-        document.getElementById("GrandTotal").innerHTML = GrandTotal;
+        var Change = tempValue - GrandTotal;
+        if(Change < 0){
+            document.getElementById("Change").innerHTML = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("Change").innerHTML = Change;
+        }
+        
     }
     
-}*/
+}

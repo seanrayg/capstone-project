@@ -595,6 +595,7 @@ class ReservationController extends Controller
     /*----------------- WALK IN -------------------*/
     
     public function addWalkIn(Request $req){
+        dd(Input::all());
         // Prepares data to be saved
         $tempCheckInDate = trim($req->input('s-CheckInDate'));
         $tempCheckOutDate = trim($req->input('s-CheckOutDate'));

@@ -154,7 +154,7 @@ class ViewResortController extends Controller
         $FeeAmount = DB::table('tblFee as a')
                 ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
                 ->select('b.dblFeeAmount')
-                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeName', '=', $FeeName]])
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeName', '=', $FeeName], ['a.strFeeStatus', '=', 'Active']])
                 ->get();
         
         return response()->json($FeeAmount);
