@@ -172,8 +172,8 @@ class ReservationController extends Controller
         
         DB::table('tblReservationDetail')->insert($ReservationData);
         
-        
-        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID);
+        $PaymentStatus = 0;
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
         
         //Save Reserved Boats
         if($BoatsUsed != null){
@@ -306,8 +306,9 @@ class ReservationController extends Controller
         $BoatsUsed = trim($req->input('r-BoatsUsed'));
         $PickUpTime = trim($req->input('r-PickUpTime'));
         
+        $PaymentStatus = 0;
         DB::table('tblreservationroom')->where('strResRReservationID', '=', $ReservationID)->delete();
-        $this->saveReservedRooms($ChosenRooms, $tempCheckInDate, $tempCheckOutDate, $ReservationID);
+        $this->saveReservedRooms($ChosenRooms, $tempCheckInDate, $tempCheckOutDate, $ReservationID, $PaymentStatus);
         
         if($NoOfKids != null && $NoOfKids != null){
             $updateData = array("intResDNoOfAdults" => $NoOfAdults, 
@@ -428,7 +429,7 @@ class ReservationController extends Controller
         
     }
     
-    public function saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID){
+    public function saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus){
         //Prepares Room Data
         $IndividualRooms = explode(',',$ChosenRooms);
         $IndividualRoomsLength = sizeof($IndividualRooms);
@@ -471,7 +472,8 @@ class ReservationController extends Controller
                    for($z = 0; $z <= $AvailableRoomsArrayLength; $z++){
                         if($z != $IndividualRoomsInfo[3]){
                             $InsertRoomsData = array('strResRReservationID'=>$ReservationID,
-                                                     'strResRRoomID'=>$AvailableRoomsArray[$z]);
+                                                     'strResRRoomID'=>$AvailableRoomsArray[$z],
+                                                     'intResRPayment'=>$PaymentStatus);
                             DB::table('tblReservationRoom')->insert($InsertRoomsData);
                         }
                         else{
@@ -564,7 +566,8 @@ class ReservationController extends Controller
             }
 
             $InsertBoatData = array('strResBReservationID'=>$ReservationID,
-                                    'strResBBoatID'=>$temp);
+                                    'strResBBoatID'=>$temp,
+                                    'intResBPayment'=> '0');
 
             DB::table('tblReservationBoat')->insert($InsertBoatData);
 
@@ -595,7 +598,6 @@ class ReservationController extends Controller
     /*----------------- WALK IN -------------------*/
     
     public function addWalkIn(Request $req){
-        dd(Input::all());
         // Prepares data to be saved
         $tempCheckInDate = trim($req->input('s-CheckInDate'));
         $tempCheckOutDate = trim($req->input('s-CheckOutDate'));
@@ -610,6 +612,15 @@ class ReservationController extends Controller
         $Contact = trim($req->input('s-Contact'));
         $Nationality = trim($req->input('s-Nationality'));
         $tempDateOfBirth = trim($req->input('s-DateOfBirth'));
+        $GrandTotal = trim($req->input('s-GrandTotal'));
+        $AmountTendered = trim($req->input('s-AmountTendered'));
+        $OtherFees = trim($req->input('s-OtherFees'));
+        $AddFees = json_decode($req->input('s-AddFees'));
+        
+        $PaymentStatus = 0;
+        if($AmountTendered != null){
+            $PaymentStatus = 1;
+        }
 
         $tempDateOfBirth2 = explode('/', $tempDateOfBirth);
         $tempCheckInDate2 = explode('/', $tempCheckInDate);
@@ -707,13 +718,63 @@ class ReservationController extends Controller
         
         DB::table('tblReservationDetail')->insert($ReservationData);   
         
-        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID);
+        //saves reserved rooms
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
 
+        
+        //saves payment
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$GrandTotal,
+                              'strPayTypeID'=> 1,
+                              'dtePayDate'=>$DateBooked->toDateString());
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        $TransactionData2 = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$GrandTotal,
+                              'strPayTypeID'=> 3,
+                              'dtePayDate'=>$DateBooked->toDateString());
+        
+        DB::table('tblPayment')->insert($TransactionData2);
+        
+        
+        //save Fees
+        if(sizeof($AddFees) != 0){
+            foreach($AddFees as $Fee){
+                $FeeName = $Fee->FeeName;
+                $FeeAmount = $Fee->FeeAmount;
+                $this->saveFees($FeeName, $FeeAmount);
+            }
+        }
+        
+        $arrOtherFees = explode(',', $OtherFees);
+
+        for($x = 0; $x < sizeof($arrOtherFees); $x++){
+            $arrFee = explode('-', $arrOtherFees[$x]);
+            $FeeID = DB::table('tblFee')->where([['strFeeStatus', 'Active'],['strFeeName', $arrFee[0]]])->orderBy('strFeeID')->pluck('strFeeID');
+            if(sizeof($FeeID) != 0){
+                $this->addFees($FeeID[0], $arrFee[2], $PaymentStatus, $ReservationID);
+            }
+            
+        }
+        
         \Session::flash('flash_message','Booked successfully!');
         \Session::flash('ReservationID', $ReservationID);
         return redirect('/ChooseRooms/'.$ReservationID);
     }
     
+    //Edit rooms
     public function saveChosenRooms(Request $req){
         $ReservationID = trim($req->input('s-ReservationID'));
         $ChosenRooms = json_decode(trim($req->input('s-ChosenRooms')));
@@ -739,7 +800,8 @@ class ReservationController extends Controller
         
         for($x = 0; $x < count($arrChosenRooms); $x++){
             $data = array('strResRReservationID'=>$ReservationID,
-                     'strResRRoomID'=>$arrChosenRooms[$x]);
+                          'strResRRoomID'=>$arrChosenRooms[$x],
+                          'intResRPayment' => 1);
         
             DB::table('tblReservationRoom')->insert($data);
         }
@@ -748,9 +810,8 @@ class ReservationController extends Controller
          return redirect('/Rooms');
     }
     
-    public function addFees(Request $req){
-        $FeeName = trim($req->input('FeeName'));
-        $FeeAmount = trim($req->input('FeeAmount'));
+    //saves new fees to the database
+    public function saveFees($FeeName, $FeeAmount){
         $FeeID = $this->SmartCounter('tblFee', 'strFeeID');
         $DateCreated = Carbon::now();
         
@@ -794,6 +855,18 @@ class ReservationController extends Controller
 
             DB::table('tblFeeAmount')->insert($dataAmount);
         }
+    }
+    
+    //add fees to customer's bill
+    public function addFees($FeeID, $FeeQuantity, $PaymentStatus, $ReservationID){
+        
+        $data = array('strResFReservationID'=>$ReservationID,
+                     'strResFFeeID'=>$FeeID,
+                     'intResFPayment'=>$PaymentStatus,
+                     'intResFQuantity'=>$FeeQuantity);
+
+        DB::table('tblReservationFee')->insert($data);
+
     }
     
 

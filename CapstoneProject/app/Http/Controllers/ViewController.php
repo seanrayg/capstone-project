@@ -68,8 +68,14 @@ class ViewController extends Controller
                 $Cottage->intRoomTCategory = 'Cottage';
             }
         }
-
-        $RoomTypeID = $this->SmartCounter('tblRoomType', 'strRoomTypeID');
+        
+        if((sizeof($RoomTypes) == 0) && (sizeof($CottageTypes) == 0)){
+            $RoomTypeID = "ACMT1";
+        }
+        else{
+            $RoomTypeID = $this->SmartCounter('tblRoomType', 'strRoomTypeID');
+        }
+        
         return view('Maintenance.RoomTypeMaintenance', compact('RoomTypes', 'RoomTypeID', 'CottageTypes'));
     }
       
@@ -93,8 +99,13 @@ class ViewController extends Controller
             ->where([['a.strRoomStatus', '!=', 'deleted'],['b.intRoomTCategory', '=', '0']])
             ->orderBy('a.tmsCreated', 'desc')
             ->get();
- 
-        $RoomID = $this->SmartCounter('tblRoom', 'strRoomID');
+    
+        if((sizeof($Rooms) == 0) && (sizeof($Cottages) == 0)){
+            $RoomID = "RMCT1";
+        }
+        else{
+            $RoomID = $this->SmartCounter('tblRoom', 'strRoomID');
+        }
     
         return view('Maintenance.RoomMaintenance', compact('Rooms', 'RoomID', 'Cottages'));
     }
@@ -115,7 +126,12 @@ class ViewController extends Controller
                 })
                 ->get();   
         
-        $BoatID = $this->SmartCounter('tblBoat', 'strBoatID');
+        if(sizeof($Boats) != 0){
+            $BoatID = $this->SmartCounter('tblBoat', 'strBoatID');
+        }
+        else{
+            $BoatID = "BOAT1";
+        }
 
         return view('Maintenance.BoatMaintenance', compact('Boats', 'BoatID'));
     }
@@ -131,8 +147,13 @@ class ViewController extends Controller
                 ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],
                         ['a.intItemDeleted',"=", "1"]])
                 ->get();   
-    
-        $ItemID = $this->SmartCounter('tblItem', 'strItemID');
+        
+        if(sizeof($Items) != 0){
+            $ItemID = $this->SmartCounter('tblItem', 'strItemID');
+        }
+        else{
+            $ItemID = "ITEM1";
+        }
         
         return view('Maintenance.ItemMaintenance', compact('Items', 'ItemID'));
     }
@@ -153,8 +174,6 @@ class ViewController extends Controller
                 })
                 ->get();
 
-
-    
         foreach ($Activities as $Activity) {
 
             if($Activity->intBeachABoat == '1'){
@@ -166,7 +185,13 @@ class ViewController extends Controller
 
         }
         
-        $ActivityID = $this->SmartCounter('tblBeachActivity', 'strBeachActivityID');
+        if(sizeof($Activities) != 0){
+            $ActivityID = $this->SmartCounter('tblBeachActivity', 'strBeachActivityID');
+        }
+        else{
+            $ActivityID = "ACTV1";
+        }
+    
 
         return view('Maintenance.ActivityMaintenance', compact('Activities', 'ActivityID'));
     }
@@ -176,22 +201,7 @@ class ViewController extends Controller
     }
     
     public function ViewOperations(){
-        $Fees = DB::table('tblFee as a')
-                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
-                ->select('a.strFeeID',
-                         'a.strFeeName',
-                         'a.strFeeStatus',
-                         'b.dblFeeAmount',
-                         'a.strFeeDescription')
-                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '!=', 'deleted']])
-                ->get();
-
-
-
-        
-        $FeeID = $this->SmartCounter('tblFee', 'strFeeID');
-        
-        return view('Maintenance.OperationsMaintenance', compact('Fees', 'FeeID'));
+        return view('Maintenance.OperationsMaintenance');
     }
         
     public function ViewPackages(){
@@ -213,8 +223,13 @@ class ViewController extends Controller
                          'a.strFeeDescription')
                 ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '!=', 'deleted']])
                 ->get();
-
-        $FeeID = $this->SmartCounter('tblFee', 'strFeeID');
+        
+        if(sizeof($Fees) != 0){
+            $FeeID = $this->SmartCounter('tblFee', 'strFeeID');
+        }
+        else{
+            $FeeID = "FEE1";
+        }
         
         return view('Maintenance.FeeMaintenance', compact('Fees', 'FeeID'));
     }
