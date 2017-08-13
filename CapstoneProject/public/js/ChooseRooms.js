@@ -1,4 +1,4 @@
-var ReservationID = "";
+var ReservationID = "RESV2";
 var ChosenRoomType = "";
 var ChosenRoom = "";
 var ChosenRowIndex;
@@ -81,7 +81,7 @@ function HideModalReplaceRoom(){
 
 
 window.onload = function(){
-    ReservationID = document.getElementById("ReservationID").value;
+    //ReservationID = document.getElementById("ReservationID").value;
     var arrRoomType = [];
     var temp = "";
     //Remove all existing options

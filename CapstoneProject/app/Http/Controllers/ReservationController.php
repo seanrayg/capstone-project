@@ -598,6 +598,7 @@ class ReservationController extends Controller
     /*----------------- WALK IN -------------------*/
     
     public function addWalkIn(Request $req){
+
         // Prepares data to be saved
         $tempCheckInDate = trim($req->input('s-CheckInDate'));
         $tempCheckOutDate = trim($req->input('s-CheckOutDate'));
@@ -739,15 +740,16 @@ class ReservationController extends Controller
         
         DB::table('tblPayment')->insert($TransactionData);
         
-        $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
-        $TransactionData2 = array('strPaymentID'=>$PaymentID,
-                              'strPayReservationID'=>$ReservationID,
-                              'dblPayAmount'=>$GrandTotal,
-                              'strPayTypeID'=> 3,
-                              'dtePayDate'=>$DateBooked->toDateString());
+        if($PaymentStatus == 1){
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+            $TransactionData2 = array('strPaymentID'=>$PaymentID,
+                                  'strPayReservationID'=>$ReservationID,
+                                  'dblPayAmount'=>$GrandTotal,
+                                  'strPayTypeID'=> 3,
+                                  'dtePayDate'=>$DateBooked->toDateString());
         
-        DB::table('tblPayment')->insert($TransactionData2);
-        
+            DB::table('tblPayment')->insert($TransactionData2);
+        }
         
         //save Fees
         if(sizeof($AddFees) != 0){
@@ -796,14 +798,26 @@ class ReservationController extends Controller
             $arrChosenRooms[$x] = str_replace(']', '', $arrChosenRooms[$x]);
         }
         
-        DB::table('tblReservationRoom')->where('strResRReservationID', '=', $ReservationID)->delete();
+        $AvailedRooms = DB::table('tblReservationRoom')->where('strResRReservationID', $ReservationID)->orderBy('strResRRoomID')->pluck('strResRRoomID')->toArray();
+        $roomFound = false;
+   
+        //get the difference between two arrays
+        $NewRooms = array_diff($arrChosenRooms, $AvailedRooms);
+        $OldRooms = array_diff($AvailedRooms, $arrChosenRooms);
+
+        //reset keys of array
+        $NewRooms = array_values($NewRooms);
+        $OldRooms = array_values($OldRooms);
+
+        //saves array data
+        for($x = 0; $x < count($NewRooms); $x++){
         
-        for($x = 0; $x < count($arrChosenRooms); $x++){
-            $data = array('strResRReservationID'=>$ReservationID,
-                          'strResRRoomID'=>$arrChosenRooms[$x],
-                          'intResRPayment' => 1);
+            $data = array("strResRRoomID" => $NewRooms[$x]);  
+            
+            DB::table('tblReservationRoom')
+            ->where([['strResRRoomID', $OldRooms[$x]], ['strResRReservationID', $ReservationID]])
+            ->update($data);
         
-            DB::table('tblReservationRoom')->insert($data);
         }
         
         \Session::flash('flash_message','Saved successfully!');
