@@ -96,7 +96,7 @@ function LoginCheckCode(){
             success: function(data) {
                 if(data == 1){
 
-                    //Redirect here
+                    //Redirect here to Customer Reservation
                     alert('code matched');
 
                 }else if(data == 2){
