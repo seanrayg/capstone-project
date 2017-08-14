@@ -1,6 +1,5 @@
 var DatesInfo = [];
 
-
 //Date Modals
 function ShowModalAddDate(){
     document.getElementById("DivModalAddDate").style.display = "block";
@@ -8,7 +7,8 @@ function ShowModalAddDate(){
 function HideModalAddDate(){
     document.getElementById("DivModalAddDate").style.display = "none";
 }
-function ShowModalEditDate(){     
+function ShowModalEditDate(){
+
     document.getElementById("DivModalEditDate").style.display = "block";
 }
 function HideModalEditDate(){
@@ -21,25 +21,6 @@ function HideModalDeleteDate(){
     document.getElementById("DivModalDeleteDate").style.display = "none";
 }
 
-//Contact Modals
-function ShowModalAddContact(){
-    document.getElementById("DivModalAddContact").style.display = "block";
-}
-function HideModalAddContact(){
-    document.getElementById("DivModalAddContact").style.display = "none";
-}
-function ShowModalEditContact(){     
-    document.getElementById("DivModalEditContact").style.display = "block";
-}
-function HideModalEditContact(){
-    document.getElementById("DivModalEditContact").style.display = "none";
-}
-function ShowModalDeleteContact(){
-    document.getElementById("DivModalDeleteContact").style.display = "block";
-}
-function HideModalDeleteContact(){
-    document.getElementById("DivModalDeleteContact").style.display = "none";
-}
 
 
 // Table Function
@@ -58,6 +39,8 @@ function run(event){
     }
 
     DatesInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML];
+    
+    FillData();
 
 }
 
@@ -81,7 +64,7 @@ $( document ).ready(function() {
             } 
             var EndDate = document.getElementById("EndDate").value;
             if(StartDate != "" && EndDate != ""){
-                CheckDates(StartDate, EndDate);
+                CheckDates(StartDate, EndDate, 'add');
             }
         }
         
@@ -105,23 +88,80 @@ $( document ).ready(function() {
             } 
             var StartDate = document.getElementById("StartDate").value;
             if(StartDate != "" && EndDate != ""){
-                CheckDates(StartDate, EndDate);
+                CheckDates(StartDate, EndDate, 'add');
+            }
+        }
+    }).data('datepicker');
+    
+    $('#EditStartDate').on('changeDate', function(ev) {
+        var StartDate = document.getElementById("EditStartDate").value;
+        var PastError = DateChecker(StartDate);
+        if(PastError){
+            $('#EditStartDateError').addClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Invalid Date";
+            } 
+        }
+        else{
+            $('#EditStartDateError').removeClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="";
+            } 
+            var EndDate = document.getElementById("EditEndDate").value;
+            if(StartDate != "" && EndDate != ""){
+                CheckDates(StartDate, EndDate, 'edit');
+            }
+        }
+        
+    }).data('datepicker');
+
+    $('#EditEndDate').on('changeDate', function(ev) {
+        var EndDate = document.getElementById("EditEndDate").value;
+        var PastError = DateChecker(EndDate);
+        if(PastError){
+            $('#EditEndDateError').addClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Invalid Date";
+            } 
+        }
+        else{
+            $('#EditEndDateError').removeClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="";
+            } 
+            var StartDate = document.getElementById("EditStartDate").value;
+            if(StartDate != "" && EndDate != ""){
+                CheckDates(StartDate, EndDate, 'edit');
             }
         }
     }).data('datepicker');
 });
 
 
-function CheckDates(StartDate, EndDate){
+function CheckDates(StartDate, EndDate, sender){
     if(StartDate <= EndDate){
-        $('#EndDateError').removeClass("has-warning");
+        if(sender == "add"){
+            $('#EndDateError').removeClass("has-warning");
+        }
+        else{
+            $('#EditEndDateError').removeClass("has-warning");
+        }
         var x = document.getElementsByClassName("ErrorLabel");
         for(var i = 0; i < x.length; i++){
             x[i].innerText="";
         } 
     }
     else{
-        $('#EndDateError').addClass("has-warning");
+        if(sender == "add"){
+            $('#EndDateError').addClass("has-warning");
+        }
+        else{
+            $('#EditEndDateError').addClass("has-warning");
+        }
         var x = document.getElementsByClassName("ErrorLabel");
         for(var i = 0; i < x.length; i++){
             x[i].innerText="Invalid Date!";
@@ -137,4 +177,21 @@ function DateChecker(selectedDate){
        return true;
     }
     return false;
+}
+
+//fills inputs on edit modal
+function FillData(){
+    document.getElementById("OldDateID").value = DatesInfo[0];
+    document.getElementById("OldDateName").value = DatesInfo[1];
+    document.getElementById("EditDateID").value = DatesInfo[0];
+    document.getElementById("EditDateName").value = DatesInfo[1];
+    document.getElementById("EditStartDate").value = DatesInfo[6];
+    document.getElementById("EditEndDate").value = DatesInfo[7];
+    document.getElementById("EditDateStatus").value = DatesInfo[4];
+    document.getElementById("EditDateDescription").value = DatesInfo[5];
+    
+    document.getElementById("DeleteDateID").value = DatesInfo[0];
+    
+    $('#EditStartDate').datepicker('setValue', DatesInfo[6]);
+    $('#EditEndDate').datepicker('setValue', DatesInfo[7]);
 }

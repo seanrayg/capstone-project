@@ -178,6 +178,10 @@ Route::post('/Maintenance/Package/Edit', 'MaintenanceController@checkPackage');
 
 Route::post('/Maintenance/Fee/Edit', 'MaintenanceController@checkFee');
 
+//Edit Dates
+
+Route::post('Maintenance/Operation/Edit', 'MaintenanceController@checkOperation');
+
 
 
 //DELETE
@@ -211,7 +215,9 @@ Route::post('/Maintenance/Package/Delete', 'MaintenanceController@deletePackage'
 
 Route::post('/Maintenance/Fee/Delete', 'MaintenanceController@deleteFee');
 
+//Delete Date
 
+Route::post('Maintenance/Operation/Delete', 'MaintenanceController@deleteOperation');
 
 /*----------- RESERVATION -------------*/
 
@@ -242,9 +248,7 @@ Route::get('/Reservation/Info/Dates', 'ViewController@checkReservedRoomBoat');
 //Reservations
 Route::get('/Reservations', 'ViewController@ViewReservations');
 
-Route::get('/BookReservations', function () {
-    return view('BookReservations');
-});
+Route::get('/BookReservations', 'ViewController@ViewBookReservations');
 
 Route::get('/EditReservations/{id}', 'ViewController@ViewEditReservation');
 

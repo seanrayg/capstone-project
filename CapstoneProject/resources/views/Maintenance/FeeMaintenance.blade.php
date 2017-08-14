@@ -5,7 +5,7 @@
 @endsection
 
 @section('scripts')
-    <script src="/js/OperationsMaintenance.js" type="text/javascript"></script>
+    <script src="/js/FeeMaintenance.js" type="text/javascript"></script>
     <script src="/js/input-validator.js" type="text/javascript"></script>
 @endsection
 

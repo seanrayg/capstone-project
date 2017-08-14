@@ -1688,6 +1688,7 @@ class MaintenanceController extends Controller
     
     //OPERATION FUNCTIONS
     
+    //add Dates
     public function storeOperation(Request $req){
         $UserInput = Input::all();
            $rules =  [
@@ -1742,6 +1743,121 @@ class MaintenanceController extends Controller
             }
     }
     
+    //Check Duplicate
+    public function checkOperation(Request $req){     
+        $OldDateID = trim($req->input('OldDateID'));
+        $OldDateName = trim($req->input('OldDateName'));
+        
+        $DateID = trim($req->input('EditDateID'));
+        $DateName = trim($req->input('EditDateName'));
+        
+        $DuplicateChecker = false;
+        $ErrorMessage;
+
+        /*Check Duplicate*/
+        
+        if(($OldDateID != $DateID) && ($OldDateName != $DateName)){
+            $DuplicateError = DB::table('tblInoperationalDate')
+                ->where([['intDateStatus', "!=", '0'], ['strDateID', $DateID], ['strDateTitle', $DateName]])->first();
+
+            if($DuplicateError){
+                $DuplicateChecker = true;
+                $ErrorMessage = "ID/Title is already taken. Please enter a new one to continue.";
+            }
+            else{
+                $DuplicateError2 = DB::table('tblInoperationalDate')
+                ->where('intDateStatus',"!=" ,'0')
+                ->where(function($query) use($DateID, $DateName){
+                    $query->where('strDateID', $DateID)
+                          ->orWhere('strDateTitle', $DateName);
+                })
+                ->first();
+                if($DuplicateError2){
+                    $DuplicateChecker = true;
+                    $ErrorMessage = "ID/Title is already taken is already taken. Please enter a new one to continue.";
+                }
+            }
+        }
+        
+        if($OldDateID != $DateID){
+            $DuplicateError = DB::table('tblInoperationalDate')
+                ->where('strDateID', $DateID)->first();
+
+            if($DuplicateError){
+                $DuplicateChecker = true;
+                $ErrorMessage = "ID is already taken. Please enter a new one to continue.";
+            }
+        }
+        
+        
+        if($OldDateName != $DateName){
+            $DuplicateError = DB::table('tblInoperationalDate')
+                ->where([['intDateStatus',"!=",'0'],['strDateTitle', $DateName]])->first();
+
+
+            if($DuplicateError){
+                $DuplicateChecker = true;
+                $ErrorMessage = "Title is already taken. Please enter a new one to continue.";
+            }
+        }
+        
+        if($DuplicateChecker){
+            \Session::flash('duplicate_message',$ErrorMessage);
+            return redirect('Maintenance/Operations')->withInput();
+        }
+        else{
+            $StartDate = trim($req->input('EditStartDate'));
+            $EndDate = trim($req->input('EditEndDate'));
+            $DateDescription = trim($req->input('EditDateDescription'));
+            $DateStatus = trim($req->input('EditDateStatus'));
+            
+            return $this->updateOperation($DateID, $DateName, $DateStatus, $StartDate, $EndDate, $DateDescription, $OldDateID);
+        }
+    }
+    
+    //update dates
+    public function updateOperation($DateID, $DateTitle, $DateStatus, $StartDate, $EndDate, $DateDescription, $OldDateID){
+        
+        if($DateStatus == "Inactive"){
+            $DateStatus = "2";
+        }
+        else{
+            $DateStatus = "1";
+        }
+        
+        if($DateDescription == null){
+            $DateDescription = "N/A";
+        }
+        
+        $updateData = array("strDateID" => $DateID, 
+                            'strDateTitle' => $DateTitle,
+                            'intDateStatus' => $DateStatus,
+                            'dteStartDate' => Carbon::parse($StartDate)->format('Y-m-d'),
+                            'dteEndDate' => Carbon::parse($EndDate)->format('Y-m-d'),
+                            'strDateDescription' => $DateDescription);   
+        
+        DB::table('tblInoperationalDate')
+            ->where('strDateID', $OldDateID)
+            ->update($updateData);
+        
+
+         \Session::flash('flash_message','Successfully updated!');
+
+          return redirect('Maintenance/Operations');
+
+    }
+    
+    //delete date
+    public function deleteOperation(Request $req){
+        $DateID = trim($req->input('DeleteDateID'));
+        DB::table('tblInoperationalDate')
+            ->where('strDateID', $DateID)
+            ->update(['intDateStatus' => '0']);
+
+        \Session::flash('flash_message','Successfully deleted!');
+
+        return redirect('Maintenance/Operations');
+    }
 }
 
 

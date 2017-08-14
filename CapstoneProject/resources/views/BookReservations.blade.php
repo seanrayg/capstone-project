@@ -66,6 +66,8 @@
                 </div>
 
                 <div class="card-content white-background">
+                    
+                    
                     <div class="row">
                         <div class="col-md-2"></div>
                         <div class="col-md-7">
@@ -141,8 +143,7 @@
                             </div>
 
                             <br>
-                            <button type="button" class="btn btn-success pull-right" onclick="CheckInputDate()">Check Availability</button>
-                            <div class="clearfix"></div>
+                            
 
                         </div>
                         <br><br>
@@ -161,6 +162,10 @@
                                     </div>
                                 </div>
                             </div>
+                        
+                            <button type="button" class="btn btn-success pull-left" onclick="ShowModalInoperationalDates()">Show Dates when resort is closed</button>
+                            <button type="button" class="btn btn-success pull-right" onclick="CheckInputDate()">Check Availability</button>
+                            <div class="clearfix"></div>
                         
                         </div>
                     </div>
@@ -705,6 +710,56 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<!-- Modal for inoperational dates -->
+
+<div id="DivModalInoperationalDates" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+
+                            <div class="card-header" data-background-color="blue">
+                                <i class="material-icons">create</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">Dates<span class="close" onclick="HideModalInoperationalDates()">X</span></h3>
+                                    <p class="category paragraphText">Dates when the resort is not accepting reservations/walkins</p>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event)" style="font-family: Roboto" id="tblInoperationalDates">
+                                <thead class="text-success">
+                                    <th>Date ID</th>
+                                    <th>Title</th>   
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Description</th>
+                                    <th style="display:none">Start Date2</th>
+                                    <th style="display:none">End Date2</th>
+                                </thead>
+                                <tbody>
+                                    @foreach($Dates as $Date)
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>{{$Date->strDateID}}</td>
+                                            <td>{{$Date->strDateTitle}}</td>
+                                            <td>{{Carbon\Carbon::parse($Date -> dteStartDate)->format('M j, Y')}}</td>
+                                            <td>{{Carbon\Carbon::parse($Date -> dteEndDate)->format('M j, Y')}}</td>
+                                            <td>{{$Date-> strDateDescription}}</td>
+                                            <td style="display: none">{{Carbon\Carbon::parse($Date -> dteStartDate)->format('m/d/Y')}}</td>
+                                            <td style="display: none">{{Carbon\Carbon::parse($Date -> dteEndDate)->format('m/d/Y')}}</td>
+                                        </tr>
+                                    @endforeach
+
+                                </tbody>
+                            </table>
+                            </div>
+
+                    </div>
+                </div>
         </div>
     </div>
 </div>

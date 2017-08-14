@@ -238,11 +238,13 @@
                                 <div class="row">
                                     <h3 class="title">Edit Date<span class="close" onclick="HideModalEditDate()">X</span></h3>
                                 </div>
-                                <form>
+                                <form id="EditDateForm" onsubmit="return CheckForm()" method="POST" action="/Maintenance/Operation/Edit">
                                     {{ csrf_field() }}
+                                    <input type="hidden" name="OldDateID" id="OldDateID" value="">
+                                    <input type="hidden" name="OldDateName" id="OldDateName" value="">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="form-group label-floating" id="EditDateIDError">
+                                            <div class="form-group label-static" id="EditDateIDError">
                                                 <label class="control-label">ID</label>
                                                 <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditDateIDError')" onchange="ValidateInput(this, 'string', '#EditDateIDError')" value="" id="EditDateID" name="EditDateID" required>
                                             </div>
@@ -250,7 +252,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="form-group label-floating" id="EditDateNameError">
+                                            <div class="form-group label-static" id="EditDateNameError">
                                                 <label class="control-label">Title</label>
                                                 <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditDateNameError')" onchange="ValidateInput(this, 'string', '#EditDateNameError')" id="EditDateName" name="EditDateName" required>
                                             </div>
@@ -261,13 +263,27 @@
                                         <div class="col-md-6">
                                             <div class="form-group label-static" id="EditStartDateError">
                                                 <label class="control-label">Start Date</label>
-                                                <input type="text" class="datepicker form-control" id="EditStartDate" required/>
+                                                <input type="text" class="datepicker form-control" name="EditStartDate" id="EditStartDate" readonly required/>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group label-static" id="EditEndDateError">
                                                 <label class="control-label">End Date</label>
-                                                <input type="text" class="datepicker form-control" id="EditEndDate" required/>
+                                                <input type="text" class="datepicker form-control" name="EditEndDate" id="EditEndDate" readonly required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class = "row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-static">
+                                                <label class="control-label">Status</label>
+                                                <div class="selectBox">
+                                                    <select name="EditDateStatus" id="EditDateStatus">
+                                                      <option>Active</option>
+                                                      <option>Inactive</option>
+                                                    </select>
+                                                  </div>
                                             </div>
                                         </div>
                                     </div>
@@ -317,7 +333,7 @@
                         <div class="card-content">
                             <p class="category"></p>
                             <h3 class="title">Delete Date?<span class="close" onclick="HideModalDeleteDate()">X</span></h3>
-                            <form>
+                            <form id="EditDateForm" method="POST" action="/Maintenance/Operation/Delete">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="DeleteDateID" id="DeleteDateID" value="">
                                 <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteDate()">Cancel</button>

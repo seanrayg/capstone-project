@@ -45,7 +45,13 @@ function HideModalNoMultipleBoats(){
     document.getElementById("DivModalNoMultipleBoats").style.display = "none";  
 }
 
+function ShowModalInoperationalDates(){
+    document.getElementById("DivModalInoperationalDates").style.display = "block";
+}
 
+function HideModalInoperationalDates(){
+    document.getElementById("DivModalInoperationalDates").style.display = "none ";
+}
 
 
 
@@ -103,13 +109,25 @@ $( document ).ready(function() {
         else{
             $('.alert').hide();
             $('#CheckInDateError').removeClass("has-warning");
-            if(document.getElementById("CheckOutDate").value.trim() != ""){
-                var CheckOutDate = new Date(document.getElementById("CheckOutDate").value);
-                var InvalidDates = CheckDates(CheckInDate, CheckOutDate);
-                if(InvalidDates){
-                    $('.alert').show();
-                    $('#CheckOutDateError').addClass("has-warning");
-                    document.getElementById("ErrorMessage").innerHTML = "Invalid Date!";
+
+            var OperationError = CheckOperationalDates(document.getElementById("CheckInDate").value);
+            if(OperationError){
+                $('.alert').show();
+                $('#CheckInDateError').addClass("has-warning");
+                document.getElementById("ErrorMessage").innerHTML = "Resort is closed on that day.";
+            }
+            else{
+                $('.alert').hide();
+                $('#CheckInDateError').removeClass("has-warning");
+                if(document.getElementById("CheckOutDate").value.trim() != ""){
+                    var CheckOutDate = new Date(document.getElementById("CheckOutDate").value);
+                    var InvalidDates = CheckDates(CheckInDate, CheckOutDate);
+                    if(InvalidDates){
+                        $('.alert').show();
+                        $('#CheckOutDateError').addClass("has-warning");
+                        document.getElementById("ErrorMessage").innerHTML = "Invalid Date!";
+                    }
+
                 }
             }
         }
@@ -127,20 +145,55 @@ $( document ).ready(function() {
         else{
             $('.alert').hide();
             $('#CheckOutDateError').removeClass("has-warning");
-            if(document.getElementById("CheckInDate").value.trim() != ""){
-                var CheckInDate = new Date(document.getElementById("CheckInDate").value);
-                var InvalidDates = CheckDates(CheckInDate, CheckOutDate);
-                if(InvalidDates){
-                    $('.alert').show();
-                    $('#CheckOutDateError').addClass("has-warning");
-                    document.getElementById("ErrorMessage").innerHTML = "Invalid Date!";
-                }
+
+            var OperationError = CheckOperationalDates(document.getElementById("CheckOutDate").value);
+            if(OperationError){
+                $('.alert').show();
+                $('#CheckOutDateError').addClass("has-warning");
+                document.getElementById("ErrorMessage").innerHTML = "Resort is closed on that day.";
             }
+            else{
+                $('.alert').hide();
+                $('#CheckOutDateError').removeClass("has-warning");
+                if(document.getElementById("CheckInDate").value.trim() != ""){
+                    var CheckInDate = new Date(document.getElementById("CheckInDate").value);
+                    var InvalidDates = CheckDates(CheckInDate, CheckOutDate);
+                    if(InvalidDates){
+                        $('.alert').show();
+                        $('#CheckOutDateError').addClass("has-warning");
+                        document.getElementById("ErrorMessage").innerHTML = "Invalid Date!";
+                    }
+                }  
+            }
+            
         }
 
 
     }).data('datepicker');
 });
+
+
+function CheckOperationalDates(selectedDate){
+    var DateFound = false;
+    $("#tblInoperationalDates tbody tr").each(function(){
+        var dateFrom = $(this).find("td:nth-child(6)").text();
+        var dateTo = $(this).find("td:nth-child(7)").text();
+        var d1 = dateFrom.split("/");
+        var d2 = dateTo.split("/");
+        var c = selectedDate.split("/");
+
+        var from = new Date(d1[2], parseInt(d1[1])-1, d1[0]);  // -1 because months are from 0 to 11
+        var to   = new Date(d2[2], parseInt(d2[1])-1, d2[0]);
+        var check = new Date(c[2], parseInt(c[1])-1, c[0]);
+        
+        if(check >= from && check <= to){
+            DateFound = true;
+            return false;
+        }
+    });
+    
+    return DateFound;
+}
 
 function DateChecker(selectedDate){
     var today = new Date();

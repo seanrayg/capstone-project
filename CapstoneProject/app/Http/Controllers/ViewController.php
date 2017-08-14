@@ -687,6 +687,15 @@ class ViewController extends Controller
         return view('Reservations', compact('FloatingReservations', 'PaidReservations'));
     }
     
+    public function ViewBookReservations(){
+        $Dates = DB::table('tblInoperationalDate')
+                ->where('intDateStatus','=','1')
+                ->get();
+        
+        
+        return View('BookReservations', compact('Dates'));
+    }
+    
     public function CancelReservation($ReservationID){
         
         $updateData = array("intResDStatus" => "3");   
