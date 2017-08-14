@@ -201,7 +201,27 @@ class ViewController extends Controller
     }
     
     public function ViewOperations(){
-        return view('Maintenance.OperationsMaintenance');
+        $Dates = DB::table('tblInoperationalDate')
+                ->where('intDateStatus','!=','0')
+                ->get();
+
+        foreach ($Dates as $Date) {
+            if($Date->intDateStatus == '1'){
+                $Date->intDateStatus = 'Active';
+            }
+            else{
+                $Date->intDateStatus= 'Inactive';
+            }
+        }
+        
+        if(sizeof($Dates) != 0){
+            $DateID = $this->SmartCounter('tblInoperationalDate', 'strDateID');
+        }
+        else{
+            $DateID = "DATE1";
+        }
+        
+        return view('Maintenance.OperationsMaintenance', compact('Dates', 'DateID'));
     }
         
     public function ViewPackages(){

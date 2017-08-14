@@ -1,26 +1,5 @@
-var FeeInfo = [];
 var DatesInfo = [];
-var ContactInfo = [];
 
-//Fee Modals
-function ShowModalAddFee(){
-    document.getElementById("DivModalAddFee").style.display = "block";
-}
-function HideModalAddFee(){
-    document.getElementById("DivModalAddFee").style.display = "none";
-}
-function ShowModalEditFee(){     
-    document.getElementById("DivModalEditFee").style.display = "block";
-}
-function HideModalEditFee(){
-    document.getElementById("DivModalEditFee").style.display = "none";
-}
-function ShowModalDeleteFee(){
-    document.getElementById("DivModalDeleteFee").style.display = "block";
-}
-function HideModalDeleteFee(){
-    document.getElementById("DivModalDeleteFee").style.display = "none";
-}
 
 //Date Modals
 function ShowModalAddDate(){
@@ -64,7 +43,7 @@ function HideModalDeleteContact(){
 
 
 // Table Function
-function run(event, sender){
+function run(event){
 
     var cells;
     event = event || window.event; 
@@ -78,31 +57,84 @@ function run(event, sender){
         return;
     }
 
-    if(sender == "Fee"){
+    DatesInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML];
 
-        FeeInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML];
-        FillFeeData();
+}
+
+//Start/End date event listener
+$( document ).ready(function() {
+    $('#StartDate').on('changeDate', function(ev) {
+        var StartDate = document.getElementById("StartDate").value;
+        var PastError = DateChecker(StartDate);
+        if(PastError){
+            $('#StartDateError').addClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Invalid Date";
+            } 
+        }
+        else{
+            $('#StartDateError').removeClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="";
+            } 
+            var EndDate = document.getElementById("EndDate").value;
+            if(StartDate != "" && EndDate != ""){
+                CheckDates(StartDate, EndDate);
+            }
+        }
+        
+    }).data('datepicker');
+
+    $('#EndDate').on('changeDate', function(ev) {
+        var EndDate = document.getElementById("EndDate").value;
+        var PastError = DateChecker(EndDate);
+        if(PastError){
+            $('#EndDateError').addClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Invalid Date";
+            } 
+        }
+        else{
+            $('#EndDateError').removeClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="";
+            } 
+            var StartDate = document.getElementById("StartDate").value;
+            if(StartDate != "" && EndDate != ""){
+                CheckDates(StartDate, EndDate);
+            }
+        }
+    }).data('datepicker');
+});
+
+
+function CheckDates(StartDate, EndDate){
+    if(StartDate <= EndDate){
+        $('#EndDateError').removeClass("has-warning");
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="";
+        } 
     }
-    if(sender == "Dates"){
-        DatesInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML];
-    }
-    if(sender == "Contact"){
-        ContactInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML];
+    else{
+        $('#EndDateError').addClass("has-warning");
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="Invalid Date!";
+        }
     }
 }
 
-//MISC
-
-function FillFeeData(){
-    document.getElementById("EditFeeID").value = FeeInfo[0];
-    document.getElementById("EditFeeName").value = FeeInfo[1];
-    document.getElementById("EditFeeAmount").value = FeeInfo[3];
-    document.getElementById("EditFeeStatus").value = FeeInfo[2];
-    document.getElementById("EditFeeDescription").value = FeeInfo[4];
-
-    document.getElementById("OldFeeID").value = FeeInfo[0];
-    document.getElementById("OldFeeName").value = FeeInfo[1];
-    document.getElementById("OldFeeAmount").value = FeeInfo[3];
-
-    document.getElementById("DeleteFeeID").value = FeeInfo[0];
+//check if the date is from the past
+function DateChecker(selectedDate){
+    var today = new Date();
+    var nextWeek = today.getMonth()+1 + "/" +today.getDate() + "/" + today.getFullYear();
+    if(!(Date.parse(selectedDate) >= Date.parse(nextWeek))){
+       return true;
+    }
+    return false;
 }

@@ -1685,6 +1685,63 @@ class MaintenanceController extends Controller
         return redirect('Maintenance/Package');
     }
     
+    
+    //OPERATION FUNCTIONS
+    
+    public function storeOperation(Request $req){
+        $UserInput = Input::all();
+           $rules =  [
+                'DateID' => 'unique:tblInoperationalDate,strDateID',
+           ];
+        
+            $validator = Validator::make($UserInput, $rules);
+
+            if ($validator->fails()) {
+                // send back to the page with the input data and errors
+                return Redirect::to('/Maintenance/Operations')->withInput()->withErrors($validator);
+            }
+        
+            else{
+                $tempDateName = trim($req->input('DateName'));
+                $DateNameError = DB::table('tblInoperationalDate')->where([['intDateStatus',"!=", '0'],['strDateTitle', $tempDateName]])->first();
+                
+                if($DateNameError){
+                    
+                    \Session::flash('duplicate_message','Title already exists. Please enter a new one to continue.');
+                    return redirect('Maintenance/Operations')->withInput();
+                }
+                else{
+                    $DateID = trim($req->input('DateID'));
+                    $DateTitle = trim($req->input('DateName'));
+                    $StartDate = trim($req->input('StartDate'));
+                    $EndDate = trim($req->input('EndDate'));
+                    
+                    $DateDescription;
+                    $DateCreated = Carbon::now();
+                    if(!empty(trim($req->input('DateDescription')))){
+                        $DateDescription = trim($req->input('DateDescription'));
+                    }
+                    else{
+                        $DateDescription = "N/A";
+                    }
+
+                    $data = array('strDateID'=>$DateID,
+                                 'strDateTitle'=>$DateTitle,
+                                 'dteStartDate'=>Carbon::parse($StartDate)->format('Y-m-d'),
+                                 'dteEndDate'=>Carbon::parse($EndDate)->format('Y-m-d'),
+                                 'intDateStatus'=>1,
+                                 'strDateDescription'=>$DateDescription,
+                                 'tmsCreated'=>$DateCreated);
+
+                    DB::table('tblInoperationalDate')->insert($data);
+                    
+                    \Session::flash('flash_message','Added successfully!');
+        
+                    return redirect('Maintenance/Operations');
+                }
+            }
+    }
+    
 }
 
 

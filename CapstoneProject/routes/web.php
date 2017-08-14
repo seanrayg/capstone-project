@@ -142,6 +142,9 @@ Route::post('/Maintenance/Package/Add', 'MaintenanceController@storePackage');
 
 Route::post('/Maintenance/Fee', 'MaintenanceController@storeFee');
 
+//Add Dates
+Route::post('Maintenance/Operation', 'MaintenanceController@storeOperation');
+
 
 
 //EDIT

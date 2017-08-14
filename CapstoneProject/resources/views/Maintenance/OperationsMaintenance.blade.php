@@ -86,7 +86,6 @@
             <li><a href="/Maintenance/Activity">Activity Maintenance</a></li>
             <li><a href="/Maintenance/Fee">Fee Maintenance</a></li>
             <li><a href="/Maintenance/Package">Package Maintenance</a></li>
-
         </ul>
     </div>
 </div>
@@ -98,76 +97,40 @@
                 <h4 class="title">Dates</h4>
             </div>
             <div class="card-content table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" onclick="run(event)">
                     <thead class="text-success">
                         <th>Date ID</th>
-                        <th>Title</th>
-                        <th>Description</th>
+                        <th>Title</th>   
                         <th>Start Date</th>
                         <th>End Date</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th style="display:none">Start Date2</th>
+                        <th style="display:none">End Date2</th>
                         <th>Action</th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>DATE-01</td>
-                            <td>Anniversary Celebration</td>
-                            <td>Resort is closed for 3 days</td>
-                            <td>June 12, 2017</td>
-                            <td>June 15, 2017</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalEditDate()">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs" onclick="ShowModalDeleteDate()">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>DATE-01</td>
-                            <td>Anniversary Celebration</td>
-                            <td>Resort is closed for 3 days</td>
-                            <td>June 12, 2017</td>
-                            <td>June 15, 2017</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>DATE-01</td>
-                            <td>Anniversary Celebration</td>
-                            <td>Resort is closed for 3 days</td>
-                            <td>June 12, 2017</td>
-                            <td>June 15, 2017</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>DATE-01</td>
-                            <td>Anniversary Celebration</td>
-                            <td>Resort is closed for 3 days</td>
-                            <td>June 12, 2017</td>
-                            <td>June 15, 2017</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
+                        @foreach($Dates as $Date)
+                            <tr onclick="HighlightRow(this)">
+                                <td>{{$Date->strDateID}}</td>
+                                <td>{{$Date->strDateTitle}}</td>
+                                <td>{{Carbon\Carbon::parse($Date -> dteStartDate)->format('M j, Y')}}</td>
+                                <td>{{Carbon\Carbon::parse($Date -> dteEndDate)->format('M j, Y')}}</td>
+                                <td>{{$Date-> intDateStatus}}</td>
+                                <td>{{$Date-> strDateDescription}}</td>
+                                <td style="display: none">{{Carbon\Carbon::parse($Date -> dteStartDate)->format('m/d/Y')}}</td>
+                                <td style="display: none">{{Carbon\Carbon::parse($Date -> dteEndDate)->format('m/d/Y')}}</td>
+                                <td class="td-actions text-right">
+                                    <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalEditDate()">
+                                        <i class="material-icons">edit</i>
+                                    </button>
+                                    <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs" onclick="ShowModalDeleteDate()">
+                                        <i class="material-icons">close</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+
                     </tbody>
                 </table>
                 <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddDate()">Add</button>
@@ -178,118 +141,7 @@
 </div>
 
 
-<div class = "row">
-   <div class="col-lg-12 col-md-12">
-        <div class="card">
-            <div class="card-header" data-background-color="green">
-                <h4 class="title">Fees</h4>
-            </div>
-            <div class="card-content table-responsive scrollable-table" id="style-1">
-                <table class="table" id="FeeTable" onclick="run(event, 'Fee')">
-                    <thead class="text-success">
-                        <th onclick="sortTable(0, 'FeeTable', 'string')">ID</th>
-                        <th onclick="sortTable(1, 'FeeTable', 'string')">Name</th>
-                        <th onclick="sortTable(2, 'FeeTable', 'string')">Status</th>
-                        <th onclick="sortTable(3, 'FeeTable', 'double')">Amount</th>
-                        <th onclick="sortTable(4, 'FeeTable', 'string')">Description</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        @foreach ($Fees as $Fee)
-                        <tr onclick="HighlightRow(this)">
-                            <td>{{$Fee -> strFeeID}}</td>
-                            <td>{{$Fee -> strFeeName}}</td>
-                            <td>{{$Fee -> strFeeStatus}}</td>
-                            <td>{{$Fee -> dblFeeAmount}}</td>
-                            <td>{{$Fee -> strFeeDescription}}</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs" value="{{$Fee -> strFeeName}}" onclick="ShowModalEditFee()">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs" value="{{$Fee -> strFeeName}}" onclick="ShowModalDeleteFee()">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddFee()">Add</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-12 col-md-12">
-        <div class="card">
-            <div class="card-header" data-background-color="green">
-                <h4 class="title">Contact Information</h4>
-            </div>
-            <div class="card-content table-responsive">
-                <table class="table table-hover">
-                    <thead class="text-success">
-                        <th>Contact</th>
-                        <th>Info</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Cellphone Number</td>
-                            <td>911</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalEditContact()">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs" onclick="ShowModalDeleteContact()">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Telephone Number</td>
-                            <td>8 7000</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Facebook</td>
-                            <td>https://www.facebook.com/nardsmalabanan</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Twitter</td>
-                            <td>https://twitter.com/nardmalabanan</td>
-                            <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs">
-                                    <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddContact()">Add</button>
-            </div>
-        </div>
-    </div> 
-
-</div>
 
 
 
@@ -298,203 +150,11 @@
 @section('modals')
 
 
-<div id="DivModalAddFee" class="modal">
-    <div class="Modal-content" style="max-width: 500px">
-        <div class="row">
-            <div class="col-md-12">
-                    <div class="card card-stats">
-
-                            <div class="card-header" data-background-color="green">
-                                <i class="material-icons">add</i>
-                            </div>
-                            <div class="card-content">
-                                <p class="category"></p>
-                                <h3 class="title">Add Fee<span class="close" onclick="HideModalAddFee()">X</span></h3>
-                                <form onsubmit="return CheckForm()" method="post" action="/Maintenance/Fee">
-                                    {{ csrf_field() }}
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-floating" id="FeeIDError">
-                                                <label class="control-label">Fee ID</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#FeeIDError')" onchange="ValidateInput(this, 'string', '#FeeIDError')" value="{{$FeeID}}" id="FeeID" name="FeeID" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-floating" id="FeeNameError">
-                                                <label class="control-label">Fee Name</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#FeeNameError')" onchange="ValidateInput(this, 'string', '#FeeNameError')" id="FeeName" name="FeeName" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-floating" id="FeeAmountError">
-                                                <label class="control-label">Fee Amount</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#FeeAmountError')" onchange="ValidateInput(this, 'double', '#FeeAmountError')" id="FeeAmount" name="FeeAmount" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-
-                                                <div class="form-group label-floating">
-                                                    <label class="control-label">Fee Description</label>
-                                                    <textarea class="form-control" name="FeeDescription" id="FeeDescription" rows="5"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p class="ErrorLabel"></p>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-success pull-right">Save</button>
-                                    <div class="clearfix"></div>
-
-
-                                </form>
-                            </div>
-
-                    </div>
-                </div>
-        </div>
-    </div>
-</div>
-
-<div id="DivModalEditFee" class="modal">
-    <div class="Modal-content" style="max-width: 500px;">
-        <div class="row">
-            <div class="col-md-12">
-                    <div class="card card-stats">
-
-                            <div class="card-header" data-background-color="blue">
-                                <i class="material-icons">create</i>
-                            </div>
-                            <div class="card-content">
-                                <p class="category"></p>
-                                <h3 class="title">Edit Fee<span class="close" onclick="HideModalEditFee()">X</span></h3>
-                                <form onsubmit="return CheckForm()" method="post" action="/Maintenance/Fee/Edit">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="OldFeeID" id="OldFeeID" value="{{old('OldFeeID')}}">
-                                    <input type="hidden" name="OldFeeName" id="OldFeeName" value="{{old('OldFeeName')}}">
-                                    <input type="hidden" name="OldFeeAmount" id="OldFeeAmount" value="{{old('OldFeeAmount')}}">
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static" id="EditFeeIDError">
-                                                <label class="control-label">Fee ID</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditFeeIDError')" onchange="ValidateInput(this, 'string', '#EditFeeIDError')" id="EditFeeID" name="EditFeeID" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static" id="EditFeeNameError">
-                                                <label class="control-label">Fee Name</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditFeeNameError')" onchange="ValidateInput(this, 'string', '#EditFeeNameError')" id="EditFeeName" name="EditFeeName" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static" id="EditFeeAmountError">
-                                                <label class="control-label">Fee Amount</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#EditFeeAmountError')" onchange="ValidateInput(this, 'double', '#EditFeeAmountError')" id="EditFeeAmount" name="EditFeeAmount" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class = "row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static">
-                                                <label class="control-label">Fee Status</label>
-                                                <div class="selectBox">
-                                                    <select id="EditFeeStatus" name="EditFeeStatus">
-                                                      <option>Active</option>
-                                                      <option>Inactive</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>        
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-
-                                                <div class="form-group label-static">
-                                                    <label class="control-label">Fee Description</label>
-                                                    <textarea class="form-control" name="EditFeeDescription" id="EditFeeDescription" rows="5"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p class="ErrorLabel"></p>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-success pull-right">Save</button>
-                                    <div class="clearfix"></div>
-
-                                </form>
-                            </div>
-
-                    </div>
-                </div>
-        </div>
-    </div>
-</div>
-
-<div id="DivModalDeleteFee" class="modal">
-    <div class="Modal-content">
-        <div class="row">
-            <div class="col-md-3">
-            </div>
-            <div class="col-md-8">
-                <div class="card card-stats">
-
-                        <div class="card-header" data-background-color="red">
-                            <i class="material-icons">delete</i>
-                        </div>
-                        <div class="card-content">
-                            <p class="category"></p>
-                            <h3 class="title">Delete Fee?<span class="close" onclick="HideModalDeleteFee()">X</span></h3>
-                            <form method="post" action="/Maintenance/Fee/Delete">
-                                {{ csrf_field() }}
-                                <input type="hidden" name="DeleteFeeID" id="DeleteFeeID" value="">
-                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteFee()">Cancel</button>
-                                <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>
-                                <div class="clearfix"></div>
-                            </form>
-                        </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
 <div id="DivModalAddDate" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="width: 500px">
         <div class="row">
             <div class="col-md-12">
                     <div class="card card-stats">
-
                             <div class="card-header" data-background-color="green">
                                 <i class="material-icons">add</i>
                             </div>
@@ -502,19 +162,21 @@
                                 <div class="row">
                                     <h3 class="title">Add Date<span class="close" onclick="HideModalAddDate()">X</span></h3>
                                 </div>
-                                <form>
+                                <form id="AddDateForm" onsubmit="return CheckForm()" method="POST" action="/Maintenance/Operation">
                                     {{ csrf_field() }}
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group label-floating" id="DateIDError">
-                                                <label class="control-label">Inoperational Date ID</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#DateIDError')" onchange="ValidateInput(this, 'string', '#DateIDError')" value="" id="DateID" name="DateID" required>
+                                                <label class="control-label">ID</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#DateIDError')" onchange="ValidateInput(this, 'string', '#DateIDError')" value="{{$DateID}}" id="DateID" name="DateID" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
                                             <div class="form-group label-floating" id="DateNameError">
-                                                <label class="control-label">Inoperational Date ID</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#DateNameError')" onchange="ValidateInput(this, 'string', '#DateNameError')" id="DateName" name="DateName" required>
+                                                <label class="control-label">Title</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#DateNameError')" onchange="ValidateInput(this, 'string', '#DateNameError')" value="{{old('DateName')}}"  id="DateName" name="DateName" required>
                                             </div>
                                         </div>
                                     </div>
@@ -523,13 +185,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group label-static" id="StartDateError">
                                                 <label class="control-label">Start Date</label>
-                                                <input type="text" class="datepicker form-control" id="StartDate" required/>
+                                                <input type="text" class="datepicker form-control" value="{{old('StartDate')}}"  name="StartDate" id="StartDate" readonly required/>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group label-static" id="EndDateError">
                                                 <label class="control-label">End Date</label>
-                                                <input type="text" class="datepicker form-control" id="EndDate" required/>
+                                                <input type="text" class="datepicker form-control" value="{{old('EndDate')}}"  name="EndDate" id="EndDate" readonly required/>
                                             </div>
                                         </div>
                                     </div>
@@ -539,7 +201,7 @@
                                             <div class="form-group">
                                                 <div class="form-group label-static">
                                                     <label class="control-label">Date Description</label>
-                                                    <textarea class="form-control" name="DateDescription" id="DateDescription" rows="5"></textarea>
+                                                    <textarea class="form-control" name="DateDescription" value="{{old('DateDescription')}}"  id="DateDescription" rows="5"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -564,7 +226,7 @@
 </div>
 
 <div id="DivModalEditDate" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="width: 500px">
         <div class="row">
             <div class="col-md-12">
                     <div class="card card-stats">
@@ -579,15 +241,17 @@
                                 <form>
                                     {{ csrf_field() }}
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group label-floating" id="EditDateIDError">
-                                                <label class="control-label">Inoperational Date ID</label>
+                                                <label class="control-label">ID</label>
                                                 <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditDateIDError')" onchange="ValidateInput(this, 'string', '#EditDateIDError')" value="" id="EditDateID" name="EditDateID" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
                                             <div class="form-group label-floating" id="EditDateNameError">
-                                                <label class="control-label">Inoperational Date ID</label>
+                                                <label class="control-label">Title</label>
                                                 <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditDateNameError')" onchange="ValidateInput(this, 'string', '#EditDateNameError')" id="EditDateName" name="EditDateName" required>
                                             </div>
                                         </div>
