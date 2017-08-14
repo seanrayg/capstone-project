@@ -33,6 +33,11 @@ class ReservationController extends Controller
         6 = Other Bills
     */
     
+    /* Payment Status for Amenities
+        0 = not paid
+        1 = paid
+    */
+    
     //Book Reservation
     
     public function addReservation(Request $req){
@@ -188,6 +193,20 @@ class ReservationController extends Controller
                               'dtePayDate'=>$DateBooked->toDateString());
         
         DB::table('tblPayment')->insert($TransactionData);
+        
+        
+        //Check if there is an entrance fee
+        $EntranceFeeID = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('a.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '=', 'Active'],['a.strFeeName', '=', 'Entrance Fee']])
+                ->pluck('strFeeID')->first();
+        //saves entrance fee
+        if(sizeof($EntranceFeeID) != 0){
+            $this->addFees($EntranceFeeID, $NoOfAdults, $PaymentStatus, $ReservationID);
+        }
+            
+        
         
          \Session::flash('flash_message','Reservation successfully booked! The reservation code of '. $FirstName . ' ' . $LastName . ' is ' . $ReservationCode.'.');
          return redirect('/Reservations');
@@ -768,7 +787,17 @@ class ReservationController extends Controller
             if(sizeof($FeeID) != 0){
                 $this->addFees($FeeID[0], $arrFee[2], $PaymentStatus, $ReservationID);
             }
-            
+        }
+        
+        //Check if there is an entrance fee
+        $EntranceFeeID = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('a.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '=', 'Active'],['a.strFeeName', '=', 'Entrance Fee']])
+                ->pluck('strFeeID')->first();
+        //saves entrance fee
+        if(sizeof($EntranceFeeID) != 0){
+            $this->addFees($EntranceFeeID, $NoOfAdults, $PaymentStatus, $ReservationID);
         }
         
         \Session::flash('flash_message','Booked successfully!');
@@ -874,13 +903,28 @@ class ReservationController extends Controller
     //add fees to customer's bill
     public function addFees($FeeID, $FeeQuantity, $PaymentStatus, $ReservationID){
         
-        $data = array('strResFReservationID'=>$ReservationID,
-                     'strResFFeeID'=>$FeeID,
-                     'intResFPayment'=>$PaymentStatus,
-                     'intResFQuantity'=>$FeeQuantity);
+        $ExistingFeeQuantity = DB::table('tblReservationFee')
+                ->select('intResFQuantity')
+                ->where([['strResFFeeID','=', $FeeID], ['strResFReservationID','=', $ReservationID]])
+                ->pluck('intResFQuantity')->first();
+        
+        if(sizeof($ExistingFeeQuantity) == 0){
+            $data = array('strResFReservationID'=>$ReservationID,
+                          'strResFFeeID'=>$FeeID,
+                          'intResFPayment'=>$PaymentStatus,
+                          'intResFQuantity'=>$FeeQuantity);
 
-        DB::table('tblReservationFee')->insert($data);
+            DB::table('tblReservationFee')->insert($data);
+        }
+        else{
+            $newQuantity = (int)$ExistingFeeQuantity + (int)$FeeQuantity;
 
+            $updateData = array("intResFQuantity" => $newQuantity);   
+        
+            DB::table('tblReservationFee')
+                ->where([['strResFFeeID', $FeeID], ['strResFReservationID', $ReservationID]])
+                ->update($updateData);
+        }
     }
     
 

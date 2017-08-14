@@ -20,7 +20,7 @@
                 </a>
             </li>
             <li id="SB-Walkin">
-                <a href="/Walkin">
+                <a href="#"  onclick="ShowModalWalkinOption()">
                     <i class="material-icons">wc</i>
                     <p>Walk In</p>
                 </a>

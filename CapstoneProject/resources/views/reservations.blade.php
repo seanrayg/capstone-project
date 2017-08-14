@@ -215,6 +215,7 @@
                         <i class="material-icons">pages</i>
                     </div>
                     <div class="card-content">
+                        <h4><span class="close" onclick="HideModalReservationOptions()" style="color: black; font-family: Roboto Thin">X</span></h4>
                         <h3 class="title">Avail a Package?</h3>
                         <br><br>
                         <div class = "row">
@@ -308,7 +309,8 @@
                                 <small><h4>Bill Information</h4></small>
                                 <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="d-DateBooked"></p><br>
                                 <p class="paragraphText text-primary">Payment Due Date:</p><p class="paragraphText" id="d-PaymentDueDate"></p><br>
-                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="d-InitialBill"></p><br><br>
+                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="d-InitialBill"></p><br>
+                                <p class="paragraphText text-primary">Required Downpayment:</p> <p class="paragraphText" id="d-RequiredDownpayment"></p><br><br>
                             </div>
                         </div>
                         <div class="row">
@@ -390,6 +392,7 @@
                                 </table><br><br>
                                 <small><h4>Bill Information</h4></small>
                                 <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="i-InitialBill"></p><br>
+                                <p class="paragraphText text-primary">Required Downpayment:</p> <p class="paragraphText" id="i-RequiredDownpayment"></p><br>
                                 <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="i-DateBooked"></p><br>
                                 <p class="paragraphText text-primary">Payment Due Date</p><p class="paragraphText" id="i-PaymentDueDate"></p><br><br>
                                 <small><h4>Guest Information</h4></small>

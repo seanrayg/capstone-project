@@ -52,6 +52,7 @@ function ShowModalPaidReservation(){
                 document.getElementById("d-DateBooked").innerHTML = PendingReservationInfo[2];
                 document.getElementById("d-InitialBill").innerHTML = data.InitialBill[0].dblPayAmount;
                 InitialBill = data.InitialBill[0].dblPayAmount;
+                document.getElementById("d-RequiredDownpayment").innerHTML = Math.ceil(parseFloat(data.InitialBill[0].dblPayAmount) * .20);
                 document.getElementById("DivModalPaidReservation").style.display = "block";
             },
             error:function(response){
@@ -119,6 +120,7 @@ function getReservationInfo(){
             document.getElementById("i-PaymentDueDate").innerHTML = PendingReservationInfo[3];
             document.getElementById("i-DateBooked").innerHTML = PendingReservationInfo[2];
             document.getElementById("i-InitialBill").innerHTML = data.InitialBill[0].dblPayAmount;
+            document.getElementById("i-RequiredDownpayment").innerHTML = Math.ceil(parseFloat(data.InitialBill[0].dblPayAmount) * .20);
             
             if(data.ReservationInfo[0].strCustGender == "M"){
                 document.getElementById("i-Gender").innerHTML = "Male";

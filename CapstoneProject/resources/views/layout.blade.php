@@ -36,6 +36,35 @@
 	</div>
     
     @yield('modals')
+    
+    <div id="DivModalWalkinOptions" class="modal">
+        <div class="Modal-contentChoice">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-stats">
+                        <div class="card-header" data-background-color="orange">
+                            <i class="material-icons">pages</i>
+                        </div>
+                        <div class="card-content">
+                            <h4><span class="close" onclick="HideModalWalkinOption()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                            <h3 class="title">Avail a Package?</h3>
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-4">
+                                    <a href="#"><button type="button" class="btn btn-success">Yes</button></a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="/Walkin"><button type="button" class="btn btn-success">No</button></a>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
 
 </body>
 

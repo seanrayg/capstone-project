@@ -183,7 +183,10 @@
                                     <td>Email</td>
                                     <td>
                                         <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                            <i class="material-icons">info_outline</i>
+                                            <i class="material-icons">insert_invitation</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
@@ -196,10 +199,13 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
@@ -210,10 +216,13 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
@@ -224,10 +233,30 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
+                                            <i class="material-icons">close</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
+                                    <td>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
@@ -238,105 +267,102 @@
                     </div>
                     <div class="tab-pane" id="messages">
                         <table class="table">
+                            <thead class="text-primary">
+                                <tr>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Initial Bill</th>
+                                    <th class="text-center">Required Downpayment</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes" checked>
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                                    </td>
-                                    <td class="td-actions text-right">
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes">
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                    <td class="td-actions text-right">
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="settings">
-                        <table class="table">
-                            <tbody>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes">
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
-                                    <td class="td-actions text-right">
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes" checked>
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                                    </td>
-                                    <td class="td-actions text-right">
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes">
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                    <td class="td-actions text-right">
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                            <i class="material-icons">question_answer</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
                                 </tr>
+                                
                             </tbody>
                         </table>
                     </div>

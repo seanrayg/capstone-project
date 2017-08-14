@@ -168,6 +168,16 @@ window.onload = function() {
     }
 };
 
+//modal for walkin
+
+function ShowModalWalkinOption(){
+    document.getElementById("DivModalWalkinOptions").style.display = "block";
+}
+
+function HideModalWalkinOption(){
+    document.getElementById("DivModalWalkinOptions").style.display = "none";
+}
+
 //form
 
 function CheckForm(){
