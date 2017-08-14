@@ -119,6 +119,15 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group label-floating">
+            <label class="control-label">Search Fees</label>
+            <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('FeeTable', '1')">
+        </div>
+    </div>
+</div>
+
 
 <div class = "row">
    <div class="col-lg-12 col-md-12">

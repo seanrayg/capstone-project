@@ -138,29 +138,23 @@
 
 <div class="row">
     
-    <div class="col-lg-6 col-md-12">
+    <div class="col-lg-8 col-md-12">
         <div class="card card-nav-tabs">
-            <div class="card-header" data-background-color="purple">
+            <div class="card-header" data-background-color="teal">
                 <div class="nav-tabs-navigation">
                     <div class="nav-tabs-wrapper">
-                        <span class="nav-tabs-title">Tasks:</span>
+                        <span class="nav-tabs-title">Unpaid Customers:</span>
                         <ul class="nav nav-tabs" data-tabs="tabs">
                             <li class="active">
                                 <a href="#profile" data-toggle="tab">
-                                    <i class="material-icons">bug_report</i>
-                                    Bugs
+                                    <i class="material-icons">announcement</i>
+                                    3rd Day
                                 <div class="ripple-container"></div></a>
                             </li>
                             <li class="">
                                 <a href="#messages" data-toggle="tab">
-                                    <i class="material-icons">code</i>
-                                    Website
-                                <div class="ripple-container"></div></a>
-                            </li>
-                            <li class="">
-                                <a href="#settings" data-toggle="tab">
-                                    <i class="material-icons">cloud</i>
-                                    Server
+                                    <i class="material-icons">phonelink_erase</i>
+                                    5th Day
                                 <div class="ripple-container"></div></a>
                             </li>
                         </ul>
@@ -172,17 +166,36 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="profile">
                         <table class="table">
+                            <thead class="text-primary">
+                                <tr>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Initial Bill</th>
+                                    <th class="text-center">Required Downpayment</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes" checked>
-                                            </label>
-                                        </div>
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                            <i class="material-icons">info_outline</i>
+                                        </button>
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
+                                            <i class="material-icons">close</i>
+                                        </button>
                                     </td>
-                                    <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                    <td class="td-actions text-right">
+                                </tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
+                                    <td>
                                         <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
                                             <i class="material-icons">edit</i>
                                         </button>
@@ -191,16 +204,12 @@
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes">
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
-                                    <td class="td-actions text-right">
                                         <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
                                             <i class="material-icons">edit</i>
                                         </button>
@@ -209,17 +218,12 @@
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="text-center">
+                                    <td>Name</td>
+                                    <td>Bill</td>
+                                    <td>Payment</td>
+                                    <td>Email</td>
                                     <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes">
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                                    </td>
-                                    <td class="td-actions text-right">
                                         <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
                                             <i class="material-icons">edit</i>
                                         </button>
@@ -228,24 +232,7 @@
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="optionsCheckboxes" checked>
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Create 4 Invisible User Experiences you Never Knew About</td>
-                                    <td class="td-actions text-right">
-                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple btn-xs">
-                                            <i class="material-icons">edit</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                
                             </tbody>
                         </table>
                     </div>
@@ -358,7 +345,7 @@
         </div>
     </div>
 
-    <div class="col-lg-6 col-md-12">
+    <div class="col-lg-4 col-md-12">
         <div class="card">
             <div class="card-header" data-background-color="orange">
                 <h4 class="title">Employees Stats</h4>

@@ -259,7 +259,14 @@ class ViewController extends Controller
         $Items = DB::table('tblItem')->where('intItemDeleted', '1')->pluck('strItemName');
         $Activities = DB::table('tblBeachActivity')->where('strBeachAStatus', '=', 'Available')->pluck('strBeachAName');
         $Fees = DB::table('tblFee')->where('strFeeStatus', '=', 'Active')->pluck('strFeeName');
-        $PackageID = $this->SmartCounter('tblPackage', 'strPackageID');
+        
+        $Packages = $this->getPackages();
+        if(sizeof($Packages) != 0){
+            $PackageID = $this->SmartCounter('tblPackage', 'strPackageID');
+        }
+        else{
+            $PackageID = "PACK1";
+        }
         
         return view('Maintenance.AddPackage', compact('Items', 'Activities', 'Fees', 'PackageID'));
     }

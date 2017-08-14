@@ -60,7 +60,6 @@
                             <div class="col-xs-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label">Search Rooms</label>
-                                    <input type="text" class="form-control" >
                                 </div>
                             </div>
                         </div>
@@ -135,7 +134,7 @@
                             <div class="col-xs-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label">Search Customer</label>
-                                    <input type="text" class="form-control" >
+                                    <input type="text" class="form-control" id="SearchBar2" onkeyup="SearchTable2('tblOccupiedRooms', '3')">
                                 </div>
                             </div>
                         </div>
@@ -171,6 +170,7 @@
                         <div class = "row">
                             <div class="col-xs-12">
                                 <button type="button" class="btn btn-warning pull-right" onclick="#"><i class="material-icons">alarm_add</i> Extend Stay</button>
+                                <button type="button" class="btn btn-info pull-right" onclick="#"><i class="material-icons">compare_arrows</i> Transfer</button>
                                 <button type="button" class="btn btn-primary pull-right" onclick="#"><i class="material-icons">done_all</i> Check out</button>
                             </div> 
                         </div>  

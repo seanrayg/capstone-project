@@ -76,7 +76,7 @@
                             <div class="col-xs-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label">Search Activities</label>
-                                    <input type="text" class="form-control" >
+                                    <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('tblAvailableActivities', '1')">
                                 </div>
                             </div>
 

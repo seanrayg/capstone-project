@@ -7,6 +7,7 @@
 @section('scripts')
 <script src="/js/Reservations.js" type="text/javascript"></script>
 <script src="/js/input-validator.js" type="text/javascript"></script>
+<script src="/js/MainJavascript.js" type="text/javascript"></script>
 @endsection
 
 
@@ -74,7 +75,7 @@
                             <div class="col-xs-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label">Search Reservations</label>
-                                    <input type="text" class="form-control" >
+                                    <input type="text" class="form-control" id="SearchBar" onkeyup="SearchTable('ConfirmedReservationTable', '1')">
                                 </div>
                             </div>
                             <div class="col-xs-3 pull-right">
@@ -133,10 +134,10 @@
 
                     <div class="tab-pane" id="PendingReservations">
                         <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col-md-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label">Search Reservations</label>
-                                    <input type="text" class="form-control" >
+                                    <input type="text" class="form-control" id="SearchBar2" onkeyup="SearchTable2('PendingReservationTable', '1')">
                                 </div>
                             </div>
                             <div class="col-xs-3 pull-right">
