@@ -13,6 +13,22 @@ use Illuminate\Support\Facades\Redirect;
 class ViewResortController extends Controller
 {
     
+    /* ITEM REFERENCE 
+    
+    intRentedIReturned
+    
+    0 = not returned
+    1 = returned
+    
+    intRentedIBroken
+    0 = not broken
+    1 = Broken
+    
+    intRentedIPayment
+    0 = not paid
+    1 = paid
+    */
+    
     /*------------ROOMS--------------*/
     //
     public function ViewSelectedRooms($id){
@@ -165,7 +181,7 @@ class ViewResortController extends Controller
     /*------------------ ITEM RENTAL -----------*/
     
     function getAvailableItems(){
-        $Items = DB::table('tblItem as a')
+        $RentalItems = DB::table('tblItem as a')
                 ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
                 ->select('a.strItemID',
                          'a.strItemName',
@@ -176,6 +192,25 @@ class ViewResortController extends Controller
                         ['a.intItemDeleted',"=", "1"], ['a.intItemQuantity', "!=", 0]])
                 ->get();
         
+        $RentedItems = DB::table('tblRentedItem as a')
+                ->join ('tblItem as b', 'b.strItemID', '=' , 'a.strRentedIItemID')
+                ->join ('tblReservationDetail as c', 'c.strReservationID', '=' , 'a.strRentedIReservationID')
+                ->join ('tblCustomer as d', 'c.strResDCustomerID', '=' , 'd.strCustomerID')
+                ->select(DB::raw('CONCAT(d.strCustFirstName , " " , d.strCustLastName) AS Name'),
+                        'b.strItemName',
+                        'a.tmsCreated',
+                        'a.intRentedIDuration',
+                        'a.intRentedIQuantity')
+                ->where('a.intRentedIReturned', '=', 0)
+                ->get();
+        
+        
+        foreach($RentedItems as $Items){
+            $Items->tmsCreated = Carbon::parse($Items->tmsCreated)->format('g:i A');
+            $Items->intRentedIDuration = Carbon::parse($Items->tmsCreated)->addHours($Items->intRentedIDuration)->format('g:i A');
+        }
+        
+
         $Guests = DB::table('tblReservationDetail as a')
                         ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
                         ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'))
@@ -183,7 +218,7 @@ class ViewResortController extends Controller
                         ->orderBy('Name')
                         ->get();
         
-        return view('ItemRental', compact('Items', 'Guests'));
+        return view('ItemRental', compact('RentalItems', 'Guests', 'RentedItems'));
     }
     
     

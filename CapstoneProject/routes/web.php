@@ -302,3 +302,8 @@ Route::get('/QueryReports', function () {
 // Query Report AJAX
 Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
+
+/*----------- ITEM RENTAL -------------*/
+
+Route::post('/ItemRental/Rent', 'ResortController@storeRentalItem');
+

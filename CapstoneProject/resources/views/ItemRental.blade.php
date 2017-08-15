@@ -13,6 +13,25 @@
 @endsection
 
 @section('content')
+<!-- Add success -->
+@if(Session::has('flash_message'))
+    <div class="row">
+        <div class="col-md-5 col-md-offset-7">
+            <div class="alert alert-success hide-automatic">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">check</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                  {{ Session::get('flash_message') }}
+                </div>
+            </div> 
+        </div>
+    </div>
+@endif
+
 <h5 id="TitlePage">Item Rental</h5>
 
 <div class="row">
@@ -72,7 +91,7 @@
                                         <th>Action</th>
                                     </thead>
                                     <tbody>
-                                        @foreach ($Items as $Item)
+                                        @foreach($RentalItems as $Item)
                                         <tr onclick="HighlightRow(this)">
                                             <td>{{$Item -> strItemID}}</td>
                                             <td>{{$Item -> strItemName}}</td>
@@ -118,57 +137,17 @@
                                         <th>Time Rented</th>
                                         <th>Return Time</th>
                                         <th>Quantity Availed</th>
-                                        <th>Status</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Rented By</td>
-                                            <td>Time Rented</td>
-                                            <td>Return Time</td>
-                                            <td>Quantity Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Rented By</td>
-                                            <td>Time Rented</td>
-                                            <td>Return Time</td>
-                                            <td>Quantity Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Rented By</td>
-                                            <td>Time Rented</td>
-                                            <td>Return Time</td>
-                                            <td>Quantity Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Rented By</td>
-                                            <td>Time Rented</td>
-                                            <td>Return Time</td>
-                                            <td>Quantity Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Rented By</td>
-                                            <td>Time Rented</td>
-                                            <td>Return Time</td>
-                                            <td>Quantity Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Rented By</td>
-                                            <td>Time Rented</td>
-                                            <td>Return Time</td>
-                                            <td>Quantity Availed</td>
-                                            <td>Status</td>
-                                        </tr>
+                                        @foreach($RentedItems as $Item)
+                                            <tr>
+                                                <td>{{$Item->strItemName}}</td>
+                                                <td>{{$Item->Name}}</td>
+                                                <td>{{$Item->tmsCreated}}</td>
+                                                <td>{{$Item->intRentedIDuration}}</td>
+                                                <td>{{$Item->intRentedIQuantity}}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -271,74 +250,83 @@
                             <p class="category"></p>
                             <h3 class="title">Rent Item<span class="close" onclick="HideModalRentItem()">X</span></h3>
                         </div>
-                        <div class = "row">
-                            <div class="col-md-6">
-                                <div class="form-group label-static">
-                                    <label class="control-label">ID</label>
-                                    <input type="text" class="form-control" id="RentItemID" name="RentItemID" readonly>
+                        <form method="POST" action="/ItemRental/Rent" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <div class = "row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">ID</label>
+                                        <input type="text" class="form-control" id="RentItemID" name="RentItemID" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Item</label>
+                                        <input type="text" class="form-control" id="RentItemName" name="RentItemName" readonly>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group label-static">
-                                    <label class="control-label">Item</label>
-                                    <input type="text" class="form-control" id="RentItemName" name="RentItemName" readonly>
+                            <div class = "row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Quantity Left</label>
+                                        <input type="text" class="form-control" id="RentQuantityLeft" name="RentQuantityLeft" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Rate per hour</label>
+                                        <input type="text" class="form-control" id="RentItemRate" name="RentItemRate" readonly>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class = "row">
-                            <div class="col-md-6">
-                                <div class="form-group label-static">
-                                    <label class="control-label">Quantity Left</label>
-                                    <input type="text" class="form-control" id="RentQuantityLeft" name="RentQuantityLeft" readonly>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Guest to rent</label>
+                                        <div class="selectBox">
+                                            <select name="SelectGuests" id="SelectGuests">
+                                                @foreach($Guests as $Guest)
+                                                    <option>{{$Guest->Name}}</option>
+                                                @endforeach
+                                            </select>
+                                          </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group label-static">
-                                    <label class="control-label">Rate per hour</label>
-                                    <input type="text" class="form-control" id="RentItemRate" name="RentItemRate" readonly>
+                            <div class = "row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating" id="RentQuantityError">
+                                        <label class="control-label">Quantity to rent</label>
+                                        <input type="text" class="form-control" onkeyup="SendQuantityInput(this, 'int', '#RentQuantityError')"
+                                        onchange="SendQuantityInput(this, 'int', '#RentQuantityError')" id="RentQuantity" name="RentQuantity" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating" id="RentDurationError">
+                                        <label class="control-label">Duration (hours)</label>
+                                        <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#RentDurationError')"
+                                        onchange="ValidateInput(this, 'int', '#RentDurationError')" id="RentDuration" name="RentDuration" required>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group label-static">
-                                    <label class="control-label">Guest to rent</label>
-                                    <div class="selectBox">
-                                        <select name="SelectGuests" id="SelectGuests">
-                                            @foreach($Guests as $Guest)
-                                                <option>{{$Guest->Name}}</option>
-                                            @endforeach
-                                        </select>
-                                      </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
                                 </div>
                             </div>
-                        </div>
-                        <div class = "row">
-                            <div class="col-md-6">
-                                <div class="form-group label-floating" id="RentQuantityError">
-                                    <label class="control-label">Quantity to rent</label>
-                                    <input type="text" class="form-control" onkeyup="SendQuantityInput(this, 'int', '#RentQuantityError')"
-                                    onchange="SendQuantityInput(this, 'int', '#RentQuantityError')" id="RentQuantity" name="RentQuantity" required>
-                                </div>
+
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                                </div> 
+                                <div class="col-xs-6">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
+                                </div> 
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group label-floating" id="RentDurationError">
-                                    <label class="control-label">Duration (hours)</label>
-                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#RentDurationError')"
-                                    onchange="ValidateInput(this, 'int', '#RentDurationError')" id="RentDuration" name="RentDuration" required>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <br><br>
-                        <div class = "row">
-                            <div class="col-xs-6">
-                                <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
-                            </div> 
-                            <div class="col-xs-6">
-                                <button type="button" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
-                            </div> 
-                        </div> 
+                        </form>
                     </div>
                 </div>
             </div>
