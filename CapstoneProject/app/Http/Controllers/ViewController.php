@@ -984,28 +984,7 @@ class ViewController extends Controller
     /* ------------- END OF RESERVATION ------------- */
     
     
-    
-    //Item Rental
-    
-    function getAvailableItems(){
-        $Items = DB::table('tblItem as a')
-                ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
-                ->select('a.strItemID',
-                         'a.strItemName',
-                         'a.intItemQuantity',
-                         'b.dblItemRate',
-                         'a.strItemDescription')
-                ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],
-                        ['a.intItemDeleted',"=", "1"], ['a.intItemQuantity', "!=", 0]])
-                ->get();   
-        
-        return view('ItemRental', compact('Items'));
-    }
-    
-    
-    
-    /* ------------ END OF ITEM RENTAL ---------------*/
-    
+
     
     //Activities
     

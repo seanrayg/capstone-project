@@ -48,6 +48,34 @@
     </div>
 @endif
 
+<!-- Date Error -->
+@if(Session::has('date_message'))
+    <div class="row">
+        <div class="col-md-6 col-md-offset-6">
+            <div class="alert alert-danger hide-on-click">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">warning</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                  {{ Session::get('date_message') }}
+                  <ul>
+                    <?php 
+                        $Customers = Session::get('arrCustomers');
+                        for($x = 0; $x < sizeof($Customers); $x++){
+                            echo "<li>" .$Customers[$x]. "</li>";
+                        }
+                    ?>
+                  </ul>  
+                <a href="/Reservations"><button class="btn btn-simple pull-right" style="color: white">Manage Reservations</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <!-- Misc Error -->
 @if (count($errors) > 0)
     <div class="row">

@@ -26,7 +26,7 @@ Route::get('/BoatSchedule', function () {
 
 Route::get('/Rooms', 'ViewResortController@ViewRooms');
 
-Route::get('/ItemRental', 'ViewController@getAvailableItems');
+Route::get('/ItemRental', 'ViewResortController@getAvailableItems');
 
 Route::get('/Activities', 'ViewController@getAvailableActivities');
 

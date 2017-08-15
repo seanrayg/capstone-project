@@ -81,7 +81,13 @@ function HideModalReplaceRoom(){
 
 
 window.onload = function(){
-    ReservationID = document.getElementById("ReservationID").value;
+    if (localStorage.getItem("ReservationID") === null) {
+      ReservationID = document.getElementById("ReservationID").value;
+    }
+    else{
+      ReservationID = localStorage.getItem("ReservationID");  
+    }
+    
     var arrRoomType = [];
     var temp = "";
     //Remove all existing options

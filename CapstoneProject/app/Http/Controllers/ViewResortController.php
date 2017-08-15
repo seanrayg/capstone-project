@@ -162,7 +162,29 @@ class ViewResortController extends Controller
     
     
     
+    /*------------------ ITEM RENTAL -----------*/
     
+    function getAvailableItems(){
+        $Items = DB::table('tblItem as a')
+                ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
+                ->select('a.strItemID',
+                         'a.strItemName',
+                         'a.intItemQuantity',
+                         'b.dblItemRate',
+                         'a.strItemDescription')
+                ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],
+                        ['a.intItemDeleted',"=", "1"], ['a.intItemQuantity', "!=", 0]])
+                ->get();
+        
+        $Guests = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'))
+                        ->where('a.intResDStatus', '=', '4')
+                        ->orderBy('Name')
+                        ->get();
+        
+        return view('ItemRental', compact('Items', 'Guests'));
+    }
     
     
 }

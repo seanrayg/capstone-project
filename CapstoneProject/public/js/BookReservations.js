@@ -96,6 +96,7 @@ function CheckInputDate(){
         }
     }
 }
+
 //Check in/out date event listener
 $( document ).ready(function() {
     $('#CheckInDate').on('changeDate', function(ev) {
@@ -127,7 +128,30 @@ $( document ).ready(function() {
                         $('#CheckOutDateError').addClass("has-warning");
                         document.getElementById("ErrorMessage").innerHTML = "Invalid Date!";
                     }
-
+                    else{
+                        $('.alert').hide();
+                        $('#CheckInDateError').removeClass("has-warning");
+                        var lastError = false;
+                        var dateArray = InoperationalChecker();
+                        for(var x = 0; x < dateArray.length; x++){
+                            var DateOperationError = CheckOperationalDates(dateArray[x]);
+                            if(DateOperationError){
+                                lastError = true;
+                                break;
+                            }
+                        }
+                        if(lastError){
+                            $('.alert').show();
+                            $('#CheckInDateError').addClass("has-warning");
+                            $('#CheckOutDateError').addClass("has-warning");
+                            document.getElementById("ErrorMessage").innerHTML = "Resort is closed on that range of days.";
+                        }
+                        else{
+                            $('.alert').hide();
+                            $('#CheckInDateError').removeClass("has-warning");
+                            $('#CheckOutDateError').removeClass("has-warning");
+                        }
+                    }
                 }
             }
         }
@@ -163,15 +187,56 @@ $( document ).ready(function() {
                         $('#CheckOutDateError').addClass("has-warning");
                         document.getElementById("ErrorMessage").innerHTML = "Invalid Date!";
                     }
+                    else{
+                        $('.alert').hide();
+                        $('#CheckOutDateError').removeClass("has-warning");
+                        var lastError = false;
+                        var dateArray = InoperationalChecker();
+                        for(var x = 0; x < dateArray.length; x++){
+                            var DateOperationError = CheckOperationalDates(dateArray[x]);
+                            if(DateOperationError){
+                                lastError = true;
+                                break;
+                            }
+                        }
+                        if(lastError){
+                            $('.alert').show();
+                            $('#CheckInDateError').addClass("has-warning");
+                            $('#CheckOutDateError').addClass("has-warning");
+                            document.getElementById("ErrorMessage").innerHTML = "Resort is closed on that range of days.";
+                        }
+                        else{
+                            $('.alert').hide();
+                            $('#CheckInDateError').removeClass("has-warning");
+                            $('#CheckOutDateError').removeClass("has-warning");
+                        }
+                    }
                 }  
             }
             
         }
 
-
     }).data('datepicker');
 });
 
+
+function InoperationalChecker(){
+    
+    var startDate = new Date(document.getElementById("CheckInDate").value);
+    var stopDate = new Date(document.getElementById("CheckOutDate").value);
+    var dateArray = new Array();
+    var currentDate = startDate;
+    while (currentDate <= stopDate) {
+        dateArray.push( new Date (currentDate) )
+        currentDate.setDate( currentDate.getDate()  + 1);
+    }
+    
+    for(var x = 0; x < dateArray.length; x++){
+        dateArray[x] = (parseInt(dateArray[x].getMonth()) + 1) +"/"+ dateArray[x].getDate() +"/"+ dateArray[x].getFullYear();
+    }
+    
+    return dateArray;
+}
 
 function CheckOperationalDates(selectedDate){
     var DateFound = false;
@@ -419,139 +484,6 @@ function switchTab(GuestChoice){
 
 /*---------- ROOM TAB CONTROLLER --------------*/
 
-
-/*
-
-function CheckRooms(){
-    var ErrorMessage = document.getElementById("RoomErrorMessage");
-    var NoOfKids = document.getElementById("NoOfKids").value;
-    var NoOfAdults = document.getElementById("NoOfAdults").value;
-    var TotalGuests = parseInt(NoOfKids) + parseInt(NoOfAdults);
-    var TotalRoomCapacity = 0;
-
-    $("#tblChosenRooms tr").each(function(){
-        if(($(this).find("td:nth-child(2)").text())!=""){
-            TotalRoomCapacity += (parseInt($(this).find("td:nth-child(2)").text()) * parseInt($(this).find("td:nth-child(4)").text()));
-        }
-    });
-    var rowCount = $('#tblChosenRooms >tbody >tr').length;
-    if(rowCount == 0){
-        $('.alert').show();
-        ErrorMessage.innerHTML = "Please choose a room to reserve";
-    }
-    else if(!(TotalGuests <= TotalRoomCapacity)){
-        $('.alert').show();
-        ErrorMessage.innerHTML = "Total number of guests exceeds total capacity of selected rooms!";
-    }
-    else{
-        $('.alert').hide();
-        $('#ReservationRoom').removeClass('active');
-        $('#RoomList').removeClass('active');
-        $('#InfoList').addClass('active');
-        $('#ReservationInfo').addClass('active');
-    }
-}
-
-//table row clicked
-
-$(document).ready(function(){
-    $('#tblAvailableRooms').on('click', 'tbody tr', function(){
-        HighlightRow(this);
-        AddRowIndex = $(this).index();
-    });
-    
-    $('#tblChosenRooms').on('click', 'tbody tr', function(){
-        HighlightRow(this);
-        RemoveRowIndex = $(this).index();
-    });
-    
-});
-
-function AddRoom(){
-    var TotalRooms = document.getElementById("TotalRooms").value;
-    var TableChecker = CheckTable('#tblAvailableRooms tr');
-    if(TableChecker){
-        var x = document.getElementsByClassName("ErrorLabel");
-        for(var i = 0; i < x.length; i++){
-            x[i].innerText="";
-        }
-        if(TotalRooms == ""){
-            $('#TotalRoomsError').addClass('has-warning');
-            var x = document.getElementsByClassName("ErrorLabel");
-            for(var i = 0; i < x.length; i++){
-                x[i].innerText="Please specify the number of rooms to avail";
-            }
-        }
-        else if(parseInt(TotalRooms) > parseInt(AvailableRooms[3])){
-           $('#TotalRoomsError').addClass('has-warning');
-            var x = document.getElementsByClassName("ErrorLabel");
-            for(var i = 0; i < x.length; i++){
-                x[i].innerText="Room quantity exceeded!";
-            }
-        }
-        else if(!($('#TotalRoomsError').hasClass('has-warning'))){
-            RemovedRows += AvailableRooms[0]+"@"+AvailableRooms[1]+"@"+AvailableRooms[2]+"@"+AvailableRooms[3]+",";
-            document.getElementById("tblAvailableRooms").deleteRow(AddRowIndex+1);
-            var tableRef = document.getElementById('tblChosenRooms').getElementsByTagName('tbody')[0];
-            
-            var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-
-            var newCell1  = newRow.insertCell(0);
-            var newCell2  = newRow.insertCell(1);
-            var newCell3  = newRow.insertCell(2);
-            var newCell4 = newRow.insertCell(3);
-
-
-            newCell1.innerHTML = AvailableRooms[0];
-            newCell2.innerHTML = AvailableRooms[1];
-            newCell3.innerHTML = AvailableRooms[2];
-            newCell4.innerHTML = TotalRooms;
-            
-            document.getElementById("TotalRooms").value = "";
-        }
-    }
-    
-    else{
-        var x = document.getElementsByClassName("ErrorLabel");
-        for(var i = 0; i < x.length; i++){
-            x[i].innerText="Please choose a room";
-        }
-    }
-}
-
-function RemoveRoom(){
-    var TableChecker = CheckTable('#tblChosenRooms tr');
-    if(TableChecker){
-        var temp = RemovedRows.split(',');
-        for(var x = 0; x < temp.length; x++){
-           if (temp[x].indexOf(ChosenRooms[0]) > -1)
-                {
-                      var tableRef = document.getElementById('tblAvailableRooms').getElementsByTagName('tbody')[0];
-
-                      var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-                      var newCell1  = newRow.insertCell(0);
-                      var newCell2  = newRow.insertCell(1);
-                      var newCell3  = newRow.insertCell(2);
-                      var newCell4 = newRow.insertCell(3);
-
-                      var ReturnRoom = temp[x].split("@");
-                    
-                      newCell1.innerHTML = ReturnRoom[0];
-                      newCell2.innerHTML = ReturnRoom[1];
-                      newCell3.innerHTML = ReturnRoom[2];
-                      newCell4.innerHTML = ReturnRoom[3];
-
-                      break;
-                }
-       }
-       document.getElementById("tblChosenRooms").deleteRow(RemoveRowIndex+1);
-   
-    }
-}
-
-*/
 
 function CheckRooms(){
     var ErrorMessage = document.getElementById("RoomError");

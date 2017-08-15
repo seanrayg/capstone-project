@@ -33,8 +33,8 @@
                 <i class="material-icons">local_hotel</i>
             </div>
             <div class="card-content">
-                <p class="category">Guests In Resort</p>
-                <h3 class="title">19</h3>
+                <p class="category">Departing Guests</p>
+                <h3 class="title">9</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">

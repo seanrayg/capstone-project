@@ -5,41 +5,10 @@
 @endsection
 
 @section('scripts')
-<script>  
-        
-    function ShowModalRentItem(){
-        document.getElementById("DivModalRentItem").style.display = "block";
-    }
 
-    function HideModalRentItem(){
-        document.getElementById("DivModalRentItem").style.display = "none";
-    }
-
-    function ShowModalReturnItem(){
-        document.getElementById("DivModalReturnItem").style.display = "block";
-    }
-
-    function HideModalReturnItem(){
-        document.getElementById("DivModalReturnItem").style.display = "none";
-    }
-
-    function ShowModalExtendRent(){
-        document.getElementById("DivModalExtendRent").style.display = "block";
-    }
-
-    function HideModalExtendRent(){
-        document.getElementById("DivModalExtendRent").style.display = "none";
-    }
-
-    function ShowModalRentPackagedItem(){
-        document.getElementById("DivModalRentPackagedItem").style.display = "block";
-    }
-
-    function HideModalRentPackagedItem(){
-        document.getElementById("DivModalRentPackagedItem").style.display = "none";
-    }
-
-</script>
+<script src="/js/ItemRental.js" type="text/javascript"></script>
+<script src="/js/input-validator.js" type="text/javascript"></script>
+<script src="/js/MainJavascript.js" type="text/javascript"></script>
 
 @endsection
 
@@ -93,13 +62,14 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table" id="tblAvailableItems">
+                                <table class="table" id="tblAvailableItems" onclick="run(event, 'Rent')">
                                     <thead class="text-primary">
                                         <th onclick="sortTable(0, 'tblAvailableItems', 'string')">Item ID</th>
                                         <th onclick="sortTable(1, 'tblAvailableItems', 'string')">Item Name</th>
                                         <th onclick="sortTable(2, 'tblAvailableItems', 'int')">Quantity Left</th>
                                         <th onclick="sortTable(3, 'tblAvailableItems', 'double')">Rate per hour</th>
                                         <th onclick="sortTable(4, 'tblAvailableItems', 'string')">Description</th>
+                                        <th>Action</th>
                                     </thead>
                                     <tbody>
                                         @foreach ($Items as $Item)
@@ -109,6 +79,11 @@
                                             <td>{{$Item -> intItemQuantity}}</td>
                                             <td>{{$Item -> dblItemRate}}</td>
                                             <td>{{$Item -> strItemDescription}}</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Rent Item" class="btn btn-success btn-simple btn-xs" onclick="ShowModalRentItem()">
+                                                    <i class="material-icons">playlist_add_check</i>
+                                                </button>
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -284,20 +259,87 @@
 @section('modals')
 
 <div id="DivModalRentItem" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="width: 500px">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
-
-                        <div class="card-header" data-background-color="green">
-                            <i class="material-icons">loyalty</i>
-                        </div>
-                        <div class="card-content">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">loyalty</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
                             <p class="category"></p>
                             <h3 class="title">Rent Item<span class="close" onclick="HideModalRentItem()">X</span></h3>
-
                         </div>
-
+                        <div class = "row">
+                            <div class="col-md-6">
+                                <div class="form-group label-static">
+                                    <label class="control-label">ID</label>
+                                    <input type="text" class="form-control" id="RentItemID" name="RentItemID" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Item</label>
+                                    <input type="text" class="form-control" id="RentItemName" name="RentItemName" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class = "row">
+                            <div class="col-md-6">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Quantity Left</label>
+                                    <input type="text" class="form-control" id="RentQuantityLeft" name="RentQuantityLeft" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Rate per hour</label>
+                                    <input type="text" class="form-control" id="RentItemRate" name="RentItemRate" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Guest to rent</label>
+                                    <div class="selectBox">
+                                        <select name="SelectGuests" id="SelectGuests">
+                                            @foreach($Guests as $Guest)
+                                                <option>{{$Guest->Name}}</option>
+                                            @endforeach
+                                        </select>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class = "row">
+                            <div class="col-md-6">
+                                <div class="form-group label-floating" id="RentQuantityError">
+                                    <label class="control-label">Quantity to rent</label>
+                                    <input type="text" class="form-control" onkeyup="SendQuantityInput(this, 'int', '#RentQuantityError')"
+                                    onchange="SendQuantityInput(this, 'int', '#RentQuantityError')" id="RentQuantity" name="RentQuantity" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-floating" id="RentDurationError">
+                                    <label class="control-label">Duration (hours)</label>
+                                    <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#RentDurationError')"
+                                    onchange="ValidateInput(this, 'int', '#RentDurationError')" id="RentDuration" name="RentDuration" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-xs-6">
+                                <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                            </div> 
+                            <div class="col-xs-6">
+                                <button type="button" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
+                            </div> 
+                        </div> 
+                    </div>
                 </div>
             </div>
         </div>

@@ -95,7 +95,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table" id="ConfirmedReservationTable">
+                                <table class="table" id="ConfirmedReservationTable" onclick="run(event, 'Active')">
                                     <thead class="text-primary">
                                         <th onclick="sortTable(0, 'ConfirmedReservationTable', 'string')">ID</th>
                                         <th onclick="sortTable(1, 'ConfirmedReservationTable', 'string')">Name</th>
@@ -124,9 +124,9 @@
 
                         <div class = "row">
                             <div class="col-xs-12">
-                                <button type="button" class="btn btn-danger pull-right" onclick="#"><i class="material-icons">highlight_off</i> Cancel</button>
-                                <button type="button" class="btn btn-primary pull-right" onclick="#"><i class="material-icons">info</i> Info</button>
-                                <a href="/EditReservations"><button type="button" class="btn btn-info pull-right"><i class="material-icons">create</i> Edit</button></a>
+                                <button type="button" class="btn btn-danger pull-right" onclick="ShowModalCancelReservation()"><i class="material-icons">highlight_off</i> Cancel</button>
+                                <button type="button" class="btn btn-primary pull-right" onclick="ShowModalReservationInfo()"><i class="material-icons">info</i> Info</button>
+                                <button type="button" class="btn btn-info pull-right" onclick="EditConfirmedReservation()"><i class="material-icons">create</i> Edit</button>
                                 <button type="button" class="btn btn-success pull-right" onclick="#"><i class="material-icons">class</i> Check In</button>
                             </div> 
                         </div>                             

@@ -75,13 +75,13 @@
                                 <div class="col-sm-6">
                                     <div class="form-group label-static" id="CheckInDateError">
                                         <label class="control-label">Check in Date</label>
-                                        <input type="text" class="datepicker form-control" id="CheckInDate"/>
+                                        <input type="text" class="datepicker form-control" id="CheckInDate" readonly/>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group label-static" id="CheckOutDateError">
                                         <label class="control-label">Check out Date</label>
-                                        <input type="text" class="datepicker form-control" id="CheckOutDate"/>
+                                        <input type="text" class="datepicker form-control" id="CheckOutDate" readonly/>
                                     </div>
                                 </div>
                             </div>

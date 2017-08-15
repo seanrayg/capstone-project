@@ -9,6 +9,9 @@ use DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
+use DateTime;
+use DatePeriod;
+use DateInterval;
  
 class MaintenanceController extends Controller
 {
@@ -1712,35 +1715,99 @@ class MaintenanceController extends Controller
                     return redirect('Maintenance/Operations')->withInput();
                 }
                 else{
+                    
                     $DateID = trim($req->input('DateID'));
                     $DateTitle = trim($req->input('DateName'));
                     $StartDate = trim($req->input('StartDate'));
                     $EndDate = trim($req->input('EndDate'));
                     
-                    $DateDescription;
-                    $DateCreated = Carbon::now();
-                    if(!empty(trim($req->input('DateDescription')))){
-                        $DateDescription = trim($req->input('DateDescription'));
+                    $arrCustomers = $this->CheckReservations($StartDate, $EndDate);
+                    
+                    if(sizeof($arrCustomers) != 0){
+                        \Session::flash('date_message','Cannot add dates because because there are exisiting reservation(s) on that day by:');
+                        \Session::flash('arrCustomers', $arrCustomers);
+                        return redirect('Maintenance/Operations')->withInput();  
                     }
                     else{
-                        $DateDescription = "N/A";
+                        $DateDescription;
+                        $DateCreated = Carbon::now();
+                        if(!empty(trim($req->input('DateDescription')))){
+                            $DateDescription = trim($req->input('DateDescription'));
+                        }
+                        else{
+                            $DateDescription = "N/A";
+                        }
+
+                        $data = array('strDateID'=>$DateID,
+                                     'strDateTitle'=>$DateTitle,
+                                     'dteStartDate'=>Carbon::parse($StartDate)->format('Y-m-d'),
+                                     'dteEndDate'=>Carbon::parse($EndDate)->format('Y-m-d'),
+                                     'intDateStatus'=>1,
+                                     'strDateDescription'=>$DateDescription,
+                                     'tmsCreated'=>$DateCreated);
+
+                        //DB::table('tblInoperationalDate')->insert($data);
+
+                        \Session::flash('flash_message','Added successfully!');
+
+                        return redirect('Maintenance/Operations');
                     }
-
-                    $data = array('strDateID'=>$DateID,
-                                 'strDateTitle'=>$DateTitle,
-                                 'dteStartDate'=>Carbon::parse($StartDate)->format('Y-m-d'),
-                                 'dteEndDate'=>Carbon::parse($EndDate)->format('Y-m-d'),
-                                 'intDateStatus'=>1,
-                                 'strDateDescription'=>$DateDescription,
-                                 'tmsCreated'=>$DateCreated);
-
-                    DB::table('tblInoperationalDate')->insert($data);
                     
-                    \Session::flash('flash_message','Added successfully!');
-        
-                    return redirect('Maintenance/Operations');
                 }
             }
+    }
+    
+    //check if there's a reservation in dates
+    public function checkReservations($StartDate, $EndDate){
+        $StartDate = date('Y-m-d', strtotime($StartDate));
+        $EndDate = date('Y-m-d', strtotime($EndDate));
+        $arrayCustomers = [];
+        $output_format = 'Y-m-d';
+        $step = '+1 day';
+        $dates = array();
+        $current = strtotime($StartDate);
+        $last = strtotime($EndDate);
+
+        while( $current <= $last ) {
+
+            $dates[] = date($output_format, $current);
+            $current = strtotime($step, $current);
+        }
+
+        $ExistingReservations = DB::table('tblReservationDetail as a')
+        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+        ->select('a.strReservationID',
+                 DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                 'a.dtmResDArrival',
+                 'a.dtmResDDeparture',
+                 'b.strCustContact',
+                 'b.strCustEmail',
+                 'a.strReservationCode')
+        ->where(function($query){
+            $query->where('a.intResDStatus', '=', '1')
+                  ->orWhere('a.intResDStatus', '=', '2');
+        })
+        ->get();
+    
+   
+        if(sizeof($ExistingReservations) != 0){
+            for($x = 0; $x < sizeof($dates); $x++){
+                foreach($ExistingReservations as $Reservation){
+                    $DateFrom = date('Y-m-d', strtotime($Reservation->dtmResDArrival));
+                    $DateTo = date('Y-m-d', strtotime($Reservation->dtmResDDeparture));
+
+                    if (($dates[$x] >= $DateFrom) && ($dates[$x] <= $DateTo)){
+                        $arrayCustomers[sizeof($arrayCustomers)] = $Reservation->Name;
+                    }
+
+                }
+            }
+        }
+
+        $arrCustomers = array_unique($arrayCustomers);
+        $arrCustomers = array_values($arrCustomers);
+
+        return $arrCustomers;
     }
     
     //Check Duplicate
@@ -1811,7 +1878,16 @@ class MaintenanceController extends Controller
             $DateDescription = trim($req->input('EditDateDescription'));
             $DateStatus = trim($req->input('EditDateStatus'));
             
-            return $this->updateOperation($DateID, $DateName, $DateStatus, $StartDate, $EndDate, $DateDescription, $OldDateID);
+            $arrCustomers = $this->CheckReservations($StartDate, $EndDate);
+                    
+            if(sizeof($arrCustomers) != 0){
+                \Session::flash('date_message','Cannot add dates because because there are exisiting reservation(s) on that day by:');
+                \Session::flash('arrCustomers', $arrCustomers);
+                return redirect('Maintenance/Operations')->withInput();  
+            }
+            else{
+                return $this->updateOperation($DateID, $DateName, $DateStatus, $StartDate, $EndDate, $DateDescription, $OldDateID);
+            }
         }
     }
     

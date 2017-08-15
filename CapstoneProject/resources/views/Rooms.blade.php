@@ -4,6 +4,11 @@
     <title>Rooms</title>
 @endsection
 
+@section('scripts')
+    <script src="/js/Rooms.js" type="text/javascript"></script>
+@endsection
+
+
 @section('content')
 
 <!-- Add success -->
@@ -150,30 +155,40 @@
                                         <th onclick="sortTable(4, 'tblOccupiedRooms', 'string')">Guest's Contact #</th>
                                         <th onclick="sortTable(5, 'tblOccupiedRooms', 'string')">Check In Date</th>
                                         <th onclick="sortTable(6, 'tblOccupiedRooms', 'string')">Check Out Date</th>
+                                        <th style="display:none">Check In Date 2</th>
+                                        <th style="display:none">Check Out Date 2</th>
+                                        <th class="text-center">Action</th>
                                     </thead>
                                     <tbody>
                                         @foreach($RoomDetails as $Detail)
-                                            <tr onclick="HighlightRow(this)">
+                                            <tr>
                                                 <td>{{$Detail->strReservationID}}</td>
                                                 <td>{{$Detail->strRoomType}}</td>
                                                 <td>{{$Detail->strRoomName}}</td>
                                                 <td>{{$Detail->Name}}</td>
                                                 <td>{{$Detail->strCustContact}}</td>
                                                 <td>{{Carbon\Carbon::parse($Detail -> dtmResDArrival)->format('M j, Y')}}</td>
-                                                <td>{{Carbon\Carbon::parse($Detail -> dtmResDDeparture)->format('M j, Y')}}</td>  
+                                                <td>{{Carbon\Carbon::parse($Detail -> dtmResDDeparture)->format('M j, Y')}}</td>
+                                                <td style="display:none">{{Carbon\Carbon::parse($Detail -> dtmResDArrival)->format('m/d/Y')}}</td>
+                                                <td style="display:none">{{Carbon\Carbon::parse($Detail -> dtmResDDeparture)->format('m/d/Y')}}</td>
+                                                <td>
+                                                    <button type="button" rel="tooltip" title="Check Out" class="btn btn-info btn-simple btn-xs">
+                                                        <i class="material-icons">done_all</i>
+                                                    </button>
+                                                    <button type="button" rel="tooltip" title="Transfer" class="btn btn-success btn-simple btn-xs" onclick="TransferRoom('{{$Detail->strReservationID}}')">
+                                                        <i class="material-icons">compare_arrows</i>
+                                                    </button>
+                                                    <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs">
+                                                        <i class="material-icons">alarm_add</i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div class = "row">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-warning pull-right" onclick="#"><i class="material-icons">alarm_add</i> Extend Stay</button>
-                                <button type="button" class="btn btn-info pull-right" onclick="#"><i class="material-icons">compare_arrows</i> Transfer</button>
-                                <button type="button" class="btn btn-primary pull-right" onclick="#"><i class="material-icons">done_all</i> Check out</button>
-                            </div> 
-                        </div>  
+
                     </div>
 
                     </div>
