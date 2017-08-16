@@ -197,6 +197,7 @@ class ViewResortController extends Controller
                 ->join ('tblReservationDetail as c', 'c.strReservationID', '=' , 'a.strRentedIReservationID')
                 ->join ('tblCustomer as d', 'c.strResDCustomerID', '=' , 'd.strCustomerID')
                 ->select(DB::raw('CONCAT(d.strCustFirstName , " " , d.strCustLastName) AS Name'),
+                        'b.strItemID',
                         'b.strItemName',
                         'a.tmsCreated',
                         'a.intRentedIDuration',
@@ -204,12 +205,20 @@ class ViewResortController extends Controller
                 ->where('a.intRentedIReturned', '=', 0)
                 ->get();
         
-        
         foreach($RentedItems as $Items){
             $Items->tmsCreated = Carbon::parse($Items->tmsCreated)->format('g:i A');
             $Items->intRentedIDuration = Carbon::parse($Items->tmsCreated)->addHours($Items->intRentedIDuration)->format('g:i A');
         }
         
+        foreach($RentalItems as $Rental){
+            foreach($RentedItems as $Rented){
+                if($Rental->strItemID == $Rented->strItemID){
+                    $Rental->intItemQuantity -= (int)$Rented->intRentedIQuantity;
+                }
+            }
+        }
+        
+        //dd($RentalItems);
 
         $Guests = DB::table('tblReservationDetail as a')
                         ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')

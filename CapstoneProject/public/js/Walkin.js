@@ -678,6 +678,10 @@ function FillInitialBill(data){
     var secondDate = new Date(document.getElementById("CheckOutDate").value);
 
     var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+    
+    if(diffDays == 0){
+        diffDays = 1;
+    }
     document.getElementById("b-DaysOfStay").innerHTML = diffDays;
     
     //Accomodation Fee

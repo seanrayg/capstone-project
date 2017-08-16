@@ -617,7 +617,7 @@ class ReservationController extends Controller
     /*----------------- WALK IN -------------------*/
     
     public function addWalkIn(Request $req){
-
+         
         // Prepares data to be saved
         $tempCheckInDate = trim($req->input('s-CheckInDate'));
         $tempCheckOutDate = trim($req->input('s-CheckOutDate'));
@@ -636,7 +636,7 @@ class ReservationController extends Controller
         $AmountTendered = trim($req->input('s-AmountTendered'));
         $OtherFees = trim($req->input('s-OtherFees'));
         $AddFees = json_decode($req->input('s-AddFees'));
-        
+       
         $PaymentStatus = 0;
         if($AmountTendered != null){
             $PaymentStatus = 1;
@@ -779,15 +779,19 @@ class ReservationController extends Controller
             }
         }
         
-        $arrOtherFees = explode(',', $OtherFees);
+        if($OtherFees != null){
+            $arrOtherFees = explode(',', $OtherFees);
 
-        for($x = 0; $x < sizeof($arrOtherFees); $x++){
-            $arrFee = explode('-', $arrOtherFees[$x]);
-            $FeeID = DB::table('tblFee')->where([['strFeeStatus', 'Active'],['strFeeName', $arrFee[0]]])->orderBy('strFeeID')->pluck('strFeeID');
-            if(sizeof($FeeID) != 0){
-                $this->addFees($FeeID[0], $arrFee[2], $PaymentStatus, $ReservationID);
+            for($x = 0; $x < sizeof($arrOtherFees); $x++){
+                $arrFee = explode('-', $arrOtherFees[$x]);
+                $FeeID = DB::table('tblFee')->where([['strFeeStatus', 'Active'],['strFeeName', $arrFee[0]]])->orderBy('strFeeID')->pluck('strFeeID');
+                if(sizeof($FeeID) != 0){
+                    $this->addFees($FeeID[0], $arrFee[2], $PaymentStatus, $ReservationID);
+                }
             }
         }
+        
+        
         
         //Check if there is an entrance fee
         $EntranceFeeID = DB::table('tblFee as a')
