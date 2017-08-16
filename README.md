@@ -19,3 +19,6 @@ INSTALL GIT
 3. "git add -A" - Add all the files that you edited and ready them to be committed.
 4. "git commit -m "Some Comment Here" - Commit the changes in your files. NOTE: Comment is required
 5. "git push" - Finally to save them in github, use this command.
+
+
+saling kitkit
