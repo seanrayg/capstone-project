@@ -130,22 +130,34 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table">
+                                <table class="table" onclick="run(event, 'Return')" id="tblReturnItem">
                                     <thead class="text-primary">
                                         <th>Name</th>
                                         <th>Rented By</th>
                                         <th>Time Rented</th>
                                         <th>Return Time</th>
                                         <th>Quantity Availed</th>
+                                        <th>Rental Status</th>
+                                        <th>Excess Time</th>
+                                        <th style="display:none">Rate</th>
+                                        <th style="display:none">ID</th>
+                                        <th style="display:none">Reservation ID</th>
+                                        <th style="display:none">Rent ID</th>
                                     </thead>
                                     <tbody>
                                         @foreach($RentedItems as $Item)
-                                            <tr>
+                                            <tr onclick="HighlightRow(this)">
                                                 <td>{{$Item->strItemName}}</td>
                                                 <td>{{$Item->Name}}</td>
                                                 <td>{{$Item->tmsCreated}}</td>
                                                 <td>{{$Item->intRentedIDuration}}</td>
                                                 <td>{{$Item->intRentedIQuantity}}</td>
+                                                <td>{{$Item->RentalStatus}}</td>
+                                                <td>{{$Item->ExcessTime}}</td>
+                                                <td style="display:none">{{$Item->dblItemRate}}</td>
+                                                <td style="display:none">{{$Item->strItemID}}</td>
+                                                <td style="display:none">{{$Item->strReservationID}}</td>
+                                                <td style="display:none">{{$Item->strRentedItemID}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -335,7 +347,7 @@
 </div>
     
 <div id="DivModalReturnItem" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="max-width: 500px">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
@@ -344,9 +356,113 @@
                             <i class="material-icons">swap_horiz</i>
                         </div>
                         <div class="card-content">
-                            <p class="category"></p>
-                            <h3 class="title">Return Item<span class="close" onclick="HideModalReturnItem()">X</span></h3>
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Return Item<span class="close" onclick="HideModalReturnItem()">X</span></h3>
+                            </div>
+                            <form method="POST" action="/ItemRental/Return" onsubmit="return CheckReturnForm()" id="formReturnItem" name="formReturnItem">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="ReturnItemRate" id="ReturnItemRate">
+                                <input type="hidden" name="ReturnItemID" id="ReturnItemID">
+                                <input type="hidden" name="ReturnReservationID" id="ReturnReservationID">
+                                <input type="hidden" name="ReturnRentedItemID" id="ReturnRentedItemID">
+                                <input type="hidden" name="ReturnTotalQuantity" id="ReturnTotalQuantity">
+                                <div class = "row">
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Item Name</label>
+                                            <input type="text" class="form-control" id="ReturnItemName" name="ReturnItemName" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Guest</label>
+                                            <input type="text" class="form-control" id="ReturnGuestName" name="ReturnGuestName" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Rental Status</label>
+                                            <input type="text" class="form-control" id="ReturnRentalStatus" name="ReturnRentalStatus" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Excess Time</label>
+                                            <input type="text" class="form-control" id="ReturnExcessTime" name="ReturnExcessTime" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="ReturnQuantityError">
+                                            <label class="control-label">Quantity to return</label>
+                                            <input type="text" class="form-control" onkeyup="SendQuantityReturn(this, 'int', '#ReturnQuantityError')"
+                                            onchange="SendQuantityReturn(this, 'int', '#ReturnQuantityError')" id="ReturnQuantityAvailed" name="ReturnQuantityAvailed">
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div id="DivExcessTime" style="display:none">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-static" id="ReturnTimePenaltyError">
+                                                <label class="control-label">Excess Time Penalty</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#ReturnTimePenaltyError')" onchange="ValidateInput(this, 'int', '#ReturnTimePenaltyError')" id="ReturnTimePenalty" name="ReturnTimePenalty" value="0" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Item Status</label>
+                                            <div class="selectBox" onchange="ControlBrokenContent()">
+                                                <select name="ReturnItemStatus" id="ReturnItemStatus">
+                                                    <option>Good</option>
+                                                    <option>Broken/Lost</option>
+                                                </select>
+                                              </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="DivBrokenItem" style="display:none">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group label-static" id="BrokenQuantityError">
+                                                <label class="control-label">No. of Broken/Lost Items</label>
+                                                <input type="text" class="form-control" onkeyup="SendQuantityReturn(this, 'int', '#BrokenQuantityError')" onchange="SendQuantityReturn(this, 'int', '#BrokenQuantityError')" id="ReturnBrokenQuantity" name="ReturnBrokenQuantity" value="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group label-static" id="BrokenPenaltyError">
+                                                <label class="control-label">Penalty due to broken/lost item</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double', '#BrokenPenaltyError')" onchange="ValidateInput(this, 'double', '#BrokenPenaltyError')" id="ReturnBrokenPenalty" name="ReturnBrokenPenalty" value="0" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel"></p>
+                                    </div>
+                                </div>
+
+                                <br><br>
+                                <div class = "row">
+                                    <div class="col-xs-6">
+                                        <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                                    </div> 
+                                    <div class="col-xs-6">
+                                        <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
+                                    </div> 
+                                </div>
+                            </form>
                         </div>
 
                 </div>
@@ -361,13 +477,15 @@
             <div class="col-md-12">
                 <div class="card card-stats">
 
-                        <div class="card-header" data-background-color="green">
+                        <div class="card-header" data-background-color="blue">
                             <i class="material-icons">alarm_add</i>
                         </div>
                         <div class="card-content">
-                            <p class="category"></p>
-                            <h3 class="title">Extend Rent<span class="close" onclick="HideModalExtendRent()">X</span></h3>
-
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Extend Rent<span class="close" onclick="HideModalExtendRent()">X</span></h3>
+                            </div>
+                            
                         </div>
 
                 </div>
@@ -386,9 +504,10 @@
                             <i class="material-icons">loyalty</i>
                         </div>
                         <div class="card-content">
-                            <p class="category"></p>
-                            <h3 class="title">Rent Item<span class="close" onclick="HideModalRentPackagedItem()">X</span></h3>
-
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Rent Item<span class="close" onclick="HideModalRentPackagedItem()">X</span></h3>
+                            </div>
                         </div>
 
                 </div>

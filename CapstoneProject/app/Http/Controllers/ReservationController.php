@@ -69,7 +69,7 @@ class ReservationController extends Controller
         $DateBooked = Carbon::now();
         $Gender;
         $Remarks;
-        
+        $PickOutTime;
         //gets customer id
         $CustomerID = DB::table('tblCustomer')->pluck('strCustomerID')->first();
         if(!$CustomerID){
@@ -161,13 +161,19 @@ class ReservationController extends Controller
 
         DB::table('tblCustomer')->insert($CustomerData);
         
+        if($CheckInDate == $CheckOutDate){
+            $PickOutTime = "23:59:59";
+        }
+        else{
+            $PickOutTime = $PickUpTime;
+        }
         
         //Saves Reservation Data
         $ReservationData = array('strReservationID'=>$ReservationID,
                               'intWalkIn'=>'0',
                               'strResDCustomerID'=>$CustomerID,
                               'dtmResDArrival'=>$CheckInDate." ".$PickUpTime,
-                              'dtmResDDeparture'=>$CheckOutDate." ".$PickUpTime,
+                              'dtmResDDeparture'=>$CheckOutDate." ".$PickOutTime,
                               'intResDNoOfAdults'=>$NoOfAdults,
                               'intResDNoOfKids'=>$NoOfKids,
                               'strResDRemarks'=>$Remarks,
@@ -177,8 +183,11 @@ class ReservationController extends Controller
         
         DB::table('tblReservationDetail')->insert($ReservationData);
         
+        $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
+        $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
+
         $PaymentStatus = 0;
-        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
         
         //Save Reserved Boats
         if($BoatsUsed != null){
@@ -324,10 +333,21 @@ class ReservationController extends Controller
         $NoOfKids = trim($req->input('r-NoOfKids'));
         $BoatsUsed = trim($req->input('r-BoatsUsed'));
         $PickUpTime = trim($req->input('r-PickUpTime'));
+        $PickOutTime;
+        
+        if($tempCheckInDate == $tempCheckOutDate){
+            $PickOutTime = $PickUpTime;
+        }
+        else{
+            $PickOutTime = "23:59:59";
+        }
+        
+        $CheckInDate = $tempCheckInDate ." ". $PickUpTime;
+        $CheckOutDate = $tempCheckInDate ." ". $PickOutTime;
         
         $PaymentStatus = 0;
         DB::table('tblreservationroom')->where('strResRReservationID', '=', $ReservationID)->delete();
-        $this->saveReservedRooms($ChosenRooms, $tempCheckInDate, $tempCheckOutDate, $ReservationID, $PaymentStatus);
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
         
         if($NoOfKids != null && $NoOfKids != null){
             $updateData = array("intResDNoOfAdults" => $NoOfAdults, 
@@ -463,9 +483,35 @@ class ReservationController extends Controller
         $IndividualRoomTypeLength = sizeof($IndividualRoomType);
          
         for($x = 0; $x < $IndividualRoomTypeLength; $x++){
+            $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->whereBetween('dtmResDArrival', [$CheckInDate, $CheckOutDate])
+                                          ->orWhereBetween('dtmResDDeparture', [$CheckInDate, $CheckOutDate]);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+            $ExistingRooms = DB::table('tblReservationRoom')
+                                    ->whereIn('strResRReservationID', $ExistingReservations)
+                                    ->pluck('strResRRoomID')
+                                    ->toArray();
 
-            $Rooms = DB::select("SELECT a.strRoomID FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$CheckInDate."' AND '".$CheckOutDate."') OR (dtmResDArrival BETWEEN '".$CheckInDate."' AND '".$CheckOutDate."') AND NOT intResDStatus = 3))) AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) AND a.strRoomTypeID = '".$IndividualRoomType[$x]."'");
-            
+            $tempArrivalDate = explode(" ", $CheckInDate);
+            $tempDepartureDate = explode(" ", $CheckOutDate);
+
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('a.strRoomID')
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['a.strRoomTypeID', '=', $IndividualRoomType[$x]]])
+                         ->groupBy('a.strRoomID')
+                         ->get();
             
             foreach($Rooms as $Room){
                 $AvailableRooms .= $Room->strRoomID . ",";
@@ -477,8 +523,6 @@ class ReservationController extends Controller
         $arrAvailableRooms = explode('@', $AvailableRooms);
         array_pop($arrAvailableRooms);
 
-  
-       
         //Saves Reserved Rooms
         for($x = 0; $x < $IndividualRoomTypeLength; $x++){
            $IndividualRoomsInfo = explode('-', $IndividualRooms[$x]);
@@ -670,7 +714,7 @@ class ReservationController extends Controller
         
         $dt = Carbon::now('HongKong');
         $TimeToday = $dt->toTimeString();          
-        
+        $PickOutTime = "";
         $PickUpTime = "";
         $arrTimeToday = explode(':', $TimeToday);
         if(((int)$arrTimeToday[1] >= 00) && ((int)$arrTimeToday[1]<=15)){
@@ -722,13 +766,19 @@ class ReservationController extends Controller
 
         DB::table('tblCustomer')->insert($CustomerData);
         
+        if($CheckInDate == $CheckOutDate){
+            $PickOutTime = "23:59:59";
+        }
+        else{
+            $PickOutTime = $PickUpTime;
+        }
         
         //Saves Reservation Data
         $ReservationData = array('strReservationID'=>$ReservationID,
                               'intWalkIn'=>'1',
                               'strResDCustomerID'=>$CustomerID,
                               'dtmResDArrival'=>$CheckInDate." ".$PickUpTime,
-                              'dtmResDDeparture'=>$CheckOutDate." ".$PickUpTime,
+                              'dtmResDDeparture'=>$CheckOutDate." ".$PickOutTime,
                               'intResDNoOfAdults'=>$NoOfAdults,
                               'intResDNoOfKids'=>$NoOfKids,
                               'strResDRemarks'=>$Remarks,
@@ -738,8 +788,12 @@ class ReservationController extends Controller
         
         DB::table('tblReservationDetail')->insert($ReservationData);   
         
+        
+        $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
+        $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
+        
         //saves reserved rooms
-        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
 
         
         //saves payment
