@@ -75,11 +75,89 @@ class ResortController extends Controller
                      'intRentedIDuration'=>$RentDuration,
                      'intRentedIBroken'=>0,
                      'intRentedIPayment'=>$PaymentStatus,
+                     'intRentedIBrokenQuantity'=>0,
                      'tmsCreated'=>$TimeRented);
         
         DB::table('tblRentedItem')->insert($data);
         
         \Session::flash('flash_message','Successfully rented the item!');
+        
+        return redirect('ItemRental');
+    }
+    
+    //return item
+    public function storeReturnItem(Request $req){
+        $ItemID = trim($req->input('ReturnItemID'));
+        $ReservationID = trim($req->input('ReturnReservationID'));
+        $RentedItemID = trim($req->input('ReturnRentedItemID'));
+        $ItemRate = trim($req->input('ReturnItemRate'));
+        $ItemQuantity = trim($req->input('ReturnTotalQuantity'));
+        $ItemName = trim($req->input('ReturnItemName'));
+        $CustomerName = trim($req->input('ReturnGuestName'));
+        $TimePenalty = trim($req->input('ReturnTimePenalty'));
+        $RentalStatus = trim($req->input('ReturnRentalStatus'));
+        $ExcessTime = trim($req->input('ReturnExcessTime'));
+        $QuantityReturned = trim($req->input('ReturnQuantityAvailed'));
+        $ItemStatus = trim($req->input('ReturnItemStatus'));
+        $BrokenQuantity = trim($req->input('ReturnBrokenQuantity'));
+        $BrokenPenalty = trim($req->input('ReturnBrokenPenalty'));
+        
+        //$PaymentRemarks = collect(['name' => 'Desk', 'price' => 100]);
+        
+        $QuantityLeft = (int)$ItemQuantity - (int)$QuantityReturned;
+        
+        if($ItemStatus == "Good"){
+            if($ItemQuantity == $QuantityReturned){
+                $updateData = array("intRentedIReturned" => "1");   
+        
+                DB::table('tblRentedItem')
+                    ->where('strRentedItemID', '=', $RentedItemID)
+                    ->update($updateData);
+                
+                if((int)$TimePenalty != "0"){
+                    
+                }
+                
+            }
+            else{
+                if((int)$TimePenalty == "0"){
+                    $updateData = array("intRentedIReturned" => "1",
+                                        "intRentedIQuantity" => $QuantityReturned);   
+            
+                    $RentalInfo = DB::table('tblRentedItem')
+                    ->where('strRentedItemID', '=', $RentedItemID)
+                    ->get();
+                    
+                    DB::table('tblRentedItem')
+                        ->where('strRentedItemID', '=', $RentedItemID)
+                        ->update($updateData);
+                    
+                    $newRentItemID = $this->SmartCounter('tblrenteditem', 'strRentedItemID');
+                    
+                    foreach($RentalInfo as $Item){
+                        $data = array('strRentedItemID'=>$newRentItemID,
+                                 'strRentedIReservationID'=>$ReservationID,
+                                 'strRentedIItemID'=>$ItemID,
+                                 'intRentedIReturned'=>0,
+                                 'intRentedIQuantity'=>$QuantityLeft,
+                                 'intRentedIDuration'=>$Item->intRentedIDuration,
+                                 'intRentedIBroken'=>0,
+                                 'intRentedIPayment'=>$Item->intRentedIPayment,
+                                 'intRentedIBrokenQuantity'=>0,
+                                 'tmsCreated'=>$Item->tmsCreated);
+
+                        DB::table('tblRentedItem')->insert($data);
+                    }
+                    
+                    
+                }
+            }
+        }
+        else{
+            
+        }
+        
+        \Session::flash('flash_message','Successfully returned the item!');
         
         return redirect('ItemRental');
     }

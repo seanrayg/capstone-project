@@ -305,3 +305,5 @@ Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
 Route::post('/ItemRental/Rent', 'ResortController@storeRentalItem');
 
+Route::post('/ItemRental/Return', 'ResortController@storeReturnItem');
+

@@ -971,7 +971,8 @@ function CheckReservedAmenities(){
             },
             error:function(response){
                 console.log(response);
-                alert(response.status);
+                var errors = response.responseJSON;
+                console.log(errors);
             }
         });  
 }

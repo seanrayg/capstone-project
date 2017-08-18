@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use DB;
+use DateTime;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
@@ -100,7 +101,34 @@ class ViewResortController extends Controller
         $CheckInDate = str_replace("-","/",$ArrivalDate);
         $CheckOutDate = str_replace("-","/",$DepartureDate);
         
-        $Rooms = DB::select("SELECT a.strRoomTypeID, a.strRoomName FROM tblRoom a, tblRoomType b WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2 OR intResDStatus = 4) AND ((dtmResDDeparture BETWEEN '".$CheckInDate."' AND '".$CheckOutDate."') OR (dtmResDArrival BETWEEN '".$CheckInDate."' AND '".$CheckOutDate."') AND NOT intResDStatus = 3))) AND a.strRoomTypeID = '".$RoomTypeID."' AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomStatus = 'Available'");
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->whereBetween('dtmResDArrival', [$CheckInDate, $CheckOutDate])
+                                          ->orWhereBetween('dtmResDDeparture', [$CheckInDate, $CheckOutDate]);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+        $ExistingRooms = DB::table('tblReservationRoom')
+                                ->whereIn('strResRReservationID', $ExistingReservations)
+                                ->pluck('strResRRoomID')
+                                ->toArray();
+
+        $tempArrivalDate = explode(" ", $CheckInDate);
+        $tempDepartureDate = explode(" ", $CheckOutDate);
+
+        $Rooms = DB::table('tblRoom as a')
+                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                    ->select('a.strRoomTypeID',
+                             'a.strRoomName')
+                     ->whereNotIn('strRoomID', $ExistingRooms)
+                     ->where([['a.strRoomStatus','=','Available'],['a.strRoomTypeID', '=', $RoomTypeID]])
+                     ->get();
 
         return response()->json($Rooms);
     }
@@ -196,18 +224,48 @@ class ViewResortController extends Controller
                 ->join ('tblItem as b', 'b.strItemID', '=' , 'a.strRentedIItemID')
                 ->join ('tblReservationDetail as c', 'c.strReservationID', '=' , 'a.strRentedIReservationID')
                 ->join ('tblCustomer as d', 'c.strResDCustomerID', '=' , 'd.strCustomerID')
+                ->join ('tblItemRate as e', 'e.strItemID', '=' , 'b.strItemID')
                 ->select(DB::raw('CONCAT(d.strCustFirstName , " " , d.strCustLastName) AS Name'),
                         'b.strItemID',
                         'b.strItemName',
                         'a.tmsCreated',
                         'a.intRentedIDuration',
-                        'a.intRentedIQuantity')
-                ->where('a.intRentedIReturned', '=', 0)
+                        'a.intRentedIQuantity',
+                        DB::raw('a.intRentedIBroken AS ExcessTime'),
+                        DB::raw('b.strItemDescription AS RentalStatus'),
+                        'e.dblItemRate',
+                        'c.strReservationID',
+                        'b.strItemID',
+                        'a.strRentedItemID')
+                ->where([['a.intRentedIReturned', '=', 0], ['e.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = b.strItemID)")]])
                 ->get();
         
+        $DateTimeToday = Carbon::now('HongKong');
         foreach($RentedItems as $Items){
-            $Items->tmsCreated = Carbon::parse($Items->tmsCreated)->format('g:i A');
-            $Items->intRentedIDuration = Carbon::parse($Items->tmsCreated)->addHours($Items->intRentedIDuration)->format('g:i A');
+            $Items->tmsCreated = Carbon::parse($Items->tmsCreated)->format('M j, Y g:i A');
+            $Items->intRentedIDuration = Carbon::parse($Items->tmsCreated)->addHours($Items->intRentedIDuration)->format('M j, Y g:i A');
+            
+            $tempHour = Carbon::parse($Items->intRentedIDuration);
+            
+            $start_time = $tempHour->toDateTimeString();
+            $end_time = $DateTimeToday->toDateTimeString();
+            
+            $time1 = new DateTime($start_time);
+            $time2 = new DateTime($end_time);
+            $interval = $time1->diff($time2);
+          
+            $hour = $interval->format('%h');
+            $min = $interval->format('%i');
+            
+            if($end_time > $start_time){
+                $Items->ExcessTime = $hour ." hour(s) ". $min ." minutes";
+                $Items->RentalStatus = "Overtime";
+            }
+            else{
+                $Items->ExcessTime = "None";
+                $Items->RentalStatus = "Undertime";
+            }
+
         }
         
         foreach($RentalItems as $Rental){

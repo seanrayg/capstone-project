@@ -722,11 +722,14 @@ class ViewController extends Controller
         $tempArrivalDate = trim($req->input('CheckInDate'));
         $tempDepartureDate = trim($req->input('CheckOutDate'));
         
-        $tempArrivalDate2 = explode("/", $tempArrivalDate);
-        $tempDepartureDate2 = explode("/", $tempDepartureDate);
+        $tempArrivalDate1 = explode(" ", $tempArrivalDate);
+        $tempDepartureDate1 = explode(" ", $tempDepartureDate);
         
-        $ArrivalDate = $tempArrivalDate2[2] ."/". $tempArrivalDate2[0] ."/". $tempArrivalDate2[1];
-        $DepartureDate = $tempDepartureDate2[2] ."/". $tempDepartureDate2[0] ."/". $tempDepartureDate2[1];
+        $tempArrivalDate2 = explode("/", $tempArrivalDate1[0]);
+        $tempDepartureDate2 = explode("/", $tempDepartureDate1[0]);
+        
+        $ArrivalDate = $tempArrivalDate2[2] ."/". $tempArrivalDate2[0] ."/". $tempArrivalDate2[1] ." ". $tempArrivalDate1[1];
+        $DepartureDate = $tempDepartureDate2[2] ."/". $tempDepartureDate2[0] ."/". $tempDepartureDate2[1] ." ". $tempDepartureDate1[1];
         
         $Rooms = $this->fnGetAvailableRooms($ArrivalDate, $DepartureDate);
         
@@ -890,11 +893,52 @@ class ViewController extends Controller
     }
     
     public function fnGetAvailableRooms($ArrivalDate, $DepartureDate){
-        if($ArrivalDate != $DepartureDate){
-            $Rooms = DB::select("SELECT b.strRoomType, c.dblRoomRate, b.intRoomTCapacity, COUNT(a.strRoomTypeID) as TotalRooms FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') OR (dtmResDArrival BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') AND NOT intResDStatus = 3))) AND b.intRoomTCategory = 1 AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) GROUP BY a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity");
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->whereBetween('dtmResDArrival', [$ArrivalDate, $DepartureDate])
+                                          ->orWhereBetween('dtmResDDeparture', [$ArrivalDate, $DepartureDate]);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+        $ExistingRooms = DB::table('tblReservationRoom')
+                                ->whereIn('strResRReservationID', $ExistingReservations)
+                                ->pluck('strResRRoomID')
+                                ->toArray();
+        
+        $tempArrivalDate = explode(" ", $ArrivalDate);
+        $tempDepartureDate = explode(" ", $DepartureDate);
+        
+        if($tempArrivalDate[0] != $tempDepartureDate[0]){
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('b.strRoomType', 
+                         'c.dblRoomRate', 
+                         'b.intRoomTCapacity', 
+                         DB::raw("COUNT(a.strRoomTypeID) as TotalRooms"))
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['b.intRoomTCategory', '=', 1]])
+                         ->groupBy('b.strRoomType','c.dblRoomRate', 'b.intRoomTCapacity')
+                         ->get();
         }
         else{
-             $Rooms = DB::select("SELECT b.strRoomType, c.dblRoomRate, b.intRoomTCapacity, COUNT(a.strRoomTypeID) as TotalRooms FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') OR (dtmResDArrival BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') AND NOT intResDStatus = 3))) AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) GROUP BY a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity");
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('b.strRoomType', 
+                         'c.dblRoomRate', 
+                         'b.intRoomTCapacity', 
+                         DB::raw("COUNT(a.strRoomTypeID) as TotalRooms"))
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                         ->groupBy('b.strRoomType','c.dblRoomRate', 'b.intRoomTCapacity')
+                         ->get();
         }
         return $Rooms;
     }
@@ -905,7 +949,14 @@ class ViewController extends Controller
         $tempCheckOutDate = trim($req->input('CheckOutDate'));
         $PickUpTime = trim($req->input('PickUpTime'));
         $TotalGuests = trim($req->input('TotalGuests'));  
+        $PickOutTime;
         
+        if($tempArrivalDate == $tempCheckOutDate){
+            $PickOutTime = "23:59:59";
+        }
+        else{
+            $PickOutTime = $PickUpTime;
+        }
         $errorBoat = false;
         $errorRoom = false;
  
@@ -914,11 +965,11 @@ class ViewController extends Controller
 
         $tempArrivalDate2 = explode('/', $tempArrivalDate);
 
-        $ArrivalDate = $tempArrivalDate2[2] ."/". $tempArrivalDate2[0] ."/". $tempArrivalDate2[1];
+        $ArrivalDate = $tempArrivalDate2[2] ."/". $tempArrivalDate2[0] ."/". $tempArrivalDate2[1] ." ". $PickUpTime;
         
         $tempCheckOutDate2 = explode('/', $tempCheckOutDate);
 
-        $DepartureDate = $tempCheckOutDate2[2] ."/". $tempCheckOutDate2[0] ."/". $tempCheckOutDate2[1];
+        $DepartureDate = $tempCheckOutDate2[2] ."/". $tempCheckOutDate2[0] ."/". $tempCheckOutDate2[1] ." ". $PickOutTime;
         
         if($ChosenBoats != null){
             $tempArrivalDate2 = explode('/', $tempArrivalDate);
@@ -941,7 +992,39 @@ class ViewController extends Controller
             }
         }
         
-        $Rooms = DB::select("SELECT a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity, COUNT(a.strRoomTypeID) as TotalRooms FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') OR (dtmResDArrival BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') AND NOT intResDStatus = 3)) AND NOT strResRReservationID = '".$ReservationID."') AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) GROUP BY a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity");
+        
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->whereBetween('dtmResDArrival', [$ArrivalDate, $DepartureDate])
+                                          ->orWhereBetween('dtmResDDeparture', [$ArrivalDate, $DepartureDate]);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+               
+        $ExistingRooms = DB::table('tblReservationRoom')
+                                ->whereIn('strResRReservationID', $ExistingReservations)
+                                ->where('strResRReservationID', '!=', $ReservationID)
+                                ->pluck('strResRRoomID')
+                                ->toArray();
+
+        $Rooms = DB::table('tblRoom as a')
+                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                    ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                    ->select('a.strRoomTypeID',
+                             'b.strRoomType',
+                             'c.dblRoomRate',
+                              DB::raw("COUNT(a.strRoomTypeID) as TotalRooms"))
+                     ->whereNotIn('strRoomID', $ExistingRooms)
+                     ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                     ->groupBy('a.strRoomTypeID', 'b.strRoomType', 'c.dblRoomRate', 'b.intRoomTCapacity')
+                     ->get();
+
       
         $RoomCounter = 0;
         $TotalChosenRooms = count($ChosenRooms);
