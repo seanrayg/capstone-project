@@ -97,59 +97,19 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Capacity</th>
-                                        <th>Status</th>
                                         <th>Price</th>
                                         <th>Description</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Capacity</td>
-                                            <td>Status</td>
-                                            <td>Price</td>
-                                            <td>Description</td>
+                                        @foreach($AvailableBoats as $AvailableBoat)
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>{{$AvailableBoat -> strBoatID}}</td>
+                                            <td>{{$AvailableBoat -> strBoatName}}</td>
+                                            <td>{{$AvailableBoat -> intBoatCapacity}}</td>
+                                            <td>{{$AvailableBoat -> dblBoatRate}}</td>
+                                            <td>{{$AvailableBoat -> strBoatDescription}}</td>
                                         </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Capacity</td>
-                                            <td>Status</td>
-                                            <td>Price</td>
-                                            <td>Description</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Capacity</td>
-                                            <td>Status</td>
-                                            <td>Price</td>
-                                            <td>Description</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Capacity</td>
-                                            <td>Status</td>
-                                            <td>Price</td>
-                                            <td>Description</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Capacity</td>
-                                            <td>Status</td>
-                                            <td>Price</td>
-                                            <td>Description</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>Name</td>
-                                            <td>Capacity</td>
-                                            <td>Status</td>
-                                            <td>Price</td>
-                                            <td>Description</td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -157,8 +117,7 @@
 
                         <div class = "row">
                             <div class="col-xs-12">
-                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalRentBoat()"><i class="material-icons">class</i> Rent</button>
-                            </div>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalRentBoat()"><i class="material-icons">class</i> Rent</button> </div>
                         </div>
                     </div>
 

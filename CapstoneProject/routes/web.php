@@ -20,9 +20,7 @@ Route::get('/Walkin', 'ViewResortController@ViewWalkIn');
 
 Route::get('/Customers', 'ViewResortController@ViewCustomers');
 
-Route::get('/BoatSchedule', function () {
-    return view('BoatSchedule');
-});
+Route::get('/BoatSchedule', 'ViewResortController@getAvailableBoats');
 
 Route::get('/Rooms', 'ViewResortController@ViewRooms');
 

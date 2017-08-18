@@ -230,5 +230,25 @@ class ViewResortController extends Controller
         return view('ItemRental', compact('RentalItems', 'Guests', 'RentedItems'));
     }
     
+    /*------ Boat Schedule ------*/
+
+    function getAvailableBoats(){
+
+        $AvailableBoats = DB::table('tblBoat as a')
+        ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
+        ->select('a.strBoatID', 
+                 'a.strBoatName',
+                 'a.intBoatCapacity',
+                 'b.dblBoatRate',
+                 'a.strBoatDescription')
+        ->where('b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)"))
+        ->where(function($query){
+            $query->where('a.strBoatStatus', '=', 'Available');
+        })
+        ->get();
+
+        return view('BoatSchedule', compact('AvailableBoats'));
+
+    }
     
 }
