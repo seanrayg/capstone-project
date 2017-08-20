@@ -42,6 +42,7 @@
         
 
     </script>
+    <script src="/js/BoatSchedule.js" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -92,7 +93,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table">
+                                <table class="table" onclick="run(event)">
                                     <thead class="text-primary">
                                         <th>ID</th>
                                         <th>Name</th>
@@ -142,8 +143,6 @@
                                         <th>Pick up</th>
                                         <th>Drop off</th>
                                         <th>Rented By</th>
-                                        <th>Boat Driver</th>
-                                        <th>Assistant</th>
                                     </thead>
                                     <tbody>
                                         <tr>
@@ -154,8 +153,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -165,8 +162,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -176,8 +171,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -187,8 +180,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -198,8 +189,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -209,8 +198,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -244,8 +231,6 @@
                                         <th>Pick up</th>
                                         <th>Drop off</th>
                                         <th>Rented By</th>
-                                        <th>Boat Driver</th>
-                                        <th>Assistant</th>
                                     </thead>
                                     <tbody>
                                         <tr>
@@ -256,8 +241,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -267,8 +250,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -278,8 +259,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -289,8 +268,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -300,8 +277,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
@@ -311,8 +286,6 @@
                                             <td>Pick up</td>
                                             <td>Drop off</td>
                                             <td>Rented By</td>
-                                            <td>Boat Driver</td>
-                                            <td>Assistant</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -357,7 +330,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Boat to be rented</label>
-                                                <input type="text" value="Banana Boat" class="form-control" disabled>
+                                                <input type="text" id="BoatName" value="Boat Name" class="form-control" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -367,39 +340,9 @@
                                            <p style="font-family: 'Roboto'">Rented By:</p>
                                             <input list="GuestsList" class="inputlist">
                                                 <datalist id="GuestsList">
-                                                  <option value="1">
-                                                  <option value="2">
-                                                  <option value="3">
-                                                  <option value="4">
-                                                  <option value="5">
-                                                </datalist> 
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                           <p style="font-family: 'Roboto'">Driver:</p>
-                                            <input list="GuestsList" class="inputlist">
-                                                <datalist id="GuestsList">
-                                                  <option value="1">
-                                                  <option value="2">
-                                                  <option value="3">
-                                                  <option value="4">
-                                                  <option value="5">
-                                                </datalist> 
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                           <p style="font-family: 'Roboto'">Assistant:</p>
-                                            <input list="GuestsList" class="inputlist">
-                                                <datalist id="GuestsList">
-                                                  <option value="1">
-                                                  <option value="2">
-                                                  <option value="3">
-                                                  <option value="4">
-                                                  <option value="5">
+                                                  @foreach($ActiveCustomers as $ActiveCustomer)
+                                                    <option value="{{$ActiveCustomer -> strCustomerID}}">{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}</option>
+                                                  @endforeach
                                                 </datalist> 
                                         </div>
                                     </div>
