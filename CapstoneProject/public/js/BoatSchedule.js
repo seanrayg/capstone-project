@@ -2,6 +2,8 @@ var BoatInfo = [];
 
 function run(event){
 
+	document.getElementById('RentButton').disabled = false;
+
 	event = event || window.event; 
     var target = event.target || event.srcElement;
     while (target && target.nodeName != 'TR') {

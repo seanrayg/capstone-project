@@ -118,7 +118,7 @@
 
                         <div class = "row">
                             <div class="col-xs-12">
-                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalRentBoat()"><i class="material-icons">class</i> Rent</button> </div>
+                                <button id="RentButton" type="button" class="btn btn-success pull-right" onclick="ShowModalRentBoat()" disabled=""><i class="material-icons">class</i> Rent</button> </div>
                         </div>
                     </div>
 
@@ -341,7 +341,7 @@
                                             <input list="GuestsList" class="inputlist">
                                                 <datalist id="GuestsList">
                                                   @foreach($ActiveCustomers as $ActiveCustomer)
-                                                    <option value="{{$ActiveCustomer -> strCustomerID}}">{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}</option>
+                                                    <option id="{{$ActiveCustomer -> strCustomerID}}">{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}</option>
                                                   @endforeach
                                                 </datalist> 
                                         </div>
@@ -351,6 +351,15 @@
                                         <div class="col-md-12">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Number of passengers</label>
+                                                <input type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-floating">
+                                                <label class="control-label">Purpose</label>
                                                 <input type="text" class="form-control" required>
                                             </div>
                                         </div>
@@ -401,11 +410,6 @@
                                            <p style="font-family: 'Roboto'">Rented By:</p>
                                             <input list="GuestsList" class="inputlist">
                                                 <datalist id="GuestsList">
-                                                  <option value="1">
-                                                  <option value="2">
-                                                  <option value="3">
-                                                  <option value="4">
-                                                  <option value="5">
                                                 </datalist> 
                                         </div>
                                     </div>
