@@ -307,3 +307,7 @@ Route::post('/ItemRental/Rent', 'ResortController@storeRentalItem');
 
 Route::post('/ItemRental/Return', 'ResortController@storeReturnItem');
 
+Route::post('ItemRental/Restore', 'ResortController@storeRestoreItem');
+
+Route::post('ItemRental/Delete', 'ResortController@DeleteItemRental');
+

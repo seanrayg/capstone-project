@@ -276,6 +276,28 @@ class ViewResortController extends Controller
             }
         }
         
+        $BrokenItems = DB::table('tblRentedItem as a')
+                ->join ('tblItem as b', 'b.strItemID', '=' , 'a.strRentedIItemID')
+                ->join ('tblReservationDetail as c', 'c.strReservationID', '=' , 'a.strRentedIReservationID')
+                ->join ('tblCustomer as d', 'c.strResDCustomerID', '=' , 'd.strCustomerID')
+                ->select(DB::raw('CONCAT(d.strCustFirstName , " " , d.strCustLastName) AS Name'),
+                        'b.strItemID',
+                        'b.strItemName',
+                        'a.intRentedIBrokenQuantity',
+                        'c.strReservationID',
+                        'b.strItemID',
+                        'a.strRentedItemID',
+                        'a.tmsCreated')
+                ->where('a.intRentedIBroken', '=', 1)
+                ->get();
+        
+        foreach($RentalItems as $Rental){
+            foreach($BrokenItems as $Broken){
+                if($Rental->strItemID == $Broken->strItemID){
+                    $Rental->intItemQuantity -= (int)$Broken->intRentedIBrokenQuantity;
+                }
+            }
+        }
         //dd($RentalItems);
 
         $Guests = DB::table('tblReservationDetail as a')
@@ -285,13 +307,12 @@ class ViewResortController extends Controller
                         ->orderBy('Name')
                         ->get();
         
-        return view('ItemRental', compact('RentalItems', 'Guests', 'RentedItems'));
+        return view('ItemRental', compact('RentalItems', 'Guests', 'RentedItems', 'BrokenItems'));
     }
     
     /*------ Boat Schedule ------*/
 
     function getAvailableBoats(){
-
         $AvailableBoats = DB::table('tblBoat as a')
         ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
         ->select('a.strBoatID', 

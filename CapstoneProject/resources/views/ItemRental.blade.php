@@ -54,6 +54,12 @@
                                 <div class="ripple-container"></div></a>
                             </li>
                             <li class="">
+                                <a href="#BrokenItems" data-toggle="tab">
+                                    <i class="material-icons">inbox</i>
+                                    Broken/Lost Items
+                                <div class="ripple-container"></div></a>
+                            </li>
+                            <li class="">
                                 <a href="#PackagedItems" data-toggle="tab">
                                     <i class="material-icons">pages</i>
                                     Packaged Items
@@ -167,7 +173,54 @@
                         <div class = "row">
                             <div class="col-xs-12">
                                 <button type="button" class="btn btn-info pull-right" onclick="ShowModalExtendRent()"><i class="material-icons">alarm_add</i> Extend</button>
-                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalReturnItem()"><i class="material-icons">swap_horiz</i> Return Item</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalUndertime()"><i class="material-icons">swap_horiz</i> Return Item</button>
+                            </div> 
+                        </div>  
+                    </div>
+                    
+                    <div class="tab-pane" id="BrokenItems">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Search Items</label>
+                                    <input type="text" class="form-control" >
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
+                                <table class="table" onclick="run(event, 'Broken')" id="tblBrokenItem">
+                                    <thead class="text-primary">
+                                        <th>Item</th>
+                                        <th>Rented By</th>
+                                        <th>Quantity</th>
+                                        <th>Date Reported</th>
+                                        <th style="display:none">ID</th>
+                                        <th style="display:none">Reservation ID</th>
+                                        <th style="display:none">Rent ID</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($BrokenItems as $Item)
+                                            <tr onclick="HighlightRow(this)">
+                                                <td>{{$Item->strItemName}}</td>
+                                                <td>{{$Item->Name}}</td>
+                                                <td>{{$Item->intRentedIBrokenQuantity}}</td>
+                                                <td>{{Carbon\Carbon::parse($Item -> tmsCreated)->format('M j, Y g:i A')}}</td>
+                                                <td style="display:none">{{$Item->strItemID}}</td>
+                                                <td style="display:none">{{$Item->strReservationID}}</td>
+                                                <td style="display:none">{{$Item->strRentedItemID}}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class = "row">
+                            <div class="col-xs-12">
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalRestoreItem()"><i class="material-icons">unarchive</i>Restore Item</button>
+                                <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteItem()"><i class="material-icons">delete_sweep</i>Delete Item</button>
                             </div> 
                         </div>  
                     </div>
@@ -410,7 +463,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group label-static" id="ReturnTimePenaltyError">
                                                 <label class="control-label">Excess Time Penalty</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#ReturnTimePenaltyError')" onchange="ValidateInput(this, 'int', '#ReturnTimePenaltyError')" id="ReturnTimePenalty" name="ReturnTimePenalty" value="0" required>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'double2', '#ReturnTimePenaltyError')" onchange="ValidateInput(this, 'double2', '#ReturnTimePenaltyError')" id="ReturnTimePenalty" rel="tooltip" title="Please enter quantity of rental item to return to see the suggested penalty amount" name="ReturnTimePenalty" value="0" required>
                                             </div>
                                         </div>
                                     </div>
@@ -476,18 +529,15 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
-
-                        <div class="card-header" data-background-color="blue">
-                            <i class="material-icons">alarm_add</i>
+                    <div class="card-header" data-background-color="blue">
+                        <i class="material-icons">alarm_add</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Extend Rent<span class="close" onclick="HideModalExtendRent()">X</span></h3>
                         </div>
-                        <div class="card-content">
-                            <div class="row">
-                                <p class="category"></p>
-                                <h3 class="title">Extend Rent<span class="close" onclick="HideModalExtendRent()">X</span></h3>
-                            </div>
-                            
-                        </div>
-
+                    </div>
                 </div>
             </div>
         </div>
@@ -499,7 +549,6 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
-
                         <div class="card-header" data-background-color="green">
                             <i class="material-icons">loyalty</i>
                         </div>
@@ -509,11 +558,175 @@
                                 <h3 class="title">Rent Item<span class="close" onclick="HideModalRentPackagedItem()">X</span></h3>
                             </div>
                         </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div id="DivModalUndertime" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">alarm_off</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalUndertime()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <br>
+                                <h5 class="title text-center">There is still remaining time. Are you sure you want to return the item?</h5>
+                            </div>
+                        </div>
+                        
+                        <br>
+                        <div class = "row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" onclick="ShowModalReturnItem()">Yes</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" onclick="HideModalUndertime()">No</button>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalRestoreItem" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">unarchive</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Restore Item<span class="close" onclick="HideModalRestoreItem()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/ItemRental/Restore" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="BrokenItemID" id="BrokenItemID">
+                            <input type="hidden" name="BrokenReservationID" id="BrokenReservationID">
+                            <input type="hidden" name="BrokenRentedItemID" id="BrokenRentedItemID">
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Item Name</label>
+                                        <input type="text" class="form-control" id="BrokenItemName" name="BrokenItemName" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Number of items broken/lost</label>
+                                        <input type="text" class="form-control" id="BrokenItemQuantity" name="BrokenItemQuantity" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-floating" id="RestoreQuantityError">
+                                        <label class="control-label">Number of items to restore</label>
+                                        <input type="text" class="form-control" id="BrokenRestoreQuantity" name="BrokenRestoreQuantity" onkeyup="SendQuantityRestore(this, 'int', '#RestoreQuantityError')" onchange="SendQuantityRestore(this, 'int', '#RestoreQuantityError')" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
+                                </div>
+                            </div>
+                            
+                            <div class = "row">
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-info pull-left" onclick="HideModalRestoreItem()">Cancel</button>
+                                </div> 
+                                <div class="col-xs-6">
+                                    <button type="submit" class="btn btn-success pull-right">Restore</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<div id="DivModalDeleteItem" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="red">
+                        <i class="material-icons">delete</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Delete Item<span class="close" onclick="HideModalDeleteItem()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/ItemRental/Delete" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="DeleteItemID" id="DeleteItemID">
+                            <input type="hidden" name="DeleteReservationID" id="DeleteReservationID">
+                            <input type="hidden" name="DeleteRentedItemID" id="DeleteRentedItemID">
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Item Name</label>
+                                        <input type="text" class="form-control" id="DeleteItemName" name="DeleteItemName" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Number of items broken/lost</label>
+                                        <input type="text" class="form-control" id="DeleteItemQuantity" name="DeleteItemQuantity" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-floating" id="DeleteQuantityError">
+                                        <label class="control-label">Number of items to delete</label>
+                                        <input type="text" class="form-control" id="DeleteQuantity" name="DeleteQuantity" onkeyup="SendQuantityRestore(this, 'int', '#DeleteQuantityError')" onchange="SendQuantityRestore(this, 'int', '#DeleteQuantityError')"  required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
+                                </div>
+                            </div>
+                            
+                            <div class = "row">
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-info pull-left" onclick="HideModalDeleteItem()">Cancel</button>
+                                </div> 
+                                <div class="col-xs-6">
+                                    <button type="submit" class="btn btn-danger pull-right">Delete</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
 
 @endsection

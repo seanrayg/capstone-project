@@ -87,6 +87,8 @@ class ResortController extends Controller
     
     //return item
     public function storeReturnItem(Request $req){
+  
+        $DateTimeToday = Carbon::now('HongKong')->format('Y-m-d');
         $ItemID = trim($req->input('ReturnItemID'));
         $ReservationID = trim($req->input('ReturnReservationID'));
         $RentedItemID = trim($req->input('ReturnRentedItemID'));
@@ -102,8 +104,6 @@ class ResortController extends Controller
         $BrokenQuantity = trim($req->input('ReturnBrokenQuantity'));
         $BrokenPenalty = trim($req->input('ReturnBrokenPenalty'));
         
-        //$PaymentRemarks = collect(['name' => 'Desk', 'price' => 100]);
-        
         $QuantityLeft = (int)$ItemQuantity - (int)$QuantityReturned;
         
         if($ItemStatus == "Good"){
@@ -113,15 +113,9 @@ class ResortController extends Controller
                 DB::table('tblRentedItem')
                     ->where('strRentedItemID', '=', $RentedItemID)
                     ->update($updateData);
-                
-                if((int)$TimePenalty != "0"){
-                    
-                }
-                
             }
             else{
-                if((int)$TimePenalty == "0"){
-                    $updateData = array("intRentedIReturned" => "1",
+                $updateData = array("intRentedIReturned" => "1",
                                         "intRentedIQuantity" => $QuantityReturned);   
             
                     $RentalInfo = DB::table('tblRentedItem')
@@ -148,18 +142,121 @@ class ResortController extends Controller
 
                         DB::table('tblRentedItem')->insert($data);
                     }
+            }
+            
+            if((int)$TimePenalty != "0"){
                     
-                    
-                }
+                $PaymentDescription = "Excess time is:".$ExcessTime;
+                $PaymentRemarks = collect(['QuantityReturned' => $QuantityReturned, 'TimePenalty' => $TimePenalty, 'Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'RentedItemID' => $RentedItemID]);
+
+                $jsonRemarks = $PaymentRemarks->toJson();
+
+                $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+                $data = array('strPaymentID'=>$PaymentID,
+                             'strPayReservationID'=>$ReservationID,
+                             'dblPayAmount'=>$TimePenalty,
+                             'strPayTypeID'=>6,
+                             'dtePayDate'=>$DateTimeToday,
+                             'strPaymentRemarks'=>$jsonRemarks);
+
+                    DB::table('tblPayment')->insert($data);
             }
         }
-        else{
+        else{//if item is broken 
+            if($ItemQuantity == $QuantityReturned){
+                $updateData = array("intRentedIReturned" => "1",
+                                    "intRentedIBroken" => "1",
+                                    "intRentedIBrokenQuantity" => $BrokenQuantity);   
+        
+                DB::table('tblRentedItem')
+                    ->where('strRentedItemID', '=', $RentedItemID)
+                    ->update($updateData);
+            }
+            else{
+                $updateData = array("intRentedIReturned" => "1",
+                                    "intRentedIQuantity" => $QuantityReturned,
+                                    "intRentedIBroken" => "1",
+                                    "intRentedIBrokenQuantity" => $BrokenQuantity);   
             
+                $RentalInfo = DB::table('tblRentedItem')
+                ->where('strRentedItemID', '=', $RentedItemID)
+                ->get();
+
+                DB::table('tblRentedItem')
+                    ->where('strRentedItemID', '=', $RentedItemID)
+                    ->update($updateData);
+
+                $newRentItemID = $this->SmartCounter('tblrenteditem', 'strRentedItemID');
+
+                foreach($RentalInfo as $Item){
+                    $data = array('strRentedItemID'=>$newRentItemID,
+                             'strRentedIReservationID'=>$ReservationID,
+                             'strRentedIItemID'=>$ItemID,
+                             'intRentedIReturned'=>0,
+                             'intRentedIQuantity'=>$QuantityLeft,
+                             'intRentedIDuration'=>$Item->intRentedIDuration,
+                             'intRentedIBroken'=>0,
+                             'intRentedIPayment'=>$Item->intRentedIPayment,
+                             'intRentedIBrokenQuantity'=>0,
+                             'tmsCreated'=>$Item->tmsCreated);
+
+                    DB::table('tblRentedItem')->insert($data);
+                }
+            }
+            
+            if((int)$TimePenalty != "0"){
+                    
+                $PaymentDescription = "Excess time is:".$ExcessTime;
+                $PaymentRemarks = collect(['QuantityReturned' => $QuantityReturned, 'TimePenalty' => $TimePenalty, 'Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'RentedItemID' => $RentedItemID]);
+
+                $jsonRemarks = $PaymentRemarks->toJson();
+
+                $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+                $data = array('strPaymentID'=>$PaymentID,
+                             'strPayReservationID'=>$ReservationID,
+                             'dblPayAmount'=>$TimePenalty,
+                             'strPayTypeID'=>6,
+                             'dtePayDate'=>$DateTimeToday,
+                             'strPaymentRemarks'=>$jsonRemarks);
+
+                DB::table('tblPayment')->insert($data);
+            }
+            
+            if((int)$BrokenPenalty != "0"){
+                $PaymentDescription = "Number of broken/lost item is ".$BrokenQuantity;
+                $PaymentRemarks = collect(['Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'RentedItemID' => $RentedItemID]);
+
+                $jsonRemarks = $PaymentRemarks->toJson();
+
+                $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+                $data = array('strPaymentID'=>$PaymentID,
+                             'strPayReservationID'=>$ReservationID,
+                             'dblPayAmount'=>$BrokenPenalty,
+                             'strPayTypeID'=>7,
+                             'dtePayDate'=>$DateTimeToday,
+                             'strPaymentRemarks'=>$jsonRemarks);
+
+                DB::table('tblPayment')->insert($data);
+                
+            }
         }
         
         \Session::flash('flash_message','Successfully returned the item!');
         
         return redirect('ItemRental');
+    }
+    
+    //restore item
+    public function storeRestoreItem(Request $req){
+        dd(Input::all());
+    }
+    
+    //delete
+    public function DeleteItemRental(Request $req){
+        dd(Input::all());
     }
     
     

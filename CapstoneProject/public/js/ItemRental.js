@@ -1,7 +1,10 @@
 var RentItemInfo = [];
 var ReturnItemInfo = [];
+var BrokenItemInfo = [];
 
-/*------------- RENT ITEM ------------------*/
+
+/*----------- MODAL CONTROLLER ------------*/
+
 function ShowModalRentItem(){
     document.getElementById("DivModalRentItem").style.display = "block";
 }
@@ -22,16 +25,8 @@ function ShowModalReturnItem(){
         document.getElementById("ReturnItemID").value = ReturnItemInfo[8];
         document.getElementById("ReturnReservationID").value = ReturnItemInfo[9];
         document.getElementById("ReturnRentedItemID").value = ReturnItemInfo[10];
-        document.getElementById("ReturnTotalQuantity").value = ReturnItemInfo[4];
-        
-        var ExcessTime = ReturnItemInfo[6].split(" ");
-        var SuggestedPenalty = (parseInt(ExcessTime[0]) * parseInt(ReturnItemInfo[7])) * parseInt(ReturnItemInfo[4]);
-        SuggestedPenalty += ((parseInt(ExcessTime[2]) / 60) * parseInt(ReturnItemInfo[7])) * parseInt(ReturnItemInfo[4]);
-        
-        SuggestedPenalty = Math.ceil(SuggestedPenalty);
-       
-        document.getElementById('ReturnTimePenalty').placeholder = "Suggested penalty is PHP" + SuggestedPenalty;
-        
+        document.getElementById("ReturnTotalQuantity").value = ReturnItemInfo[4];    
+
         if(ReturnItemInfo[6] != "None"){
             document.getElementById("DivExcessTime").style.display = "block";
         }
@@ -63,6 +58,58 @@ function HideModalRentPackagedItem(){
     document.getElementById("DivModalRentPackagedItem").style.display = "none";
 }
 
+function ShowModalUndertime(){
+    var TableChecker = CheckTable('#tblReturnItem tr');
+    if(TableChecker){
+        if(ReturnItemInfo[5] != "Overtime"){
+            document.getElementById("DivModalUndertime").style.display = "block";
+        }
+        else{
+            ShowModalReturnItem();
+            document.getElementById("DivExcessTime").style.display = "block";
+        }
+        
+    }
+}
+
+function HideModalUndertime(){
+    document.getElementById("DivModalUndertime").style.display = "none";
+}
+
+function ShowModalRestoreItem(){
+    var TableChecker = CheckTable('#tblBrokenItem tr');
+    if(TableChecker){
+        document.getElementById("BrokenItemName").value = BrokenItemInfo[0];
+        document.getElementById("BrokenItemQuantity").value = BrokenItemInfo[2];
+        document.getElementById("BrokenItemID").value = BrokenItemInfo[4];
+        document.getElementById("BrokenReservationID").value = BrokenItemInfo[5];
+        document.getElementById("BrokenRentedItemID").value = BrokenItemInfo[6];
+        document.getElementById("DivModalRestoreItem").style.display = "block";    
+    }
+}
+
+function HideModalRestoreItem(){
+        document.getElementById("DivModalRestoreItem").style.display = "none";
+}
+
+function ShowModalDeleteItem(){
+    var TableChecker = CheckTable('#tblBrokenItem tr');
+    if(TableChecker){
+        document.getElementById("DeleteItemName").value = BrokenItemInfo[0];
+        document.getElementById("DeleteItemQuantity").value = BrokenItemInfo[2];
+        document.getElementById("DeleteItemID").value = BrokenItemInfo[4];
+        document.getElementById("DeleteReservationID").value = BrokenItemInfo[5];
+        document.getElementById("DeleteRentedItemID").value = BrokenItemInfo[6];
+        document.getElementById("DivModalDeleteItem").style.display = "block";
+    }
+}
+
+function HideModalDeleteItem(){
+        document.getElementById("DivModalDeleteItem").style.display = "none";
+}
+
+/*------------- RENT ITEM ------------------*/
+
 function run(event, sender){
     event = event || window.event; 
     var target = event.target || event.srcElement;
@@ -81,7 +128,9 @@ function run(event, sender){
     }
     if(sender == "Return"){
         ReturnItemInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML, cells[10].innerHTML];
-        
+    }
+    if(sender == "Broken"){
+       BrokenItemInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML]; 
     }
 }
 
@@ -145,6 +194,43 @@ function SendQuantityReturn(field, dataType, holder){
         }
         ValidateInput(field, dataType, holder);
     }
+    
+    if(holder == "#ReturnQuantityError"){
+        if(!($(holder).hasClass('has-warning'))){
+            var ExcessTime = ReturnItemInfo[6].split(" ");
+            var SuggestedPenalty = (parseInt(ExcessTime[0]) * parseInt(ReturnItemInfo[7])) * parseInt(field.value);
+            SuggestedPenalty += ((parseInt(ExcessTime[2]) / 60) * parseInt(ReturnItemInfo[7])) * parseInt(field.value);
+
+            SuggestedPenalty = Math.ceil(SuggestedPenalty);
+
+            $("#ReturnTimePenalty").attr('title', "Suggested penalty is PHP" + SuggestedPenalty).tooltip('fixTitle').tooltip('show');
+        }
+        else{
+            $("#ReturnTimePenalty").attr('title', "Please enter a valid quantity").tooltip('fixTitle').tooltip('show');
+        }
+    }
+    
+    var BrokenQuantity = parseInt(document.getElementById("ReturnBrokenQuantity").value);
+    var ReturnQuantity = parseInt(document.getElementById("ReturnQuantityAvailed").value);
+    
+    if(((BrokenQuantity != 0) || (BrokenQuantity != null)) && ((ReturnQuantity != 0) || (ReturnQuantity != null))){
+        if((!($('#ReturnBrokenQuantity').hasClass('has-warning'))) && (!($('#ReturnQuantityAvailed').hasClass('has-warning')))){
+            if(BrokenQuantity > ReturnQuantity){
+                $('#ReturnBrokenQuantity').addClass('has-warning');
+                var x = document.getElementsByClassName("ErrorLabel");
+                for(var i = 0; i < x.length; i++){
+                    x[i].innerText="Input exceeds quantity of item to return";
+                }
+            }
+            else{
+                $('#ReturnBrokenQuantity').removeClass('has-warning');
+                var x = document.getElementsByClassName("ErrorLabel");
+                for(var i = 0; i < x.length; i++){
+                    x[i].innerText="";
+                }
+            }
+        }
+    }
 
 }
 
@@ -154,8 +240,6 @@ function CheckReturnForm(){
         if(ReturnItemInfo[6] == "None"){
             document.getElementById("ReturnTimePenalty").value = "0";
         }
-
-        
         return true;
     }
     else{
@@ -163,3 +247,25 @@ function CheckReturnForm(){
     }
 }
 
+
+/*-------------- RESTORE ITEM -------------*/
+
+function SendQuantityRestore(field, dataType, holder){
+    var QuantityBroken = BrokenItemInfo[2];
+    if(!(parseInt(QuantityBroken) >= parseInt(field.value))){
+        $(holder).addClass('has-warning');
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="Invalid input!";
+        }
+    }
+    else{
+        $(holder).removeClass('has-warning');
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="";
+        }
+        ValidateInput(field, dataType, holder);
+    }
+    
+}

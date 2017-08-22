@@ -17,6 +17,10 @@ function ValidateInput(field, variableType, holder){
         inputError = CheckDouble(field.value);
     }
     
+    else if(variableType == "double2"){
+        inputError = CheckDouble(field.value);
+    }
+    
     else if(variableType == "string2"){
         inputError = CheckString2(field.value);
     }
@@ -109,6 +113,21 @@ function CheckDouble(temp){
          return true;
     }
     else if(temp <= 0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+function CheckDouble(temp){
+    if(/^-?\d*(\.\d+)?$/.test(temp) == false) {
+        return true;
+    }
+    else if(temp.charAt(0)=='-'){
+         return true;
+    }
+    else if(temp < 0){
         return true;
     }
     else{
