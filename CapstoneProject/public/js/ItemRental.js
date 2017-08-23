@@ -15,7 +15,7 @@ function HideModalRentItem(){
 
 function ShowModalReturnItem(){
     var TableChecker = CheckTable('#tblReturnItem tr');
-    
+    HideModalUndertime();
     if(TableChecker){
         document.getElementById("ReturnItemName").value = ReturnItemInfo[0];
         document.getElementById("ReturnGuestName").value = ReturnItemInfo[1];

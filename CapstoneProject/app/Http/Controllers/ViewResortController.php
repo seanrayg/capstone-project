@@ -288,7 +288,7 @@ class ViewResortController extends Controller
                         'b.strItemID',
                         'a.strRentedItemID',
                         'a.tmsCreated')
-                ->where('a.intRentedIBroken', '=', 1)
+                ->where([['a.intRentedIBroken', '=', 1], ['a.intRentedIBrokenQuantity', '!=', '0']])
                 ->get();
         
         foreach($RentalItems as $Rental){

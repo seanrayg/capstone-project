@@ -251,12 +251,56 @@ class ResortController extends Controller
     
     //restore item
     public function storeRestoreItem(Request $req){
-        dd(Input::all());
+        $ItemID = trim($req->input('BrokenItemID'));
+        $ReservationID = trim($req->input('BrokenReservationID'));
+        $RentedItemID = trim($req->input('BrokenRentedItemID'));
+        $ItemQuantity = trim($req->input('BrokenItemQuantity'));
+        $RestoreQuantity = trim($req->input('BrokenRestoreQuantity'));
+        
+        $NewBrokenQuantity = (int)$ItemQuantity - (int)$RestoreQuantity;
+        
+        $updateData = array("intRentedIBrokenQuantity" => $NewBrokenQuantity);   
+
+        DB::table('tblRentedItem')
+            ->where('strRentedItemID', '=', $RentedItemID)
+            ->update($updateData);
+        
+        
+        
+        \Session::flash('flash_message','Successfully restored the item!');
+        
+        return redirect('ItemRental');
     }
     
     //delete
     public function DeleteItemRental(Request $req){
-        dd(Input::all());
+        $ItemID = trim($req->input('DeleteItemID'));
+        $ReservationID = trim($req->input('DeleteReservationID'));
+        $RentedItemID = trim($req->input('DeleteRentedItemID'));
+        $TotalBrokenQuantity = trim($req->input('DeleteItemQuantity'));
+        $DeleteQuantity = trim($req->input('DeleteQuantity'));
+        
+        $ItemQuantity = DB::table('tblItem')->where('strItemID', '=', $ItemID)->pluck('intItemQuantity')->first();
+        
+        $NewBrokenQuantity = (int)$TotalBrokenQuantity - (int)$DeleteQuantity;
+        
+        $NewItemQuantity = (int)$ItemQuantity - (int)$DeleteQuantity;
+        
+        $updateData = array("intRentedIBrokenQuantity" => $NewBrokenQuantity);   
+
+        DB::table('tblRentedItem')
+            ->where('strRentedItemID', '=', $RentedItemID)
+            ->update($updateData);
+        
+        $updateItemData = array("intItemQuantity" => $NewItemQuantity);
+        
+        DB::table('tblItem')
+            ->where('strItemID', '=', $ItemID)
+            ->update($updateItemData);
+        
+        \Session::flash('flash_message','Successfully deleted the item!');
+        
+        return redirect('ItemRental');
     }
     
     
