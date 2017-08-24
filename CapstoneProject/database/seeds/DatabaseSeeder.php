@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
              array('strPaymentTypeID'=>'5','strPaymentType'=>'Additional Payment'),
              array('strPaymentTypeID'=>'6','strPaymentType'=>'Time Penalty Bill'),
              array('strPaymentTypeID'=>'7','strPaymentType'=>'Broken/Lost Penalty Bill')
+             array('strPaymentTypeID'=>'8','strPaymentType'=>'Boat Reservation Bill')
+             array('strPaymentTypeID'=>'9','strPaymentType'=>'Boat Reservation Payment')
         ));
         
         //for verification
