@@ -151,8 +151,8 @@ window.onload = function() {
         $("#SB-Activities").addClass("active");
     }
 
-    else if(TitlePage == "Payment"){
-        $("#SB-Payment").addClass("active");
+    else if(TitlePage == "Billing"){
+        $("#SB-Billing").addClass("active");
     }
 
     else if(TitlePage.indexOf("Maintenance") > -1){

@@ -5,33 +5,9 @@
 @endsection
 
 @section('scripts')
-<script>  
-        
-        function ShowModalAvailActivity(){
-            document.getElementById("DivModalAvailActivity").style.display = "block";
-        }
 
-        function HideModalAvailActivity(){
-            document.getElementById("DivModalAvailActivity").style.display = "none";
-        }
-        
-        function ShowModalActivityDone(){
-            document.getElementById("DivModalActivityDone").style.display = "block";
-        }
-
-        function HideModalActivityDone(){
-            document.getElementById("DivModalActivityDone").style.display = "none";
-        }
-        
-        function ShowModalAvailPackagedActivity(){
-            document.getElementById("DivModalAvailPackagedActivity").style.display = "block";
-        }
-
-        function HideModalAvailPackagedActivity(){
-            document.getElementById("DivModalAvailPackagedActivity").style.display = "none";
-        }
-        
-</script>
+    <script src="/js/Activities.js" type="text/javascript"></script>
+    <script src="/js/input-validator.js" type="text/javascript"></script>
 
 @endsection
 
@@ -91,6 +67,7 @@
                                         <th onclick="sortTable(2, 'tblAvailableActivities', 'double')">Rate</th>
                                         <th onclick="sortTable(3, 'tblAvailableActivities', 'string')">Is boat needed?</th>
                                         <th onclick="sortTable(4, 'tblAvailableActivities', 'string')">Description</th>
+                                        <th>Action</th>
                                     </thead>
                                     <tbody>
                                         @foreach($Activities as $Activity)
@@ -100,18 +77,17 @@
                                             <td>{{$Activity -> dblBeachARate}}</td>
                                             <td>{{$Activity -> intBeachABoat}}</td>
                                             <td>{{$Activity -> strBeachADescription}}</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Avail Activity" class="btn btn-success btn-simple btn-xs" onclick="ShowModalAvailActivity()">
+                                                    <i class="material-icons">playlist_add_check</i>
+                                                </button>
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-
-                        <div class = "row">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalAvailActivity()"><i class="material-icons">done</i> Avail</button>
-                            </div> 
-                        </div>                             
+                        </div>                            
                     </div>
 
                     <div class="tab-pane" id="AvailedActivities">
@@ -261,7 +237,7 @@
 
 @section('modals')
 <div id="DivModalAvailActivity" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="max-width: 500px">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
@@ -270,9 +246,74 @@
                             <i class="material-icons">rowing</i>
                         </div>
                         <div class="card-content">
-                            <p class="category"></p>
-                            <h3 class="title">Avail Activity<span class="close" onclick="HideModalAvailActivity()">X</span></h3>
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Avail Activity<span class="close" onclick="HideModalAvailActivity()">X</span></h3>
+                            </div>
+                            <form>
+                                {{ csrf_field() }}
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Activity to avail</label>
+                                            <input type="text" class="form-control" id="AvailActivityName" name="AvailActivityName" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                     <p style="font-family: 'Roboto'">Rented By:</p>
+                                        <input list="GuestsList" class="inputlist" id="AvailActivityName" name="AvailActivityName">
+                                        <datalist id="GuestsList">
+                                          @foreach($Guests as $Guest)
+                                            <option id="{{$Guest -> strReservationID}}">{{$Guest -> Name}}</option>
+                                          @endforeach
+                                        </datalist> 
+                                    </div>
+                                </div>
+                                <div class="DivLandActivity">
+                                   <div class = "row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-static">
+                                                <label class="control-label">Quantity</label>
+                                                <input type="text" class="form-control" id="AvailLandQuantity" name="AvailLandQuantity" value="0" required>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="DivWaterActivity">
+                                    <div class = "row">
+                                        <div class="col-md-6">
+                                            <div class="form-group label-static">
+                                                <label class="control-label">No. of guests to avail</label>
+                                                <input type="text" class="form-control" id="AvailGuestQuantity" name="AvailGuestQuantity" value="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group label-static">
+                                                <label class="control-label">No. of guests to avail</label>
+                                                <input type="text" class="form-control" id="AvailGuestQuantity" name="AvailGuestQuantity" value="0" required>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel"></p>
+                                    </div>
+                                </div>
 
+                                <br><br>
+                                <div class = "row">
+                                    <div class="col-xs-6">
+                                        <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                                    </div> 
+                                    <div class="col-xs-6">
+                                        <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
+                                    </div> 
+                                </div>
+                                
+                            </form>
                         </div>
 
                 </div>

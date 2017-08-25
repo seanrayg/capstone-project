@@ -613,6 +613,7 @@
                                     </tr>
                                 </tbody>
                             </table>
+
                         </div>
 
                     </div>
@@ -622,7 +623,7 @@
 </div>
 
 <div id="DivModalNewReservations" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="max-width: 1000px">
         <div class="row">
             <div class="col-md-12">
                     <div class="card card-stats">
@@ -637,82 +638,75 @@
                                 </div>
                                 <br>
                                 <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
-                                <thead class="text-success">
-                                    <th class="text-center">ID</th>
-                                    <th class="text-center">Name</th>   
-                                    <th class="text-center">Time of departure</th>
-                                    <th class="text-center">Email</th>
-                                    <th class="text-center">Contact Number</th>
-                                    <th class="text-center">Bill Status</th>
-                                    <th class="text-center">Action</th>
-                                </thead>
-                                <tbody>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                    <thead class="text-info">
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Name</th>   
+                                        <th class="text-center">Check In Date</th>
+                                        <th class="text-center">Check Out Date</th>
+                                        <th class="text-center">Contact Number</th>
+                                        <th class="text-center">Email</th>
+                                        <th class="text-center">Action</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="/Reservations"><button type="button" class="btn btn-success pull-right">Manage Reservations</button></a>
+                                    </div>    
+                                </div>
                         </div>
 
                     </div>
@@ -722,7 +716,7 @@
 </div>
 
 <div id="DivModalCancelledReservations" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="max-width: 1000px">
         <div class="row">
             <div class="col-md-12">
                     <div class="card card-stats">
@@ -737,24 +731,70 @@
                                 </div>
                                 <br>
                                 <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
-                                <thead class="text-success">
-                                    <th>Date ID</th>
-                                    <th>Title</th>   
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Description</th>
-                                    <th style="display:none">Start Date2</th>
-                                    <th style="display:none">End Date2</th>
-                                </thead>
-                                <tbody>
-
-                                        <tr onclick="HighlightRow(this)">
-
+                                    <thead class="text-danger">
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Name</th>   
+                                        <th class="text-center">Check In Date</th>
+                                        <th class="text-center">Check Out Date</th>
+                                        <th class="text-center">Contact Number</th>
+                                        <th class="text-center">Email</th>
+                                        <th class="text-center">Action</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
                                         </tr>
-
-
-                                </tbody>
-                            </table>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td class="text-center">ID</td>
+                                            <td class="text-center">Name</td>   
+                                            <td class="text-center">Check In Date</td>
+                                            <td class="text-center">Check Out Date</td>
+                                            <td class="text-center">Contact Number</td>
+                                            <td class="text-center">Email</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
 
                     </div>

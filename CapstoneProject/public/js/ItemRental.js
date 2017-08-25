@@ -31,6 +31,8 @@ function ShowModalReturnItem(){
             document.getElementById("DivExcessTime").style.display = "block";
         }
         else{
+            document.getElementById("btnReturnOut").innerHTML = "Return Item";
+            document.getElementById("btnReturnNow").style.display = "none";
             document.getElementById("DivExcessTime").style.display = "none";
         }
         document.getElementById("DivModalReturnItem").style.display = "block";
