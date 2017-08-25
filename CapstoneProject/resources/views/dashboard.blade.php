@@ -4,13 +4,16 @@
     <title>Dashboard</title>
 @endsection
 
+@section('scripts')
+    <script src="/js/Dashboard.js" type="text/javascript"></script>
+@endsection
 
 @section('content')
 <h5 id="TitlePage">Dashboard</h5>
 
 <div class="row">
     
-    <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalArrivingGuests()">
         <div class="card card-stats">
             <div class="card-header" data-background-color="orange">
                 <i class="material-icons">supervisor_account</i>
@@ -27,7 +30,7 @@
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalDepartingGuests()">
         <div class="card card-stats">
             <div class="card-header" data-background-color="green">
                 <i class="material-icons">local_hotel</i>
@@ -44,7 +47,7 @@
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalNewReservations()">
         <div class="card card-stats">
             <div class="card-header" data-background-color="blue">
                 <i class="material-icons">event_available</i>
@@ -61,7 +64,7 @@
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalCancelledReservations()">
         <div class="card card-stats">
             <div class="card-header" data-background-color="red">
                 <i class="material-icons">event_busy</i>
@@ -415,7 +418,348 @@
             </div>
         </div>
     </div>
-    </div>
+</div>
 				
 
+@endsection
+
+@section('modals')
+<div id="DivModalArrivingGuests" class="modal">
+    <div class="Modal-content" style="max-width:1000px">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+                            <div class="card-header" data-background-color="orange">
+                                <i class="material-icons">supervisor_account</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">Arriving Guests<span class="close" onclick="HideModalArrivingGuests()">X</span></h3>
+                                    <p class="category paragraphText">As of today</p>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
+                                <thead class="text-warning">
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Name</th>   
+                                    <th class="text-center">Time of arrival</th>
+                                    <th class="text-center">Check Out Date</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Contact Number</th>
+                                    <th class="text-center">Action</th>
+                                </thead>
+                                <tbody>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td>ID</td>
+                                            <td>Name</td>   
+                                            <td>Time of arrival</td>
+                                            <td>Check Out Date</td>
+                                            <td>Email</td>
+                                            <td>Contact Number</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
+                                                    <i class="material-icons">done_all</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td>ID</td>
+                                            <td>Name</td>   
+                                            <td>Time of arrival</td>
+                                            <td>Check Out Date</td>
+                                            <td>Email</td>
+                                            <td>Contact Number</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
+                                                    <i class="material-icons">done_all</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td>ID</td>
+                                            <td>Name</td>   
+                                            <td>Time of arrival</td>
+                                            <td>Check Out Date</td>
+                                            <td>Email</td>
+                                            <td>Contact Number</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
+                                                    <i class="material-icons">done_all</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)" class="text-center">
+                                            <td>ID</td>
+                                            <td>Name</td>   
+                                            <td>Time of arrival</td>
+                                            <td>Check Out Date</td>
+                                            <td>Email</td>
+                                            <td>Contact Number</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
+                                                    <i class="material-icons">done_all</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalDepartingGuests" class="modal">
+    <div class="Modal-content" style="max-width: 1000px">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+                            <div class="card-header" data-background-color="green">
+                                <i class="material-icons">local_hotel</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">Departing Guests<span class="close" onclick="HideModalDepartingGuests()">X</span></h3>
+                                    <p class="category paragraphText">As of today</p>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
+                                <thead class="text-success">
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Name</th>   
+                                    <th class="text-center">Time of departure</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Contact Number</th>
+                                    <th class="text-center">Bill Status</th>
+                                    <th class="text-center">Action</th>
+                                </thead>
+                                <tbody>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalNewReservations" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+
+                            <div class="card-header" data-background-color="blue">
+                                <i class="material-icons">event_available</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">New Reservations<span class="close" onclick="HideModalNewReservations()">X</span></h3>
+                                    <p class="category paragraphText">As of today</p>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
+                                <thead class="text-success">
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Name</th>   
+                                    <th class="text-center">Time of departure</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Contact Number</th>
+                                    <th class="text-center">Bill Status</th>
+                                    <th class="text-center">Action</th>
+                                </thead>
+                                <tbody>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr onclick="HighlightRow(this)" class="text-center">
+                                        <td class="text-center">ID</td>
+                                        <td class="text-center">Name</td>   
+                                        <td class="text-center">Time of departure</td>
+                                        <td class="text-center">Email</td>
+                                        <td class="text-center">Contact Number</td>
+                                        <td class="text-center">Bill Status</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                <i class="material-icons">exit_to_app</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalCancelledReservations" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+
+                            <div class="card-header" data-background-color="red">
+                                <i class="material-icons">event_busy</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">Cancelled Reservations<span class="close" onclick="HideModalCancelledReservations()">X</span></h3>
+                                    <p class="category paragraphText">As of today</p>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
+                                <thead class="text-success">
+                                    <th>Date ID</th>
+                                    <th>Title</th>   
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Description</th>
+                                    <th style="display:none">Start Date2</th>
+                                    <th style="display:none">End Date2</th>
+                                </thead>
+                                <tbody>
+
+                                        <tr onclick="HighlightRow(this)">
+
+                                        </tr>
+
+
+                                </tbody>
+                            </table>
+                            </div>
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
 @endsection

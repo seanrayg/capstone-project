@@ -525,7 +525,7 @@
 </div>
     
 <div id="DivModalExtendRent" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-content" style="width: 500px">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
@@ -537,6 +537,66 @@
                             <p class="category"></p>
                             <h3 class="title">Extend Rent<span class="close" onclick="HideModalExtendRent()">X</span></h3>
                         </div>
+                        <form method="POST" action="/ItemRental/Extend" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <!--<input type="hidden" name="ExtendItemRate" id="ExtendItemRate">-->
+                            <input type="hidden" name="ExtendItemID" id="ExtendItemID">
+                            <input type="hidden" name="ExtendReservationID" id="ExtendReservationID">
+                            <input type="hidden" name="ExtendRentedItemID" id="ExtendRentedItemID">
+                            <input type="hidden" name="ExtendTotalQuantity" id="ExtendTotalQuantity">
+                            <div class = "row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Item Name</label>
+                                        <input type="text" class="form-control" id="ExtendItemName" name="ExtendItemName" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Guest</label>
+                                        <input type="text" class="form-control" id="ExtendGuestName" name="ExtendGuestName" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-static" id="ExtendQuantityError">
+                                        <label class="control-label">No. of items to extend</label>
+                                        <input type="text" class="form-control" onkeyup="SendQuantityExtend(this, 'int', '#ExtendQuantityError')" onchange="SendQuantityExtend(this, 'int', '#ExtendQuantityError')" id="ExtendQuantity" name="ExtendQuantity" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-static" id="ExtendTimeError">
+                                        <label class="control-label">Extend Time</label>
+                                        <input type="text" class="form-control" onkeyup="SendQuantityExtend(this, 'int', '#ExtendTimeError')" onchange="SendQuantityExtend(this, 'int', '#ExtendTimeError')"  id="ExtendTime" name="ExtendTime" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Price to pay</label>
+                                        <input type="text" class="form-control" rel="tooltip" title="Please enter quantity of items to extend and for how long to see the price" name="ExtendPrice" id="ExtendPrice" value ="0" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
+                                </div>
+                            </div>
+
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                                </div> 
+                                <div class="col-xs-6">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
+                                </div> 
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

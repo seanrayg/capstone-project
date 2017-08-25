@@ -5617,6 +5617,7 @@ th.activeHeader{
     border: none;
     border-bottom: .01em solid #9E9E9E;
     width: 100%;
+    font-family: "Roboto";
 }
 
 .icon-header{

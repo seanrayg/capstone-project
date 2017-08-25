@@ -43,7 +43,17 @@ function HideModalReturnItem(){
 }
 
 function ShowModalExtendRent(){
-    document.getElementById("DivModalExtendRent").style.display = "block";
+    var TableChecker = CheckTable('#tblReturnItem tr');
+    if(TableChecker){
+        document.getElementById("ExtendItemName").value = ReturnItemInfo[0];
+        document.getElementById("ExtendGuestName").value = ReturnItemInfo[1];
+        document.getElementById("ExtendItemID").value = ReturnItemInfo[8];
+        document.getElementById("ExtendReservationID").value = ReturnItemInfo[9];
+        document.getElementById("ExtendRentedItemID").value = ReturnItemInfo[10];
+        document.getElementById("ExtendTotalQuantity").value = ReturnItemInfo[4];
+        
+        document.getElementById("DivModalExtendRent").style.display = "block";
+    }
 }
 
 function HideModalExtendRent(){
@@ -267,5 +277,44 @@ function SendQuantityRestore(field, dataType, holder){
         }
         ValidateInput(field, dataType, holder);
     }
+}
+
+/*----------- EXTEND ITEM ------------*/
+
+function SendQuantityExtend(field, dataType, holder){
+    if(holder == "#ExtendQuantityError"){
+        var ItemQuantity = ReturnItemInfo[4];
+        if(!(parseInt(ItemQuantity) >= parseInt(field.value))){
+            $(holder).addClass('has-warning');
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Invalid input!";
+            }
+        }
+        else{
+            $(holder).removeClass('has-warning');
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="";
+            }
+            ValidateInput(field, dataType, holder);
+        }
+    }
+    else{
+        ValidateInput(field, dataType, holder);
+    }
+    
+    var ItemRate = parseFloat(ReturnItemInfo[7]);
+    if(!($('.form-group').hasClass('has-warning'))){
+        if(document.getElementById("ExtendQuantity").value != "" && document.getElementById("ExtendTime").value != ""){
+            var ExtendQuantity = parseInt(document.getElementById("ExtendQuantity").value);
+            var ExtendTime = parseInt(document.getElementById("ExtendTime").value);
+            document.getElementById("ExtendPrice").value = (ExtendQuantity * ItemRate) * ExtendTime;
+        }
+    }
+    else{
+        document.getElementById("ExtendPrice").value = "Please enter valid values";
+    }
     
 }
+

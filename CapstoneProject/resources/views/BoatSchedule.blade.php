@@ -337,13 +337,13 @@
 
                                     <div class="row">
                                         <div class="col-xs-12">
-                                           <p style="font-family: 'Roboto'">Rented By:</p>
+                                         <p style="font-family: 'Roboto'">Rented By:</p>
                                             <input list="GuestsList" class="inputlist">
-                                                <datalist id="GuestsList">
-                                                  @foreach($ActiveCustomers as $ActiveCustomer)
-                                                    <option id="{{$ActiveCustomer -> strCustomerID}}">{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}</option>
-                                                  @endforeach
-                                                </datalist> 
+                                            <datalist id="GuestsList">
+                                              @foreach($ActiveCustomers as $ActiveCustomer)
+                                                <option id="{{$ActiveCustomer -> strCustomerID}}">{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}</option>
+                                              @endforeach
+                                            </datalist> 
                                         </div>
                                     </div>
 

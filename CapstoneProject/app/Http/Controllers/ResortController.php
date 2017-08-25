@@ -118,30 +118,30 @@ class ResortController extends Controller
                 $updateData = array("intRentedIReturned" => "1",
                                         "intRentedIQuantity" => $QuantityReturned);   
             
-                    $RentalInfo = DB::table('tblRentedItem')
-                    ->where('strRentedItemID', '=', $RentedItemID)
-                    ->get();
-                    
-                    DB::table('tblRentedItem')
-                        ->where('strRentedItemID', '=', $RentedItemID)
-                        ->update($updateData);
-                    
-                    $newRentItemID = $this->SmartCounter('tblrenteditem', 'strRentedItemID');
-                    
-                    foreach($RentalInfo as $Item){
-                        $data = array('strRentedItemID'=>$newRentItemID,
-                                 'strRentedIReservationID'=>$ReservationID,
-                                 'strRentedIItemID'=>$ItemID,
-                                 'intRentedIReturned'=>0,
-                                 'intRentedIQuantity'=>$QuantityLeft,
-                                 'intRentedIDuration'=>$Item->intRentedIDuration,
-                                 'intRentedIBroken'=>0,
-                                 'intRentedIPayment'=>$Item->intRentedIPayment,
-                                 'intRentedIBrokenQuantity'=>0,
-                                 'tmsCreated'=>$Item->tmsCreated);
+                $RentalInfo = DB::table('tblRentedItem')
+                ->where('strRentedItemID', '=', $RentedItemID)
+                ->get();
 
-                        DB::table('tblRentedItem')->insert($data);
-                    }
+                DB::table('tblRentedItem')
+                    ->where('strRentedItemID', '=', $RentedItemID)
+                    ->update($updateData);
+
+                $newRentItemID = $this->SmartCounter('tblrenteditem', 'strRentedItemID');
+
+                foreach($RentalInfo as $Item){
+                    $data = array('strRentedItemID'=>$newRentItemID,
+                             'strRentedIReservationID'=>$ReservationID,
+                             'strRentedIItemID'=>$ItemID,
+                             'intRentedIReturned'=>0,
+                             'intRentedIQuantity'=>$QuantityLeft,
+                             'intRentedIDuration'=>$Item->intRentedIDuration,
+                             'intRentedIBroken'=>0,
+                             'intRentedIPayment'=>$Item->intRentedIPayment,
+                             'intRentedIBrokenQuantity'=>0,
+                             'tmsCreated'=>$Item->tmsCreated);
+
+                    DB::table('tblRentedItem')->insert($data);
+                }
             }
             
             if((int)$TimePenalty != "0"){
@@ -299,6 +299,63 @@ class ResortController extends Controller
             ->update($updateItemData);
         
         \Session::flash('flash_message','Successfully deleted the item!');
+        
+        return redirect('ItemRental');
+    }
+    
+    //extend
+    public function ExtendItemRental(Request $req){
+        $ItemID = trim($req->input('ExtendItemID'));
+        $ReservationID = trim($req->input('ExtendReservationID'));
+        $RentedItemID = trim($req->input('ExtendRentedItemID'));
+        $TotalRentedQuantity = trim($req->input('ExtendTotalQuantity'));
+        $ExtendQuantity = trim($req->input('ExtendQuantity'));
+        $ExtendTime = trim($req->input('ExtendTime'));
+        $ExtendPrice = trim($req->input('ExtendPrice'));
+        $RentedDuration = DB::table('tblRentedItem')->where('strRentedItemID', '=', $RentedItemID)->pluck("intRentedIDuration")->first();
+        $RentTime = DB::table('tblRentedItem')->where('strRentedItemID', '=', $RentedItemID)->pluck("tmsCreated")->first();
+        
+        $QuantityDiff = (int)$TotalRentedQuantity - (int)$ExtendQuantity;
+        
+        if($TotalRentedQuantity == $ExtendQuantity){
+            $updateData = array("intRentedIDuration" => (int)$RentedDuration + (int)$ExtendTime,
+                                "tmsCreated" => $RentTime);   
+
+            DB::table('tblRentedItem')
+                ->where('strRentedItemID', '=', $RentedItemID)
+                ->update($updateData);
+        }
+        else{
+            $updateData = array("intRentedIQuantity" => $QuantityDiff,
+                                "tmsCreated" => $RentTime);   
+
+            $RentalInfo = DB::table('tblRentedItem')
+            ->where('strRentedItemID', '=', $RentedItemID)
+            ->get();
+
+            DB::table('tblRentedItem')
+                ->where('strRentedItemID', '=', $RentedItemID)
+                ->update($updateData);
+
+            $newRentItemID = $this->SmartCounter('tblrenteditem', 'strRentedItemID');
+
+            foreach($RentalInfo as $Item){
+                $data = array('strRentedItemID'=>$newRentItemID,
+                         'strRentedIReservationID'=>$ReservationID,
+                         'strRentedIItemID'=>$ItemID,
+                         'intRentedIReturned'=>0,
+                         'intRentedIQuantity'=>$ExtendQuantity,
+                         'intRentedIDuration'=>(int)$RentedDuration + (int)$ExtendTime,
+                         'intRentedIBroken'=>0,
+                         'intRentedIPayment'=>$Item->intRentedIPayment,
+                         'intRentedIBrokenQuantity'=>0,
+                         'tmsCreated'=>$Item->tmsCreated);
+
+                DB::table('tblRentedItem')->insert($data);
+            }
+        }
+        
+        \Session::flash('flash_message','Successfully extended!');
         
         return redirect('ItemRental');
     }
