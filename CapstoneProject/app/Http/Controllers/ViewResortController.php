@@ -329,7 +329,7 @@ class ViewResortController extends Controller
         $ActiveCustomers = DB::table('tblCustomer as a')
         ->join('tblReservationDetail as b', 'a.strCustomerID', '=', 'b.strResDCustomerID')
         ->select('a.strCustomerID', 'a.strCustFirstName', 'a.strCustLastName')
-        ->where('b.intResDStatus', '=', 2)
+        ->where('b.intResDStatus', '=', 4)
         ->get();
 
         return view('BoatSchedule', compact('AvailableBoats', 'ActiveCustomers'));
