@@ -325,7 +325,6 @@
                                 <p class="category"></p>
                                 <h3 class="title">Rent Boat<span class="close" onclick="HideModalRentBoat()">X</span></h3>
                                 <form>
-
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group label-floating">

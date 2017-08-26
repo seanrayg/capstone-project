@@ -353,4 +353,42 @@ class ViewResortController extends Controller
 
     }
     
+    
+    /*----------------- ACTIVITIES ------------*/
+    
+     //Activities
+    
+    function getAvailableActivities(){
+        $Activities = DB::table('tblBeachActivity as a')
+                ->join ('tblBeachActivityRate as b', 'a.strBeachActivityID', '=' , 'b.strBeachActivityID')
+                ->select('a.strBeachActivityID',
+                         'a.strBeachAName',
+                         'a.strBeachAStatus',
+                         'b.dblBeachARate',
+                         'a.intBeachABoat',
+                         'a.strBeachADescription')
+                ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['a.strBeachAStatus', '=', 'Available']])
+                ->get();
+    
+        foreach ($Activities as $Activity) {
+
+            if($Activity->intBeachABoat == '1'){
+                $Activity->intBeachABoat = 'Yes';
+            }
+            else{
+                $Activity->intBeachABoat = 'No';
+            }
+
+        }
+        
+        $Guests = DB::table('tblReservationDetail as a')
+                ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                        'a.strReservationID')
+                ->where('a.intResDStatus', '=', '4')
+                ->orderBy('Name')
+                ->get();
+        
+        return view('Activities', compact('Activities', 'Guests'));
+    }
 }

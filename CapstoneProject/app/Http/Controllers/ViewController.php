@@ -1069,33 +1069,7 @@ class ViewController extends Controller
     
 
     
-    //Activities
-    
-    function getAvailableActivities(){
-        $Activities = DB::table('tblBeachActivity as a')
-                ->join ('tblBeachActivityRate as b', 'a.strBeachActivityID', '=' , 'b.strBeachActivityID')
-                ->select('a.strBeachActivityID',
-                         'a.strBeachAName',
-                         'a.strBeachAStatus',
-                         'b.dblBeachARate',
-                         'a.intBeachABoat',
-                         'a.strBeachADescription')
-                ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['a.strBeachAStatus', '=', 'Available']])
-                ->get();
-    
-        foreach ($Activities as $Activity) {
-
-            if($Activity->intBeachABoat == '1'){
-                $Activity->intBeachABoat = 'Yes';
-            }
-            else{
-                $Activity->intBeachABoat = 'No';
-            }
-
-        }
-        
-        return view('Activities', compact('Activities'));
-    }
+   
     
     
     

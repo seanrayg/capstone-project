@@ -26,14 +26,14 @@ Route::get('/Rooms', 'ViewResortController@ViewRooms');
 
 Route::get('/ItemRental', 'ViewResortController@getAvailableItems');
 
-Route::get('/Activities', 'ViewController@getAvailableActivities');
+Route::get('/Activities', 'ViewResortController@getAvailableActivities');
 
 Route::get('/Reports', function () {
     return view('Reports');
 });
 
-Route::get('/Payment', function () {
-    return view('Payment');
+Route::get('/Billing', function () {
+    return view('Billing');
 });
 
 Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');

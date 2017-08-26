@@ -55,10 +55,10 @@
                     <p>Activities</p>
                 </a>
             </li>
-            <li id="SB-Payment">
-                <a href="/Payment">
+            <li id="SB-Billing">
+                <a href="/Billing">
                     <i class="material-icons">local_atm</i>
-                    <p>Payment</p>
+                    <p>Billing</p>
                 </a>
             </li>
             <li id="SB-Maintenance">

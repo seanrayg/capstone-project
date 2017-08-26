@@ -115,12 +115,7 @@
                                 </table>
                             </div>
                         </div>
-
-                        <div class = "row">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalRentItem()"><i class="material-icons">check_box</i> Rent</button>
-                            </div> 
-                        </div>                             
+                           
                     </div>
 
                     <div class="tab-pane" id="RentedItems">
@@ -509,10 +504,10 @@
                                 <br><br>
                                 <div class = "row">
                                     <div class="col-xs-6">
-                                        <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                                        <button type="button" class="btn btn-success pull-left" id="btnReturnNow"><i class="material-icons">done</i> Pay now</button>
                                     </div> 
                                     <div class="col-xs-6">
-                                        <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
+                                        <button type="submit" class="btn btn-success pull-right" id="btnReturnOut"><i class="material-icons">done</i> Pay at check out</button>
                                     </div> 
                                 </div>
                             </form>
