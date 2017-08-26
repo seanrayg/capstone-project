@@ -313,6 +313,22 @@ class ViewResortController extends Controller
     /*------ Boat Schedule ------*/
 
     function getAvailableBoats(){
+
+        $dtmNow = Carbon::now('Asia/Manila');
+
+        $dtmDate = $dtmNow->toDateString();
+        $dtmTime = $dtmNow->toTimeString();
+
+        $ScheduledBoats =  DB::raw("
+            SELECT strBoatSBoatID
+            FROM tblBoatSchedule
+            WHERE intBoatSStatus = 1
+            AND DATE(dtmBoatSPickUp) = '$dtmDate'
+            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR))
+            OR DATE(dtmBoatSDropOff) =  '$dtmDate'
+            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSDropOff, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSDropOff, INTERVAL 1 HOUR))
+        ");
+
         $AvailableBoats = DB::table('tblBoat as a')
         ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
         ->select('a.strBoatID', 
@@ -320,10 +336,11 @@ class ViewResortController extends Controller
                  'a.intBoatCapacity',
                  'b.dblBoatRate',
                  'a.strBoatDescription')
-        ->where('b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)"))
-        ->where(function($query){
-            $query->where('a.strBoatStatus', '=', 'Available');
-        })
+        ->where([
+            ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")],
+            ['a.strBoatStatus', "=", 'Available']
+        ])
+        ->whereNotIn('a.strBoatID', [$ScheduledBoats])
         ->get();
 
         $ActiveCustomers = DB::table('tblCustomer as a')
