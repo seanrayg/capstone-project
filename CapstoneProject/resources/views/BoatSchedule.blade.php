@@ -9,6 +9,73 @@
     <script>
         function ShowModalRentBoat(){
             document.getElementById("DivModalRentBoat").style.display = "block";
+
+            var dtmNow = new Date();
+
+            var strTimeNow = formatAMPM(dtmNow, 1);
+            var strTimeNowPlusTwo = formatAMPM(dtmNow, 2);
+
+            document.getElementById("time1").value = strTimeNow;
+            document.getElementById("time2").value = strTimeNowPlusTwo
+        }
+
+        function ChangeTime2(){
+            var e = document.getElementById("PickUpTime");
+            var intSelectedHour = e.options[e.selectedIndex].value;
+
+            var strTime1 = document.getElementById("time1").value;
+            var SplittedTime = strTime1.split(":");
+            var intTime1Hour = SplittedTime[0];
+            var SplittedTime2 = SplittedTime[1].split(" ");
+
+            var intNewHour = parseInt(intSelectedHour) + parseInt(intTime1Hour);
+
+            var strAMPM = SplittedTime2[1];
+            if(SplittedTime2[1] == 'am'){
+                if(intNewHour > 12){
+                    var intNewHour = intNewHour - 12;
+                    var strAMPM = 'pm';
+                }else if(intNewHour == 12){
+                    var strAMPM = 'pm';
+                }
+            }else if(SplittedTime2[1] == 'pm'){
+                if(intNewHour > 12){
+                    var intNewHour = intNewHour - 12;
+                    var strAMPM = 'am';
+                }else if(intNewHour == 12){
+                    var strAMPM = 'am';
+                }
+            }
+
+            var strTime2 = document.getElementById("time2").value;
+            var SplittedTime = strTime1.split(":");
+            var SplittedTime2 = SplittedTime[1].split(" ");
+
+            var strNewTime2 = intNewHour + ':' + SplittedTime2[0] + ' ' + strAMPM;
+
+            document.getElementById("time2").value = strNewTime2;
+        }
+
+        function formatAMPM(date, mode) {
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+
+            var strTimeNow = hours + ':' + minutes + ' ' + ampm;
+
+            hours = hours + 2;
+
+            var strTimeNowPlusTwo = hours + ':' + minutes + ' ' + ampm;
+
+            if(mode == 1){
+                return strTimeNow;
+            }else{
+                return strTimeNowPlusTwo;
+            }
         }
         
         function HideModalRentBoat(){
@@ -136,7 +203,6 @@
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
                                 <table class="table">
                                     <thead class="text-primary">
-                                        <th>Name</th>
                                         <th>Used Boat</th>
                                         <th>No. of passengers</th>
                                         <th>Purpose</th>
@@ -145,60 +211,6 @@
                                         <th>Rented By</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Used Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Used Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Used Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Used Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Used Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Used Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -360,6 +372,44 @@
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Purpose</label>
                                                 <input type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group label-floating">
+                                                <label>Hours</label>
+                                                <div class="selectBox" rel="tooltip" title="Minimum hours is 2">
+                                                    <select id="PickUpTime" onchange="ChangeTime2()">
+                                                      <option>2</option>
+                                                      <option>3</option>
+                                                      <option>4</option>
+                                                      <option>5</option>
+                                                      <option>6</option>
+                                                      <option>7</option>
+                                                      <option>8</option>
+                                                      <option>9</option>
+                                                      <option>10</option>
+                                                      <option>11</option>
+                                                      <option>12</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group label-floating">
+                                                <label>From: </label>
+                                                <input id="time1" type="text" class="form-control" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group label-floating">
+                                                <label>To: </label>
+                                                <input id="time2" type="text" class="form-control" readonly>
                                             </div>
                                         </div>
                                     </div>
