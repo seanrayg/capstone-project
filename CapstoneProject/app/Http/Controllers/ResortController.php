@@ -479,7 +479,7 @@ class ResortController extends Controller
     //avail activity
     public function AvailActivity(Request $req){
 
-        $DateTimeToday = Carbon::now('HongKong')->format('Y/m/d h:m:s');
+        $DateTimeToday = Carbon::now('Asia/Manila')->format('Y/m/d h:m:s');
         $ActivityID = trim($req->input('AvailActivityID'));
         $CustomerName = trim($req->input('AvailCustomerName'));
         $ActivityType = trim($req->input('AvailActivityType'));
@@ -516,10 +516,15 @@ class ResortController extends Controller
 
             $HoursToAdd = trim($req->input('DurationTime'));
             $MinutesToAdd = trim($req->input('DurationMinute'));
-            $DropOff = Carbon::now('HongKong');
-            $DropOff = $DropOff->addHours($HoursToAdd);
+            $DropOff = Carbon::now('Asia/Manila');
+    
+            if($HoursToAdd != "0"){
+                $DropOff = $DropOff->addHours((int)$HoursToAdd);
+            }
+
             $DropOff = $DropOff->addMinutes($MinutesToAdd);
-            
+            $DropOff = $DropOff->toDateTimeString();
+     
             $BoatName = trim($req->input('AvailBoat'));
             $BoatSchedID = DB::table('tblBoatSchedule')->pluck('strBoatScheduleID')->first();
             if(!$BoatSchedID){
@@ -545,11 +550,11 @@ class ResortController extends Controller
                                          'strBoatSBoatID'=>$BoatID,
                                          'strBoatSPurpose'=>'Beach Activity',
                                          'dtmBoatSPickUp'=>$DateTimeToday,
-                                         'dtmBoatSDropOff'=>$DropOff->format('Y/m/d h:m:s'),
+                                         'dtmBoatSDropOff'=>$DropOff,
                                          'intBoatSStatus'=>'1',
                                          'strBoatSReservationID' => $ReservationID);
             
-            DB::table('tblboatschedule')->insert($data);
+            DB::table('tblboatschedule')->insert($InsertBoatSchedData);
             
         }
         

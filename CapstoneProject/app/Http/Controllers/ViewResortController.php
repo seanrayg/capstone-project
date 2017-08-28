@@ -313,10 +313,6 @@ class ViewResortController extends Controller
     /*------ Boat Schedule ------*/
 
     function getAvailableBoats(){
-<<<<<<< HEAD
-        
-        
-=======
 
         $dtmNow = Carbon::now('Asia/Manila');
 
@@ -333,7 +329,6 @@ class ViewResortController extends Controller
             AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSDropOff, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSDropOff, INTERVAL 1 HOUR))
         ");
 
->>>>>>> 198574081bc74f1d8998631d89bf8c48d5d4f337
         $AvailableBoats = DB::table('tblBoat as a')
         ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
         ->select('a.strBoatID', 
@@ -412,6 +407,20 @@ class ViewResortController extends Controller
                 ->orderBy('Name')
                 ->get();
         
-        return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable'));
+        $AvailedActivities = DB::table('tblAvailBeachActivity as a')
+                ->join ('tblReservationDetail as b', 'a.strAvailBAReservationID', '=' , 'b.strReservationID')
+                ->join ('tblCustomer as c', 'b.strResDCustomerID', '=' , 'c.strCustomerID')
+                ->join ('tblBeachActivity as d', 'd.strBeachActivityID', '=' , 'a.strAvailBABeachActivityID')
+                ->join ('tblBoatSchedule as e', 'e.strBoatSReservationID', '=' , 'b.strReservationID')
+                ->join ('tblBoat as f', 'f.strBoatID', '=' , 'e.strBoatSBoatID')
+                ->select('d.strBeachAName',
+                         DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustLastName) AS Name'),
+                         'f.strBoatName',
+                         'e.dtmBoatSPickUp',
+                         'e.dtmBoatSDropOff')
+                ->where([['e.intBoatSStatus', '=', '1'], ['a.strAvailBABoatID', '!=', null]])
+                ->get();
+        
+        return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable', 'AvailedActivities'));
     }
 }

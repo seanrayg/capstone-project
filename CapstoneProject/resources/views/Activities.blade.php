@@ -130,51 +130,24 @@
                                         <th>Availed by</th>
                                         <th>Boat Used</th>
                                         <th>Time Availed</th>
-                                        <th>Status</th>
+                                        <th>Expected Time of Return</th>
+                                        <th>Action</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Availed by</td>
-                                            <td>Boat Used</td>
-                                            <td>Time Availed</td>
-                                            <td>Status</td>
+                                        @foreach($AvailedActivities as $Activity)
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>{{$Activity -> strBeachAName}}</td>
+                                            <td>{{$Activity -> Name}}</td>
+                                            <td>{{$Activity -> strBoatName}}</td>
+                                            <td>{{Carbon\Carbon::parse($Activity -> dtmBoatSPickUp)->format('M j, Y g:i A')}}</td>  
+                                            <td>{{Carbon\Carbon::parse($Activity -> dtmBoatSDropOff)->format('M j, Y g:i A')}}</td>  
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Avail Activity" class="btn btn-success btn-simple btn-xs" onclick="ShowModalAvailActivity()">
+                                                    <i class="material-icons">playlist_add_check</i>
+                                                </button>
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Availed by</td>
-                                            <td>Boat Used</td>
-                                            <td>Time Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Availed by</td>
-                                            <td>Boat Used</td>
-                                            <td>Time Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Availed by</td>
-                                            <td>Boat Used</td>
-                                            <td>Time Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Availed by</td>
-                                            <td>Boat Used</td>
-                                            <td>Time Availed</td>
-                                            <td>Status</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Availed by</td>
-                                            <td>Boat Used</td>
-                                            <td>Time Availed</td>
-                                            <td>Status</td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
