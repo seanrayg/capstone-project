@@ -156,22 +156,38 @@ function fillRentItem(){
 function SendQuantityInput(field, dataType, holder){
 
     ValidateInput(field, dataType, holder);
-    if(!($('.form-group').hasClass('has-warning'))){
-        var QuantityLeft = parseInt(document.getElementById("RentQuantityLeft").value);
-        if(parseInt(QuantityLeft) < parseInt(field.value)){
-            $(holder).addClass('has-warning');
-            var x = document.getElementsByClassName("ErrorLabel");
-            for(var i = 0; i < x.length; i++){
-                x[i].innerText="Invalid input!";
+    if(holder == "#RentQuantityError"){
+        if(!($('.form-group').hasClass('has-warning'))){
+            var QuantityLeft = parseInt(document.getElementById("RentQuantityLeft").value);
+            if(parseInt(QuantityLeft) < parseInt(field.value)){
+                $(holder).addClass('has-warning');
+                var x = document.getElementsByClassName("ErrorLabel");
+                for(var i = 0; i < x.length; i++){
+                    x[i].innerText="Invalid input!";
+                }
             }
-        }
-        else{
-            var x = document.getElementsByClassName("ErrorLabel");
-            for(var i = 0; i < x.length; i++){
-                x[i].innerText="";
+            else{
+                var x = document.getElementsByClassName("ErrorLabel");
+                for(var i = 0; i < x.length; i++){
+                    x[i].innerText="";
+                }
             }
         }
     }
+    
+    if(document.getElementById("RentQuantity").value != "" && document.getElementById("RentDuration").value != ""){
+        if(!($('.form-group').hasClass('has-warning'))){
+            var RentQuantity = parseInt(document.getElementById("RentQuantity").value);
+            var RentDuration = parseInt(document.getElementById("RentDuration").value);
+            var ItemRate = parseFloat(RentItemInfo[3]);
+            var TotalRentPrice = (RentQuantity * ItemRate) * RentDuration;
+            document.getElementById("RentItemPrice").value = TotalRentPrice;
+        }
+        else{
+            document.getElementById("RentItemPrice").value = "Please enter valid inputs";
+        }
+    } 
+    
 }
 
 

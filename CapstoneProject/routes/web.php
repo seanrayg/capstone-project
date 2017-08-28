@@ -313,3 +313,6 @@ Route::post('ItemRental/Delete', 'ResortController@DeleteItemRental');
 
 Route::post('ItemRental/Extend', 'ResortController@ExtendItemRental');
 
+/*------------ ACTIVITY ------------*/
+
+Route::post('/Activity/Avail', 'ResortController@AvailActivity');

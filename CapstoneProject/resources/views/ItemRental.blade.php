@@ -365,8 +365,16 @@
                                 <div class="col-md-6">
                                     <div class="form-group label-floating" id="RentDurationError">
                                         <label class="control-label">Duration (hours)</label>
-                                        <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#RentDurationError')"
-                                        onchange="ValidateInput(this, 'int', '#RentDurationError')" id="RentDuration" name="RentDuration" required>
+                                        <input type="text" class="form-control" onkeyup="SendQuantityInput(this, 'int', '#RentDurationError')"
+                                        onchange="SendQuantityInput(this, 'int', '#RentDurationError')" id="RentDuration" name="RentDuration" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Price</label>
+                                        <input type="text" class="form-control" rel="tooltip" title="Please enter quantity to rent and for how long to see the price" id="RentItemPrice" name="RentItemPrice" readonly>
                                     </div>
                                 </div>
                             </div>

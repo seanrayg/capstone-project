@@ -313,6 +313,8 @@ class ViewResortController extends Controller
     /*------ Boat Schedule ------*/
 
     function getAvailableBoats(){
+        
+        
         $AvailableBoats = DB::table('tblBoat as a')
         ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
         ->select('a.strBoatID', 
@@ -364,6 +366,24 @@ class ViewResortController extends Controller
 
         }
         
+        $TimeToday = Carbon::now()->toTimeString();
+        $DateToday = Carbon::now()->toDateString();
+        $DateToday = str_replace("-","/", $DateToday);
+
+        $BoatsAvailable = DB::table('tblBoat as a')
+             ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
+                ->select('a.strBoatID', 
+                         'a.strBoatName',
+                         'a.intBoatCapacity',
+                         'b.dblBoatRate',
+                         'a.strBoatStatus',
+                         'a.strBoatDescription')
+                ->whereNotIn('a.strBoatID', [DB::raw("(SELECT strBoatSBoatID FROM tblBoatSchedule WHERE intBoatSStatus = 1 AND (date(dtmBoatSPickUp) = '".$DateToday."') AND '".$TimeToday."' BETWEEN time(dtmBoatSPickUp) AND time(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)))")])
+                ->where([['a.strBoatStatus', "=", 'Available'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")]])
+                ->orderBy('a.intBoatCapacity')
+                ->get();
+        
+        
         $Guests = DB::table('tblReservationDetail as a')
                 ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
                 ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
@@ -372,6 +392,6 @@ class ViewResortController extends Controller
                 ->orderBy('Name')
                 ->get();
         
-        return view('Activities', compact('Activities', 'Guests'));
+        return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable'));
     }
 }
