@@ -106,7 +106,13 @@
             document.getElementById("DivModalCancelReserveBoat").style.display = "none";
         }
         
-        
+        $(function() {
+          $('#CustomerName').on('input',function() {
+            var opt = $('option[value="'+$(this).val()+'"]');
+            
+            document.getElementById('CustomerID').value = opt.attr('id');
+          });
+        });
 
     </script>
     <script src="/js/BoatSchedule.js" type="text/javascript"></script>
@@ -336,12 +342,13 @@
                             <div class="card-content">
                                 <p class="category"></p>
                                 <h3 class="title">Rent Boat<span class="close" onclick="HideModalRentBoat()">X</span></h3>
-                                <form>
+                                <form method="post" action="/BoatSchedule">
+                                    {{ csrf_field() }}
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group label-floating">
-                                                <label class="control-label">Boat to be rented</label>
-                                                <input type="text" id="BoatName" value="Boat Name" class="form-control" disabled>
+                                                <label>Boat to be rented</label>
+                                                <input type="text" id="BoatName" name="BoatID" class="form-control" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -349,10 +356,11 @@
                                     <div class="row">
                                         <div class="col-xs-12">
                                          <p style="font-family: 'Roboto'">Rented By:</p>
-                                            <input list="GuestsList" class="inputlist">
+                                            <input id="CustomerName" name="CustomerName" list="GuestsList" class="inputlist">
+                                            <input type="hidden" id="CustomerID" name="CustomerID">
                                             <datalist id="GuestsList">
                                               @foreach($ActiveCustomers as $ActiveCustomer)
-                                                <option id="{{$ActiveCustomer -> strCustomerID}}">{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}</option>
+                                                <option id="{{$ActiveCustomer -> strCustomerID}}" value="{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}" />
                                               @endforeach
                                             </datalist> 
                                         </div>
@@ -362,7 +370,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Number of passengers</label>
-                                                <input type="text" class="form-control" required>
+                                                <input name="NumberOfPassengers" type="text" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
@@ -371,7 +379,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Purpose</label>
-                                                <input type="text" class="form-control" required>
+                                                <input name="BoatPurpose" type="text" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
@@ -403,13 +411,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group label-floating">
                                                 <label>From: </label>
-                                                <input id="time1" type="text" class="form-control" readonly>
+                                                <input id="time1" name="time1" type="text" class="form-control" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group label-floating">
                                                 <label>To: </label>
-                                                <input id="time2" type="text" class="form-control" readonly>
+                                                <input id="time2" name="time2" type="text" class="form-control" readonly>
                                             </div>
                                         </div>
                                     </div>
