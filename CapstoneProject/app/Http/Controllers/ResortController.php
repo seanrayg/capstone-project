@@ -33,6 +33,14 @@ class ResortController extends Controller
     1 = paid
     */
     
+    /* ACTIVITY REFERENCE
+    
+    intAvailBAPayment
+     0 = not paid
+     1 = paid;
+    
+    */
+    
     
     /*------------ ITEM RENTAL -------------*/
     
@@ -125,8 +133,6 @@ class ResortController extends Controller
                 DB::table('tblRentedItem')
                     ->where('strRentedItemID', '=', $RentedItemID)
                     ->update($updateData);
-
-                $newRentItemID = $this->SmartCounter('tblrenteditem', 'strRentedItemID');
 
                 foreach($RentalInfo as $Item){
                     $data = array('strRentedItemID'=>$newRentItemID,
@@ -414,5 +420,146 @@ class ResortController extends Controller
         $strSmartCounter = implode($arrTempID) . $intCounter;
         
         return $strSmartCounter;
+    }
+    
+    public function SmartCounter2($strTableName, $strColumnName){
+        $endLoop = false;
+        $latestID = DB::table($strTableName)->pluck($strColumnName)->first();
+        
+        $SmartCounter = $this->getID2($latestID);
+        
+        do{
+            $DuplicateError = DB::table($strTableName)->where($strColumnName, $SmartCounter)->pluck($strColumnName)->first();
+            if($DuplicateError == null){
+                $endLoop = true;
+            }
+            else{
+                $SmartCounter = $this->getID2($SmartCounter);
+            }       
+        }while($endLoop == false);
+        
+        return $SmartCounter;
+    }
+    
+    public function getID2($latestID){
+        $arrTempID = str_split($latestID);
+
+        $intArrSize = sizeof($arrTempID) - 1;
+        $arrNumbers = Array();
+        for($i = $intArrSize; $i > 0; $i--){
+            if(is_numeric($arrTempID[$i])){
+                array_push($arrNumbers, $arrTempID[$i]);
+            }else{
+                break;
+            }
+        }
+
+        $arrRevNumbers = array_reverse($arrNumbers);
+        $intCounter = implode($arrRevNumbers);
+        $intCounterOLen = strlen($intCounter);
+        $intCounter += 1;
+        $intCounterNLen = strlen($intCounter);
+        if($intCounterOLen > $intCounterNLen){
+            $intZeroes = $intCounterOLen - $intCounterNLen;
+            for($i = 0; $i < $intZeroes; $i++){
+                $intCounter = "0" . $intCounter;
+            }
+        }
+        
+        array_splice($arrTempID, (sizeof($arrTempID) - sizeof($arrNumbers)), sizeof($arrNumbers));
+
+        $strSmartCounter = implode($arrTempID) . $intCounter;
+        
+        return $strSmartCounter;
+    }
+    
+    
+    /*------------ ACTIVITY ------------*/
+    
+    //avail activity
+    public function AvailActivity(Request $req){
+
+        $DateTimeToday = Carbon::now('Asia/Manila')->format('Y/m/d h:m:s');
+        $ActivityID = trim($req->input('AvailActivityID'));
+        $CustomerName = trim($req->input('AvailCustomerName'));
+        $ActivityType = trim($req->input('AvailActivityType'));
+        $ReservationID = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->where([['a.intResDStatus', '=', '4'],[DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName)'),'=',$CustomerName]])
+                        ->pluck('a.strReservationID')
+                        ->first();
+        
+        $AvailedActivities = DB::table('tblavailbeachactivity')->get();
+            
+        if((sizeof($AvailedActivities) == 0)){
+            $AvailActivityID = "BAVL1";
+        }
+        else{
+            $AvailActivityID = $this->SmartCounter('tblavailbeachactivity', 'strAvailBeachActivityID');
+        }
+    
+        if($ActivityType == "Land"){   
+            $AvailQuantity = trim($req->input('AvailLandQuantity'));
+            
+            $data = array('strAvailBeachActivityID'=>$AvailActivityID,
+                     'strAvailBAReservationID'=>$ReservationID,
+                     'strAvailBABeachActivityID'=>$ActivityID,
+                     'strAvailBABoatID'=> null,
+                     'intAvailBAQuantity'=>$AvailQuantity,
+                     'intAvailBAPayment'=>0,
+                     'tmsCreated'=>$DateTimeToday);
+        
+            DB::table('tblavailbeachactivity')->insert($data);
+            
+        }
+        else if($ActivityType == "Water"){
+
+            $HoursToAdd = trim($req->input('DurationTime'));
+            $MinutesToAdd = trim($req->input('DurationMinute'));
+            $DropOff = Carbon::now('Asia/Manila');
+    
+            if($HoursToAdd != "0"){
+                $DropOff = $DropOff->addHours((int)$HoursToAdd);
+            }
+
+            $DropOff = $DropOff->addMinutes($MinutesToAdd);
+            $DropOff = $DropOff->toDateTimeString();
+     
+            $BoatName = trim($req->input('AvailBoat'));
+            $BoatSchedID = DB::table('tblBoatSchedule')->pluck('strBoatScheduleID')->first();
+            if(!$BoatSchedID){
+                $BoatSchedID = "BSCHD1";
+            }
+            else{
+                $BoatSchedID = $this->SmartCounter2('tblBoatSchedule', 'strBoatScheduleID');
+            }
+            
+            $BoatID = DB::table('tblBoat')->where([['strBoatStatus', '=', 'Available'],['strBoatName', '=', $BoatName]])->pluck('strBoatID')->first();
+            
+            $data = array('strAvailBeachActivityID'=>$AvailActivityID,
+                     'strAvailBAReservationID'=>$ReservationID,
+                     'strAvailBABeachActivityID'=>$ActivityID,
+                     'strAvailBABoatID'=> $BoatID,
+                     'intAvailBAQuantity'=>1,
+                     'intAvailBAPayment'=>0,
+                     'tmsCreated'=>$DateTimeToday);
+        
+            DB::table('tblavailbeachactivity')->insert($data);
+            
+            $InsertBoatSchedData = array('strBoatScheduleID'=>$BoatSchedID,
+                                         'strBoatSBoatID'=>$BoatID,
+                                         'strBoatSPurpose'=>'Beach Activity',
+                                         'dtmBoatSPickUp'=>$DateTimeToday,
+                                         'dtmBoatSDropOff'=>$DropOff,
+                                         'intBoatSStatus'=>'1',
+                                         'strBoatSReservationID' => $ReservationID);
+            
+            DB::table('tblboatschedule')->insert($InsertBoatSchedData);
+            
+        }
+        
+        \Session::flash('flash_message','Successfully availed the beach activity!');
+        
+        return redirect('/Activities');
     }
 }
