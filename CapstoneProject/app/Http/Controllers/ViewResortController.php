@@ -213,7 +213,7 @@ class ViewResortController extends Controller
     
     /*------------------ ITEM RENTAL -----------*/
     
-    function getAvailableItems(){
+    public function getAvailableItems(){
         $RentalItems = DB::table('tblItem as a')
                 ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
                 ->select('a.strItemID',
@@ -319,7 +319,7 @@ class ViewResortController extends Controller
     
     /*---------- BOAT SCHEDULE ----------*/
 
-    function getAvailableBoats(){
+    public function getAvailableBoats(){
 
         $dtmNow = Carbon::now('Asia/Manila');
 
@@ -405,7 +405,7 @@ class ViewResortController extends Controller
     
      //Activities
     
-    function getAvailableActivities(){
+    public function getAvailableActivities(){
         $Activities = DB::table('tblBeachActivity as a')
                 ->join ('tblBeachActivityRate as b', 'a.strBeachActivityID', '=' , 'b.strBeachActivityID')
                 ->select('a.strBeachActivityID',
@@ -490,7 +490,7 @@ class ViewResortController extends Controller
     
     /*----------------- FEES -----------------*/
     
-    function ViewFees(){
+    public function ViewFees(){
         $CustomerResort = DB::table('tblCustomer as a')
                             ->join ('tblReservationDetail as b', 'b.strResDCustomerID', '=' , 'a.strCustomerID')
                             ->where([['a.intCustStatus', 1],['b.intResDStatus', '=', '4']])
@@ -504,4 +504,20 @@ class ViewResortController extends Controller
         
         return view('Fees', compact('CustomerResort', 'Fees'));
     }
+    
+    public function GetFeeDetails(Request $req){
+        $ReservationID = trim($req->input('ReservationID'));
+        
+        $CustomerFees = DB::table('tblReservationFee as a')
+             ->join ('tblFee as b', 'a.strResFFeeID', '=' , 'b.strFeeID')
+                ->select('b.strFeeID', 
+                         'b.strFeeName',
+                         'a.intResFQuantity')
+                ->where([['a.intResFPayment', '=', 0],['a.strResFReservationID', '=', $ReservationID]])
+                ->get();
+        
+        return response()->json($CustomerFees);
+    }
+    
+    
 }

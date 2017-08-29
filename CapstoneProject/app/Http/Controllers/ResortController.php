@@ -580,7 +580,64 @@ class ResortController extends Controller
      /*-------------- FEE -------------*/
 
     public function AddFee(Request $req){
-        $ReservationID = trim($req->input('ReservationID'));
+        $ReservationID = trim($req->input('AddReservationID'));
+        $FeeID = trim($req->input('AddFeeID'));
+        $FeeQuantity = trim($req->input('AddFeeQuantity'));
+        
+        $ReservedFeeQuantity = DB::table('tblReservationFee')
+                        ->where([['strResFReservationID', '=', $ReservationID],['intResFPayment', '=', 0], ['strResFFeeID', '=', $FeeID]])
+                        ->pluck('intResFQuantity')
+                        ->first();
+
+
+        if($ReservedFeeQuantity != null){
+            $FeeQuantity = $ReservedFeeQuantity + $FeeQuantity;
+
+            $updateData = array("intResFQuantity" => $FeeQuantity);   
+
+            DB::table('tblReservationFee')
+                ->where([['strResFReservationID', '=', $ReservationID], ['strResFFeeID', '=', $FeeID], ["intResFPayment", '=', '0']])
+                ->update($updateData);
+        }
+        else{
+            $data = array('strResFReservationID'=>$ReservationID,
+                             'strResFFeeID'=>$FeeID,
+                             'intResFPayment'=>0,
+                             'intResFQuantity'=> $FeeQuantity);
+
+            DB::table('tblReservationFee')->insert($data);
+        }
+
+        
+        \Session::flash('flash_message','Successfully added the fee to the customer!');
+        
+        return redirect('/Fees');
+    }
+    
+    public function EditFee(Request $req){
+        $ReservationID = trim($req->input('EditReservationID'));
+        $FeeID = trim($req->input('EditFeeID'));
+        $FeeQuantity = trim($req->input('EditFeeQuantity'));
+        
+        $updateData = array("intResFQuantity" => $FeeQuantity);   
+
+        DB::table('tblReservationFee')
+            ->where([['strResFReservationID', '=', $ReservationID], ['strResFFeeID', '=', $FeeID], ["intResFPayment", '=', '0']])
+            ->update($updateData);
+        
+        \Session::flash('flash_message','Successfully edited the fee of the customer!');
+        
+        return redirect('/Fees');
+    }
+    
+    public function DeleteFee(Request $req){
+        $ReservationID = trim($req->input('DeleteReservationID'));
+        $FeeID = trim($req->input('DeleteFeeID'));
+        DB::table('tblreservationfee')->where([['strResFReservationID', '=', $ReservationID],['strResFFeeID', '=', $FeeID],['intResFPayment', '=', 0]])->delete();
+        
+        \Session::flash('flash_message','Successfully deleted the fee of the customer!');
+        
+        return redirect('/Fees');
     }
 }
 

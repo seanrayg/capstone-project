@@ -12,6 +12,25 @@
 @endsection
 
 @section('content')
+<!-- Add success -->
+@if(Session::has('flash_message'))
+    <div class="row">
+        <div class="col-md-5 col-md-offset-7">
+            <div class="alert alert-success hide-automatic">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">check</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                  {{ Session::get('flash_message') }}
+                </div>
+            </div> 
+        </div>
+    </div>
+@endif
+
 <h5 id="TitlePage">Fees</h5>
 
 <div class="row">
@@ -35,7 +54,7 @@
 
                 <div class="row">
                     <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                        <table class="table" id="tblResortCustomers" onclick="run(event)">
+                        <table class="table" id="tblResortCustomers" onclick="run(event, 'Add')">
                             <thead class="text-success">
                                 <th style="display:none" class="text-center">Customer ID</th>
                                 <th style="display:none" class="text-center">Reservation ID</th>
@@ -60,7 +79,7 @@
                                         <button type="button" rel="tooltip" title="Add Fee" class="btn btn-warning btn-simple btn-xs" onclick="ShowModalAddFees()">
                                             <i class="material-icons">monetization_on</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="View Fees" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="View Fees" class="btn btn-info btn-simple btn-xs" value="{{$Customer->strReservationID}}" onclick="ShowModalCustomerFees(this)">
                                             <i class="material-icons">content_paste</i>
                                         </button>
                                     </td>
@@ -146,6 +165,130 @@
 
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalCustomerFees" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+                            <div class="card-header" data-background-color="orange">
+                                <i class="material-icons">content_paste</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">Customer Fees<span class="close" onclick="HideModalCustomerFees()">X</span></h3>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event, 'Details')" style="font-family: Roboto" id="tblCustomerFees">
+                                <thead class="text-warning">
+                                    <th class="text-center">Fee ID</th>
+                                    <th class="text-center">Fee Name</th>   
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Action</th>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalEditFees" class="modal">
+    <div class="Modal-content" style="max-width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="green">
+                            <i class="material-icons">monetization_on</i>
+                        </div>
+                        <div class="card-content">
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Edit Fee<span class="close" onclick="HideModalEditFees()">X</span></h3>
+                            </div>
+                            <form method="POST" action="/Fee/Edit" onsubmit="return CheckForm()">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="EditReservationID" id="EditReservationID">
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Fee</label>
+                                            <div class="selectBox">
+                                                <select name="EditFeeID" id="EditFeeID">
+                                                    @foreach($Fees as $Fee)
+                                                        <option value="{{$Fee->strFeeID}}">{{$Fee->strFeeName}}</option>
+                                                    @endforeach
+                                                </select>
+                                              </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="EditFeeQuantityError">
+                                            <label class="control-label">Quantity</label>
+                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int', '#EditFeeQuantityError')" onchange="ValidateInput(this, 'int', '#EditFeeQuantityError')" id="EditFeeQuantity" name="EditFeeQuantity" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel"></p>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class = "row">
+                                    <div class="col-xs-12">
+                                        <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i>Save</button>
+                                    </div> 
+                                </div>
+
+                            </form>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalDeleteFees" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="red">
+                            <i class="material-icons">delete</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title"><span class="close" onclick="HideModalDeleteFees()">X</span></h3>
+                            <h3 class="title">Delete this fee?</h3>
+                            <form method="post" action="/Fee/Delete">
+                                {{ csrf_field() }}
+                                <input type="hidden" id="DeleteFeeID" name="DeleteFeeID">
+                                <input type="hidden" id="DeleteReservationID" name="DeleteReservationID">
+                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteFees()">Cancel</button>
+                                <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>  
+                            </form>            
+                            <div class="clearfix"></div>
+                        </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
