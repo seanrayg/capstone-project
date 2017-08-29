@@ -332,3 +332,9 @@ Route::post('/Activity/Done', 'ResortController@ActivityDone');
 /*------------- FEE ---------------*/
 
 Route::post('/Fee/Add', 'ResortController@AddFee');
+
+Route::get('/Fee/Details', 'ViewResortController@GetFeeDetails');
+
+Route::post('/Fee/Edit', 'ResortController@EditFee');
+
+Route::post('/Fee/Delete', 'ResortController@DeleteFee');

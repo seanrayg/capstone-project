@@ -907,7 +907,8 @@
                                 <div class="form-group">
                                     <div class="form-group label-static">
                                         <label class="control-label">Message</label>
-                                        <textarea class="form-control" rows="5"></textarea>
+                                        <textarea class="form-control" rows="5">The Il Sogno Beach Resort would like to remind you to pay the downpayment (PHP540) required for your reservation until September 4, 2017. For any inquiries you may call us at 8-7000 or visit our website at www.ilsognobeachresort.com
+                                        This is a system generated message. Please do not reply</textarea>
                                     </div>
                                 </div>
                             </div>
