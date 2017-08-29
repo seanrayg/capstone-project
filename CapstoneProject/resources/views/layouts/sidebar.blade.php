@@ -43,6 +43,12 @@
                     <p>Rooms</p>
                 </a>
             </li>
+            <li id="SB-Fees">
+                <a href="/Fees">
+                    <i class="material-icons">room_service</i>
+                    <p>Fees</p>
+                </a>
+            </li>
             <li id="SB-ItemRental">
                 <a href="/ItemRental">
                     <i class="material-icons">local_offer</i>

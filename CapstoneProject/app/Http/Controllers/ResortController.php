@@ -562,4 +562,26 @@ class ResortController extends Controller
         
         return redirect('/Activities');
     }
+    
+    //activity done
+    public function ActivityDone(Request $req){
+        $BoatSchedID = trim($req->input('DoneBoatSchedID'));
+        $updateData = array("intBoatSStatus" => "0");   
+        
+        DB::table('tblBoatSchedule')
+            ->where('strBoatScheduleID', '=', $BoatSchedID)
+            ->update($updateData);
+        
+        \Session::flash('flash_message','Successfully availed the beach activity!');
+        
+        return redirect('/Activities');
+    }
+    
+     /*-------------- FEE -------------*/
+
+    public function AddFee(Request $req){
+        $ReservationID = trim($req->input('ReservationID'));
+    }
 }
+
+   

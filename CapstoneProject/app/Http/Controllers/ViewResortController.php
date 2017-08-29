@@ -174,7 +174,12 @@ class ViewResortController extends Controller
             }
         }
         
-        return view('Customers', compact('CustomerDetails'));
+        $CustomerResort = DB::table('tblCustomer as a')
+                            ->join ('tblReservationDetail as b', 'b.strResDCustomerID', '=' , 'a.strCustomerID')
+                            ->where([['a.intCustStatus', 1],['b.intResDStatus', '=', '4']])
+                            ->get();
+        
+        return view('Customers', compact('CustomerDetails', 'CustomerResort'));
     }
     
     
@@ -310,7 +315,9 @@ class ViewResortController extends Controller
         return view('ItemRental', compact('RentalItems', 'Guests', 'RentedItems', 'BrokenItems'));
     }
     
-    /*------ Boat Schedule ------*/
+    
+    
+    /*---------- BOAT SCHEDULE ----------*/
 
     function getAvailableBoats(){
 
@@ -381,10 +388,26 @@ class ViewResortController extends Controller
 
         }
         
-        $TimeToday = Carbon::now()->toTimeString();
-        $DateToday = Carbon::now()->toDateString();
-        $DateToday = str_replace("-","/", $DateToday);
+        $dtmNow = Carbon::now('Asia/Manila');
 
+        $dtmDate = $dtmNow->toDateString();
+        $dtmTime = $dtmNow->toTimeString();
+
+        $ScheduledBoats =  DB::Select("
+            SELECT strBoatSBoatID
+            FROM tblBoatSchedule
+            WHERE intBoatSStatus = 1
+            AND DATE(dtmBoatSPickUp) = '$dtmDate'
+            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR))
+            OR DATE(dtmBoatSDropOff) =  '$dtmDate'
+            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSDropOff, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSDropOff, INTERVAL 1 HOUR))
+        ");
+        
+        $UnavailableBoats = [];
+        foreach($ScheduledBoats as $Boat){
+            $UnavailableBoats[sizeof($UnavailableBoats)] = $Boat->strBoatSBoatID;
+        }
+        
         $BoatsAvailable = DB::table('tblBoat as a')
              ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
                 ->select('a.strBoatID', 
@@ -393,12 +416,11 @@ class ViewResortController extends Controller
                          'b.dblBoatRate',
                          'a.strBoatStatus',
                          'a.strBoatDescription')
-                ->whereNotIn('a.strBoatID', [DB::raw("(SELECT strBoatSBoatID FROM tblBoatSchedule WHERE intBoatSStatus = 1 AND (date(dtmBoatSPickUp) = '".$DateToday."') AND '".$TimeToday."' BETWEEN time(dtmBoatSPickUp) AND time(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)))")])
+                ->whereNotIn('a.strBoatID', $UnavailableBoats)
                 ->where([['a.strBoatStatus', "=", 'Available'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")]])
                 ->orderBy('a.intBoatCapacity')
                 ->get();
-        
-        
+
         $Guests = DB::table('tblReservationDetail as a')
                 ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
                 ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
@@ -417,10 +439,29 @@ class ViewResortController extends Controller
                          DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustLastName) AS Name'),
                          'f.strBoatName',
                          'e.dtmBoatSPickUp',
-                         'e.dtmBoatSDropOff')
+                         'e.dtmBoatSDropOff',
+                         'e.strBoatScheduleID')
                 ->where([['e.intBoatSStatus', '=', '1'], ['a.strAvailBABoatID', '!=', null]])
                 ->get();
         
         return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable', 'AvailedActivities'));
+    }
+    
+    
+    /*----------------- FEES -----------------*/
+    
+    function ViewFees(){
+        $CustomerResort = DB::table('tblCustomer as a')
+                            ->join ('tblReservationDetail as b', 'b.strResDCustomerID', '=' , 'a.strCustomerID')
+                            ->where([['a.intCustStatus', 1],['b.intResDStatus', '=', '4']])
+                            ->get();
+        
+        $Fees = DB::table('tblFee')
+                ->select('strFeeID',
+                         'strFeeName')
+                ->where('strFeeStatus', '=', 'Active')
+                ->get();
+        
+        return view('Fees', compact('CustomerResort', 'Fees'));
     }
 }

@@ -124,13 +124,14 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table">
+                                <table class="table" onclick="run(event, 'Done')">
                                     <thead class="text-primary">
                                         <th>Activity</th>
                                         <th>Availed by</th>
                                         <th>Boat Used</th>
                                         <th>Time Availed</th>
                                         <th>Expected Time of Return</th>
+                                        <th style="display:none">Schedule ID</th>
                                         <th>Action</th>
                                     </thead>
                                     <tbody>
@@ -140,16 +141,21 @@
                                             <td>{{$Activity -> Name}}</td>
                                             <td>{{$Activity -> strBoatName}}</td>
                                             <td>{{Carbon\Carbon::parse($Activity -> dtmBoatSPickUp)->format('M j, Y g:i A')}}</td>  
-                                            <td>{{Carbon\Carbon::parse($Activity -> dtmBoatSDropOff)->format('M j, Y g:i A')}}</td>  
+                                            <td>{{Carbon\Carbon::parse($Activity -> dtmBoatSDropOff)->format('M j, Y g:i A')}}</td>
+                                            <td style="display:none">{{$Activity -> strBoatScheduleID}}</td>
                                             <td>
-                                                <button type="button" rel="tooltip" title="Avail Activity" class="btn btn-success btn-simple btn-xs" onclick="ShowModalAvailActivity()">
-                                                    <i class="material-icons">playlist_add_check</i>
+                                                <button type="button" rel="tooltip" title="Activity Done" class="btn btn-success btn-simple btn-xs" onclick="ShowModalActivityDone()">
+                                                    <i class="material-icons">done</i>
                                                 </button>
                                             </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <form id="FormDoneActivity" method="POST" action="/Activity/Done">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" id="DoneBoatSchedID" name="DoneBoatSchedID">
+                                </form>
                             </div>
                         </div>
                         <div class = "row">
@@ -348,20 +354,28 @@
 </div>
     
 <div id="DivModalActivityDone" class="modal">
-    <div class="Modal-content">
+    <div class="Modal-contentChoice">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
-
-                        <div class="card-header" data-background-color="green">
-                            <i class="material-icons">done</i>
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">done</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalReservationOptions()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">Activity Done?</h3>
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" onclick="SubmitActivityForm()">Yes</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" onclick="HideModalActivityDone()">No</button>
+                            </div>
+                            <div class="col-md-2"></div>
                         </div>
-                        <div class="card-content">
-                            <p class="category"></p>
-                            <h3 class="title">Activity Done<span class="close" onclick="HideModalActivityDone()">X</span></h3>
-
-                        </div>
-
+                    </div>
                 </div>
             </div>
         </div>
