@@ -282,7 +282,7 @@
                                 <input type="hidden" id="DeleteFeeID" name="DeleteFeeID">
                                 <input type="hidden" id="DeleteReservationID" name="DeleteReservationID">
                                 <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteFees()">Cancel</button>
-                                <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>  
+                                <button type="submit" class="btn btn-success btn-sm pull-right">Checkout</button>  
                             </form>            
                             <div class="clearfix"></div>
                         </div>
