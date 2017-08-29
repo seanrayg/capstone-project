@@ -176,13 +176,13 @@
                                     </thead>
                                     <tbody>
                                         @foreach($AvailableBoats as $AvailableBoat)
-                                        <tr onclick="HighlightRow(this)">
-                                            <td>{{$AvailableBoat -> strBoatID}}</td>
-                                            <td>{{$AvailableBoat -> strBoatName}}</td>
-                                            <td>{{$AvailableBoat -> intBoatCapacity}}</td>
-                                            <td>{{$AvailableBoat -> dblBoatRate}}</td>
-                                            <td>{{$AvailableBoat -> strBoatDescription}}</td>
-                                        </tr>
+                                            <tr onclick="HighlightRow(this)">
+                                                <td>{{$AvailableBoat -> strBoatID}}</td>
+                                                <td>{{$AvailableBoat -> strBoatName}}</td>
+                                                <td>{{$AvailableBoat -> intBoatCapacity}}</td>
+                                                <td>{{$AvailableBoat -> dblBoatRate}}</td>
+                                                <td>{{$AvailableBoat -> strBoatDescription}}</td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -209,14 +209,22 @@
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
                                 <table class="table">
                                     <thead class="text-primary">
-                                        <th>Used Boat</th>
-                                        <th>No. of passengers</th>
-                                        <th>Purpose</th>
+                                        <th>Boat ID</th>
+                                        <th>Boat Name</th>
                                         <th>Pick up</th>
                                         <th>Drop off</th>
                                         <th>Rented By</th>
                                     </thead>
                                     <tbody>
+                                        @foreach($RentedBoats as $RentedBoat)
+                                            <tr onclick="HighlightRow(this)">
+                                                <td>{{$RentedBoat->strBoatSBoatID}}</td>
+                                                <td>{{$RentedBoat->strBoatName}}</td>
+                                                <td>{{$RentedBoat->dtmBoatSPickUp}}</td>
+                                                <td>{{$RentedBoat->dtmBoatSDropOff}}</td>
+                                                <td>{{$RentedBoat->strCustomerName}}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
