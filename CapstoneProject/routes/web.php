@@ -38,6 +38,8 @@ Route::get('/Billing', function () {
 
 Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');
 
+Route::get('/Fees', 'ViewResortController@ViewFees');
+
 
 
 /*-------------- MAINTENANCE --------------*/
@@ -320,3 +322,10 @@ Route::post('/BoatSchedule', 'ScheduleController@RentBoat');
 /*------------ ACTIVITY ------------*/
 
 Route::post('/Activity/Avail', 'ResortController@AvailActivity');
+
+Route::post('/Activity/Done', 'ResortController@ActivityDone');
+
+
+/*------------- FEE ---------------*/
+
+Route::post('/Fee/Add', 'ResortController@AddFee');

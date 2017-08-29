@@ -185,10 +185,10 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
                                             <i class="material-icons">question_answer</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
@@ -202,10 +202,10 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
                                             <i class="material-icons">question_answer</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
@@ -219,10 +219,10 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
                                             <i class="material-icons">question_answer</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
@@ -236,10 +236,10 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
                                             <i class="material-icons">question_answer</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
@@ -253,10 +253,10 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
                                             <i class="material-icons">question_answer</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
@@ -286,7 +286,7 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
@@ -303,7 +303,7 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
@@ -320,7 +320,7 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
@@ -337,7 +337,7 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
@@ -354,7 +354,7 @@
                                     <td>Payment</td>
                                     <td>Email</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
                                         <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
@@ -799,6 +799,123 @@
 
                     </div>
                 </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalReservationInfo" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="blue">
+                        <i class="material-icons">insert_invitation</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <h3 class="title">Reservation Info<span class="close" onclick="HideModalReservationInfo()">X</span></h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1"></div>
+                            <div class="col-xs-10">
+                                <small><h4>Reservation Info:</h4></small>
+                                <p class="paragraphText text-primary">Reservation ID:</p> <p class="paragraphText" id="i-ReservationID"></p><br>
+                                <p class="paragraphText text-primary">Reservation Code:</p> <p class="paragraphText" id="i-ReservationCode"></p><br>
+                                <p class="paragraphText text-primary">Check In Date:</p> <p class="paragraphText" id="i-CheckInDate"></p><br>
+                                <p class="paragraphText text-primary">Check Out Date:</p> <p class="paragraphText" id="i-CheckOutDate"></p><br>
+                                <p class="paragraphText text-primary">Pick Up Time:</p> <p class="paragraphText" id="i-PickUpTime"></p><br>
+                                <p class="paragraphText text-primary">Number of adult guests:</p> <p class="paragraphText" id="i-NoOfAdults"></p><br>
+                                <p class="paragraphText text-primary">Number of child guests:</p> <p class="paragraphText" id="i-NoOfKids"></p><br>
+                                <p class="paragraphText text-primary">Remarks:</p> <p class="paragraphText" id="i-Remarks"></p><br>
+                                <small><h4>Reserved Room(s):</h4></small>
+                                <div class="row"></div>
+                                <table class="table" id="tblChosenRooms" style="font-family: 'Roboto'">
+                                    <thead class="text-primary">
+                                        <th>Room</th>
+                                        <th>Quantity</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table><br><br>
+                                <small><h4>Reserved Boat(s):</h4></small>
+                                <div class="row"></div>
+                                <table class="table" id="tblChosenBoats" style="font-family: 'Roboto'">
+                                    <thead class="text-primary">
+                                        <th>Boat</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table><br><br>
+                                <small><h4>Bill Information</h4></small>
+                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="i-InitialBill"></p><br>
+                                <p class="paragraphText text-primary">Required Downpayment:</p> <p class="paragraphText" id="i-RequiredDownpayment"></p><br>
+                                <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="i-DateBooked"></p><br>
+                                <p class="paragraphText text-primary">Payment Due Date</p><p class="paragraphText" id="i-PaymentDueDate"></p><br><br>
+                                <small><h4>Guest Information</h4></small>
+                                <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="i-Name"></p><br>
+                                <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="i-Address"></p><br>
+                                <p class="paragraphText text-primary">Contact Number:</p><p class="paragraphText" id="i-ContactNumber"></p><br>
+                                <p class="paragraphText text-primary">Email:</p><p class="paragraphText" id="i-Email"></p><br>
+                                <p class="paragraphText text-primary">Age:</p><p class="paragraphText" id="i-Age"></p><br>
+                                <p class="paragraphText text-primary">Gender:</p><p class="paragraphText" id="i-Gender"></p><br>
+                                <p class="paragraphText text-primary">Nationality:</p><p class="paragraphText" id="i-Nationality"></p><br>
+                                <br><br>
+
+                                <button type="button" class="btn btn-info pull-right" onclick="HideModalReservationInfo()">Close</button>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalSendEmail" class="modal">
+    <div class="Modal-content" style="max-width:400px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">question_answer</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <h3 class="title">Compose Email<span class="close" onclick="HideModalSendEmail()">X</span></h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group label-static">
+                                    <label class="control-label">To:</label>
+                                    <input type="text" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Email:</label>
+                                    <input type="text" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Message</label>
+                                        <textarea class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success pull-right" onclick="">Send</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -29,3 +29,19 @@ function ShowModalCancelledReservations(){
 function HideModalCancelledReservations(){
     document.getElementById("DivModalCancelledReservations").style.display = "none";
 }
+
+function ShowModalReservationInfo(){
+    document.getElementById("DivModalReservationInfo").style.display = "block";
+}
+
+function HideModalReservationInfo(){
+    document.getElementById("DivModalReservationInfo").style.display = "none";
+}
+
+function ShowModalSendEmail(){
+    document.getElementById("DivModalSendEmail").style.display = "block";
+}
+
+function HideModalSendEmail(){
+    document.getElementById("DivModalSendEmail").style.display = "none";
+}

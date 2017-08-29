@@ -72,6 +72,11 @@ function run(event, sender){
         AvailActivityInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML];
         fillAvailActivity();
     }
+    
+    else if(sender == "Done"){
+        DoneActivityInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML];
+        fillDoneActivity();
+    }
 
 }
 
@@ -135,4 +140,14 @@ function ComputePrice(field, dataType, holder){
         var ActivityQuantity = parseInt(document.getElementById("AvailLandQuantity").value);
         document.getElementById("LandActivityRate").value = ActivityRate * ActivityQuantity;
     }
+}
+
+/*-------- ACTIVITY DONE -----------*/
+
+function fillDoneActivity(){
+    document.getElementById("DoneBoatSchedID").value = DoneActivityInfo[5];
+}
+
+function SubmitActivityForm(){
+    document.getElementById("FormDoneActivity").submit();
 }

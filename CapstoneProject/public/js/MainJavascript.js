@@ -166,6 +166,10 @@ window.onload = function() {
     else if(TitlePage == "Reports"){
         $("#SB-Reports").addClass("active");
     }
+    
+    else if(TitlePage == "Fees"){
+        $("#SB-Fees").addClass("active");
+    }
 };
 
 //modal for walkin
