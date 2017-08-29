@@ -326,7 +326,7 @@ class ViewResortController extends Controller
         $dtmDate = $dtmNow->toDateString();
         $dtmTime = $dtmNow->toTimeString();
 
-        $ScheduledBoats =  DB::raw("
+        $ScheduledBoats =  DB::Select("
             SELECT strBoatSBoatID
             FROM tblBoatSchedule
             WHERE intBoatSStatus = 1
@@ -335,20 +335,24 @@ class ViewResortController extends Controller
             OR DATE(dtmBoatSDropOff) =  '$dtmDate'
             AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSDropOff, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSDropOff, INTERVAL 1 HOUR))
         ");
-
+        
+        $UnavailableBoats = [];
+        foreach($ScheduledBoats as $Boat){
+            $UnavailableBoats[sizeof($UnavailableBoats)] = $Boat->strBoatSBoatID;
+        }
+        
         $AvailableBoats = DB::table('tblBoat as a')
-        ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
-        ->select('a.strBoatID', 
-                 'a.strBoatName',
-                 'a.intBoatCapacity',
-                 'b.dblBoatRate',
-                 'a.strBoatDescription')
-        ->where([
-            ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")],
-            ['a.strBoatStatus', "=", 'Available']
-        ])
-        ->whereNotIn('a.strBoatID', [$ScheduledBoats])
-        ->get();
+             ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
+                ->select('a.strBoatID', 
+                         'a.strBoatName',
+                         'a.intBoatCapacity',
+                         'b.dblBoatRate',
+                         'a.strBoatStatus',
+                         'a.strBoatDescription')
+                ->whereNotIn('a.strBoatID', $UnavailableBoats)
+                ->where([['a.strBoatStatus', "=", 'Available'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")]])
+                ->orderBy('a.intBoatCapacity')
+                ->get();
 
         $RentedBoats = DB::table('tblBoatSchedule as a')
             ->join('tblBoat as b', 'a.strBoatSBoatID', '=', 'b.strBoatID')
