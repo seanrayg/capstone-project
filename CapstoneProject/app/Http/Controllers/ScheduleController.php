@@ -13,30 +13,50 @@ class ScheduleController extends Controller
     	$strBoatID = $request->input('BoatID');
     	$strCustomerID = $request->input('CustomerID');
     	$intPassengers = $request->input('NumberOfPassengers');
-    	$strBoatPurpose = $request->input('BoatPurpose');
+    	$strBoatPurpose = 'Rental';
     	$strPickUpTime = $request->input('time1');
     	$strDropOffTime = $request->input('time2');
 
     	$tempPickUpTime = explode(" ", $strPickUpTime);
 
     	if($tempPickUpTime[1] == 'am'){
-    		$PickUpTime = $tempPickUpTime[0] . ':00';
-    	}else if($tempPickUpTime[1] == 'pm'){
-    		$tempPickUpTime = explode(":", $tempPickUpTime[0]);
+    		$tempTime = explode(":", $tempPickUpTime[0]);
 
-    		$intNewHour = 12 + $tempPickUpTime[0];
-    		$PickUpTime = $intNewHour . ':' . $tempPickUpTime[1] . ':00';
+            if($tempTime[0] == 12){
+                $PickUpTime = '00:' . $tempTime[1] . ':00';
+            }else{
+                $PickUpTime = $tempPickUpTime[0] . ':00';
+            }
+    	}else if($tempPickUpTime[1] == 'pm'){
+    		$tempTime = explode(":", $tempPickUpTime[0]);
+
+    		if($tempTime[0] == 12){
+                $PickUpTime = $tempPickUpTime[0] . ':00';
+            }else{
+                $intNewHour = 12 + $tempTime[0];
+                $PickUpTime = $intNewHour . ':' . $tempTime[1] . ':00';
+            }
     	}
 
-        $tempPickUpTime = explode(" ", $strDropOffTime);
+        $tempDropOffTime = explode(" ", $strDropOffTime);
 
-        if($tempPickUpTime[1] == 'am'){
-            $DropOffTime = $tempPickUpTime[0] . ':00';
-        }else if($tempPickUpTime[1] == 'pm'){
-            $tempPickUpTime = explode(":", $tempPickUpTime[0]);
+        if($tempDropOffTime[1] == 'am'){
+            $tempTime = explode(":", $tempDropOffTime[0]);
 
-            $intNewHour = 12 + $tempPickUpTime[0];
-            $DropOffTime = $intNewHour . ':' . $tempPickUpTime[1] . ':00';
+            if($tempTime[0] == 12){
+                $DropOffTime = '00:' . $tempTime[1] . ':00';
+            }else{
+                $DropOffTime = $tempDropOffTime[0] . ':00';
+            }
+        }else if($tempDropOffTime[1] == 'pm'){
+            $tempTime = explode(":", $tempDropOffTime[0]);
+
+            if($tempTime[0] == 12){
+                $DropOffTime = $tempDropOffTime[0] . ':00';
+            }else{
+                $intNewHour = 12 + $tempTime[0];
+                $DropOffTime = $intNewHour . ':' . $tempTime[1] . ':00';
+            }
         }
 
     	$dtmNow = Carbon::now('Asia/Manila');
@@ -67,6 +87,16 @@ class ScheduleController extends Controller
         DB::table('tblBoatSchedule')->insert($BoatSchedule);
 
     	return redirect('BoatSchedule');
+    }
+
+    public function RentDone(Request $request){
+        $strBoatScheduleID = $request->input('BoatScheduleID');
+
+        DB::table('tblBoatSchedule')
+        ->where('strBoatScheduleID', $strBoatScheduleID)
+        ->update(['intBoatSStatus' => 0]);
+
+        return redirect('BoatSchedule');
     }
 
     public function SmartCounter($strTableName, $strColumnName){

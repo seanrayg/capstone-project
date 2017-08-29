@@ -1,8 +1,6 @@
 var BoatInfo = [];
 
-function run(event){
-
-	document.getElementById('RentButton').disabled = false;
+function run(event, table){
 
 	event = event || window.event; 
     var target = event.target || event.srcElement;
@@ -15,6 +13,14 @@ function run(event){
         return;
     }
 
-    document.getElementById('BoatName').value = cells[0].innerHTML;
+    if(table == 'AvailableBoats'){
+        document.getElementById('RentButton').disabled = false;
+
+        document.getElementById('BoatName').value = cells[0].innerHTML;
+    }else if(table == 'RentedBoats'){
+        document.getElementById('TripDoneButton').disabled = false;
+        
+        document.getElementById('BoatScheduleID').value = cells[0].innerHTML;
+    }
 
 }

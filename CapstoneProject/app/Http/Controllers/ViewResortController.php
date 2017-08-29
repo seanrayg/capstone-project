@@ -331,9 +331,15 @@ class ViewResortController extends Controller
             FROM tblBoatSchedule
             WHERE intBoatSStatus = 1
             AND DATE(dtmBoatSPickUp) = '$dtmDate'
-            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR))
-            OR DATE(dtmBoatSDropOff) =  '$dtmDate'
-            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSDropOff, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSDropOff, INTERVAL 1 HOUR))
+            AND '$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND TIME(dtmBoatSPickUp)
+            OR '$dtmTime' BETWEEN TIME(dtmBoatSPickUp) AND TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR))
+            UNION
+            SELECT strBoatSBoatID
+            FROM tblBoatSchedule
+            WHERE intBoatSStatus = 1
+            AND DATE(dtmBoatSDropoff) = '$dtmDate'
+            AND '$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSDropoff, INTERVAL 1 HOUR)) AND TIME(dtmBoatSDropoff)
+            OR '$dtmTime' BETWEEN TIME(dtmBoatSDropoff) AND TIME(DATE_ADD(dtmBoatSDropoff, INTERVAL 1 HOUR))
         ");
         
         $UnavailableBoats = [];
@@ -362,6 +368,7 @@ class ViewResortController extends Controller
                 ['a.strBoatSPurpose', '=', 'Rental'],
                 ['a.intBoatSStatus', '=', 1]])
             ->select(
+                'a.strBoatScheduleID',
                 'a.strBoatSBoatID', 
                 'b.strBoatName', 
                 'a.dtmBoatSPickUp', 

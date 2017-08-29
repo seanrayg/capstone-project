@@ -317,7 +317,10 @@ Route::post('ItemRental/Extend', 'ResortController@ExtendItemRental');
 
 /*----------- BOAT SCHEDULE -------------*/
 
-Route::post('/BoatSchedule', 'ScheduleController@RentBoat');
+Route::post('/BoatSchedule/RentBoat', 'ScheduleController@RentBoat');
+
+Route::post('/BoatSchedule/RentDone', 'ScheduleController@RentDone');
+
 
 /*------------ ACTIVITY ------------*/
 

@@ -32,18 +32,26 @@
 
             var strAMPM = SplittedTime2[1];
             if(SplittedTime2[1] == 'am'){
-                if(intNewHour > 12){
+                if(intTime1Hour == 12){
                     var intNewHour = intNewHour - 12;
-                    var strAMPM = 'pm';
-                }else if(intNewHour == 12){
-                    var strAMPM = 'pm';
+                }else{
+                    if(intNewHour > 12){
+                        var intNewHour = intNewHour - 12;
+                        var strAMPM = 'pm';
+                    }else if(intNewHour == 12){
+                        var strAMPM = 'pm';
+                    }
                 }
             }else if(SplittedTime2[1] == 'pm'){
-                if(intNewHour > 12){
+                if(intTime1Hour == 12){
                     var intNewHour = intNewHour - 12;
-                    var strAMPM = 'am';
-                }else if(intNewHour == 12){
-                    var strAMPM = 'am';
+                }else{
+                    if(intNewHour > 12){
+                        var intNewHour = intNewHour - 12;
+                        var strAMPM = 'am';
+                    }else if(intNewHour == 12){
+                        var strAMPM = 'am';
+                    }
                 }
             }
 
@@ -166,7 +174,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table" onclick="run(event)">
+                                <table class="table" onclick="run(event, 'AvailableBoats')">
                                     <thead class="text-primary">
                                         <th>ID</th>
                                         <th>Name</th>
@@ -207,7 +215,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table">
+                                <table class="table" onclick="run(event, 'RentedBoats')">
                                     <thead class="text-primary">
                                         <th>Boat ID</th>
                                         <th>Boat Name</th>
@@ -218,6 +226,7 @@
                                     <tbody>
                                         @foreach($RentedBoats as $RentedBoat)
                                             <tr onclick="HighlightRow(this)">
+                                                <td style="display: none">{{$RentedBoat->strBoatScheduleID}}</td>
                                                 <td>{{$RentedBoat->strBoatSBoatID}}</td>
                                                 <td>{{$RentedBoat->strBoatName}}</td>
                                                 <td>{{$RentedBoat->dtmBoatSPickUp}}</td>
@@ -231,7 +240,11 @@
                         </div>
                         <div class = "row">
                             <div class="col-xs-12">
-                                <button type="button" class="btn btn-success pull-right" onclick="#"><i class="material-icons">check</i> Trip Done</button>
+                                <form method="post" action="/BoatSchedule/RentDone">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="BoatScheduleID" id="BoatScheduleID">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#" id="TripDoneButton" disabled><i class="material-icons">check</i> Trip Done</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -350,7 +363,7 @@
                             <div class="card-content">
                                 <p class="category"></p>
                                 <h3 class="title">Rent Boat<span class="close" onclick="HideModalRentBoat()">X</span></h3>
-                                <form method="post" action="/BoatSchedule">
+                                <form method="post" action="/BoatSchedule/RentBoat">
                                     {{ csrf_field() }}
                                     <div class="row">
                                         <div class="col-md-12">
@@ -371,24 +384,6 @@
                                                 <option id="{{$ActiveCustomer -> strCustomerID}}" value="{{$ActiveCustomer -> strCustFirstName}} {{$ActiveCustomer -> strCustLastName}}" />
                                               @endforeach
                                             </datalist> 
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Number of passengers</label>
-                                                <input name="NumberOfPassengers" type="text" class="form-control" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Purpose</label>
-                                                <input name="BoatPurpose" type="text" class="form-control" required>
-                                            </div>
                                         </div>
                                     </div>
 
