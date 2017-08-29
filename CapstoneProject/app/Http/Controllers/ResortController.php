@@ -479,7 +479,7 @@ class ResortController extends Controller
     //avail activity
     public function AvailActivity(Request $req){
 
-        $DateTimeToday = Carbon::now('Asia/Manila')->format('Y/m/d h:m:s');
+        $DateTimeToday = Carbon::now('Asia/Manila');
         $ActivityID = trim($req->input('AvailActivityID'));
         $CustomerName = trim($req->input('AvailCustomerName'));
         $ActivityType = trim($req->input('AvailActivityType'));
