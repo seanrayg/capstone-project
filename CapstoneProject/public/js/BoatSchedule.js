@@ -17,6 +17,7 @@ function run(event, table){
         document.getElementById('RentButton').disabled = false;
 
         document.getElementById('BoatName').value = cells[0].innerHTML;
+        document.getElementById('BoatRate').value = cells[3].innerHTML;
     }else if(table == 'RentedBoats'){
         document.getElementById('TripDoneButton').disabled = false;
         

@@ -16,6 +16,7 @@ class ScheduleController extends Controller
     	$strBoatPurpose = 'Rental';
     	$strPickUpTime = $request->input('time1');
     	$strDropOffTime = $request->input('time2');
+        $dblBoatRate = $request->input('BoatRate');
 
     	$tempPickUpTime = explode(" ", $strPickUpTime);
 
@@ -85,6 +86,20 @@ class ScheduleController extends Controller
     	);
 
         DB::table('tblBoatSchedule')->insert($BoatSchedule);
+
+        $strPaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+        $BoatScheduleBill = array(
+            'strPaymentID'=>$strPaymentID,
+            'strPayReservationID'=>$strReservationID,
+            'dblPayAmount'=>$dblBoatRate,
+            'strPayTypeID'=>8,
+            'dtePayDate'=>Carbon::now('Asia/Manila')->toDateString(),
+            'strPaymentRemarks'=>null,
+            'tmsCreated'=>Carbon::now('Asia/Manila')
+        );
+
+        DB::table('tblPayment')->insert($BoatScheduleBill);
 
     	return redirect('BoatSchedule');
     }

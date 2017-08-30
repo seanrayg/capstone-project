@@ -263,69 +263,22 @@
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
                                 <table class="table">
                                     <thead class="text-primary">
-                                        <th>Name</th>
-                                        <th>Reserved Boat</th>
-                                        <th>No. of passengers</th>
-                                        <th>Purpose</th>
-                                        <th>Pick up</th>
-                                        <th>Drop off</th>
-                                        <th>Rented By</th>
+                                        <th>Boat ID</th>
+                                        <th>Boat Name</th>
+                                        <th>Pick Up</th>
+                                        <th>Drop Off</th>
+                                        <th>Reserved By</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Reserved Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Reserved Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Reserved Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Reserved Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Reserved Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Reserved Boat</td>
-                                            <td>No. of passengers</td>
-                                            <td>Purpose</td>
-                                            <td>Pick up</td>
-                                            <td>Drop off</td>
-                                            <td>Rented By</td>
-                                        </tr>
+                                        @foreach($ReservedBoats as $ReservedBoat)
+                                            <tr onclick="HighlightRow(this)">
+                                                <td>{{$ReservedBoat -> strBoatSBoatID}}</td>
+                                                <td>{{$ReservedBoat -> strBoatName}}</td>
+                                                <td>{{$ReservedBoat -> dtmBoatSPickUp}}</td>
+                                                <td>{{$ReservedBoat -> dtmBoatSDropOff}}</td>
+                                                <td>{{$ReservedBoat -> strCustomerName}}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -370,6 +323,15 @@
                                             <div class="form-group label-floating">
                                                 <label>Boat to be rented</label>
                                                 <input type="text" id="BoatName" name="BoatID" class="form-control" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-floating">
+                                                <label>Boat Rate</label>
+                                                <input type="text" id="BoatRate" name="BoatRate" class="form-control" readonly>
                                             </div>
                                         </div>
                                     </div>

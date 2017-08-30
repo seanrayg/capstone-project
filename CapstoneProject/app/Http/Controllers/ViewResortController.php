@@ -403,7 +403,44 @@ class ViewResortController extends Controller
         ->where('b.intResDStatus', '=', 4)
         ->get();
 
-        return view('BoatSchedule', compact('AvailableBoats', 'ActiveCustomers', 'RentedBoats'));
+        $ReservedBoats = DB::table('tblBoatSchedule as a')
+            ->join('tblBoat as b', 'a.strBoatSBoatID', '=', 'b.strBoatID')
+            ->join('tblReservationDetail as d', 'a.strBoatSReservationID', '=', 'd.strReservationID')
+            ->join('tblCustomer as c', 'd.strResDCustomerID', '=', 'c.strCustomerID')
+            ->where([
+                ['a.strBoatSPurpose', '=', 'Reservation'],
+                ['a.intBoatSStatus', '=', 1]])
+            ->select(
+                'a.strBoatScheduleID',
+                'a.strBoatSBoatID', 
+                'b.strBoatName', 
+                'a.dtmBoatSPickUp', 
+                'a.dtmBoatSDropOff', 
+                DB::raw('CONCAT(c.strCustFirstName, " ", c.strCustLastName) AS strCustomerName'))
+            ->get();
+
+        foreach($ReservedBoats as $ReservedBoat){
+            $dtmBoatSPickUp = $ReservedBoat->dtmBoatSPickUp;
+            $dtmBoatSDropOff = $ReservedBoat->dtmBoatSDropOff;
+
+            //Pick Up Date Time
+            $dtmBoatSPickUp = explode(" ", $dtmBoatSPickUp);
+            $dateBoatSPickUp = explode("-", $dtmBoatSPickUp[0]);
+            $timeBoatSPickUp = explode(":", $dtmBoatSPickUp[1]);
+
+            //Drop Off Date Time
+            $dtmBoatSDropOff = explode(" ", $dtmBoatSDropOff);
+            $dateBoatSDropOff = explode("-", $dtmBoatSDropOff[0]);
+            $timeBoatSDropOff = explode(":", $dtmBoatSDropOff[1]);
+
+            $dtPickUp = Carbon::create($dateBoatSPickUp[0], $dateBoatSPickUp[1], $dateBoatSPickUp[2], $timeBoatSPickUp[0], $timeBoatSPickUp[1], $timeBoatSPickUp[2]);
+            $dtDropOff = Carbon::create($dateBoatSDropOff[0], $dateBoatSDropOff[1], $dateBoatSDropOff[2], $timeBoatSDropOff[0], $timeBoatSDropOff[1], $timeBoatSDropOff[2]);
+
+            $ReservedBoat->dtmBoatSPickUp = $dtPickUp->toDayDateTimeString();
+            $ReservedBoat->dtmBoatSDropOff = $dtDropOff->toDayDateTimeString();
+        }
+
+        return view('BoatSchedule', compact('AvailableBoats', 'ActiveCustomers', 'RentedBoats', 'ReservedBoats'));
 
     }
     
