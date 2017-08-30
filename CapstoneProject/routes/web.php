@@ -228,6 +228,9 @@ Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
 Route::post('/Reservation/Cancel', 'ReservationController@cancelReservation');
 
+//Checkin Reservation
+Route::post('/Reservation/CheckIn', 'ReservationController@checkInReservation');
+
 //Edit Reservation
 Route::post('/Reservation/Info/Edit', 'ReservationController@updateReservationInfo');
 

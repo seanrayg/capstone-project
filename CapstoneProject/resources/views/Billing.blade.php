@@ -4,6 +4,11 @@
     <title>Payment</title>
 @endsection
 
+@section('scripts')
+    <script src="/js/Billing.js" type="text/javascript"></script>
+    <script src="/js/input-validator.js" type="text/javascript"></script>
+@endsection
+
 @section('content')
 <h5 id="TitlePage">Billing</h5>
 
@@ -45,10 +50,10 @@
                             <td>Check Out Date</td>
                             <td>Total Bill</td>
                             <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                     <i class="material-icons">assignment</i>
                                 </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
                                     <i class="material-icons">format_indent_increase</i>
                                 </button>
                             </td>
@@ -60,10 +65,10 @@
                             <td>Check Out Date</td>
                             <td>Total Bill</td>
                             <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                     <i class="material-icons">assignment</i>
                                 </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
                                     <i class="material-icons">format_indent_increase</i>
                                 </button>
                             </td>
@@ -75,10 +80,10 @@
                             <td>Check Out Date</td>
                             <td>Total Bill</td>
                             <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                     <i class="material-icons">assignment</i>
                                 </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
                                     <i class="material-icons">format_indent_increase</i>
                                 </button>
                             </td>
@@ -90,10 +95,10 @@
                             <td>Check Out Date</td>
                             <td>Total Bill</td>
                             <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                     <i class="material-icons">assignment</i>
                                 </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
                                     <i class="material-icons">format_indent_increase</i>
                                 </button>
                             </td>
@@ -105,10 +110,10 @@
                             <td>Check Out Date</td>
                             <td>Total Bill</td>
                             <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                     <i class="material-icons">assignment</i>
                                 </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs">
+                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
                                     <i class="material-icons">format_indent_increase</i>
                                 </button>
                             </td>
@@ -129,4 +134,272 @@
 </div>
 
 
+@endsection
+
+@section('modals')
+<div id="DivModalBillBreakdown" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="purple">
+                        <i class="material-icons">format_indent_increase</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <h3 class="title">Bill Breakdown<span class="close" onclick="HideModalBillBreakdown()">X</span></h3>
+                        </div>
+                        <h5>Rooms/Cottages</h5>
+                        <table class="table" style="font-family:'Roboto'">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Type</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Rate per day</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr>
+                                    <td>Type</td>
+                                    <td>Name</td>
+                                    <td>Rate per day</td>
+                                </tr>
+                                <tr>
+                                    <td>Type</td>
+                                    <td>Name</td>
+                                    <td>Rate per day</td>
+                                </tr>
+                                <tr>
+                                    <td>Type</td>
+                                    <td>Name</td>
+                                    <td>Rate per day</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
+                        <h5>Item Rental</h5>
+                        <table class="table" style="font-family:'Roboto'">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Item Rental</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Rate per hour</th>
+                                    <th class="text-center">Hours used</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr>
+                                    <td>Item Rental</td>
+                                    <td>Quantity</td>
+                                    <td>Rate per hour</td>
+                                    <td>Hours used</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Rental</td>
+                                    <td>Quantity</td>
+                                    <td>Rate per hour</td>
+                                    <td>Hours used</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Rental</td>
+                                    <td>Quantity</td>
+                                    <td>Rate per hour</td>
+                                    <td>Hours used</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
+                        <h5>Beach Activities</h5>
+                        <table class="table" style="font-family:'Roboto'">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Activity</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr>
+                                    <td>Activity</td>
+                                    <td>Quantity</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Activity</td>
+                                    <td>Quantity</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Activity</td>
+                                    <td>Quantity</td>
+                                    <td>Price</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
+                        <h5>Fees</h5>
+                         <table class="table" style="font-family:'Roboto'">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Fee</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr>
+                                    <td>Fee</td>
+                                    <td>Quantity</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Fee</td>
+                                    <td>Quantity</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Fee</td>
+                                    <td>Quantity</td>
+                                    <td>Price</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
+                        <h5>Boats</h5>
+                        <table class="table" style="font-family:'Roboto'">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Boat</th>
+                                    <th class="text-center">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr>
+                                    <td>Boat</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Boat</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Boat</td>
+                                    <td>Price</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
+                        <h5>Penalties</h5>
+                        <table class="table" style="font-family:'Roboto'">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Penalty</th>
+                                    <th class="text-center">Remarks</th>
+                                    <th class="text-center">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr>
+                                    <td>Penalty</td>
+                                    <td>Remarks</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Penalty</td>
+                                    <td>Remarks</td>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Penalty</td>
+                                    <td>Remarks</td>
+                                    <td>Price</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
+                        <button type="button" class="btn btn-info pull-right" onclick="HideModalBillBreakdown()">Close</button>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalReservationInfo" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="purple">
+                        <i class="material-icons">pages</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <h3 class="title">Reservation Info<span class="close" onclick="HideModalReservationInfo()">X</span></h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1"></div>
+                            <div class="col-xs-10">
+                                <small><h4>Reservation Info:</h4></small>
+                                <p class="paragraphText text-primary">Reservation ID:</p> <p class="paragraphText" id="i-ReservationID"></p><br>
+                                <p class="paragraphText text-primary">Reservation Code:</p> <p class="paragraphText" id="i-ReservationCode"></p><br>
+                                <p class="paragraphText text-primary">Check In Date:</p> <p class="paragraphText" id="i-CheckInDate"></p><br>
+                                <p class="paragraphText text-primary">Check Out Date:</p> <p class="paragraphText" id="i-CheckOutDate"></p><br>
+                                <p class="paragraphText text-primary">Pick Up Time:</p> <p class="paragraphText" id="i-PickUpTime"></p><br>
+                                <p class="paragraphText text-primary">Number of adult guests:</p> <p class="paragraphText" id="i-NoOfAdults"></p><br>
+                                <p class="paragraphText text-primary">Number of child guests:</p> <p class="paragraphText" id="i-NoOfKids"></p><br>
+                                <p class="paragraphText text-primary">Remarks:</p> <p class="paragraphText" id="i-Remarks"></p><br>
+                                <small><h4>Reserved Room(s):</h4></small>
+                                <div class="row"></div>
+                                <table class="table" id="tblChosenRooms" style="font-family: 'Roboto'">
+                                    <thead class="text-primary">
+                                        <th>Room</th>
+                                        <th>Quantity</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table><br><br>
+                                <small><h4>Reserved Boat(s):</h4></small>
+                                <div class="row"></div>
+                                <table class="table" id="tblChosenBoats" style="font-family: 'Roboto'">
+                                    <thead class="text-primary">
+                                        <th>Boat</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table><br><br>
+                                <small><h4>Bill Information</h4></small>
+                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="i-InitialBill"></p><br>
+                                <p class="paragraphText text-primary">Required Downpayment:</p> <p class="paragraphText" id="i-RequiredDownpayment"></p><br>
+                                <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="i-DateBooked"></p><br>
+                                <p class="paragraphText text-primary">Payment Due Date</p><p class="paragraphText" id="i-PaymentDueDate"></p><br><br>
+                                <small><h4>Guest Information</h4></small>
+                                <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="i-Name"></p><br>
+                                <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="i-Address"></p><br>
+                                <p class="paragraphText text-primary">Contact Number:</p><p class="paragraphText" id="i-ContactNumber"></p><br>
+                                <p class="paragraphText text-primary">Email:</p><p class="paragraphText" id="i-Email"></p><br>
+                                <p class="paragraphText text-primary">Age:</p><p class="paragraphText" id="i-Age"></p><br>
+                                <p class="paragraphText text-primary">Gender:</p><p class="paragraphText" id="i-Gender"></p><br>
+                                <p class="paragraphText text-primary">Nationality:</p><p class="paragraphText" id="i-Nationality"></p><br>
+                                <br><br>
+
+                                <button type="button" class="btn btn-info pull-right" onclick="HideModalReservationInfo()">Close</button>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

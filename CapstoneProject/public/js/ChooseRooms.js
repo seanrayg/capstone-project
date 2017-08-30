@@ -83,7 +83,6 @@ function HideModalReplaceRoom(){
 window.onload = function(){
     if (localStorage.getItem("ReservationID") === null) {
       ReservationID = document.getElementById("ReservationID").value;
-      
     }
     else{
         ReservationID = localStorage.getItem("ReservationID");

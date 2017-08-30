@@ -104,6 +104,8 @@
                                         <th onclick="sortTable(4, 'ConfirmedReservationTable', 'string')">Contact Number</th>
                                         <th onclick="sortTable(5, 'ConfirmedReservationTable', 'string')">Email Address</th>
                                         <th onclick="sortTable(6, 'ConfirmedReservationTable', 'string')">Reservation Code</th>
+                                        <th style="display:none">Email Address</th>
+                                        <th style="display:none">Reservation Code</th>
                                     </thead>
                                     <tbody>
                                         @foreach($PaidReservations as $Reservation)
@@ -115,6 +117,8 @@
                                             <td>{{$Reservation -> strCustContact}}</td> 
                                             <td>{{$Reservation -> strCustEmail}}</td>
                                             <td>{{$Reservation -> strReservationCode}}</td>
+                                            <td style="display:none">{{Carbon\Carbon::parse($Reservation -> dtmResDArrival)->format('m/d/Y h:m:s')}}</td>
+                                            <td style="display:none">{{Carbon\Carbon::parse($Reservation -> dtmResDArrival)->format('m/d/Y h:m:s')}}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -123,11 +127,18 @@
                         </div>
 
                         <div class = "row">
-                            <div class="col-xs-12">
+                            <div class="col-xs-4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ElementError" id="CheckInError"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-8">
                                 <button type="button" class="btn btn-danger pull-right" onclick="ShowModalCancelReservation()"><i class="material-icons">highlight_off</i> Cancel</button>
                                 <button type="button" class="btn btn-primary pull-right" onclick="ShowModalReservationInfo()"><i class="material-icons">info</i> Info</button>
                                 <button type="button" class="btn btn-info pull-right" onclick="EditConfirmedReservation()"><i class="material-icons">create</i> Edit</button>
-                                <button type="button" class="btn btn-success pull-right" onclick="#"><i class="material-icons">class</i> Check In</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalCheckIn()"><i class="material-icons">class</i> Check In</button>
                             </div> 
                         </div>                             
                     </div>
@@ -444,4 +455,62 @@
         </div>
     </div>
 </div>
+
+<div id="DivModalCheckIn" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">beenhere</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category"></p>
+                        <h5 class="title">Check in the customer?<span class="close" onclick="HideModalCheckIn()">X</span></h5>
+                        <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalCheckIn()">No</button>
+                        <button type="button" class="btn btn-danger btn-sm pull-right" onclick="ShowModalPayment()">Yes</button>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalPayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">pages</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalPayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">Pay Initial Bill?</h3>
+                        <br><br>
+                        <form method="post" action="/Reservation/CheckIn">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="CheckInReservationID" id="CheckInReservationID" value="">
+                            <div class = "row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-success">Yes</button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-success">No</button>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection

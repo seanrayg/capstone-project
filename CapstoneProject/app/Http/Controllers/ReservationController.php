@@ -574,6 +574,23 @@ class ReservationController extends Controller
     }
     
     
+    //Check in Reservation
+    
+    public function checkInReservation(Request $req){
+        $ReservationID = trim($req->input('CheckInReservationID'));
+        
+        $updateData = array("intResDStatus" => "4");   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', $ReservationID)
+            ->update($updateData);
+        
+        \Session::flash('flash_message','Booked successfully!');
+        \Session::flash('ReservationID', $ReservationID);
+        return redirect('/ChooseRooms/'.$ReservationID);
+    }
+    
+    
     //Save Downpayment
     
     public function saveDownPayment(Request $req){

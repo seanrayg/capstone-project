@@ -96,8 +96,40 @@ function HideModalNoDepositSlip(){
     document.getElementById("DivModalNoDepositSlip").style.display = "none";
 }
 
+function ShowModalCheckIn(){
+    var TableChecker = CheckTable('#ConfirmedReservationTable tr');
+    if(TableChecker){
+        var tempToday = new Date();
+        if(((tempToday.getMonth)+1) > 10){
+            var DateToday = (tempToday.getMonth() + 1) + "/" + tempToday.getDate() + "/" + tempToday.getFullYear();
+        }
+        else{
+            var DateToday = "0"+(tempToday.getMonth() + 1) + "/" + tempToday.getDate() + "/" + tempToday.getFullYear();
+        }
+        var TimeToday = tempToday.getHours() + ":" + tempToday.getMinutes() + ":" + tempToday.getSeconds();
+        var arrDateInfo = ActiveReservationInfo[7].split(" ");
+        if(DateToday == arrDateInfo[0]){
+            document.getElementById("CheckInReservationID").value = ActiveReservationInfo[0];
+            document.getElementById("DivModalCheckIn").style.display = "block";
+        }
+        else{
+            document.getElementById("CheckInError").innerHTML = "The reservation date of the guest is not today!";
+        }
+    }
+}
 
+function HideModalCheckIn(){
+    document.getElementById("DivModalCheckIn").style.display = "none";
+}
 
+function ShowModalPayment(){
+    HideModalCheckIn();
+    document.getElementById("DivModalPayment").style.display = "block";
+}
+
+function HideModalPayment(){
+    document.getElementById("DivModalPayment").style.display = "none";
+}
 
 //MISC
 
@@ -142,7 +174,8 @@ function run(event, sender){
         PendingReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML];
     }
     else if(sender == "Active"){
-        ActiveReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML];
+        document.getElementById("CheckInError").innerHTML = "";
+        ActiveReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML];
     }
 
 }
@@ -343,3 +376,4 @@ function getConfirmedReservationInfo(){
         }
     });  
 }
+
