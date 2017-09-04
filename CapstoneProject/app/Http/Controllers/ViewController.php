@@ -804,7 +804,8 @@ class ViewController extends Controller
                                  'b.strCustAddress',
                                  'b.dtmCustBirthday',
                                  'b.strCustNationality',
-                                 'b.strCustGender')
+                                 'b.strCustGender',
+                                 'a.strReservationCode')
                         ->where('strReservationID', '=', $ReservationID)
                         ->get();
         

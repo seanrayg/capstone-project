@@ -31,7 +31,7 @@
                         </div>
                     </div>
                 </div>
-                <table class="table" id="tblBill">
+                <table class="table" id="tblBill" onclick="run(event, 'Bill')">
                     <thead class="text-success">
                         <tr>
                             <th class="text-center">ID</th>
@@ -43,12 +43,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($ReservationInfo as $Info)
                         <tr class="text-center">
-                            <td>Reservation ID</td>
-                            <td>Name</td>
-                            <td>Check In Date</td>
-                            <td>Check Out Date</td>
-                            <td>Total Bill</td>
+                            <td>{{$Info->strReservationID}}</td>
+                            <td>{{$Info->Name}}</td>
+                            <td>{{Carbon\Carbon::parse($Info -> dtmResDArrival)->format('M j, Y')}}</td>
+                            <td>{{Carbon\Carbon::parse($Info -> dtmResDDeparture)->format('M j, Y')}}</td> 
+                            <td>{{$Info->TotalBill}}</td>
                             <td>
                                 <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
                                     <i class="material-icons">assignment</i>
@@ -58,67 +59,7 @@
                                 </button>
                             </td>
                         </tr>
-                        <tr class="text-center">
-                            <td>Reservation ID</td>
-                            <td>Name</td>
-                            <td>Check In Date</td>
-                            <td>Check Out Date</td>
-                            <td>Total Bill</td>
-                            <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                    <i class="material-icons">assignment</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
-                                    <i class="material-icons">format_indent_increase</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="text-center">
-                            <td>Reservation ID</td>
-                            <td>Name</td>
-                            <td>Check In Date</td>
-                            <td>Check Out Date</td>
-                            <td>Total Bill</td>
-                            <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                    <i class="material-icons">assignment</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
-                                    <i class="material-icons">format_indent_increase</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="text-center">
-                            <td>Reservation ID</td>
-                            <td>Name</td>
-                            <td>Check In Date</td>
-                            <td>Check Out Date</td>
-                            <td>Total Bill</td>
-                            <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                    <i class="material-icons">assignment</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
-                                    <i class="material-icons">format_indent_increase</i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="text-center">
-                            <td>Reservation ID</td>
-                            <td>Name</td>
-                            <td>Check In Date</td>
-                            <td>Check Out Date</td>
-                            <td>Total Bill</td>
-                            <td>
-                                <button type="button" rel="tooltip" title="Show reservation info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                    <i class="material-icons">assignment</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
-                                    <i class="material-icons">format_indent_increase</i>
-                                </button>
-                            </td>
-                        </tr>
-
+                        @endforeach
                     </tbody>
                 </table>
 
@@ -150,7 +91,7 @@
                             <h3 class="title">Bill Breakdown<span class="close" onclick="HideModalBillBreakdown()">X</span></h3>
                         </div>
                         <h5>Rooms/Cottages</h5>
-                        <table class="table" style="font-family:'Roboto'">
+                        <table class="table" style="font-family:'Roboto'" id="tblBillAccommodation">
                             <thead class="text-success">
                                 <tr>
                                     <th class="text-center">Type</th>
@@ -159,60 +100,29 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                <tr>
-                                    <td>Type</td>
-                                    <td>Name</td>
-                                    <td>Rate per day</td>
-                                </tr>
-                                <tr>
-                                    <td>Type</td>
-                                    <td>Name</td>
-                                    <td>Rate per day</td>
-                                </tr>
-                                <tr>
-                                    <td>Type</td>
-                                    <td>Name</td>
-                                    <td>Rate per day</td>
-                                </tr>
+     
                             </tbody>
                         </table>
                         <br><br>
                         
                         <h5>Item Rental</h5>
-                        <table class="table" style="font-family:'Roboto'">
+                        <table class="table" style="font-family:'Roboto'" id="tblBillItem">
                             <thead class="text-success">
                                 <tr>
                                     <th class="text-center">Item Rental</th>
                                     <th class="text-center">Quantity</th>
-                                    <th class="text-center">Rate per hour</th>
                                     <th class="text-center">Hours used</th>
+                                    <th class="text-center">Rate per hour</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                <tr>
-                                    <td>Item Rental</td>
-                                    <td>Quantity</td>
-                                    <td>Rate per hour</td>
-                                    <td>Hours used</td>
-                                </tr>
-                                <tr>
-                                    <td>Item Rental</td>
-                                    <td>Quantity</td>
-                                    <td>Rate per hour</td>
-                                    <td>Hours used</td>
-                                </tr>
-                                <tr>
-                                    <td>Item Rental</td>
-                                    <td>Quantity</td>
-                                    <td>Rate per hour</td>
-                                    <td>Hours used</td>
-                                </tr>
+
                             </tbody>
                         </table>
                         <br><br>
                         
                         <h5>Beach Activities</h5>
-                        <table class="table" style="font-family:'Roboto'">
+                        <table class="table" style="font-family:'Roboto'" id="tblBillActivity">
                             <thead class="text-success">
                                 <tr>
                                     <th class="text-center">Activity</th>
@@ -221,27 +131,13 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                <tr>
-                                    <td>Activity</td>
-                                    <td>Quantity</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Activity</td>
-                                    <td>Quantity</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Activity</td>
-                                    <td>Quantity</td>
-                                    <td>Price</td>
-                                </tr>
+        
                             </tbody>
                         </table>
                         <br><br>
                         
                         <h5>Fees</h5>
-                         <table class="table" style="font-family:'Roboto'">
+                         <table class="table" style="font-family:'Roboto'" id="tblBillFee">
                             <thead class="text-success">
                                 <tr>
                                     <th class="text-center">Fee</th>
@@ -250,27 +146,13 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                <tr>
-                                    <td>Fee</td>
-                                    <td>Quantity</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Fee</td>
-                                    <td>Quantity</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Fee</td>
-                                    <td>Quantity</td>
-                                    <td>Price</td>
-                                </tr>
+  
                             </tbody>
                         </table>
                         <br><br>
                         
                         <h5>Boats</h5>
-                        <table class="table" style="font-family:'Roboto'">
+                        <table class="table" style="font-family:'Roboto'" id="tblBillBoat">
                             <thead class="text-success">
                                 <tr>
                                     <th class="text-center">Boat</th>
@@ -278,47 +160,22 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                <tr>
-                                    <td>Boat</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Boat</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Boat</td>
-                                    <td>Price</td>
-                                </tr>
+
                             </tbody>
                         </table>
                         <br><br>
                         
-                        <h5>Penalties</h5>
-                        <table class="table" style="font-family:'Roboto'">
+                        <h5>Miscellaneous</h5>
+                        <table class="table" style="font-family:'Roboto'" id="tblBillMiscellaneous">
                             <thead class="text-success">
                                 <tr>
-                                    <th class="text-center">Penalty</th>
+                                    <th class="text-center">Title</th>
                                     <th class="text-center">Remarks</th>
                                     <th class="text-center">Price</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                <tr>
-                                    <td>Penalty</td>
-                                    <td>Remarks</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Penalty</td>
-                                    <td>Remarks</td>
-                                    <td>Price</td>
-                                </tr>
-                                <tr>
-                                    <td>Penalty</td>
-                                    <td>Remarks</td>
-                                    <td>Price</td>
-                                </tr>
+
                             </tbody>
                         </table>
                         <br><br>
@@ -377,11 +234,6 @@
 
                                     </tbody>
                                 </table><br><br>
-                                <small><h4>Bill Information</h4></small>
-                                <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="i-InitialBill"></p><br>
-                                <p class="paragraphText text-primary">Required Downpayment:</p> <p class="paragraphText" id="i-RequiredDownpayment"></p><br>
-                                <p class="paragraphText text-primary">Date Booked:</p> <p class="paragraphText" id="i-DateBooked"></p><br>
-                                <p class="paragraphText text-primary">Payment Due Date</p><p class="paragraphText" id="i-PaymentDueDate"></p><br><br>
                                 <small><h4>Guest Information</h4></small>
                                 <p class="paragraphText text-primary">Name:</p><p class="paragraphText" id="i-Name"></p><br>
                                 <p class="paragraphText text-primary">Address:</p><p class="paragraphText" id="i-Address"></p><br>

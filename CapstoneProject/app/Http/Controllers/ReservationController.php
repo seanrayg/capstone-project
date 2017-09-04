@@ -522,7 +522,7 @@ class ReservationController extends Controller
         
         $arrAvailableRooms = explode('@', $AvailableRooms);
         array_pop($arrAvailableRooms);
-
+    
         //Saves Reserved Rooms
         for($x = 0; $x < $IndividualRoomTypeLength; $x++){
            $IndividualRoomsInfo = explode('-', $IndividualRooms[$x]);
@@ -809,6 +809,7 @@ class ReservationController extends Controller
         $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
         $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
         
+      
         //saves reserved rooms
         $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
 

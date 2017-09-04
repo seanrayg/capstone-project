@@ -29,7 +29,9 @@ class DatabaseSeeder extends Seeder
              array('strPaymentTypeID'=>'14', 'strPaymentType'=>'Broken/Lost Penalty Payment'),
              array('strPaymentTypeID'=>'15', 'strPaymentType'=>'Extend Item Payment'),
              array('strPaymentTypeID'=>'16', 'strPaymentType'=>'Beach Activity Bill'),
-             array('strPaymentTypeID'=>'17', 'strPaymentType'=>'Beach Activity Payment')
+             array('strPaymentTypeID'=>'17', 'strPaymentType'=>'Beach Activity Payment'),
+             array('strPaymentTypeID'=>'18', 'strPaymentType'=>'Fee Bill'),
+             array('strPaymentTypeID'=>'19', 'strPaymentType'=>'Fee Payment')
         ));
         
         //for verification

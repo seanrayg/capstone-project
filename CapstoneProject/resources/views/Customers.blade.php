@@ -52,7 +52,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table" id="tblResortCustomers">
+                                <table class="table" id="tblResortCustomers" onclick="run(event, 'Resort')">
                                     <thead class="text-primary">
                                         <th style="display:none" class="text-center">Customer ID</th>
                                         <th style="display:none" class="text-center">Reservation ID</th>
@@ -61,6 +61,8 @@
                                         <th onclick="sortTable(5, 'tblResortCustomers', 'string')" class="text-center">Lastname</th>
                                         <th onclick="sortTable(6, 'tblResortCustomers', 'string')" class="text-center">Contact #</th>
                                         <th onclick="sortTable(7, 'tblResortCustomers', 'string')" class="text-center">Email</th>
+                                        <th style="display:none">Check In Date</th>
+                                        <th style="display:none">Check Out Date</th>
                                         <th class="text-center">Action</th>
                                     </thead>
                                     <tbody>
@@ -73,6 +75,8 @@
                                             <td>{{$Customer->strCustLastName}}</td>
                                             <td>{{$Customer->strCustContact}}</td>
                                             <td>{{$Customer->strCustEmail}}</td>
+                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('Y/m/d h:m:s')}}</td>
+                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDDeparture)->format('Y/m/d h:m:s')}}</td> 
                                             <td>
                                                 <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs" onclick="ShowModalExtendStay()">
                                                     <i class="material-icons">alarm_add</i>
@@ -344,18 +348,13 @@
                     <div class="card-content">
                         <div class="row">
                             <p class="ErrorLabel" id="RoomError"></p>
-                            <form method="post" action="/Reservation/Room/Edit" id="frmEditRooms" onsubmit="return CheckRooms()">
+                            <form method="post" action="/Customer/Rooms" id="formAddRoom" onsubmit="return CheckRooms()">
                                 {{ csrf_field() }}
-                                <input type="hidden" name="ChosenRooms" id="ChosenRooms">
-                                <input type="hidden" name="r-NoOfKids" id="r-NoOfKids">
-                                <input type="hidden" name="r-NoOfAdults" id="r-NoOfAdults">
-                                <input type="hidden" name="r-CheckInDate" id="r-CheckInDate">
-                                <input type="hidden" name="r-CheckOutDate" id="r-CheckOutDate">
-                                <input type="hidden" id="r-ReservationID" name="r-ReservationID">
-                                <input type="hidden" name="r-BoatsUsed" id="r-BoatsUsed">
-                                <input type="hidden" name="r-PickUpTime" id="r-PickUpTime">
+                                <input type="hidden" name="AddChosenRooms" id="AddChosenRooms">
+                                <input type="hidden" name="AddReservationID" id="AddReservationID">
+                                <input type="hidden" name="AddRoomPayment" id="AddRoomPayment">
                                 <button type="button" class="btn btn-danger pull-right" style="margin-right: 50px;" onclick="HideModalAddRoom()">Cancel</button>
-                                <button type="submit" class="btn btn-success pull-right" style="margin-right: 50px;">Add Rooms</button>    
+                                <button type="button" class="btn btn-success pull-right" style="margin-right: 50px;" onclick="ShowModalAddRoomPayment()">Add Rooms</button>    
                                 <div class="clearfix"></div>
                             </form>
                         </div>

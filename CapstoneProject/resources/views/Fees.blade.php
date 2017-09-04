@@ -347,7 +347,7 @@
                                 <br>
                                 <div class = "row">
                                     <div class="col-xs-12">
-                                        <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i> Pay at check out</button>
+                                        <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i>Continue</button>
                                     </div> 
                                 </div>
 

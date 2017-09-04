@@ -32,9 +32,7 @@ Route::get('/Reports', function () {
     return view('Reports');
 });
 
-Route::get('/Billing', function () {
-    return view('Billing');
-});
+Route::get('/Billing', 'ViewResortController@ViewBilling');
 
 Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');
 
@@ -353,3 +351,14 @@ Route::post('/Fee/Edit', 'ResortController@EditFee');
 Route::post('/Fee/Delete', 'ResortController@DeleteFee');
 
 Route::post('/Fee/Pay', 'ResortController@PayFee');
+
+/*------------ BILLING ------------*/
+
+Route::get('/Billing/Info', 'ViewResortController@getBillBreakdown');
+
+
+/*------------ CUSTOMERS -----------*/
+
+Route::get('/Customers/GetRooms', 'ViewResortController@getAddAvailableRooms');
+
+Route::post('/Customers/Rooms', 'ResortController@saveAddRooms');
