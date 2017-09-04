@@ -364,9 +364,7 @@ class ViewResortController extends Controller
             ->join('tblBoat as b', 'a.strBoatSBoatID', '=', 'b.strBoatID')
             ->join('tblReservationDetail as d', 'a.strBoatSReservationID', '=', 'd.strReservationID')
             ->join('tblCustomer as c', 'd.strResDCustomerID', '=', 'c.strCustomerID')
-            ->where([
-                ['a.strBoatSPurpose', '=', 'Rental'],
-                ['a.intBoatSStatus', '=', 1]])
+            ->where([['a.intBoatSStatus', '=', 1],['a.strBoatSPurpose', '!=', 'Reservation']])
             ->select(
                 'a.strBoatScheduleID',
                 'a.strBoatSBoatID', 
@@ -563,6 +561,7 @@ class ViewResortController extends Controller
         return response()->json($CustomerFees);
     }
     
+<<<<<<< HEAD
     public function GetFeePrice(Request $req){
         $FeeID = trim($req->input('FeeID'));
         
@@ -575,4 +574,6 @@ class ViewResortController extends Controller
         return response()->json($FeeAmount);
     }
     
+=======
+>>>>>>> ecf50583faa615efee60ceabca2524f868730943
 }

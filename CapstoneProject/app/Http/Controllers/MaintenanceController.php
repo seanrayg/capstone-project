@@ -515,8 +515,6 @@ class MaintenanceController extends Controller
             return redirect('Maintenance/Boat');  
         }
         else{
-            dd($ReservedBoats); 
-            dd($Input::all());
             DB::table('tblBoat')
                 ->where('strBoatID', $BoatID)
                 ->update(['strBoatStatus' => 'deleted']);
@@ -1746,7 +1744,7 @@ class MaintenanceController extends Controller
                                      'strDateDescription'=>$DateDescription,
                                      'tmsCreated'=>$DateCreated);
 
-                        //DB::table('tblInoperationalDate')->insert($data);
+                        DB::table('tblInoperationalDate')->insert($data);
 
                         \Session::flash('flash_message','Added successfully!');
 

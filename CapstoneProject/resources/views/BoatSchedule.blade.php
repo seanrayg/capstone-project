@@ -283,7 +283,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class = "row">
+                        <div class = "row" style="display: none">
                             <div class="col-xs-12">
                                 <button type="button" class="btn btn-danger pull-right" onclick="ShowModalCancelReserveBoat()"><i class="material-icons">clear</i> Cancel</button>
                                 <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditReserveBoat()"><i class="material-icons">create</i> Edit</button>
@@ -533,36 +533,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                           <p style="font-family: 'Roboto'">Driver:</p>
-                                            <input list="GuestsList" class="inputlist">
-                                                <datalist id="GuestsList">
-                                                  <option value="1">
-                                                  <option value="2">
-                                                  <option value="3">
-                                                  <option value="4">
-                                                  <option value="5">
-                                                </datalist> 
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                           <p style="font-family: 'Roboto'">Assistant:</p>
-                                            <input list="GuestsList" class="inputlist">
-                                                <datalist id="GuestsList">
-                                                  <option value="1">
-                                                  <option value="2">
-                                                  <option value="3">
-                                                  <option value="4">
-                                                  <option value="5">
-                                                </datalist> 
-                                        </div>
-                                    </div>
-                                    
 
                                     <div class="row">
                                         <div class="col-md-12">
