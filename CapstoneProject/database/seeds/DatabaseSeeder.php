@@ -22,7 +22,14 @@ class DatabaseSeeder extends Seeder
              array('strPaymentTypeID'=>'7','strPaymentType'=>'Broken/Lost Penalty Bill'),
              array('strPaymentTypeID'=>'8','strPaymentType'=>'Boat Reservation Bill'),
              array('strPaymentTypeID'=>'9','strPaymentType'=>'Boat Reservation Payment'),
-             array('strPaymentTypeID'=>'10','strPaymentType'=>'Extend Item Bill')
+             array('strPaymentTypeID'=>'10','strPaymentType'=>'Extend Item Bill'),
+             array('strPaymentTypeID'=>'11', 'strPaymentType'=>'Item Rental Bill'),
+             array('strPaymentTypeID'=>'12', 'strPaymentType'=>'Item Rental Payment'),
+             array('strPaymentTypeID'=>'13', 'strPaymentType'=>'Time Penalty Payment'),
+             array('strPaymentTypeID'=>'14', 'strPaymentType'=>'Broken/Lost Penalty Payment'),
+             array('strPaymentTypeID'=>'15', 'strPaymentType'=>'Extend Item Payment'),
+             array('strPaymentTypeID'=>'16', 'strPaymentType'=>'Beach Activity Bill'),
+             array('strPaymentTypeID'=>'17', 'strPaymentType'=>'Beach Activity Payment')
         ));
         
         //for verification

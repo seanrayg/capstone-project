@@ -254,6 +254,7 @@
                                 {{ csrf_field() }}
                                 <input type="hidden" id="AvailActivityType" name="AvailActivityType">
                                 <input type="hidden" id="AvailActivityID" name="AvailActivityID">
+                                <input type="hidden" id="AvailActivityTotalPrice" name="AvailActivityTotalPrice">
                                 <div class = "row">
                                     <div class="col-md-12">
                                         <div class="form-group label-static">
@@ -337,10 +338,76 @@
                                 <br>
                                 <div class = "row">
                                     <div class="col-xs-6">
-                                        <button type="button" class="btn btn-success pull-left"><i class="material-icons">done</i> Pay now</button>
+                                        <button type="button" class="btn btn-success pull-left" onclick="ShowModalPayActivity()"><i class="material-icons">done</i> Pay now</button>
                                     </div> 
                                     <div class="col-xs-6">
                                         <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i> Pay at check out</button>
+                                    </div> 
+                                </div>
+                                
+                            </form>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalPayActivity" class="modal">
+    <div class="Modal-content" style="max-width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="green">
+                            <i class="material-icons">rowing</i>
+                        </div>
+                        <div class="card-content">
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Avail Activity<span class="close" onclick="HideModalPayActivity()">X</span></h3>
+                            </div>
+                            <form id="AvailActivityForm" method="POST" action="/Activity/AvailPay" onsubmit="return CheckForm()">
+                                {{ csrf_field() }}
+                                <input type="hidden" id="PayActivityType" name="PayActivityType">
+                                <input type="hidden" id="PayActivityID" name="PayActivityID">
+                                <input type="hidden" id="PayReservationID" name="PayReservationID">
+                                <input type="hidden" id="PayLandQuantity" name="PayLandQuantity">
+                                <input type="hidden" id="PayLandActivityRate" name="PayLandQuantityRate">
+                                <input type="hidden" id="PayWaterActivityRate" name="PayActivityRate">
+                                <input type="hidden" id="PayDurationTime" name="PayDurationTime">
+                                <input type="hidden" id="PayDurationMinute" name="PayDurationMinute">
+                                <input type="hidden" id="PayAvailBoat" name="PayAvailBoat">
+
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Total Amount</label>
+                                            <input type="text" class="form-control" id="ActivityTotalPrice" name="ActivityTotalPrice" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="ActivityPaymentError">
+                                            <label class="control-label">Payment</label>
+                                            <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#ActivityPaymentError')" onchange="SendPayment(this, 'double', '#ActivityPaymentError')" id="ActivityPayment" name="ActivityPayment" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Change</label>
+                                            <input type="text" class="form-control" id="ActivityChange" name="ActivityChange">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <div class = "row">
+                                    <div class="col-xs-12">
+                                        <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                     </div> 
                                 </div>
                                 

@@ -310,13 +310,19 @@ Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
 Route::post('/ItemRental/Rent', 'ResortController@storeRentalItem');
 
+Route::post('/ItemRental/RentPay', 'ResortController@storeRentalItemPayment');
+
 Route::post('/ItemRental/Return', 'ResortController@storeReturnItem');
+
+Route::post('/ItemRental/ReturnPay', 'ResortController@storeReturnItemPayment');
 
 Route::post('ItemRental/Restore', 'ResortController@storeRestoreItem');
 
 Route::post('ItemRental/Delete', 'ResortController@DeleteItemRental');
 
 Route::post('ItemRental/Extend', 'ResortController@ExtendItemRental');
+
+Route::post('ItemRental/ExtendPay', 'ResortController@ExtendItemRentalPayment');
 
 /*----------- BOAT SCHEDULE -------------*/
 
@@ -329,6 +335,8 @@ Route::post('/BoatSchedule/RentDone', 'ScheduleController@RentDone');
 
 Route::post('/Activity/Avail', 'ResortController@AvailActivity');
 
+Route::post('/Activity/AvailPay', 'ResortController@AvailActivityPayment');
+
 Route::post('/Activity/Done', 'ResortController@ActivityDone');
 
 
@@ -338,6 +346,10 @@ Route::post('/Fee/Add', 'ResortController@AddFee');
 
 Route::get('/Fee/Details', 'ViewResortController@GetFeeDetails');
 
+Route::get('/Fee/Price', 'ViewResortController@GetFeePrice');
+
 Route::post('/Fee/Edit', 'ResortController@EditFee');
 
 Route::post('/Fee/Delete', 'ResortController@DeleteFee');
+
+Route::post('/Fee/Pay', 'ResortController@PayFee');

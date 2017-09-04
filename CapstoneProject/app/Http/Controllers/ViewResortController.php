@@ -563,5 +563,16 @@ class ViewResortController extends Controller
         return response()->json($CustomerFees);
     }
     
+    public function GetFeePrice(Request $req){
+        $FeeID = trim($req->input('FeeID'));
+        
+        $FeeAmount = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('b.dblFeeAmount')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeID', "=", $FeeID]])
+                ->get();
+        
+        return response()->json($FeeAmount);
+    }
     
 }

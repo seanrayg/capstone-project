@@ -64,6 +64,35 @@ function HideModalDeleteFees(){
     document.getElementById("DivModalDeleteFees").style.display = "none";
 }
 
+function ShowModalPayFees(){
+    var FeeID = document.getElementById("AddFeeID").value;
+    document.getElementById("PayReservationID").value = FeeInfo[1];
+    document.getElementById("PayFeeID").value = document.getElementById("AddFeeID").value;
+    document.getElementById("PayFeeQuantity").value = document.getElementById("AddFeeQuantity").value;
+    $.ajax({
+        type:'get',
+        url:'/Fee/Price',
+        data:{FeeID:FeeID},
+        success:function(data){
+            console.log('success');
+            var FeeAmount = data[0].dblFeeAmount;
+            var FeeQuantity = document.getElementById("AddFeeQuantity").value;
+            
+            var TotalFeePrice = parseFloat(FeeAmount) * parseInt(FeeQuantity);
+            
+            document.getElementById("TotalFeePrice").value = TotalFeePrice;
+        },
+        error:function(response){
+            console.log(response);
+        }
+    });   
+    document.getElementById("DivModalPayFees").style.display = "block";
+}
+
+function HideModalPayFees(){
+    document.getElementById("DivModalPayFees").style.display = "none";
+}
+
 function run(event, sender){
     event = event || window.event; 
     var target = event.target || event.srcElement;
@@ -98,4 +127,21 @@ function fillEditFeeData(){
     document.getElementById("EditReservationID").value = FeeInfo[1];
     document.getElementById("DeleteFeeID").value = DetailsInfo[0];
     document.getElementById("DeleteReservationID").value = FeeInfo[1];
+}
+
+function SendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var FeeTotal = parseInt(document.getElementById("TotalFeePrice").value);
+        var FeePayment = parseInt(field.value);
+        var Change = FeePayment - FeeTotal;
+        if(Change < 0){
+            document.getElementById("FeeChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("FeeChange").value = Change;
+        }
+        
+    }
 }

@@ -904,7 +904,6 @@ function SendInput(field, dataType, holder){
         else{
             document.getElementById("Change").innerHTML = Change;
         }
-        
     }
     
 }
