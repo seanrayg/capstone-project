@@ -121,12 +121,13 @@ function getBillBreakdown(){
         url:'/Billing/Info',
         data:{id:BillInfo[0]},
         success:function(data){
-            $('#tblBillAccomodation tbody').empty();
+            $('#tblBillAccommodation tbody').empty();
             $('#tblBillItem tbody').empty();
             $('#tblBillBoat tbody').empty();
             $('#tblBillActivity tbody').empty();
             $('#tblBillFee tbody').empty();
             $('#tblBillMiscellaneous tbody').empty();
+            $('#tblBillAdditional tbody').empty();
             
             var tableRef = document.getElementById('tblBillAccommodation').getElementsByTagName('tbody')[0];
 
@@ -140,6 +141,21 @@ function getBillBreakdown(){
                 newCell1.innerHTML = data.RoomInfo[x].strRoomType;
                 newCell2.innerHTML = data.RoomInfo[x].strRoomName;
                 newCell3.innerHTML = data.RoomInfo[x].dblRoomRate;
+
+            }
+            
+            tableRef = document.getElementById('tblBillAdditional').getElementsByTagName('tbody')[0];
+
+            for(var x = 0; x < data.AdditionalRooms.length; x++){
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+                var newCell3  = newRow.insertCell(2);
+
+                newCell1.innerHTML = data.AdditionalRooms[x].strRoomType;
+                newCell2.innerHTML = data.AdditionalRooms[x].strRoomName;
+                newCell3.innerHTML = data.AdditionalRooms[x].dblRoomRate;
 
             }
             

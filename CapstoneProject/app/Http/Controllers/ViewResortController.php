@@ -55,6 +55,10 @@ class ViewResortController extends Controller
         return $ChosenRooms;
     }
     
+    public function ViewUpgradeRoom($id){
+        return view('UpgradeRoom');
+    }
+    
     
     //GET ROOMS AJAX
     public function getChosenRooms(Request $req){
@@ -676,7 +680,7 @@ class ViewResortController extends Controller
             $TimePenalties = 0;
             $BrokenPenalties = 0;
             $TotalExtend = 0;
-            $AdditionalRooms = 0;
+            $AdditionalRoomAmount = 0;
             
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
@@ -708,10 +712,10 @@ class ViewResortController extends Controller
                             ->get();
             
             foreach($AdditionalRoomBills as $Bill){
-                $AdditionalRooms += $Bill->dblPayAmount;
+                $AdditionalRoomAmount += $Bill->dblPayAmount;
             }
             
-            dd($TotalRoom);
+           
             //Compute Item
             $RentedItems = DB::table('tblItem as a')
                         ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
@@ -785,7 +789,7 @@ class ViewResortController extends Controller
             
             //Compute Boat Rental
             
-            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRooms;
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount;
         }
         
         return view('Billing', compact('ReservationInfo'));
@@ -843,7 +847,17 @@ class ViewResortController extends Controller
                     ->orWhere('strPayTypeID', '=', 10)
                     ->get();
         
-        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo]);
+        $AdditionalRooms = DB::table('tblRoom as a')
+                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                    ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                    ->join ('tblReservationRoom as d', 'a.strRoomID', '=', 'd.strResRRoomID')
+                    ->select('b.strRoomType',
+                             'a.strRoomName',
+                             'c.dblRoomRate')
+                     ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['d.strResRReservationID', '=', $ReservationID], ['intResRPayment', '=', 2]])
+                     ->get();
+        
+        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo, 'AdditionalRooms' => $AdditionalRooms]);
     }
     
     

@@ -146,9 +146,9 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table" id="tblOccupiedRooms">
+                                <table class="table" id="tblOccupiedRooms" onclick="run(event, 'Occupied')">
                                     <thead class="text-primary">
-                                        <th onclick="sortTable(0, 'tblOccupiedRooms', 'string')">Reservation ID</th>
+                                        <th style="display:none">Reservation ID</th>
                                         <th onclick="sortTable(1, 'tblOccupiedRooms', 'string')">Room Type</th>
                                         <th onclick="sortTable(2, 'tblOccupiedRooms', 'string')">Room Name</th>
                                         <th onclick="sortTable(3, 'tblOccupiedRooms', 'string')">Guest</th>
@@ -162,7 +162,7 @@
                                     <tbody>
                                         @foreach($RoomDetails as $Detail)
                                             <tr>
-                                                <td>{{$Detail->strReservationID}}</td>
+                                                <td style="display:none">{{$Detail->strReservationID}}</td>
                                                 <td>{{$Detail->strRoomType}}</td>
                                                 <td>{{$Detail->strRoomName}}</td>
                                                 <td>{{$Detail->Name}}</td>
@@ -175,8 +175,11 @@
                                                     <button type="button" rel="tooltip" title="Check Out" class="btn btn-info btn-simple btn-xs">
                                                         <i class="material-icons">done_all</i>
                                                     </button>
-                                                    <button type="button" rel="tooltip" title="Transfer" class="btn btn-success btn-simple btn-xs" onclick="TransferRoom('{{$Detail->strReservationID}}')">
+                                                    <button type="button" rel="tooltip" title="Transfer Room" class="btn btn-success btn-simple btn-xs" onclick="TransferRoom('{{$Detail->strReservationID}}')">
                                                         <i class="material-icons">compare_arrows</i>
+                                                    </button>
+                                                    <button type="button" rel="tooltip" title="Upgrade Room" class="btn btn-primary btn-simple btn-xs" onclick="UpgradeRoom('{{$Detail->strReservationID}}', '{{$Detail->strRoomType}}', '{{$Detail->Name}}')">
+                                                        <i class="material-icons">file_upload</i>
                                                     </button>
                                                     <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs">
                                                         <i class="material-icons">alarm_add</i>

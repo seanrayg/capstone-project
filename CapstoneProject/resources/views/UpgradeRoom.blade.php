@@ -6,6 +6,7 @@
 
 @section('scripts')
     <script src="/js/ChooseRooms.js"></script>
+    <script src="/js/UpgradeRoom.js"></script>
 @endsection
 
 @section('content')
@@ -14,28 +15,26 @@
     <input type="hidden" id="ReservationID" name="ReservationID" value = "{{ Session::get('ReservationID') }}">
 @endif
 
-<!-- Add success -->
-@if(Session::has('flash_message'))
-    <div class="row">
-        <div class="col-md-5 col-md-offset-7">
-            <div class="alert alert-success hide-automatic">
-                <div class="container-fluid">
-                  <div class="alert-icon">
-                    <i class="material-icons">check</i>
-                  </div>
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
-                  </button>
-                  {{ Session::get('flash_message') }}
-                </div>
-            </div> 
-        </div>
-    </div>
-@endif
-
 <div class="row">
     <div class="col-md-3 dropdown">
-        <h5 id="TitlePage">Choose Rooms</h5>
+        <h5 id="TitlePage">Upgrade Room</h5>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="card card-stats">
+            <div class="card-header" data-background-color="green">
+                <i class="material-icons">file_upload</i>
+            </div>
+            <div class="card-content">
+                <p class="category">Room to Upgrade</p>
+            </div>
+            <div class="card-content">
+                <p class="paragraphText text-primary">Room Type</p> <p class="paragraphText" id="i-ReservationID"></p><br>
+                <p class="paragraphText text-primary">Room Name</p> <p class="paragraphText" id="i-ReservationID"></p><br>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -56,11 +55,7 @@
                                 <th>Room Type</th>
                             </thead>
                             <tbody>
-                                @foreach($ChosenRooms as $Rooms)
-                                    <tr onclick="HighlightRow(this)">
-                                        <td>{{$Rooms->strRoomType}}</td>
-                                    </tr>
-                                @endforeach
+
                             </tbody>
                         </table>
       
@@ -123,32 +118,29 @@
             </div>
             <div class="col-md-8">
                 <div class="card card-stats">
+                    <div class="card-header" data-background-color="blue">
+                        <i class="material-icons">bookmark</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Available</p>
+                        <h5 class="title">Rooms</h5>
+                    </div>
+                    <div class="card-content">
+                        <table class="table" style="font-family: 'Roboto'" id="tblAvailableRooms" onclick="run(event, 'AvailableRooms')">
+                            <thead class="text-info">
+                                <th>Room</th>
+                            </thead>
+                            <tbody>
 
-                            <div class="card-header" data-background-color="blue">
-                                <i class="material-icons">bookmark</i>
-                            </div>
-                            <div class="card-content">
-                                <p class="category">Available</p>
-                                <h5 class="title">Rooms</h5>
-                            </div>
-                            <div class="card-content">
-                                <table class="table" style="font-family: 'Roboto'" id="tblAvailableRooms" onclick="run(event, 'AvailableRooms')">
-                                    <thead class="text-info">
-                                        <th>Room</th>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                                <div class="row">
-                                    <p class="ElementError" id="EmptyTableError"></p>
-                                </div>
-                                <button type="button" class="btn btn-danger pull-left" onclick="HideModalReplaceRoom()">Cancel</button>
-                                <button type="button" class="btn btn-success pull-right" onclick="ReplaceRoom()">Choose</button>
-                                <div class="clearfix"></div>
-
-                            </div>
-
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <p class="ElementError" id="EmptyTableError"></p>
+                        </div>
+                        <button type="button" class="btn btn-danger pull-left" onclick="HideModalReplaceRoom()">Cancel</button>
+                        <button type="button" class="btn btn-success pull-right" onclick="ReplaceRoom()">Choose</button>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
             </div>
 

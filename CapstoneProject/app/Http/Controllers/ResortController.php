@@ -997,7 +997,7 @@ class ResortController extends Controller
         $AmountPaid = trim($req->input('AddRoomAmount'));
         $tempCheckInDate = trim($req->input('AddToday'));
         $tempCheckOutDate = trim($req->input('AddDeparture'));
-        $PaymentStatus = 0;
+        $PaymentStatus = 2;
         $DateToday = Carbon::now()->toDateString();
         
         $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d h:m:s');
@@ -1042,7 +1042,7 @@ class ResortController extends Controller
         $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d h:m:s');
         $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d h:m:s');
    
-        $PaymentStatus = 1;
+        $PaymentStatus = 3;
         
         $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
         

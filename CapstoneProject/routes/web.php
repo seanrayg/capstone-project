@@ -36,6 +36,8 @@ Route::get('/Billing', 'ViewResortController@ViewBilling');
 
 Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');
 
+Route::get('/UpgradeRoom/{id}', 'ViewResortController@ViewUpgradeRoom');
+
 Route::get('/Fees', 'ViewResortController@ViewFees');
 
 

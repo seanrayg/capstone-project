@@ -90,8 +90,23 @@
                         <div class="row">
                             <h3 class="title">Bill Breakdown<span class="close" onclick="HideModalBillBreakdown()">X</span></h3>
                         </div>
-                        <h5>Rooms/Cottages</h5>
+                        <h5>Reserved Rooms/Cottages</h5>
                         <table class="table" style="font-family:'Roboto'" id="tblBillAccommodation">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Type</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Rate per day</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+     
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
+                        <h5>Additional Room/Cottages</h5>
+                        <table class="table" style="font-family:'Roboto'" id="tblBillAdditional">
                             <thead class="text-success">
                                 <tr>
                                     <th class="text-center">Type</th>
