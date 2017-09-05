@@ -990,8 +990,182 @@ class ResortController extends Controller
     
     
     /*------------- CUSTOMERS -------------*/
-    public function addSaveRooms(Request $req){
-        dd(Input::all());
+    public function saveAddRooms(Request $req){
+   
+        $ReservationID = trim($req->input('AddReservationID'));
+        $ChosenRooms = trim($req->input('AddChosenRooms'));
+        $AmountPaid = trim($req->input('AddRoomAmount'));
+        $tempCheckInDate = trim($req->input('AddToday'));
+        $tempCheckOutDate = trim($req->input('AddDeparture'));
+        $PaymentStatus = 0;
+        $DateToday = Carbon::now()->toDateString();
+        
+        $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d h:m:s');
+        $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d h:m:s');
+        
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $PaymentRemarks = collect(['CheckInDate' => $CheckInDate, 'CheckOutDate' => $CheckOutDate, 'ChosenRooms'=>$ChosenRooms]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$AmountPaid,
+                              'strPayTypeID'=> 20,
+                              'dtePayDate'=>$DateToday,
+                              'strPaymentRemarks'=>$jsonRemarks);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        \Session::flash('flash_message','Successfully added a room!');
+        
+        return redirect('/Customers');
+       
+    }
+    
+    public function saveAddRoomsPayment(Request $req){
+        $ReservationID = trim($req->input('AddPayReservationID'));
+        $ChosenRooms = trim($req->input('AddPayChosenRooms'));
+        $AmountPaid = trim($req->input('AddPayTotal'));
+        $tempCheckInDate = trim($req->input('AddPayToday'));
+        $tempCheckOutDate = trim($req->input('AddPayDeparture'));
+        $DateToday = Carbon::now()->toDateString();
+        $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d h:m:s');
+        $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d h:m:s');
+   
+        $PaymentStatus = 1;
+        
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $PaymentRemarks = collect(['CheckInDate' => $CheckInDate, 'CheckOutDate' => $CheckOutDate, 'ChosenRooms'=>$ChosenRooms]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$AmountPaid,
+                              'strPayTypeID'=> 21,
+                              'dtePayDate'=>$DateToday,
+                              'strPaymentRemarks'=>$jsonRemarks);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        \Session::flash('flash_message','Successfully added a room!');
+        
+        return redirect('/Customers');
+    }
+    
+    public function saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus){
+       
+        //Prepares Room Data
+        $IndividualRooms = explode(',',$ChosenRooms);
+        $IndividualRoomsLength = sizeof($IndividualRooms);
+        $IndividualRoomType = [];
+        
+        for($x = 0; $x < $IndividualRoomsLength; $x++){
+            $IndividualRoomDetails = explode('-', $IndividualRooms[$x]);
+            $IndividualRoomType[$x] = DB::table('tblRoomType')->where([['strRoomType',"=",$IndividualRoomDetails[0]], ['intRoomTDeleted',"=","1"]])->pluck('strRoomTypeID')->first();
+        }
+        
+        $AvailableRooms = "";
+        $IndividualRoomTypeLength = sizeof($IndividualRoomType);
+         
+        for($x = 0; $x < $IndividualRoomTypeLength; $x++){
+            
+            $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+            $ExistingRooms = DB::table('tblReservationRoom')
+                                    ->whereIn('strResRReservationID', $ExistingReservations)
+                                    ->pluck('strResRRoomID')
+                                    ->toArray();
+
+            $tempArrivalDate = explode(" ", $CheckInDate);
+            $tempDepartureDate = explode(" ", $CheckOutDate);
+
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('a.strRoomID')
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['a.strRoomTypeID', '=', $IndividualRoomType[$x]]])
+                         ->groupBy('a.strRoomID')
+                         ->get();
+            
+            foreach($Rooms as $Room){
+                $AvailableRooms .= $Room->strRoomID . ",";
+            }
+            
+            $AvailableRooms .= "@";
+        }
+        
+        $arrAvailableRooms = explode('@', $AvailableRooms);
+        array_pop($arrAvailableRooms);
+    
+        //Saves Reserved Rooms
+        for($x = 0; $x < $IndividualRoomTypeLength; $x++){
+           $IndividualRoomsInfo = explode('-', $IndividualRooms[$x]);
+
+           for($y = 0; $y < $IndividualRoomsInfo[3]; $y++){
+               $AvailableRoomsArray = explode(',', $arrAvailableRooms[$x]);
+               array_pop($AvailableRoomsArray);
+               $AvailableRoomsArrayLength = sizeof($AvailableRoomsArray);
+
+                   for($z = 0; $z <= $AvailableRoomsArrayLength; $z++){
+                        if($z != $IndividualRoomsInfo[3]){
+                            $InsertRoomsData = array('strResRReservationID'=>$ReservationID,
+                                                     'strResRRoomID'=>$AvailableRoomsArray[$z],
+                                                     'intResRPayment'=>$PaymentStatus);
+                            
+                            DB::table('tblReservationRoom')->insert($InsertRoomsData);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                break;
+
+           }
+        }
     }
 }
 

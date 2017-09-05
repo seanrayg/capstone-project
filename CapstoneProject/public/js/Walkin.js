@@ -272,8 +272,20 @@ function HideAlert(){
 function getAvailableRooms(){
     var CheckInDate = document.getElementById("CheckInDate").value;
     var CheckOutDate = document.getElementById("CheckOutDate").value;
+
     var d = new Date(); // for now
     var TimeToday = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+
+    if(parseInt(d.getMinutes()) < 10 && parseInt(d.getSeconds()) < 10){
+        var TimeToday = d.getHours()+":0"+d.getMinutes()+":0"+d.getSeconds();
+    }
+    else if(parseInt(d.getSeconds()) < 10){
+        var TimeToday = d.getHours()+":"+d.getMinutes()+":0"+d.getSeconds();
+    }
+    else if(parseInt(d.getMinutes()) < 10){
+        var TimeToday = d.getHours()+":0"+d.getMinutes()+":"+d.getSeconds();
+    }
+   alert(CheckInDate);
     var TimeExit;
     if(CheckInDate == CheckOutDate){
         TimeExit = "23:59:59";
@@ -281,7 +293,7 @@ function getAvailableRooms(){
     else{
         TimeExit = TimeToday;
     }
-    alert(TimeExit);
+   
     $.ajax({
         type:'get',
         url:'/Reservation/Rooms',

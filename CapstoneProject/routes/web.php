@@ -361,4 +361,6 @@ Route::get('/Billing/Info', 'ViewResortController@getBillBreakdown');
 
 Route::get('/Customers/GetRooms', 'ViewResortController@getAddAvailableRooms');
 
-Route::post('/Customers/Rooms', 'ResortController@saveAddRooms');
+Route::post('/Customer/Rooms', 'ResortController@saveAddRooms');
+
+Route::post('/Customer/RoomsPay', 'ResortController@saveAddRoomsPayment');

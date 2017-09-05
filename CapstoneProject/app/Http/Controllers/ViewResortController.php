@@ -108,8 +108,20 @@ class ViewResortController extends Controller
                                           ->orWhere('intResDStatus', '=', '4');
                                 })
                                 ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->whereBetween('dtmResDArrival', [$CheckInDate, $CheckOutDate])
-                                          ->orWhereBetween('dtmResDDeparture', [$CheckInDate, $CheckOutDate]);
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
                                 })
                                 ->pluck('strReservationID')
                                 ->toArray();
@@ -194,8 +206,20 @@ class ViewResortController extends Controller
                                           ->orWhere('intResDStatus', '=', '4');
                                 })
                                 ->where(function($query) use($ArrivalDate, $DepartureDate){
-                                    $query->whereBetween('dtmResDArrival', [$ArrivalDate, $DepartureDate])
-                                          ->orWhereBetween('dtmResDDeparture', [$ArrivalDate, $DepartureDate]);
+                                    $query->where('dtmResDArrival','>=',$ArrivalDate)
+                                          ->where('dtmResDArrival','<=',$DepartureDate);
+                                })
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDDeparture','>=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','<=',$DepartureDate);
+                                })
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','>=',$ArrivalDate);
+                                })
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$DepartureDate)
+                                          ->where('dtmResDDeparture','>=',$DepartureDate);
                                 })
                                 ->pluck('strReservationID')
                                 ->toArray();
@@ -652,6 +676,7 @@ class ViewResortController extends Controller
             $TimePenalties = 0;
             $BrokenPenalties = 0;
             $TotalExtend = 0;
+            $AdditionalRooms = 0;
             
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
@@ -675,11 +700,18 @@ class ViewResortController extends Controller
                 $DaysOfStay = 1;
             }
             
-          
-            
             $TotalRoom = $TotalRoom * $DaysOfStay;
- 
             
+            //Additional Rooms
+            $AdditionalRoomBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 20]])
+                            ->get();
+            
+            foreach($AdditionalRoomBills as $Bill){
+                $AdditionalRooms += $Bill->dblPayAmount;
+            }
+            
+            dd($TotalRoom);
             //Compute Item
             $RentedItems = DB::table('tblItem as a')
                         ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
@@ -753,7 +785,7 @@ class ViewResortController extends Controller
             
             //Compute Boat Rental
             
-            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom;
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRooms;
         }
         
         return view('Billing', compact('ReservationInfo'));

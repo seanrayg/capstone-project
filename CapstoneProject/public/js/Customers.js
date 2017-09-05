@@ -5,6 +5,10 @@ var ReservationID;
 var ArrivalDate;
 var DepartureDate;
 var tempTotal = 0;
+var diffDays;
+var strChosenRooms;
+var TotalRoomCost = 0;
+var today;
 
 function ShowModalExtendStay(){
     document.getElementById("DivModalExtendStay").style.display = "block";
@@ -63,11 +67,56 @@ function HideModalReservationInfo(){
 }
 
 function ShowModalAddRoomPayment(){
-    document.getElementById("DivModalAddRoomPayment").style.display = "block";
+    var RoomChecker = CheckRooms();
+    if(RoomChecker){
+        var date1 = new Date();
+        var date2 = new Date(DepartureDate);
+        diffDays = date2.getDate() - date1.getDate();
+        if(diffDays == 0){
+            diffDays = 1;
+        }
+        //Get data from tables
+        var pacRooms = document.getElementById('tblChosenRooms'), cellsRooms = pacRooms.getElementsByTagName('td');
+        var pacRoomsCells = (document.getElementById('tblChosenRooms').getElementsByTagName("tr").length - 1) * 4;
+
+        strChosenRooms = "";
+        TotalRoomCost = 0;
+        for(var i = 0; i < pacRoomsCells; i += 4){             
+          strChosenRooms += cellsRooms[i].innerHTML + "-" + cellsRooms[i + 1].innerHTML + "-" + cellsRooms[i + 2].innerHTML  + "-" + cellsRooms[i + 3].innerHTML;
+          TotalRoomCost += (parseInt(cellsRooms[i + 2].innerHTML) * parseInt(cellsRooms[i + 3].innerHTML)) * diffDays;
+          if(!(i == (pacRoomsCells - 4))){                  
+              strChosenRooms += ",";                  
+          }          
+        }
+        
+        document.getElementById("AddChosenRooms").value = strChosenRooms;
+        document.getElementById("AddReservationID").value = ReservationID;
+        document.getElementById("AddRoomAmount").value = TotalRoomCost;
+        document.getElementById("AddToday").value = today;
+        document.getElementById("AddDeparture").value = DepartureDate;
+        document.getElementById("AddTotalAmount").innerHTML = "Total cost is PHP" +TotalRoomCost;
+        
+        document.getElementById("DivModalAddRoomPayment").style.display = "block";
+    }
 }
 
 function HideModalAddRoomPayment(){
     document.getElementById("DivModalAddRoomPayment").style.display = "none";
+}
+
+function ShowModalAddRoomPayNow(){
+    HideModalAddRoomPayment();
+    document.getElementById("AddPayTotal").value = TotalRoomCost;
+    document.getElementById("AddPayReservationID").value = ReservationID;
+    document.getElementById("AddPayChosenRooms").value = strChosenRooms;
+    document.getElementById("AddPayToday").value = today;
+    document.getElementById("AddPayDeparture").value = DepartureDate;
+    document.getElementById("DivModalAddRoomPayNow").style.display = "block";
+}
+
+function HideModalAddRoomPayNow(){
+    ShowModalAddRoomPayment();
+    document.getElementById("DivModalAddRoomPayNow").style.display = "none";
 }
 
 function run(event, sender){
@@ -84,7 +133,7 @@ function run(event, sender){
     
     if(sender == "Resort"){
         ResortInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML];
-        ReservationID = ResortInfo[0];
+        ReservationID = ResortInfo[1];
         ArrivalDate = ResortInfo[7];
         DepartureDate = ResortInfo[8];
 
@@ -108,10 +157,14 @@ function run(event, sender){
 /*------------- ADD ROOM ----------------*/
 
 function getAvailableRooms(){
+    var tempDate  = new Date();
+    var DateTimeToday = tempDate.getFullYear() + "/" + (parseInt(tempDate.getMonth())+1) + "/" + tempDate.getDate() + " " + tempDate.getHours() + ":" + tempDate.getMinutes() + ":" + tempDate.getSeconds();
+    
+    today = DateTimeToday;
     $.ajax({
         type:'get',
         url:'/Customers/GetRooms',
-        data:{ArrivalDate: ArrivalDate,
+        data:{ArrivalDate: DateTimeToday,
               DepartureDate: DepartureDate},
         success:function(data){
             
@@ -319,13 +372,31 @@ function CheckInput(field, errorHolder, holder){
     }
 }
 
+//check if tblchosenroom is empty
 function CheckRooms(){
     var TableLength = document.getElementById("tblChosenRooms").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
-    alert(TableLength);
     if(TableLength == 0){
         return false;
     }
     else{
         return true;
+    }
+}
+
+//validates amount to be paid
+function SendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var AddTotal = parseInt(document.getElementById("AddPayTotal").value);
+        var AddPayment = parseInt(field.value);
+        var Change = AddPayment - AddTotal;
+        if(Change < 0){
+            document.getElementById("AddPayChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("AddPayChange").value = Change;
+        }
+        
     }
 }
