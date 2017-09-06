@@ -54,6 +54,42 @@ function HideModalAvailableBoat(){
     document.getElementById("DivModalAvailableBoat").style.display = "none";
 }
 
+function ShowModalPayActivity(){
+    if(!($('.form-group').hasClass('has-warning'))){
+        if(document.getElementById("AvailBoat").value != "Please avail a boat"){
+            var DurationTime = document.getElementById("DurationTime").value;
+            var DurationMinute = document.getElementById("DurationMinute").value;
+            if(DurationTime == "0" && DurationMinute == "00"){
+                
+            }
+            else{
+                document.getElementById("PayActivityID").value = AvailActivityInfo[0];
+                document.getElementById("PayReservationID").value = document.getElementById("AvailCustomerName").value;
+                document.getElementById("PayLandQuantity").value = document.getElementById("AvailLandQuantity").value;
+                document.getElementById("PayLandActivityRate").value = document.getElementById("LandActivityRate").value;
+                document.getElementById("PayWaterActivityRate").value = AvailActivityInfo[2];
+                document.getElementById("PayDurationTime").value = document.getElementById("DurationTime").value;
+                document.getElementById("PayDurationMinute").value = document.getElementById("DurationMinute").value;
+                document.getElementById("PayAvailBoat").value = document.getElementById("AvailBoat").value;
+                if(AvailActivityInfo[3] == "Yes"){
+                    document.getElementById("PayActivityType").value = "Water";
+                    document.getElementById("ActivityTotalPrice").value = document.getElementById("PayWaterActivityRate").value;
+                }
+                else{
+                    document.getElementById("PayActivityType").value = "Land";
+                    document.getElementById("ActivityTotalPrice").value = document.getElementById("PayLandActivityRate").value;
+                }
+
+                document.getElementById("DivModalPayActivity").style.display = "block";
+            }
+        }
+    }
+}
+
+function HideModalPayActivity(){
+    document.getElementById("DivModalPayActivity").style.display = "none";
+}
+
 /*--------- MISC ----------*/
 
 function run(event, sender){
@@ -121,6 +157,12 @@ function CheckAvailForm(){
                 return false;
             }
             else{
+                if(AvailActivityInfo[3] == "Yes"){
+                    document.getElementById("AvailActivityTotalPrice").value = AvailActivityInfo[2];
+                }
+                else{
+                    document.getElementById("AvailActivityTotalPrice").value = document.getElementById("LandActivityRate").value;
+                }
                 return true;
             }
         }
@@ -139,6 +181,23 @@ function ComputePrice(field, dataType, holder){
         var ActivityRate = parseInt(AvailActivityInfo[2]);
         var ActivityQuantity = parseInt(document.getElementById("AvailLandQuantity").value);
         document.getElementById("LandActivityRate").value = ActivityRate * ActivityQuantity;
+    }
+}
+
+function SendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var ActivityTotal = parseInt(document.getElementById("ActivityTotalPrice").value);
+        var ActivityPayment = parseInt(field.value);
+        var Change = ActivityPayment - ActivityTotal;
+        if(Change < 0){
+            document.getElementById("ActivityChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("ActivityChange").value = Change;
+        }
+        
     }
 }
 

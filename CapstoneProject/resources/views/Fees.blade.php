@@ -153,7 +153,7 @@
                                 <br>
                                 <div class = "row">
                                     <div class="col-xs-6">
-                                        <button type="button" class="btn btn-success pull-left"><i class="material-icons">done</i> Pay now</button>
+                                        <button type="button" class="btn btn-success pull-left" onclick="ShowModalPayFees()"><i class="material-icons">done</i> Pay now</button>
                                     </div> 
                                     <div class="col-xs-6">
                                         <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i> Pay at check out</button>
@@ -289,6 +289,73 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalPayFees" class="modal">
+    <div class="Modal-content" style="max-width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="green">
+                            <i class="material-icons">monetization_on</i>
+                        </div>
+                        <div class="card-content">
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Add Fee<span class="close" onclick="HideModalPayFees()">X</span></h3>
+                            </div>
+                            <form method="POST" action="/Fee/Pay" onsubmit="return CheckForm()">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="PayReservationID" id="PayReservationID">
+                                <input type="hidden" name="PayFeeID" id="PayFeeID">
+                                <input type="hidden" name="PayFeeQuantity" id="PayFeeQuantity">
+                                
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Total Amount</label>
+                                            <input type="text" class="form-control" id="TotalFeePrice" name="TotalFeePrice" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="FeePaymentError">
+                                            <label class="control-label">Payment</label>
+                                            <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#FeePaymentError')" onchange="SendPayment(this, 'double', '#FeePaymentError')" id="FeePayment" name="FeePayment" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Change</label>
+                                            <input type="text" class="form-control" id="FeeChange" name="FeeChange">
+                                        </div>
+                                    </div>
+                                </div>    
+                        
+                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel"></p>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class = "row">
+                                    <div class="col-xs-12">
+                                        <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i>Continue</button>
+                                    </div> 
+                                </div>
+
+                            </form>
+                        </div>
+
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -51,14 +51,84 @@ class ResortController extends Controller
         $CustomerName = trim($req->input('SelectGuests'));
         $RentQuantity = trim($req->input('RentQuantity'));
         $RentDuration = trim($req->input('RentDuration'));
+        $RentTotal = trim($req->input('RentItemPrice'));
         $PaymentStatus = 0;
         
-        $ReservationID = DB::table('tblReservationDetail as a')
-                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
-                        ->where([['a.intResDStatus', '=', '4'],[DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName)'),'=',$CustomerName]])
-                        ->pluck('a.strReservationID')
-                        ->first();
+        $RentedItemID = $this->saveRentalItem($ItemID, $CustomerName, $RentQuantity, $RentDuration, $PaymentStatus);
         
+        $DateToday = Carbon::now()->toDateString();
+        
+        $ReservationID = $this->getReservationID($CustomerName);
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $PaymentRemarks = collect(['RentedItemID' => $RentedItemID]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$RentTotal,
+                              'strPayTypeID'=> 11,
+                              'dtePayDate'=>$DateToday,
+                              'strPaymentRemarks'=>$jsonRemarks);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        \Session::flash('flash_message','Successfully rented the item!');
+        
+        return redirect('ItemRental');
+    }
+    
+    //rent item with payment
+    public function storeRentalItemPayment(Request $req){
+        $ItemID = trim($req->input('RentPayItemID'));
+        $CustomerName = trim($req->input('RentPayGuest'));
+        $RentQuantity = trim($req->input('RentPayQuantity'));
+        $RentDuration = trim($req->input('RentPayDuration'));
+        $RentTotal = trim($req->input('RentPayTotal'));
+        $PaymentStatus = 1;
+        
+        $RentedItemID = $this->saveRentalItem($ItemID, $CustomerName, $RentQuantity, $RentDuration, $PaymentStatus);
+        $ReservationID = $this->getReservationID($CustomerName);
+        
+        $DateToday = Carbon::now()->toDateString();
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $PaymentRemarks = collect(['RentedItemID' => $RentedItemID]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$RentTotal,
+                              'strPayTypeID'=> 12,
+                              'dtePayDate'=>$DateToday,
+                              'strPaymentRemarks'=>$jsonRemarks);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        \Session::flash('flash_message','Successfully rented the item!');
+        
+        return redirect('ItemRental');
+    }
+    
+    //save rental item to db
+    public function saveRentalItem($ItemID, $CustomerName, $RentQuantity, $RentDuration, $PaymentStatus){
+        $ReservationID = $this->getReservationID($CustomerName);
         $RentedItems = DB::table('tblrenteditem')->get();
     
         $RentItemID;
@@ -88,9 +158,7 @@ class ResortController extends Controller
         
         DB::table('tblRentedItem')->insert($data);
         
-        \Session::flash('flash_message','Successfully rented the item!');
-        
-        return redirect('ItemRental');
+        return $RentItemID;
     }
     
     //return item
@@ -111,6 +179,43 @@ class ResortController extends Controller
         $ItemStatus = trim($req->input('ReturnItemStatus'));
         $BrokenQuantity = trim($req->input('ReturnBrokenQuantity'));
         $BrokenPenalty = trim($req->input('ReturnBrokenPenalty'));
+        $PaymentStatus = 0;
+        
+        $this->saveReturnItem($DateTimeToday, $ItemID, $ReservationID, $RentedItemID, $ItemRate, $ItemQuantity, $TimePenalty, $RentalStatus, $ExcessTime, $QuantityReturned, $ItemStatus, $BrokenQuantity, $BrokenPenalty, $PaymentStatus, $ItemName);
+        
+        \Session::flash('flash_message','Successfully returned the item!');
+        
+        return redirect('ItemRental');
+    }
+    
+    //return item with payment
+    public function storeReturnItemPayment(Request $req){
+        $DateTimeToday = Carbon::now('HongKong')->format('Y-m-d');
+        $ItemID = trim($req->input('ReturnPayItemID'));
+        $ReservationID = trim($req->input('ReturnPayReservationID'));
+        $RentedItemID = trim($req->input('ReturnPayRentedItemID'));
+        $ItemRate = trim($req->input('ReturnPayItemRate'));
+        $ItemQuantity = trim($req->input('ReturnPayTotalQuantity'));
+        $ItemName = trim($req->input('ReturnPayItemName'));
+        $CustomerName = trim($req->input('ReturnPayGuestName'));
+        $TimePenalty = trim($req->input('ReturnPayTimePenalty'));
+        $RentalStatus = trim($req->input('ReturnPayRentalStatus'));
+        $ExcessTime = trim($req->input('ReturnPayExcessTime'));
+        $QuantityReturned = trim($req->input('ReturnPayQuantityAvailed'));
+        $ItemStatus = trim($req->input('ReturnPayItemStatus'));
+        $BrokenQuantity = trim($req->input('ReturnPayBrokenQuantity'));
+        $BrokenPenalty = trim($req->input('ReturnPayBrokenPenalty'));
+        $PaymentStatus = 1;
+        
+        $this->saveReturnItem($DateTimeToday, $ItemID, $ReservationID, $RentedItemID, $ItemRate, $ItemQuantity, $TimePenalty, $RentalStatus, $ExcessTime, $QuantityReturned, $ItemStatus, $BrokenQuantity, $BrokenPenalty, $PaymentStatus, $ItemName);
+        
+        \Session::flash('flash_message','Successfully returned the item!');
+        
+        return redirect('ItemRental');
+    }
+    
+    //save returned item to db
+    public function saveReturnItem($DateTimeToday, $ItemID, $ReservationID, $RentedItemID, $ItemRate, $ItemQuantity, $TimePenalty, $RentalStatus, $ExcessTime, $QuantityReturned, $ItemStatus, $BrokenQuantity, $BrokenPenalty, $PaymentStatus, $ItemName){
         
         $QuantityLeft = (int)$ItemQuantity - (int)$QuantityReturned;
         
@@ -153,20 +258,34 @@ class ResortController extends Controller
             if((int)$TimePenalty != "0"){
                     
                 $PaymentDescription = "Excess time is:".$ExcessTime;
-                $PaymentRemarks = collect(['QuantityReturned' => $QuantityReturned, 'TimePenalty' => $TimePenalty, 'Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'RentedItemID' => $RentedItemID]);
+                $PaymentRemarks = collect(['QuantityReturned' => $QuantityReturned, 'TimePenalty' => $TimePenalty, 'Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'ItemName' => $ItemName, 'RentedItemID' => $RentedItemID]);
 
                 $jsonRemarks = $PaymentRemarks->toJson();
 
-                $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
-
-                $data = array('strPaymentID'=>$PaymentID,
+                if($PaymentStatus == 1){
+                    $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+                    $data = array('strPaymentID'=>$PaymentID,
                              'strPayReservationID'=>$ReservationID,
                              'dblPayAmount'=>$TimePenalty,
-                             'strPayTypeID'=>6,
+                             'strPayTypeID'=>13,
                              'dtePayDate'=>$DateTimeToday,
                              'strPaymentRemarks'=>$jsonRemarks);
 
                     DB::table('tblPayment')->insert($data);
+                }
+                else{
+                    $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+                    $data = array('strPaymentID'=>$PaymentID,
+                                 'strPayReservationID'=>$ReservationID,
+                                 'dblPayAmount'=>$TimePenalty,
+                                 'strPayTypeID'=>6,
+                                 'dtePayDate'=>$DateTimeToday,
+                                 'strPaymentRemarks'=>$jsonRemarks);
+
+                    DB::table('tblPayment')->insert($data);
+                }
+                
             }
         }
         else{//if item is broken 
@@ -214,46 +333,68 @@ class ResortController extends Controller
             if((int)$TimePenalty != "0"){
                     
                 $PaymentDescription = "Excess time is:".$ExcessTime;
-                $PaymentRemarks = collect(['QuantityReturned' => $QuantityReturned, 'TimePenalty' => $TimePenalty, 'Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'RentedItemID' => $RentedItemID]);
+                $PaymentRemarks = collect(['QuantityReturned' => $QuantityReturned, 'TimePenalty' => $TimePenalty, 'Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'ItemName' => $ItemName, 'RentedItemID' => $RentedItemID]);
 
                 $jsonRemarks = $PaymentRemarks->toJson();
 
-                $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
-
-                $data = array('strPaymentID'=>$PaymentID,
+                if($PaymentStatus == 1){
+                    $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+                    $data = array('strPaymentID'=>$PaymentID,
                              'strPayReservationID'=>$ReservationID,
                              'dblPayAmount'=>$TimePenalty,
-                             'strPayTypeID'=>6,
+                             'strPayTypeID'=>13,
                              'dtePayDate'=>$DateTimeToday,
                              'strPaymentRemarks'=>$jsonRemarks);
 
-                DB::table('tblPayment')->insert($data);
+                    DB::table('tblPayment')->insert($data);
+                }
+                else{
+                    $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+                    $data = array('strPaymentID'=>$PaymentID,
+                                 'strPayReservationID'=>$ReservationID,
+                                 'dblPayAmount'=>$TimePenalty,
+                                 'strPayTypeID'=>6,
+                                 'dtePayDate'=>$DateTimeToday,
+                                 'strPaymentRemarks'=>$jsonRemarks);
+
+                    DB::table('tblPayment')->insert($data);
+                }
             }
             
             if((int)$BrokenPenalty != "0"){
                 $PaymentDescription = "Number of broken/lost item is ".$BrokenQuantity;
-                $PaymentRemarks = collect(['Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'RentedItemID' => $RentedItemID]);
+                $PaymentRemarks = collect(['Description'=>$PaymentDescription, 'ItemID' => $ItemID, 'ItemName' => $ItemName, 'RentedItemID' => $RentedItemID]);
 
                 $jsonRemarks = $PaymentRemarks->toJson();
 
-                $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
-
-                $data = array('strPaymentID'=>$PaymentID,
+                if($PaymentStatus == 1){
+                    $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+                    $data = array('strPaymentID'=>$PaymentID,
                              'strPayReservationID'=>$ReservationID,
                              'dblPayAmount'=>$BrokenPenalty,
-                             'strPayTypeID'=>7,
+                             'strPayTypeID'=>14,
                              'dtePayDate'=>$DateTimeToday,
                              'strPaymentRemarks'=>$jsonRemarks);
 
-                DB::table('tblPayment')->insert($data);
-                
+                    DB::table('tblPayment')->insert($data);
+                }
+                else{
+                    $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+                    $data = array('strPaymentID'=>$PaymentID,
+                                 'strPayReservationID'=>$ReservationID,
+                                 'dblPayAmount'=>$BrokenPenalty,
+                                 'strPayTypeID'=>7,
+                                 'dtePayDate'=>$DateTimeToday,
+                                 'strPaymentRemarks'=>$jsonRemarks);
+
+                    DB::table('tblPayment')->insert($data);
+                }
             }
         }
-        
-        \Session::flash('flash_message','Successfully returned the item!');
-        
-        return redirect('ItemRental');
     }
+    
     
     //restore item
     public function storeRestoreItem(Request $req){
@@ -318,8 +459,39 @@ class ResortController extends Controller
         $ExtendQuantity = trim($req->input('ExtendQuantity'));
         $ExtendTime = trim($req->input('ExtendTime'));
         $ExtendPrice = trim($req->input('ExtendPrice'));
+        $PaymentStatus = 0;
+        
+        $this->saveExtendItem($ItemID, $ReservationID, $RentedItemID, $TotalRentedQuantity, $ExtendQuantity, $ExtendTime, $ExtendPrice, $PaymentStatus);
+        
+        \Session::flash('flash_message','Successfully extended!');
+        
+        return redirect('ItemRental');
+    }
+    
+    public function ExtendItemRentalPayment(Request $req){   
+        $ItemID = trim($req->input('ExtendPayItemID'));
+        $ReservationID = trim($req->input('ExtendPayReservationID'));
+        $RentedItemID = trim($req->input('ExtendPayRentedItemID'));
+        $TotalRentedQuantity = trim($req->input('ExtendPayTotalQuantity'));
+        $ExtendQuantity = trim($req->input('ExtendPayQuantity'));
+        $ExtendTime = trim($req->input('ExtendPayTime'));
+        $ExtendPrice = trim($req->input('ExtendPayTotal'));
+        $PaymentStatus = 1;
+        
+        $this->saveExtendItem($ItemID, $ReservationID, $RentedItemID, $TotalRentedQuantity, $ExtendQuantity, $ExtendTime, $ExtendPrice, $PaymentStatus);
+        
+        \Session::flash('flash_message','Successfully extended!');
+        
+        return redirect('ItemRental');
+    }
+    
+    public function saveExtendItem($ItemID, $ReservationID, $RentedItemID, $TotalRentedQuantity, $ExtendQuantity, $ExtendTime, $ExtendPrice, $PaymentStatus){
+
+        $DateTimeToday = Carbon::now('HongKong')->format('Y-m-d');
         $RentedDuration = DB::table('tblRentedItem')->where('strRentedItemID', '=', $RentedItemID)->pluck("intRentedIDuration")->first();
         $RentTime = DB::table('tblRentedItem')->where('strRentedItemID', '=', $RentedItemID)->pluck("tmsCreated")->first();
+        
+        $ItemName = DB::table('tblItem')->where('strItemID', '=', $ItemID)->pluck('strItemName')->first();
         
         $QuantityDiff = (int)$TotalRentedQuantity - (int)$ExtendQuantity;
         
@@ -361,9 +533,35 @@ class ResortController extends Controller
             }
         }
         
-        \Session::flash('flash_message','Successfully extended!');
-        
-        return redirect('ItemRental');
+        $PaymentDescription = "Extend time is:".$ExtendTime;
+        $PaymentRemarks = collect(['ExtendQuantity' => $ExtendQuantity, 'ExtendTime'=>$ExtendTime, 'ItemID' => $ItemID, 'ItemName' => $ItemName, 'RentedItemID' => $RentedItemID]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
+
+        if($PaymentStatus == 1){
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+            $data = array('strPaymentID'=>$PaymentID,
+                         'strPayReservationID'=>$ReservationID,
+                         'dblPayAmount'=>$ExtendPrice,
+                         'strPayTypeID'=>15,
+                         'dtePayDate'=>$DateTimeToday,
+                         'strPaymentRemarks'=>$jsonRemarks);
+
+            DB::table('tblPayment')->insert($data);
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+            $data = array('strPaymentID'=>$PaymentID,
+                         'strPayReservationID'=>$ReservationID,
+                         'dblPayAmount'=>$ExtendPrice,
+                         'strPayTypeID'=>10,
+                         'dtePayDate'=>$DateTimeToday,
+                         'strPaymentRemarks'=>$jsonRemarks);
+
+            DB::table('tblPayment')->insert($data);
+        }
     }
     
     
@@ -473,22 +671,76 @@ class ResortController extends Controller
         return $strSmartCounter;
     }
     
-    
-    /*------------ ACTIVITY ------------*/
-    
-    //avail activity
-    public function AvailActivity(Request $req){
-
-        $DateTimeToday = Carbon::now('Asia/Manila');
-        $ActivityID = trim($req->input('AvailActivityID'));
-        $CustomerName = trim($req->input('AvailCustomerName'));
-        $ActivityType = trim($req->input('AvailActivityType'));
+    public function getReservationID($CustomerName){
         $ReservationID = DB::table('tblReservationDetail as a')
                         ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
                         ->where([['a.intResDStatus', '=', '4'],[DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName)'),'=',$CustomerName]])
                         ->pluck('a.strReservationID')
                         ->first();
         
+        return $ReservationID;
+    }
+    
+    
+    /*------------ ACTIVITY ------------*/
+    
+    //avail activity
+    public function AvailActivity(Request $req){
+        $DateTimeToday = Carbon::now('Asia/Manila');
+        $ActivityID = trim($req->input('AvailActivityID'));
+        $CustomerName = trim($req->input('AvailCustomerName'));
+        $ActivityType = trim($req->input('AvailActivityType'));
+        $ActivityPrice = trim($req->input('AvailActivityTotalPrice'));
+        $HoursToAdd = trim($req->input('DurationTime'));
+        $MinutesToAdd = trim($req->input('DurationMinute'));
+        $AvailQuantity = trim($req->input('AvailLandQuantity'));
+        
+        $BoatName = trim($req->input('AvailBoat'));
+        $ReservationID = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->where([['a.intResDStatus', '=', '4'],[DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName)'),'=',$CustomerName]])
+                        ->pluck('a.strReservationID')
+                        ->first();
+        $PaymentStatus = 0;
+        
+        $this->saveAvailedActivity($DateTimeToday, $ActivityID, $ActivityType, $ReservationID, $PaymentStatus, $ActivityPrice, $HoursToAdd, $MinutesToAdd, $BoatName, $AvailQuantity);
+        
+        \Session::flash('flash_message','Successfully availed the beach activity!');
+        
+        return redirect('/Activities');
+    }
+    
+    //avail activity with payment
+    public function AvailActivityPayment(Request $req){
+  
+        $DateTimeToday = Carbon::now('Asia/Manila');
+        $ActivityID = trim($req->input('PayActivityID'));
+        $CustomerName = trim($req->input('PayReservationID'));
+        $ActivityType = trim($req->input('PayActivityType'));
+        $ActivityPrice = trim($req->input('ActivityTotalPrice'));
+        $HoursToAdd = trim($req->input('PayDurationTime'));
+        $MinutesToAdd = trim($req->input('PayDurationMinute'));
+        $BoatName = trim($req->input('PayAvailBoat'));
+        $AvailQuantity = trim($req->input('PayLandQuantity'));
+        
+        $ReservationID = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->where([['a.intResDStatus', '=', '4'],[DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName)'),'=',$CustomerName]])
+                        ->pluck('a.strReservationID')
+                        ->first();
+        
+
+        $PaymentStatus = 1;
+        
+        $this->saveAvailedActivity($DateTimeToday, $ActivityID, $ActivityType, $ReservationID, $PaymentStatus, $ActivityPrice, $HoursToAdd, $MinutesToAdd, $BoatName, $AvailQuantity);
+        
+        \Session::flash('flash_message','Successfully availed the beach activity!');
+        
+        return redirect('/Activities');
+    }
+    
+    //save availed activity to db
+    public function saveAvailedActivity($DateTimeToday, $ActivityID, $ActivityType, $ReservationID, $PaymentStatus, $ActivityPrice, $HoursToAdd, $MinutesToAdd, $BoatName, $AvailQuantity){
         $AvailedActivities = DB::table('tblavailbeachactivity')->get();
             
         if((sizeof($AvailedActivities) == 0)){
@@ -499,14 +751,14 @@ class ResortController extends Controller
         }
     
         if($ActivityType == "Land"){   
-            $AvailQuantity = trim($req->input('AvailLandQuantity'));
+            
             
             $data = array('strAvailBeachActivityID'=>$AvailActivityID,
                      'strAvailBAReservationID'=>$ReservationID,
                      'strAvailBABeachActivityID'=>$ActivityID,
                      'strAvailBABoatID'=> null,
                      'intAvailBAQuantity'=>$AvailQuantity,
-                     'intAvailBAPayment'=>0,
+                     'intAvailBAPayment'=>$PaymentStatus,
                      'tmsCreated'=>$DateTimeToday);
         
             DB::table('tblavailbeachactivity')->insert($data);
@@ -514,8 +766,6 @@ class ResortController extends Controller
         }
         else if($ActivityType == "Water"){
 
-            $HoursToAdd = trim($req->input('DurationTime'));
-            $MinutesToAdd = trim($req->input('DurationMinute'));
             $DropOff = Carbon::now('Asia/Manila');
     
             if($HoursToAdd != "0"){
@@ -525,7 +775,7 @@ class ResortController extends Controller
             $DropOff = $DropOff->addMinutes($MinutesToAdd);
             $DropOff = $DropOff->toDateTimeString();
      
-            $BoatName = trim($req->input('AvailBoat'));
+            
             $BoatSchedID = DB::table('tblBoatSchedule')->pluck('strBoatScheduleID')->first();
             if(!$BoatSchedID){
                 $BoatSchedID = "BSCHD1";
@@ -541,7 +791,7 @@ class ResortController extends Controller
                      'strAvailBABeachActivityID'=>$ActivityID,
                      'strAvailBABoatID'=> $BoatID,
                      'intAvailBAQuantity'=>1,
-                     'intAvailBAPayment'=>0,
+                     'intAvailBAPayment'=>$PaymentStatus,
                      'tmsCreated'=>$DateTimeToday);
         
             DB::table('tblavailbeachactivity')->insert($data);
@@ -555,12 +805,36 @@ class ResortController extends Controller
                                          'strBoatSReservationID' => $ReservationID);
             
             DB::table('tblboatschedule')->insert($InsertBoatSchedData);
-            
         }
         
-        \Session::flash('flash_message','Successfully availed the beach activity!');
+        $PaymentRemarks = collect(['AvailActivityID' => $AvailActivityID]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
         
-        return redirect('/Activities');
+        if($PaymentStatus == 1){
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+            $data = array('strPaymentID'=>$PaymentID,
+                         'strPayReservationID'=>$ReservationID,
+                         'dblPayAmount'=>$ActivityPrice,
+                         'strPayTypeID'=>17,
+                         'dtePayDate'=>$DateTimeToday,
+                         'strPaymentRemarks'=>$jsonRemarks);
+
+            DB::table('tblPayment')->insert($data);
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+            $data = array('strPaymentID'=>$PaymentID,
+                         'strPayReservationID'=>$ReservationID,
+                         'dblPayAmount'=>$ActivityPrice,
+                         'strPayTypeID'=>16,
+                         'dtePayDate'=>$DateTimeToday,
+                         'strPaymentRemarks'=>$jsonRemarks);
+
+            DB::table('tblPayment')->insert($data);
+        }
     }
     
     //activity done
@@ -584,34 +858,108 @@ class ResortController extends Controller
         $FeeID = trim($req->input('AddFeeID'));
         $FeeQuantity = trim($req->input('AddFeeQuantity'));
         
-        $ReservedFeeQuantity = DB::table('tblReservationFee')
-                        ->where([['strResFReservationID', '=', $ReservationID],['intResFPayment', '=', 0], ['strResFFeeID', '=', $FeeID]])
-                        ->pluck('intResFQuantity')
-                        ->first();
+        $FeeAmount = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeID', "=", $FeeID]])
+                ->pluck('b.dblFeeAmount')
+                ->first();
+        
+        $TotalPrice = $FeeQuantity * $FeeAmount;    
+        $PaymentStatus = 0;
 
-
-        if($ReservedFeeQuantity != null){
-            $FeeQuantity = $ReservedFeeQuantity + $FeeQuantity;
-
-            $updateData = array("intResFQuantity" => $FeeQuantity);   
-
-            DB::table('tblReservationFee')
-                ->where([['strResFReservationID', '=', $ReservationID], ['strResFFeeID', '=', $FeeID], ["intResFPayment", '=', '0']])
-                ->update($updateData);
-        }
-        else{
-            $data = array('strResFReservationID'=>$ReservationID,
-                             'strResFFeeID'=>$FeeID,
-                             'intResFPayment'=>0,
-                             'intResFQuantity'=> $FeeQuantity);
-
-            DB::table('tblReservationFee')->insert($data);
-        }
-
+        $this->saveAvailedFee($ReservationID, $FeeID, $FeeQuantity, $TotalPrice, $PaymentStatus);
         
         \Session::flash('flash_message','Successfully added the fee to the customer!');
-        
         return redirect('/Fees');
+    }
+    
+    public function PayFee(Request $req){
+        $ReservationID = trim($req->input('PayReservationID'));
+        $FeeID = trim($req->input('PayFeeID'));
+        $FeeQuantity = trim($req->input('PayFeeQuantity'));
+        $TotalPrice = trim($req->input('TotalFeePrice'));
+        $PaymentStatus = 1;
+        
+        $this->saveAvailedFee($ReservationID, $FeeID, $FeeQuantity, $TotalPrice, $PaymentStatus);
+        
+        \Session::flash('flash_message','Successfully added the fee to the customer!');
+        return redirect('/Fees');
+    }
+    
+    public function saveAvailedFee($ReservationID, $FeeID, $FeeQuantity, $TotalPrice, $PaymentStatus){
+        $DateTimeToday = Carbon::now('HongKong')->format('Y-m-d');
+        if($PaymentStatus == 0){
+            $ReservedFeeQuantity = DB::table('tblReservationFee')
+                ->where([['strResFReservationID', '=', $ReservationID],['intResFPayment', '=', 0], ['strResFFeeID', '=', $FeeID]])
+                ->pluck('intResFQuantity')
+                ->first();
+        
+            if($ReservedFeeQuantity != null){
+                $FeeQuantity = $ReservedFeeQuantity + $FeeQuantity;
+
+                $updateData = array("intResFQuantity" => $FeeQuantity);   
+
+                DB::table('tblReservationFee')
+                    ->where([['strResFReservationID', '=', $ReservationID], ['strResFFeeID', '=', $FeeID], ["intResFPayment", '=', '0']])
+                    ->update($updateData);
+            }
+            else{
+                $data = array('strResFReservationID'=>$ReservationID,
+                                 'strResFFeeID'=>$FeeID,
+                                 'intResFPayment'=>$PaymentStatus,
+                                 'intResFQuantity'=> $FeeQuantity);
+
+                DB::table('tblReservationFee')->insert($data);
+            }
+        }
+        
+        else if($PaymentStatus == 1){
+            $ReservedFeeQuantity = DB::table('tblReservationFee')
+                ->where([['strResFReservationID', '=', $ReservationID],['intResFPayment', '=', 1], ['strResFFeeID', '=', $FeeID]])
+                ->pluck('intResFQuantity')
+                ->first();
+        
+            if($ReservedFeeQuantity != null){
+                $FeeQuantity = $ReservedFeeQuantity + $FeeQuantity;
+
+                $updateData = array("intResFQuantity" => $FeeQuantity);   
+
+                DB::table('tblReservationFee')
+                    ->where([['strResFReservationID', '=', $ReservationID], ['strResFFeeID', '=', $FeeID], ["intResFPayment", '=', '1']])
+                    ->update($updateData);
+            }
+            else{
+                $data = array('strResFReservationID'=>$ReservationID,
+                                 'strResFFeeID'=>$FeeID,
+                                 'intResFPayment'=>$PaymentStatus,
+                                 'intResFQuantity'=> $FeeQuantity);
+
+                DB::table('tblReservationFee')->insert($data);
+            }
+        }
+
+        if($PaymentStatus == 1){
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+            $data = array('strPaymentID'=>$PaymentID,
+                     'strPayReservationID'=>$ReservationID,
+                     'dblPayAmount'=>$TotalPrice,
+                     'strPayTypeID'=>19,
+                     'dtePayDate'=>$DateTimeToday);
+
+            DB::table('tblPayment')->insert($data);
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+
+            $data = array('strPaymentID'=>$PaymentID,
+                         'strPayReservationID'=>$ReservationID,
+                         'dblPayAmount'=>$TotalPrice,
+                         'strPayTypeID'=>18,
+                         'dtePayDate'=>$DateTimeToday);
+
+            DB::table('tblPayment')->insert($data);
+        }
     }
     
     public function EditFee(Request $req){
@@ -638,6 +986,186 @@ class ResortController extends Controller
         \Session::flash('flash_message','Successfully deleted the fee of the customer!');
         
         return redirect('/Fees');
+    }
+    
+    
+    /*------------- CUSTOMERS -------------*/
+    public function saveAddRooms(Request $req){
+   
+        $ReservationID = trim($req->input('AddReservationID'));
+        $ChosenRooms = trim($req->input('AddChosenRooms'));
+        $AmountPaid = trim($req->input('AddRoomAmount'));
+        $tempCheckInDate = trim($req->input('AddToday'));
+        $tempCheckOutDate = trim($req->input('AddDeparture'));
+        $PaymentStatus = 2;
+        $DateToday = Carbon::now()->toDateString();
+        
+        $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d h:m:s');
+        $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d h:m:s');
+        
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $PaymentRemarks = collect(['CheckInDate' => $CheckInDate, 'CheckOutDate' => $CheckOutDate, 'ChosenRooms'=>$ChosenRooms]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$AmountPaid,
+                              'strPayTypeID'=> 20,
+                              'dtePayDate'=>$DateToday,
+                              'strPaymentRemarks'=>$jsonRemarks);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        \Session::flash('flash_message','Successfully added a room!');
+        
+        return redirect('/Customers');
+       
+    }
+    
+    public function saveAddRoomsPayment(Request $req){
+        $ReservationID = trim($req->input('AddPayReservationID'));
+        $ChosenRooms = trim($req->input('AddPayChosenRooms'));
+        $AmountPaid = trim($req->input('AddPayTotal'));
+        $tempCheckInDate = trim($req->input('AddPayToday'));
+        $tempCheckOutDate = trim($req->input('AddPayDeparture'));
+        $DateToday = Carbon::now()->toDateString();
+        $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d h:m:s');
+        $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d h:m:s');
+   
+        $PaymentStatus = 3;
+        
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $PaymentRemarks = collect(['CheckInDate' => $CheckInDate, 'CheckOutDate' => $CheckOutDate, 'ChosenRooms'=>$ChosenRooms]);
+
+        $jsonRemarks = $PaymentRemarks->toJson();
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$AmountPaid,
+                              'strPayTypeID'=> 21,
+                              'dtePayDate'=>$DateToday,
+                              'strPaymentRemarks'=>$jsonRemarks);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        \Session::flash('flash_message','Successfully added a room!');
+        
+        return redirect('/Customers');
+    }
+    
+    public function saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus){
+       
+        //Prepares Room Data
+        $IndividualRooms = explode(',',$ChosenRooms);
+        $IndividualRoomsLength = sizeof($IndividualRooms);
+        $IndividualRoomType = [];
+        
+        for($x = 0; $x < $IndividualRoomsLength; $x++){
+            $IndividualRoomDetails = explode('-', $IndividualRooms[$x]);
+            $IndividualRoomType[$x] = DB::table('tblRoomType')->where([['strRoomType',"=",$IndividualRoomDetails[0]], ['intRoomTDeleted',"=","1"]])->pluck('strRoomTypeID')->first();
+        }
+        
+        $AvailableRooms = "";
+        $IndividualRoomTypeLength = sizeof($IndividualRoomType);
+         
+        for($x = 0; $x < $IndividualRoomTypeLength; $x++){
+            
+            $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+            $ExistingRooms = DB::table('tblReservationRoom')
+                                    ->whereIn('strResRReservationID', $ExistingReservations)
+                                    ->pluck('strResRRoomID')
+                                    ->toArray();
+
+            $tempArrivalDate = explode(" ", $CheckInDate);
+            $tempDepartureDate = explode(" ", $CheckOutDate);
+
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('a.strRoomID')
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['a.strRoomTypeID', '=', $IndividualRoomType[$x]]])
+                         ->groupBy('a.strRoomID')
+                         ->get();
+            
+            foreach($Rooms as $Room){
+                $AvailableRooms .= $Room->strRoomID . ",";
+            }
+            
+            $AvailableRooms .= "@";
+        }
+        
+        $arrAvailableRooms = explode('@', $AvailableRooms);
+        array_pop($arrAvailableRooms);
+    
+        //Saves Reserved Rooms
+        for($x = 0; $x < $IndividualRoomTypeLength; $x++){
+           $IndividualRoomsInfo = explode('-', $IndividualRooms[$x]);
+
+           for($y = 0; $y < $IndividualRoomsInfo[3]; $y++){
+               $AvailableRoomsArray = explode(',', $arrAvailableRooms[$x]);
+               array_pop($AvailableRoomsArray);
+               $AvailableRoomsArrayLength = sizeof($AvailableRoomsArray);
+
+                   for($z = 0; $z <= $AvailableRoomsArrayLength; $z++){
+                        if($z != $IndividualRoomsInfo[3]){
+                            $InsertRoomsData = array('strResRReservationID'=>$ReservationID,
+                                                     'strResRRoomID'=>$AvailableRoomsArray[$z],
+                                                     'intResRPayment'=>$PaymentStatus);
+                            
+                            DB::table('tblReservationRoom')->insert($InsertRoomsData);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                break;
+
+           }
+        }
     }
 }
 

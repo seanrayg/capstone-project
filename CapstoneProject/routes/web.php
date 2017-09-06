@@ -32,11 +32,11 @@ Route::get('/Reports', function () {
     return view('Reports');
 });
 
-Route::get('/Billing', function () {
-    return view('Billing');
-});
+Route::get('/Billing', 'ViewResortController@ViewBilling');
 
 Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');
+
+Route::get('/UpgradeRoom/{id}', 'ViewResortController@ViewUpgradeRoom');
 
 Route::get('/Fees', 'ViewResortController@ViewFees');
 
@@ -310,13 +310,19 @@ Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
 Route::post('/ItemRental/Rent', 'ResortController@storeRentalItem');
 
+Route::post('/ItemRental/RentPay', 'ResortController@storeRentalItemPayment');
+
 Route::post('/ItemRental/Return', 'ResortController@storeReturnItem');
+
+Route::post('/ItemRental/ReturnPay', 'ResortController@storeReturnItemPayment');
 
 Route::post('ItemRental/Restore', 'ResortController@storeRestoreItem');
 
 Route::post('ItemRental/Delete', 'ResortController@DeleteItemRental');
 
 Route::post('ItemRental/Extend', 'ResortController@ExtendItemRental');
+
+Route::post('ItemRental/ExtendPay', 'ResortController@ExtendItemRentalPayment');
 
 /*----------- BOAT SCHEDULE -------------*/
 
@@ -329,6 +335,8 @@ Route::post('/BoatSchedule/RentDone', 'ScheduleController@RentDone');
 
 Route::post('/Activity/Avail', 'ResortController@AvailActivity');
 
+Route::post('/Activity/AvailPay', 'ResortController@AvailActivityPayment');
+
 Route::post('/Activity/Done', 'ResortController@ActivityDone');
 
 
@@ -338,9 +346,26 @@ Route::post('/Fee/Add', 'ResortController@AddFee');
 
 Route::get('/Fee/Details', 'ViewResortController@GetFeeDetails');
 
+Route::get('/Fee/Price', 'ViewResortController@GetFeePrice');
+
 Route::post('/Fee/Edit', 'ResortController@EditFee');
 
 Route::post('/Fee/Delete', 'ResortController@DeleteFee');
+
+Route::post('/Fee/Pay', 'ResortController@PayFee');
+
+/*------------ BILLING ------------*/
+
+Route::get('/Billing/Info', 'ViewResortController@getBillBreakdown');
+
+
+/*------------ CUSTOMERS -----------*/
+
+Route::get('/Customers/GetRooms', 'ViewResortController@getAddAvailableRooms');
+
+Route::post('/Customer/Rooms', 'ResortController@saveAddRooms');
+
+Route::post('/Customer/RoomsPay', 'ResortController@saveAddRoomsPayment');
 
 //testing reports
 Route::get('/sample', function(){

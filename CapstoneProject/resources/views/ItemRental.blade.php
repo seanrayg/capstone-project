@@ -388,7 +388,7 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-6">
-                                    <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                                    <button type="button" class="btn btn-success pull-left" onclick="ShowModalRentPayNow()"><i class="material-icons">done</i> Pay now</button>
                                 </div> 
                                 <div class="col-xs-6">
                                     <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
@@ -512,7 +512,7 @@
                                 <br><br>
                                 <div class = "row">
                                     <div class="col-xs-6">
-                                        <button type="button" class="btn btn-success pull-left" id="btnReturnNow"><i class="material-icons">done</i> Pay now</button>
+                                        <button type="button" class="btn btn-success pull-left" id="btnReturnNow" onclick="ShowModalReturnPayNow()"><i class="material-icons">done</i> Pay now</button>
                                     </div> 
                                     <div class="col-xs-6">
                                         <button type="submit" class="btn btn-success pull-right" id="btnReturnOut"><i class="material-icons">done</i> Pay at check out</button>
@@ -593,7 +593,7 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-6">
-                                    <button type="button" class="btn btn-success pull-left" onclick="#"><i class="material-icons">done</i> Pay now</button>
+                                    <button type="button" class="btn btn-success pull-left" onclick="ShowModalExtendPayNow()"><i class="material-icons">done</i> Pay now</button>
                                 </div> 
                                 <div class="col-xs-6">
                                     <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
@@ -782,6 +782,201 @@
                                 </div> 
                                 <div class="col-xs-6">
                                     <button type="submit" class="btn btn-danger pull-right">Delete</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<div id="DivModalRentPayNow" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Payment<span class="close" onclick="HideModalRentPayNow()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/ItemRental/RentPay" onsubmit="return CheckForm()">
+                            <input type="hidden" id="RentPayItemID" name="RentPayItemID">
+                            <input type="hidden" id="RentPayQuantity" name="RentPayQuantity">
+                            <input type="hidden" id="RentPayDuration" name="RentPayDuration">
+                            <input type="hidden" id="RentPayGuest" name="RentPayGuest">
+                            {{ csrf_field() }}
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="RentPayTotal" name="RentPayTotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static" id="RentPayPaymentError">
+                                        <label class="control-label">Payment</label>
+                                        <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#RentPayPaymentError')" onchange="SendPayment(this, 'double', '#RentPayPaymentError')" id="RentPayPayment" name="RentPayPayment" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Change</label>
+                                        <input type="text" class="form-control" id="RentPayChange" name="RentPayChange">
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalReturnPayNow" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Payment<span class="close" onclick="HideModalReturnPayNow()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/ItemRental/ReturnPay" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="ReturnPayItemRate" id="ReturnPayItemRate">
+                            <input type="hidden" name="ReturnPayItemID" id="ReturnPayItemID">
+                            <input type="hidden" name="ReturnPayReservationID" id="ReturnPayReservationID">
+                            <input type="hidden" name="ReturnPayRentedItemID" id="ReturnPayRentedItemID">
+                            <input type="hidden" name="ReturnPayTotalQuantity" id="ReturnPayTotalQuantity">
+                            <input type="hidden" id="ReturnPayItemName" name="ReturnPayItemName">
+                            <input type="hidden" id="ReturnPayGuestName" name="ReturnPayGuestName">
+                            <input type="hidden" id="ReturnPayRentalStatus" name="ReturnPayRentalStatus">
+                            <input type="hidden" id="ReturnPayExcessTime" name="ReturnPayExcessTime">
+                            <input type="hidden" id="ReturnPayQuantityAvailed" name="ReturnPayQuantityAvailed">
+                            <input type="hidden" id="ReturnPayTimePenalty" name="ReturnPayTimePenalty">
+                            <input type="hidden" id = "ReturnPayItemStatus" name="ReturnPayItemStatus">
+                            <input type="hidden" id="ReturnPayBrokenQuantity" name="ReturnPayBrokenQuantity">
+                            <input type="hidden" id="ReturnPayBrokenPenalty" name="ReturnPayBrokenPenalty">
+
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="ReturnPayTotal" name="ReturnPayTotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static" id="ReturnPayPaymentError">
+                                        <label class="control-label">Payment</label>
+                                        <input type="text" class="form-control" onkeyup="SendReturnPayment(this, 'double', '#ReturnPayPaymentError')" onchange="SendReturnPayment(this, 'double', '#ReturnPayPaymentError')" id="ReturnPayPayment" name="ReturnPayPayment" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Change</label>
+                                        <input type="text" class="form-control" id="ReturnPayChange" name="ReturnPayChange">
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalExtendPayNow" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="blue">
+                        <i class="material-icons">alarm_add</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Extend Rent<span class="close" onclick="HideModalExtendPayNow()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/ItemRental/ExtendPay" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <!--<input type="hidden" name="ExtendItemRate" id="ExtendItemRate">-->
+                            <input type="hidden" name="ExtendPayItemID" id="ExtendPayItemID">
+                            <input type="hidden" name="ExtendPayReservationID" id="ExtendPayReservationID">
+                            <input type="hidden" name="ExtendPayRentedItemID" id="ExtendPayRentedItemID">
+                            <input type="hidden" name="ExtendPayTotalQuantity" id="ExtendPayTotalQuantity">
+                            <input type="hidden" id="ExtendPayItemName" name="ExtendPayItemName">      
+                            <input type="hidden" id="ExtendPayGuestName" name="ExtendPayGuestName">
+                            <input type="hidden" id="ExtendPayQuantity" name="ExtendPayQuantity">     
+                            <input type="hidden" id="ExtendPayTime" name="ExtendPayTime"> 
+      
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="ExtendPayTotal" name="ExtendPayTotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static" id="ExtendPayPaymentError">
+                                        <label class="control-label">Payment</label>
+                                        <input type="text" class="form-control" onkeyup="SendExtendPayment(this, 'double', '#ExtendPayPaymentError')" onchange="SendExtendPayment(this, 'double', '#ExtendPayPaymentError')" id="ExtendPayPayment" name="ExtendPayPayment" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Change</label>
+                                        <input type="text" class="form-control" id="ExtendPayChange" name="ExtendPayChange">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
+                                </div>
+                            </div>
+
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
                         </form>

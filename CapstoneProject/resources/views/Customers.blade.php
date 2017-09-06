@@ -10,6 +10,25 @@
 @endsection
 
 @section('content')
+<!-- Add success -->
+@if(Session::has('flash_message'))
+    <div class="row">
+        <div class="col-md-5 col-md-offset-7">
+            <div class="alert alert-success hide-automatic">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">check</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                  {{ Session::get('flash_message') }}
+                </div>
+            </div> 
+        </div>
+    </div>
+@endif
+
 <h5 id="TitlePage">Customers</h5>
 
 <div class="row">
@@ -52,7 +71,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table" id="tblResortCustomers">
+                                <table class="table" id="tblResortCustomers" onclick="run(event, 'Resort')">
                                     <thead class="text-primary">
                                         <th style="display:none" class="text-center">Customer ID</th>
                                         <th style="display:none" class="text-center">Reservation ID</th>
@@ -61,6 +80,8 @@
                                         <th onclick="sortTable(5, 'tblResortCustomers', 'string')" class="text-center">Lastname</th>
                                         <th onclick="sortTable(6, 'tblResortCustomers', 'string')" class="text-center">Contact #</th>
                                         <th onclick="sortTable(7, 'tblResortCustomers', 'string')" class="text-center">Email</th>
+                                        <th style="display:none">Check In Date</th>
+                                        <th style="display:none">Check Out Date</th>
                                         <th class="text-center">Action</th>
                                     </thead>
                                     <tbody>
@@ -73,6 +94,8 @@
                                             <td>{{$Customer->strCustLastName}}</td>
                                             <td>{{$Customer->strCustContact}}</td>
                                             <td>{{$Customer->strCustEmail}}</td>
+                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('Y/m/d h:m:s')}}</td>
+                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDDeparture)->format('Y/m/d h:m:s')}}</td> 
                                             <td>
                                                 <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs" onclick="ShowModalExtendStay()">
                                                     <i class="material-icons">alarm_add</i>
@@ -343,21 +366,10 @@
                 <div class="card card-stats">
                     <div class="card-content">
                         <div class="row">
-                            <p class="ErrorLabel" id="RoomError"></p>
-                            <form method="post" action="/Reservation/Room/Edit" id="frmEditRooms" onsubmit="return CheckRooms()">
-                                {{ csrf_field() }}
-                                <input type="hidden" name="ChosenRooms" id="ChosenRooms">
-                                <input type="hidden" name="r-NoOfKids" id="r-NoOfKids">
-                                <input type="hidden" name="r-NoOfAdults" id="r-NoOfAdults">
-                                <input type="hidden" name="r-CheckInDate" id="r-CheckInDate">
-                                <input type="hidden" name="r-CheckOutDate" id="r-CheckOutDate">
-                                <input type="hidden" id="r-ReservationID" name="r-ReservationID">
-                                <input type="hidden" name="r-BoatsUsed" id="r-BoatsUsed">
-                                <input type="hidden" name="r-PickUpTime" id="r-PickUpTime">
-                                <button type="button" class="btn btn-danger pull-right" style="margin-right: 50px;" onclick="HideModalAddRoom()">Cancel</button>
-                                <button type="submit" class="btn btn-success pull-right" style="margin-right: 50px;">Add Rooms</button>    
-                                <div class="clearfix"></div>
-                            </form>
+                            <p class="ErrorLabel" id="RoomError"></p>        
+                            <button type="button" class="btn btn-danger pull-right" style="margin-right: 50px;" onclick="HideModalAddRoom()">Cancel</button>
+                            <button type="button" class="btn btn-success pull-right" style="margin-right: 50px;" onclick="ShowModalAddRoomPayment()">Add Rooms</button>    
+                            <div class="clearfix"></div>
                         </div>
                     </div>
                 </div>
@@ -643,6 +655,101 @@
                                 <div class="clearfix"></div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalAddRoomPayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalAddRoomPayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">Pay now?</h3>
+                        <p class="category" style="font-family: Roboto; color:black" id="AddTotalAmount"></p>
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" onclick="ShowModalAddRoomPayNow()">Yes</button>
+                            </div>
+                            <form method="post" action="/Customer/Rooms" id="formAddRoom">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="AddChosenRooms" id="AddChosenRooms">
+                                <input type="hidden" name="AddReservationID" id="AddReservationID">
+                                <input type="hidden" name="AddRoomAmount" id="AddRoomAmount">
+                                <input type="hidden" name="AddToday" id="AddToday">
+                                <input type="hidden" name="AddDeparture" id="AddDeparture">
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-success">No</button>
+                                </div>
+                            </form>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalAddRoomPayNow" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Payment<span class="close" onclick="HideModalAddRoomPayNow()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/Customer/RoomsPay" onsubmit="return CheckForm()">
+                            <input type="hidden" name="AddPayChosenRooms" id="AddPayChosenRooms">
+                            <input type="hidden" name="AddPayReservationID" id="AddPayReservationID">
+                            <input type="hidden" name="AddPayToday" id="AddPayToday">
+                            <input type="hidden" name="AddPayDeparture" id="AddPayDeparture">
+                            {{ csrf_field() }}
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="AddPayTotal" name="AddPayTotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static" id="AddPayPaymentError">
+                                        <label class="control-label">Payment</label>
+                                        <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#AddPayPaymentError')" onchange="SendPayment(this, 'double', '#AddPayPaymentError')" id="AddPayPayment" name="AddPayPayment" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Change</label>
+                                        <input type="text" class="form-control" id="AddPayChange" name="AddPayChange">
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                </div> 
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

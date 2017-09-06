@@ -804,7 +804,8 @@ class ViewController extends Controller
                                  'b.strCustAddress',
                                  'b.dtmCustBirthday',
                                  'b.strCustNationality',
-                                 'b.strCustGender')
+                                 'b.strCustGender',
+                                 'a.strReservationCode')
                         ->where('strReservationID', '=', $ReservationID)
                         ->get();
         
@@ -893,6 +894,13 @@ class ViewController extends Controller
     }
     
     public function fnGetAvailableRooms($ArrivalDate, $DepartureDate){
+        
+       
+        /*
+        ->where('duty_start','>=',$dt)
+            ->where('duty_end','<=',$dt)
+        return $query->whereDate('commenters.created_at', '>=', $from)
+        ->whereDate('commenters.created_at', '<=', $to);
         $ExistingReservations = DB::table('tblReservationDetail')
                                 ->where(function($query){
                                     $query->where('intResDStatus', '=', '1')
@@ -902,6 +910,32 @@ class ViewController extends Controller
                                 ->where(function($query) use($ArrivalDate, $DepartureDate){
                                     $query->whereBetween('dtmResDArrival', [$ArrivalDate, $DepartureDate])
                                           ->orWhereBetween('dtmResDDeparture', [$ArrivalDate, $DepartureDate]);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();*/
+        
+           
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','>=',$ArrivalDate)
+                                          ->where('dtmResDArrival','<=',$DepartureDate);
+                                })
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDDeparture','>=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','<=',$DepartureDate);
+                                })
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','>=',$ArrivalDate);
+                                })
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$DepartureDate)
+                                          ->where('dtmResDDeparture','>=',$DepartureDate);
                                 })
                                 ->pluck('strReservationID')
                                 ->toArray();
@@ -999,9 +1033,21 @@ class ViewController extends Controller
                                           ->orWhere('intResDStatus', '=', '2')
                                           ->orWhere('intResDStatus', '=', '4');
                                 })
-                                ->where(function($query) use($ArrivalDate, $DepartureDate){
-                                    $query->whereBetween('dtmResDArrival', [$ArrivalDate, $DepartureDate])
-                                          ->orWhereBetween('dtmResDDeparture', [$ArrivalDate, $DepartureDate]);
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
                                 })
                                 ->pluck('strReservationID')
                                 ->toArray();

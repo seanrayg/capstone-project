@@ -483,6 +483,8 @@ class ReservationController extends Controller
         $IndividualRoomTypeLength = sizeof($IndividualRoomType);
          
         for($x = 0; $x < $IndividualRoomTypeLength; $x++){
+            
+            
             $ExistingReservations = DB::table('tblReservationDetail')
                                 ->where(function($query){
                                     $query->where('intResDStatus', '=', '1')
@@ -490,8 +492,20 @@ class ReservationController extends Controller
                                           ->orWhere('intResDStatus', '=', '4');
                                 })
                                 ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->whereBetween('dtmResDArrival', [$CheckInDate, $CheckOutDate])
-                                          ->orWhereBetween('dtmResDDeparture', [$CheckInDate, $CheckOutDate]);
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
                                 })
                                 ->pluck('strReservationID')
                                 ->toArray();
@@ -522,7 +536,7 @@ class ReservationController extends Controller
         
         $arrAvailableRooms = explode('@', $AvailableRooms);
         array_pop($arrAvailableRooms);
-
+    
         //Saves Reserved Rooms
         for($x = 0; $x < $IndividualRoomTypeLength; $x++){
            $IndividualRoomsInfo = explode('-', $IndividualRooms[$x]);
@@ -734,6 +748,7 @@ class ReservationController extends Controller
         $PickOutTime = "";
         $PickUpTime = "";
         $arrTimeToday = explode(':', $TimeToday);
+        /*
         if(((int)$arrTimeToday[1] >= 00) && ((int)$arrTimeToday[1]<=15)){
             $PickUpTime = $arrTimeToday[0] .":00:00"; 
         }
@@ -745,7 +760,8 @@ class ReservationController extends Controller
         }
         else{
             $PickUpTime = $arrTimeToday[0] .":45:00";
-        }
+        }*/
+        $PickUpTime = $TimeToday;
         
         
         $ReservationID = DB::table('tblReservationDetail')->pluck('strReservationID')->first();
@@ -809,6 +825,7 @@ class ReservationController extends Controller
         $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
         $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
         
+      
         //saves reserved rooms
         $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
 

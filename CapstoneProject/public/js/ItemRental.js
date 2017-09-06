@@ -120,6 +120,80 @@ function HideModalDeleteItem(){
         document.getElementById("DivModalDeleteItem").style.display = "none";
 }
 
+function ShowModalRentPayNow(){
+    document.getElementById("RentPayTotal").value = document.getElementById("RentItemPrice").value;
+    document.getElementById("RentPayItemID").value = document.getElementById("RentItemID").value;
+    document.getElementById("RentPayDuration").value = document.getElementById("RentDuration").value;
+    document.getElementById("RentPayQuantity").value = document.getElementById("RentQuantity").value;
+    document.getElementById("RentPayGuest").value = document.getElementById("SelectGuests").value;
+    document.getElementById("DivModalRentPayNow").style.display = "block";
+}
+
+function HideModalRentPayNow(){
+    document.getElementById("DivModalRentPayNow").style.display = "none";
+}
+
+function ShowModalReturnPayNow(){
+    if(!($('.form-group').hasClass('has-warning'))){
+        if(ReturnItemInfo[6] == "None"){
+            document.getElementById("ReturnTimePenalty").value = "0";
+        }
+        var ExcessPenalty = 0;
+        var BrokenPenalty = 0;
+        if(document.getElementById("ReturnItemStatus").value != "Good"){
+            BrokenPenalty = parseInt(document.getElementById("ReturnBrokenPenalty").value);
+        }
+        if(document.getElementById("ReturnRentalStatus").value == "Overtime"){
+            ExcessPenalty = parseInt(document.getElementById("ReturnTimePenalty").value);
+        }
+
+        var TotalPayment = ExcessPenalty + BrokenPenalty;
+        document.getElementById("ReturnPayTotal").value = TotalPayment;
+
+        document.getElementById("ReturnPayItemName").value = ReturnItemInfo[0];
+        document.getElementById("ReturnPayGuestName").value = ReturnItemInfo[1];
+        document.getElementById("ReturnPayRentalStatus").value = ReturnItemInfo[5];
+        document.getElementById("ReturnPayExcessTime").value = ReturnItemInfo[6];
+        document.getElementById("ReturnPayItemRate").value = ReturnItemInfo[7];
+        document.getElementById("ReturnPayItemID").value = ReturnItemInfo[8];
+        document.getElementById("ReturnPayReservationID").value = ReturnItemInfo[9];
+        document.getElementById("ReturnPayRentedItemID").value = ReturnItemInfo[10];
+        document.getElementById("ReturnPayTotalQuantity").value = ReturnItemInfo[4];  
+
+        document.getElementById("ReturnPayBrokenQuantity").value = document.getElementById("ReturnBrokenQuantity").value;
+        document.getElementById("ReturnPayBrokenPenalty").value = document.getElementById("ReturnBrokenPenalty").value;
+
+        document.getElementById("ReturnPayQuantityAvailed").value = document.getElementById("ReturnQuantityAvailed").value;
+        document.getElementById("ReturnPayTimePenalty").value = document.getElementById("ReturnTimePenalty").value;
+
+        document.getElementById("ReturnPayItemStatus").value = document.getElementById("ReturnItemStatus").value;
+
+        document.getElementById("DivModalReturnPayNow").style.display = "block";
+    }
+}
+
+function HideModalReturnPayNow(){
+    document.getElementById("DivModalReturnPayNow").style.display = "none";
+} 
+
+function ShowModalExtendPayNow(){
+    document.getElementById("ExtendPayItemName").value = ReturnItemInfo[0];
+    document.getElementById("ExtendPayGuestName").value = ReturnItemInfo[1];
+    document.getElementById("ExtendPayItemID").value = ReturnItemInfo[8];
+    document.getElementById("ExtendPayReservationID").value = ReturnItemInfo[9];
+    document.getElementById("ExtendPayRentedItemID").value = ReturnItemInfo[10];
+    document.getElementById("ExtendPayTotalQuantity").value = ReturnItemInfo[4];
+    document.getElementById("ExtendPayQuantity").value = document.getElementById("ExtendQuantity").value;
+    document.getElementById("ExtendPayTime").value = document.getElementById("ExtendTime").value;
+    
+    document.getElementById("ExtendPayTotal").value = document.getElementById("ExtendPrice").value;
+    document.getElementById("DivModalExtendPayNow").style.display = "block";
+}
+
+function HideModalExtendPayNow(){
+    document.getElementById("DivModalExtendPayNow").style.display = "none";
+}
+
 /*------------- RENT ITEM ------------------*/
 
 function run(event, sender){
@@ -188,6 +262,24 @@ function SendQuantityInput(field, dataType, holder){
         }
     } 
     
+}
+
+//rent item payment
+function SendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var RentTotal = parseInt(document.getElementById("RentPayTotal").value);
+        var RentPayment = parseInt(field.value);
+        var Change = RentPayment - RentTotal;
+        if(Change < 0){
+            document.getElementById("RentPayChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("RentPayChange").value = Change;
+        }
+        
+    }
 }
 
 
@@ -275,6 +367,25 @@ function CheckReturnForm(){
     }
 }
 
+function SendReturnPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var RentTotal = parseInt(document.getElementById("ReturnPayTotal").value);
+        var RentPayment = parseInt(field.value);
+        var Change = RentPayment - RentTotal;
+        if(Change < 0){
+            document.getElementById("ReturnPayChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("ReturnPayChange").value = Change;
+        }
+        
+    }
+}
+
+
+
 
 /*-------------- RESTORE ITEM -------------*/
 
@@ -334,5 +445,22 @@ function SendQuantityExtend(field, dataType, holder){
         document.getElementById("ExtendPrice").value = "Please enter valid values";
     }
     
+}
+
+function SendExtendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var RentTotal = parseInt(document.getElementById("ExtendPayTotal").value);
+        var RentPayment = parseInt(field.value);
+        var Change = RentPayment - RentTotal;
+        if(Change < 0){
+            document.getElementById("ExtendPayChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("ExtendPayChange").value = Change;
+        }
+        
+    }
 }
 
