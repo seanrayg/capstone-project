@@ -487,7 +487,8 @@
                     </tbody>
                 </table>    
             </div>
-            <form id="print" action="" target="_blank">
+            <form id="print" method="post" action="/sample" target="_blank">
+                {{ csrf_field() }}
                 <button type="submit" class="btn btn-success pull-right">Print</button>
             </form>
         </div>

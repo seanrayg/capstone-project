@@ -341,3 +341,9 @@ Route::get('/Fee/Details', 'ViewResortController@GetFeeDetails');
 Route::post('/Fee/Edit', 'ResortController@EditFee');
 
 Route::post('/Fee/Delete', 'ResortController@DeleteFee');
+
+//testing reports
+Route::get('/sample', function(){
+	$pdf = PDF::loadView('pdf.invoice');
+	return $pdf->stream();
+});
