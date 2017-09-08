@@ -368,7 +368,8 @@ Route::post('/Customer/Rooms', 'ResortController@saveAddRooms');
 Route::post('/Customer/RoomsPay', 'ResortController@saveAddRoomsPayment');
 
 //testing reports
-Route::get('/sample', function(){
-	$pdf = PDF::loadView('pdf.invoice');
+Route::post('/sample', function(){
+	$customPaper = array(0,0,360,200);
+	$pdf = PDF::loadview('pdf.invoice')->setPaper($customPaper);
 	return $pdf->stream();
 });

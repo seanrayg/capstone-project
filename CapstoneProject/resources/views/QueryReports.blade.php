@@ -410,7 +410,7 @@
     }
 
     </script>
-    <script src="/js/reports.js" type="text/javascript"></script>
+    <script src="js/reports.js" type="text/javascript"></script>
 @endsection
 
 @section('content')
