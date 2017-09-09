@@ -120,6 +120,20 @@
                         </table>
                         <br><br>
                         
+                        <h5>Upgraded Room/Cottages</h5>
+                        <table class="table" style="font-family:'Roboto'" id="tblBillUpgrade">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Payment Needed</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+     
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
                         <h5>Item Rental</h5>
                         <table class="table" style="font-family:'Roboto'" id="tblBillItem">
                             <thead class="text-success">

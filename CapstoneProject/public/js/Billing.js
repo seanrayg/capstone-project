@@ -128,6 +128,7 @@ function getBillBreakdown(){
             $('#tblBillFee tbody').empty();
             $('#tblBillMiscellaneous tbody').empty();
             $('#tblBillAdditional tbody').empty();
+            $('#tblBillUpgrade tbody').empty();
             
             var tableRef = document.getElementById('tblBillAccommodation').getElementsByTagName('tbody')[0];
 
@@ -156,6 +157,19 @@ function getBillBreakdown(){
                 newCell1.innerHTML = data.AdditionalRooms[x].strRoomType;
                 newCell2.innerHTML = data.AdditionalRooms[x].strRoomName;
                 newCell3.innerHTML = data.AdditionalRooms[x].dblRoomRate;
+
+            }
+            
+            tableRef = document.getElementById('tblBillUpgrade').getElementsByTagName('tbody')[0];
+
+            for(var x = 0; x < data.UpgradeRooms.length; x++){
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+                
+                newCell1.innerHTML = data.UpgradeRooms[x].strPaymentRemarks;
+                newCell2.innerHTML = data.UpgradeRooms[x].dblPayAmount;
 
             }
             

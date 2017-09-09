@@ -170,6 +170,10 @@ window.onload = function() {
     else if(TitlePage == "Fees"){
         $("#SB-Fees").addClass("active");
     }
+    
+    else if(TitlePage == "Utilities"){
+        $("#SB-Utilities").addClass("active");
+    }
 };
 
 //modal for walkin

@@ -72,7 +72,12 @@
                     <i class="material-icons">build</i>
                     <p>Maintenance</p>
                  </a>
-
+            </li>
+            <li id="SB-Utilities">
+                <a href="/Utilities">
+                    <i class="material-icons">devices</i>
+                    <p>Utilities</p>
+                 </a>
             </li>
             <li id="SB-Reports">
                 <a href="/Reports">

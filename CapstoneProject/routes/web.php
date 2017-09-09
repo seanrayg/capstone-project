@@ -32,6 +32,10 @@ Route::get('/Reports', function () {
     return view('Reports');
 });
 
+Route::get('/Utilities', function () {
+    return view('Utilities');
+});
+
 Route::get('/Billing', 'ViewResortController@ViewBilling');
 
 Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');
@@ -39,6 +43,8 @@ Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');
 Route::get('/UpgradeRoom/{id}/{RoomType}/{RoomName}', 'ViewResortController@ViewUpgradeRoom');
 
 Route::get('/Fees', 'ViewResortController@ViewFees');
+
+Route::get('/ContactInformation', 'ViewUtilitiesController@ViewContact');
 
 
 
@@ -377,6 +383,15 @@ Route::get('/Customers/GetRooms', 'ViewResortController@getAddAvailableRooms');
 Route::post('/Customer/Rooms', 'ResortController@saveAddRooms');
 
 Route::post('/Customer/RoomsPay', 'ResortController@saveAddRoomsPayment');
+
+
+/*---------- CONTACT INFORMATION----------*/
+
+Route::post('Contact/Save', 'UtilitiesController@saveContactInfo');
+
+Route::post('Contact/Edit', 'UtilitiesController@editContactInfo');
+
+Route::post('Contact/Delete', 'UtilitiesController@deleteContactInfo');
 
 //testing reports
 Route::post('/sample', function(){

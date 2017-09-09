@@ -71,56 +71,26 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table">
+                                <table class="table" id="tblAvailableRooms">
                                     <thead class="text-primary">
-                                        <th>Room Type</th>
-                                        <th>Room</th>
-                                        <th>Capacity</th>
-                                        <th>Rate</th>
-                                        <th>Description</th>
-                                        <th>Available Until</th>
+                                        <th class="text-center" onclick="sortTable(0, 'tblAvailableRooms', 'string')">Accomodation</th>
+                                        <th class="text-center" onclick="sortTable(1, 'tblAvailableRooms', 'string')">Room/Cottage Type</th>
+                                        <th class="text-center" onclick="sortTable(2, 'tblAvailableRooms', 'string')">Name</th>
+                                        <th class="text-center" onclick="sortTable(3, 'tblAvailableRooms', 'int')">Capacity</th>
+                                        <th class="text-center" onclick="sortTable(4, 'tblAvailableRooms', 'double')">Rate</th>
+                                        <th class="text-center" onclick="sortTable(5, 'tblAvailableRooms', 'string')">Availability</th>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Room Type</td>
-                                            <td>Room</td>
-                                            <td>Capacity</td>
-                                            <td>Rate</td>
-                                            <td>Description</td>
-                                            <td>Available Until</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Room Type</td>
-                                            <td>Room</td>
-                                            <td>Capacity</td>
-                                            <td>Rate</td>
-                                            <td>Description</td>
-                                            <td>Available Until</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Room Type</td>
-                                            <td>Room</td>
-                                            <td>Capacity</td>
-                                            <td>Rate</td>
-                                            <td>Description</td>
-                                            <td>Available Until</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Room Type</td>
-                                            <td>Room</td>
-                                            <td>Capacity</td>
-                                            <td>Rate</td>
-                                            <td>Description</td>
-                                            <td>Available Until</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Room Type</td>
-                                            <td>Room</td>
-                                            <td>Capacity</td>
-                                            <td>Rate</td>
-                                            <td>Description</td>
-                                            <td>Available Until</td>
-                                        </tr>
+                                    <tbody class="text-center">
+                                        @foreach($RoomsAvailable as $Rooms)
+                                            <tr>
+                                                <td>{{$Rooms->intRoomTCategory}}</td>
+                                                <td>{{$Rooms->strRoomType}}</td>
+                                                <td>{{$Rooms->strRoomName}}</td>
+                                                <td>{{$Rooms->intRoomTCapacity}}</td>
+                                                <td>{{$Rooms->dblRoomRate}}</td>
+                                                <td>{{$Rooms->Availability}}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>

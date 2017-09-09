@@ -1184,41 +1184,29 @@ class ResortController extends Controller
         
         $OriginalPaymentStatus = $this->fnSaveUpgradeRoom($ReservationID, $RoomName, $NewRoomName, $AmountPaid, $PaymentStatus);
         
-        \Session::flash('flash_message','Successfully upgraded the room!');
-        
-        return redirect('/Rooms');
-    }
-    
-    public function saveUpgradeRoomPayment(Request $req){
-        $ReservationID = trim($req->input('PayReservationID'));
-        $RoomName = trim($req->input('PayRoomName'));
-        $NewRoomName = trim($req->input('PayNewRoomName'));
-        $AmountPaid = trim($req->input('PayTotal'));
-        
-        $PaymentStatus = 5;
-        
-        //$OriginalPaymentStatus = $this->fnSaveUpgradeRoom($ReservationID, $RoomName, $NewRoomName, $AmountPaid, $PaymentStatus);
-        
+        //get original room price
         $OriginalRoomPrice = DB::table('tblRoomType as a')
             ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
             ->join ('tblRoom as c', 'c.strRoomTypeID', '=', 'a.strRoomTypeID')
             ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
                     ['a.intRoomTDeleted',"=", "1"]
-                    ,['a.strRoomName', '=', $RoomName]])
+                    ,['c.strRoomName', '=', $RoomName]])
             ->pluck('b.dblRoomRate')
             ->first();
         
-        dd($OriginalRoomPrice);
-        
+        //get price of the upgraded room
         $UpgradeRoomPrice = DB::table('tblRoomType as a')
             ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
             ->select('b.dblRoomRate')
+            ->join ('tblRoom as c', 'c.strRoomTypeID', '=', 'a.strRoomTypeID')
             ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
                     ['a.intRoomTDeleted',"=", "1"]
-                    ,['a.strRoomType', '=', $UpgradeRoom]])
-            ->get();
+                    ,['c.strRoomName', '=', $NewRoomName]])
+            ->pluck('b.dblRoomRate')
+            ->first();
         
-        /*$ReservationDates = DB::table('tblReservationDetail')
+        //get the reservation dates
+        $ReservationDates = DB::table('tblReservationDetail')
                             ->select('dtmResDArrival',
                                      'dtmResDDeparture')
                             ->where('strReservationID', $ReservationID)
@@ -1228,9 +1216,15 @@ class ResortController extends Controller
         $DepartureDate = "";
         
         foreach($ReservationDates as $Dates){
-            $ArrivalDate = $Dates->dtmResDArrival;
-            $DepartureDate = $Dates->dtmResDDeparture;
+            $ArrivalDate = Carbon::parse($Dates->dtmResDArrival);
+            $DepartureDate = Carbon::parse($Dates->dtmResDDeparture);
         }
+        
+        $daysOfStay = $DepartureDate->diffInDays($ArrivalDate);
+        
+        if($daysOfStay == 0){
+            $daysOfStay = 1; 
+        } 
         
         $DateTimeToday = Carbon::now('Asia/Manila')->format('Y/m/d h:i:s');
         $DateToday = Carbon::now('Asia/Manila')->format('Y/m/d');
@@ -1245,7 +1239,111 @@ class ResortController extends Controller
         
         if($OriginalPaymentStatus == 1){
 
-            $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName]);
+            $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
+
+            $jsonRemarks = $PaymentRemarks->toJson();
+
+            $TransactionData = array('strPaymentID'=>$PaymentID,
+                                      'strPayReservationID'=>$ReservationID,
+                                      'dblPayAmount'=>$AmountPaid,
+                                      'strPayTypeID'=> 22,
+                                      'dtePayDate'=>$DateToday,
+                                      'strPaymentRemarks'=>$jsonRemarks);
+
+            DB::table('tblPayment')->insert($TransactionData);
+        }
+        
+        if($OriginalPaymentStatus == 0){
+            $OriginalRoomTotal = $OriginalRoomPrice * $daysOfStay;
+            $RemainingAmount = abs($OriginalRoomTotal + $AmountPaid);
+ 
+            $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
+
+            $jsonRemarks = $PaymentRemarks->toJson();
+
+            $TransactionData = array('strPaymentID'=>$PaymentID,
+                                      'strPayReservationID'=>$ReservationID,
+                                      'dblPayAmount'=>$RemainingAmount,
+                                      'strPayTypeID'=> 22,
+                                      'dtePayDate'=>$DateToday,
+                                      'strPaymentRemarks'=>$jsonRemarks);
+            
+            DB::table('tblPayment')->insert($TransactionData);
+        }
+        
+        \Session::flash('flash_message','Successfully upgraded the room!');
+        
+        return redirect('/Rooms');
+    }
+    
+    public function saveUpgradeRoomPayment(Request $req){
+        $ReservationID = trim($req->input('PayReservationID'));
+        $RoomName = trim($req->input('PayRoomName'));
+        $NewRoomName = trim($req->input('PayNewRoomName'));
+        $AmountPaid = trim($req->input('PayTotal'));
+        $NewRoomID = DB::table('tblRoom')->where([['strRoomName', '=', $NewRoomName],['strRoomStatus','=','Available']])->pluck("strRoomID")->first();
+        
+        $PaymentStatus = 5;
+        
+        //save upgraded room to the database
+        $OriginalPaymentStatus = $this->fnSaveUpgradeRoom($ReservationID, $RoomName, $NewRoomName, $AmountPaid, $PaymentStatus);
+        
+        //get original room price
+        $OriginalRoomPrice = DB::table('tblRoomType as a')
+            ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+            ->join ('tblRoom as c', 'c.strRoomTypeID', '=', 'a.strRoomTypeID')
+            ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
+                    ['a.intRoomTDeleted',"=", "1"]
+                    ,['c.strRoomName', '=', $RoomName]])
+            ->pluck('b.dblRoomRate')
+            ->first();
+        
+        //get price of the upgraded room
+        $UpgradeRoomPrice = DB::table('tblRoomType as a')
+            ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+            ->select('b.dblRoomRate')
+            ->join ('tblRoom as c', 'c.strRoomTypeID', '=', 'a.strRoomTypeID')
+            ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
+                    ['a.intRoomTDeleted',"=", "1"]
+                    ,['c.strRoomName', '=', $NewRoomName]])
+            ->pluck('b.dblRoomRate')
+            ->first();
+        
+        //get the reservation dates
+        $ReservationDates = DB::table('tblReservationDetail')
+                            ->select('dtmResDArrival',
+                                     'dtmResDDeparture')
+                            ->where('strReservationID', $ReservationID)
+                            ->get();
+        
+        $ArrivalDate = "";
+        $DepartureDate = "";
+        
+        foreach($ReservationDates as $Dates){
+            $ArrivalDate = Carbon::parse($Dates->dtmResDArrival);
+            $DepartureDate = Carbon::parse($Dates->dtmResDDeparture);
+        }
+        
+        $daysOfStay = $DepartureDate->diffInDays($ArrivalDate);
+        
+        if($daysOfStay == 0){
+            $daysOfStay = 1; 
+        } 
+        
+        $DateTimeToday = Carbon::now('Asia/Manila')->format('Y/m/d h:i:s');
+        $DateToday = Carbon::now('Asia/Manila')->format('Y/m/d');
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        if($OriginalPaymentStatus == 1){
+
+            $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
 
             $jsonRemarks = $PaymentRemarks->toJson();
 
@@ -1260,8 +1358,22 @@ class ResortController extends Controller
         }
         
         if($OriginalPaymentStatus == 0){
+            $OriginalRoomTotal = $OriginalRoomPrice * $daysOfStay;
+            $RemainingAmount = abs($OriginalRoomTotal - $AmountPaid);
+ 
+            $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
+
+            $jsonRemarks = $PaymentRemarks->toJson();
+
+            $TransactionData = array('strPaymentID'=>$PaymentID,
+                                      'strPayReservationID'=>$ReservationID,
+                                      'dblPayAmount'=>$RemainingAmount,
+                                      'strPayTypeID'=> 22,
+                                      'dtePayDate'=>$DateToday,
+                                      'strPaymentRemarks'=>$jsonRemarks);
             
-        }*/
+            DB::table('tblPayment')->insert($TransactionData);
+        }
         
         
         \Session::flash('flash_message','Successfully upgraded the room!');
@@ -1277,8 +1389,26 @@ class ResortController extends Controller
         
         $RoomPaymentStatus = DB::table('tblReservationRoom')->where([['strResRReservationID', $ReservationID],['strResRRoomID','=', $RoomID]])->pluck("intResRPayment")->first();
         
-        $updateData = array('strResRRoomID' => $NewRoomID,
-                            'intResRPayment' => $PaymentStatus);   
+        
+        if($RoomPaymentStatus == 1 && $PaymentStatus == 5){
+            $PaymentStatus = 7;
+            $updateData = array('strResRRoomID' => $NewRoomID,
+                            'intResRPayment' => $PaymentStatus);
+        }
+        else if($RoomPaymentStatus == 0 && $PaymentStatus == 5){
+            $updateData = array('strResRRoomID' => $NewRoomID,
+                            'intResRPayment' => $PaymentStatus);
+        }
+        
+        else if($RoomPaymentStatus == 1 && $RoomPaymentStatus == 4){
+            $updateData = array('strResRRoomID' => $NewRoomID,
+                            'intResRPayment' => $PaymentStatus);
+        }
+        else if($RoomPaymentStatus == 0 && $RoomPaymentStatus == 4){
+            $PaymentStatus = 6;
+            $updateData = array('strResRRoomID' => $NewRoomID,
+                            'intResRPayment' => $PaymentStatus);
+        }
         
         DB::table('tblReservationRoom')
             ->where([['strResRReservationID', $ReservationID],['strResRRoomID','=', $RoomID]])
