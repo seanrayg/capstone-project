@@ -22,12 +22,12 @@ function HideModalNewReservations(){
     document.getElementById("DivModalNewReservations").style.display = "none";
 }
 
-function ShowModalCancelledReservations(){
-    document.getElementById("DivModalCancelledReservations").style.display = "block";
+function ShowModalResort(){
+    document.getElementById("DivModalResort").style.display = "block";
 }
 
-function HideModalCancelledReservations(){
-    document.getElementById("DivModalCancelledReservations").style.display = "none";
+function HideModalResort(){
+    document.getElementById("DivModalResort").style.display = "none";
 }
 
 function ShowModalReservationInfo(){

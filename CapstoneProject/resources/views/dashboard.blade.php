@@ -20,11 +20,11 @@
             </div>
             <div class="card-content">
                 <p class="category">Number of Arriving Guests</p>
-                <h3 class="title">4</h3>
+                <h3 class="title">{{$ArrivingLength}}</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">date_range</i> Last 24 Hours
+                    <i class="material-icons">date_range</i> As of today
                 </div>
             </div>
         </div>
@@ -33,15 +33,15 @@
     <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalDepartingGuests()">
         <div class="card card-stats">
             <div class="card-header" data-background-color="green">
-                <i class="material-icons">local_hotel</i>
+                <i class="material-icons">keyboard_tab</i>
             </div>
             <div class="card-content">
                 <p class="category">Departing Guests</p>
-                <h3 class="title">9</h3>
+                <h3 class="title">{{$DepartingLength}}</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">date_range</i> Last 24 Hours
+                    <i class="material-icons">date_range</i> As of today
                 </div>
             </div>
         </div>
@@ -54,28 +54,28 @@
             </div>
             <div class="card-content">
                 <p class="category">New Reservations</p>
-                <h3 class="title">6</h3>
+                <h3 class="title">{{$BookedLength}}</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">date_range</i> Last 24 Hours
+                    <i class="material-icons">date_range</i> As of today
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalCancelledReservations()">
+    <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalResort()">
         <div class="card card-stats">
-            <div class="card-header" data-background-color="red">
-                <i class="material-icons">event_busy</i>
+            <div class="card-header" data-background-color="purple">
+                <i class="material-icons">pool</i>
             </div>
             <div class="card-content">
-                <p class="category">Cancelled Reservations</p>
-                <h3 class="title">1</h3>
+                <p class="category">Guests on resort</p>
+                <h3 class="title">{{$ResortLength}}</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">date_range</i> Last 24 Hours
+                    <i class="material-icons">date_range</i> As of today
                 </div>
             </div>
         </div>
@@ -448,71 +448,25 @@
                                     <th class="text-center">Contact Number</th>
                                     <th class="text-center">Action</th>
                                 </thead>
-                                <tbody>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td>ID</td>
-                                            <td>Name</td>   
-                                            <td>Time of arrival</td>
-                                            <td>Check Out Date</td>
-                                            <td>Email</td>
-                                            <td>Contact Number</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
-                                                    <i class="material-icons">done_all</i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td>ID</td>
-                                            <td>Name</td>   
-                                            <td>Time of arrival</td>
-                                            <td>Check Out Date</td>
-                                            <td>Email</td>
-                                            <td>Contact Number</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
-                                                    <i class="material-icons">done_all</i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td>ID</td>
-                                            <td>Name</td>   
-                                            <td>Time of arrival</td>
-                                            <td>Check Out Date</td>
-                                            <td>Email</td>
-                                            <td>Contact Number</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
-                                                    <i class="material-icons">done_all</i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td>ID</td>
-                                            <td>Name</td>   
-                                            <td>Time of arrival</td>
-                                            <td>Check Out Date</td>
-                                            <td>Email</td>
-                                            <td>Contact Number</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
-                                                    <i class="material-icons">done_all</i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                <tbody class="text-center">
+                                        @foreach($ArrivingGuests as $Guest)
+                                            <tr>
+                                                <td>{{$Guest->strReservationID}}</td>
+                                                <td>{{$Guest->Name}}</td>
+                                                <td>{{$Guest->dtmResDArrival}}</td>
+                                                <td>{{$Guest->dtmResDDeparture}}</td>
+                                                <td>{{$Guest->strCustEmail}}</td>
+                                                <td>{{$Guest->strCustContact}}</td>
+                                                <td>
+                                                    <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
+                                                        <i class="material-icons">insert_invitation</i>
+                                                    </button>
+                                                    <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
+                                                        <i class="material-icons">done_all</i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -543,74 +497,26 @@
                                     <th class="text-center">Time of departure</th>
                                     <th class="text-center">Email</th>
                                     <th class="text-center">Contact Number</th>
-                                    <th class="text-center">Bill Status</th>
                                     <th class="text-center">Action</th>
                                 </thead>
-                                <tbody>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr onclick="HighlightRow(this)" class="text-center">
-                                        <td class="text-center">ID</td>
-                                        <td class="text-center">Name</td>   
-                                        <td class="text-center">Time of departure</td>
-                                        <td class="text-center">Email</td>
-                                        <td class="text-center">Contact Number</td>
-                                        <td class="text-center">Bill Status</td>
-                                        <td>
-                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                <i class="material-icons">insert_invitation</i>
-                                            </button>
-                                            <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
-                                                <i class="material-icons">exit_to_app</i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tbody class="text-center">
+                                    @foreach($DepartingGuests as $Guest)
+                                        <tr>
+                                            <td>{{$Guest->strReservationID}}</td>
+                                            <td>{{$Guest->Name}}</td>
+                                            <td>{{$Guest->dtmResDDeparture}}</td>
+                                            <td>{{$Guest->strCustEmail}}</td>
+                                            <td>{{$Guest->strCustContact}}</td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                    <i class="material-icons">insert_invitation</i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
+                                                    <i class="material-icons">exit_to_app</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
 
@@ -647,59 +553,22 @@
                                         <th class="text-center">Email</th>
                                         <th class="text-center">Action</th>
                                     </thead>
-                                    <tbody>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
+                                    <tbody class="text-center">
+                                        @foreach($CustomersBooked as $Booked)
+                                        <tr>
+                                            <td>{{$Booked->strReservationID}}}</td>
+                                            <td>{{$Booked->Name}}</td>   
+                                            <td>{{$Booked->dtmResDArrival}}</td>
+                                            <td>{{$Booked->dtmResDDeparture}}</td>
+                                            <td>{{$Booked->strCustContact}}</td>
+                                            <td>{{$Booked->strCustEmail}}</td>
                                             <td>
                                                 <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
                                                     <i class="material-icons">insert_invitation</i>
                                                 </button>
                                             </td>
                                         </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                                 <div class="row">
@@ -715,23 +584,23 @@
     </div>
 </div>
 
-<div id="DivModalCancelledReservations" class="modal">
+<div id="DivModalResort" class="modal">
     <div class="Modal-content" style="max-width: 1000px">
         <div class="row">
             <div class="col-md-12">
                     <div class="card card-stats">
 
-                            <div class="card-header" data-background-color="red">
-                                <i class="material-icons">event_busy</i>
+                            <div class="card-header" data-background-color="purple">
+                                <i class="material-icons">pool</i>
                             </div>
                             <div class="card-content">
                                 <div class="row">
-                                    <h3 class="title">Cancelled Reservations<span class="close" onclick="HideModalCancelledReservations()">X</span></h3>
+                                    <h3 class="title">Guests on resort<span class="close" onclick="HideModalResort()">X</span></h3>
                                     <p class="category paragraphText">As of today</p>
                                 </div>
                                 <br>
                                 <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
-                                    <thead class="text-danger">
+                                    <thead class="text-primary">
                                         <th class="text-center">ID</th>
                                         <th class="text-center">Name</th>   
                                         <th class="text-center">Check In Date</th>
@@ -740,59 +609,22 @@
                                         <th class="text-center">Email</th>
                                         <th class="text-center">Action</th>
                                     </thead>
-                                    <tbody>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
+                                    <tbody class="text-center">
+                                        @foreach($CustomersOnResort as $Resort)
+                                        <tr>
+                                            <td>{{$Resort->strReservationID}}</td>
+                                            <td>{{$Resort->Name}}</td>   
+                                            <td>{{$Resort->dtmResDArrival}}</td>
+                                            <td>{{$Resort->dtmResDDeparture}}</td>
+                                            <td>{{$Resort->strCustContact}}</td>
+                                            <td>{{$Resort->strCustEmail}}</td>
                                             <td>
                                                 <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
                                                     <i class="material-icons">insert_invitation</i>
                                                 </button>
                                             </td>
                                         </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr onclick="HighlightRow(this)" class="text-center">
-                                            <td class="text-center">ID</td>
-                                            <td class="text-center">Name</td>   
-                                            <td class="text-center">Check In Date</td>
-                                            <td class="text-center">Check Out Date</td>
-                                            <td class="text-center">Contact Number</td>
-                                            <td class="text-center">Email</td>
-                                            <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
-                                                    <i class="material-icons">insert_invitation</i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
