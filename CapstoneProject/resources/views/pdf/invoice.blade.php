@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- Bootstrap core CSS     -->
-	<link href="/css/bootstrap.min.css" rel="stylesheet" />
-
-	<!--  Material Dashboard CSS    -->
-	<link href="/css/material-dashboard.css" rel="stylesheet"/>
-	<!--   Core JS Files   -->
-	<script src="/js/jquery.3.2.1.min.js" type="text/javascript"></script>
-	<script src="/js/bootstrap.min.js" type="text/javascript"></script>
-	<script src="/js/material.min.js" type="text/javascript"></script>
-	<script src="/js/bootstrap-datepicker.js" type="text/javascript"></script>
-	<script src="/js/material-kit.js" type="text/javascript"></script>
-
 	<title>Invoice</title>
 
+	<link rel="stylesheet" type="text/css" href="css/reports.css">
 </head>
 <body>
-	<div class="row">
-		<div class="col-md-12">
-			<h2 style="text-align: center">Il Sogno Beach Resort</h2>
-		</div>
+	<div class="header">
+		<p class="header">
+			<span id="heading">Il Sogno Beach Resort</span><br>
+			Nangkaan Locloc, Bauan, Batangas<br>
+			OLIVIA R. VILLANUEVA - Prop<br>
+			NON VAT Reg. TIN 279-535-010-000<br>
+		</p>
+	</div>
+
+	<div class="footer">
+		<p class="footer">
+			Date Issued: <u>date today</u> Valid Until <u>5 yrs</u><br>
+		</p>
 	</div>
 </body>
 </html>

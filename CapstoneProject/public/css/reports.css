@@ -1,3 +1,23 @@
-.hehe {
+html {
+	margin: 0;
+}
+
+#heading {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+p.header {
 	text-align: center;
+	font: "Times New Roman";
+	font-size: 10px;
+}
+
+div.footer {
+	margin-left: 10px;
+}
+
+p.footer {
+	font: "Times New Roman";
+	font-size: 9px;
 }
