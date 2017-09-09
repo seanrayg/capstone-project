@@ -100,8 +100,50 @@ class ViewDashboardController extends Controller
         $ResortLength = sizeof($CustomersOnResort);
         $BookedLength = sizeof($CustomersBooked);
         
+        $Customers3rdDay = DB::table('tblReservationDetail as a')
+                            ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                            ->join ('tblPayment as c', 'c.strPayReservationID', '=', 'a.strReservationID')
+                            ->select('a.strReservationID',
+                                     DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                                     'a.dteResDBooking',
+                                     DB::raw('DATE_ADD(a.dteResDBooking, INTERVAL 7 DAY) AS PaymentDueDate'),
+                                     'b.strCustContact',
+                                     'b.strCustEmail',
+                                     'c.dblPayAmount',
+                                     DB::raw('b.strCustAddress AS RequiredDownPayment'))
+                            ->where('a.intResDStatus', '=', '1')
+                            ->where(DB::raw('date(DATE_ADD(a.dteResDBooking, INTERVAL 3 DAY))'), '=', Carbon::now('Asia/Manila')->format('Y-m-d'))
+                            ->get();
         
+        foreach($Customers3rdDay as $Customer){
+            $Customer->RequiredDownPayment = ceil($Customer->dblPayAmount * .20);
+            $Customer->PaymentDueDate = Carbon::parse($Customer->PaymentDueDate)->format('M j, Y');
+            $Customer->dteResDBooking = Carbon::parse($Customer->dteResDBooking)->format('M j, Y');
+        }
         
-        return view("Dashboard", compact('ArrivingLength', 'DepartingLength', 'ResortLength', 'BookedLength', 'ArrivingGuests', 'DepartingGuests', 'CustomersOnResort', 'CustomersBooked'));
+        $Customers5thDay = DB::table('tblReservationDetail as a')
+                            ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                            ->join ('tblPayment as c', 'c.strPayReservationID', '=', 'a.strReservationID')
+                            ->select('a.strReservationID',
+                                     DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                                     'a.dteResDBooking',
+                                     DB::raw('DATE_ADD(a.dteResDBooking, INTERVAL 7 DAY) AS PaymentDueDate'),
+                                     'b.strCustContact',
+                                     'b.strCustEmail',
+                                     'c.dblPayAmount',
+                                     DB::raw('b.strCustAddress AS RequiredDownPayment'))
+                            ->where('a.intResDStatus', '=', '1')
+                            ->where(DB::raw('date(DATE_ADD(a.dteResDBooking, INTERVAL 5 DAY))'), '=', Carbon::now('Asia/Manila')->format('Y-m-d'))
+                            ->get();
+        
+        foreach($Customers5thDay as $Customer){
+            $Customer->RequiredDownPayment = ceil($Customer->dblPayAmount * .20);
+            $Customer->PaymentDueDate = Carbon::parse($Customer->PaymentDueDate)->format('M j, Y');
+            $Customer->dteResDBooking = Carbon::parse($Customer->dteResDBooking)->format('M j, Y');
+        }
+        
+        $ContactNumber = DB::table('tblContact')->where('strContactName', '=', 'Telephone')->orWhere('strContactName', '=', 'Hotline')->orWhere('strContactName', '=', 'Phone')->pluck('strContactDetails')->first();
+        
+        return view("Dashboard", compact('ArrivingLength', 'DepartingLength', 'ResortLength', 'BookedLength', 'ArrivingGuests', 'DepartingGuests', 'CustomersOnResort', 'CustomersBooked', 'Customers3rdDay', 'ContactNumber', 'Customers5thDay'));
     }
 }

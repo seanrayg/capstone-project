@@ -809,6 +809,13 @@ class ViewController extends Controller
                         ->where('strReservationID', '=', $ReservationID)
                         ->get();
         
+        foreach($ReservationInfo as $Info){
+            $Info->PaymentDueDate = Carbon::parse($Info->PaymentDueDate)->format('M j, Y');
+            $Info->dteResDBooking = Carbon::parse($Info->dteResDBooking)->format('M j, Y');
+            $Info->dtmResDArrival = Carbon::parse($Info->dtmResDArrival)->format('M j, Y');
+            $Info->dtmResDDeparture = Carbon::parse($Info->dtmResDDeparture)->format('M j, Y');
+        }
+        
         return $ReservationInfo;
     }
     

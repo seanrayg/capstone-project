@@ -10,7 +10,7 @@
 
 @section('content')
 <h5 id="TitlePage">Dashboard</h5>
-
+<input type="hidden" name="ContactNumber" id="ContactNumber" value="{{$ContactNumber}}">
 <div class="row">
     
     <div class="col-lg-3 col-md-6 col-sm-6 cursor-pointer" onclick="ShowModalArrivingGuests()">
@@ -141,7 +141,7 @@
 
 <div class="row">
     
-    <div class="col-lg-8 col-md-12">
+    <div class="col-lg-12 col-md-12">
         <div class="card card-nav-tabs">
             <div class="card-header" data-background-color="teal">
                 <div class="nav-tabs-navigation">
@@ -174,97 +174,32 @@
                                     <th class="text-center">Name</th>
                                     <th class="text-center">Initial Bill</th>
                                     <th class="text-center">Required Downpayment</th>
+                                    <th class="text-center">Payment Due Date</th>
                                     <th class="text-center">Email</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
+                            <tbody class="text-center">
+                                @foreach($Customers3rdDay as $Customer)
+                                <tr>
+                                    <td>{{$Customer->Name}}</td>
+                                    <td>{{$Customer->dblPayAmount}}</td>
+                                    <td>{{$Customer->RequiredDownPayment}}</td>
+                                    <td>{{$Customer->PaymentDueDate}}</td>
+                                    <td>{{$Customer->strCustEmail}}</td>
                                     <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
+                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo('{{$Customer->strReservationID}}')">
                                             <i class="material-icons">insert_invitation</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
+                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail('{{$Customer->Name}}','{{$Customer->RequiredDownPayment}}','{{$Customer->strCustEmail}}','{{$Customer->PaymentDueDate}}')">
                                             <i class="material-icons">question_answer</i>
                                         </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
+                                        <button type="button" rel="tooltip" title="Cancel Reservation" onclick="ShowModalCancelReservation('{{$Customer->strReservationID}}')"class="btn btn-danger btn-simple btn-xs">
                                             <i class="material-icons">close</i>
                                         </button>
                                     </td>
                                 </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs" onclick="ShowModalSendEmail()">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -275,146 +210,35 @@
                                     <th class="text-center">Name</th>
                                     <th class="text-center">Initial Bill</th>
                                     <th class="text-center">Required Downpayment</th>
+                                    <th class="text-center">Payment Due Date</th>
                                     <th class="text-center">Email</th>
+                                    <th class="text-center">Contact Number</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Name</td>
-                                    <td>Bill</td>
-                                    <td>Payment</td>
-                                    <td>Email</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Send email" class="btn btn-success btn-simple btn-xs">
-                                            <i class="material-icons">question_answer</i>
-                                        </button>
-                                        <button type="button" rel="tooltip" title="Cancel Reservation" class="btn btn-danger btn-simple btn-xs">
-                                            <i class="material-icons">close</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                
+                            <tbody class="text-center">
+                                @foreach($Customers5thDay as $Customer)
+                                    <tr>
+                                        <td>{{$Customer->Name}}</td>
+                                        <td>{{$Customer->dblPayAmount}}</td>
+                                        <td>{{$Customer->RequiredDownPayment}}</td>
+                                        <td>{{$Customer->PaymentDueDate}}</td>
+                                        <td>{{$Customer->strCustEmail}}</td> 
+                                        <td>{{$Customer->strCustContact}}</td>
+                                        <td>
+                                            <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo('{{$Customer->strReservationID}}')">
+                                                <i class="material-icons">insert_invitation</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" title="Cancel Reservation" onclick="ShowModalCancelReservation('{{$Customer->strReservationID}}')"class="btn btn-danger btn-simple btn-xs">
+                                                <i class="material-icons">close</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-12">
-        <div class="card">
-            <div class="card-header" data-background-color="orange">
-                <h4 class="title">Employees Stats</h4>
-                <p class="category">New employees on 15th September, 2016</p>
-            </div>
-            <div class="card-content table-responsive">
-                <table class="table table-hover">
-                    <thead class="text-warning">
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Salary</th>
-                        <th>Country</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Dakota Rice</td>
-                            <td>$36,738</td>
-                            <td>Niger</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Minerva Hooper</td>
-                            <td>$23,789</td>
-                            <td>Curaçao</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Sage Rodriguez</td>
-                            <td>$56,142</td>
-                            <td>Netherlands</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Philip Chaney</td>
-                            <td>$38,735</td>
-                            <td>Korea, South</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -458,7 +282,7 @@
                                                 <td>{{$Guest->strCustEmail}}</td>
                                                 <td>{{$Guest->strCustContact}}</td>
                                                 <td>
-                                                    <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs">
+                                                    <button type="button" rel="tooltip" title="Show more info" onclick="ShowModalReservationInfo('{{$Guest->strReservationID}}')" class="btn btn-info btn-simple btn-xs">
                                                         <i class="material-icons">insert_invitation</i>
                                                     </button>
                                                     <button type="button" rel="tooltip" title="Check In" class="btn btn-success btn-simple btn-xs">
@@ -508,7 +332,7 @@
                                             <td>{{$Guest->strCustEmail}}</td>
                                             <td>{{$Guest->strCustContact}}</td>
                                             <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <button type="button" rel="tooltip" title="Reservation Info" onclick="ShowModalReservationInfo('{{$Guest->strReservationID}}')" class="btn btn-info btn-simple btn-xs">
                                                     <i class="material-icons">insert_invitation</i>
                                                 </button>
                                                 <button type="button" rel="tooltip" title="Check Out" class="btn btn-success btn-simple btn-xs">
@@ -563,7 +387,7 @@
                                             <td>{{$Booked->strCustContact}}</td>
                                             <td>{{$Booked->strCustEmail}}</td>
                                             <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <button type="button" rel="tooltip" title="Reservation Info" onclick="ShowModalReservationInfo('{{$Booked->strReservationID}}')" class="btn btn-info btn-simple btn-xs">
                                                     <i class="material-icons">insert_invitation</i>
                                                 </button>
                                             </td>
@@ -619,7 +443,7 @@
                                             <td>{{$Resort->strCustContact}}</td>
                                             <td>{{$Resort->strCustEmail}}</td>
                                             <td>
-                                                <button type="button" rel="tooltip" title="Reservation Info" class="btn btn-info btn-simple btn-xs">
+                                                <button type="button" rel="tooltip" title="Reservation Info" onclick="ShowModalReservationInfo('{{$Resort->strReservationID}}')" class="btn btn-info btn-simple btn-xs">
                                                     <i class="material-icons">insert_invitation</i>
                                                 </button>
                                             </td>
@@ -655,7 +479,6 @@
                                 <p class="paragraphText text-primary">Reservation Code:</p> <p class="paragraphText" id="i-ReservationCode"></p><br>
                                 <p class="paragraphText text-primary">Check In Date:</p> <p class="paragraphText" id="i-CheckInDate"></p><br>
                                 <p class="paragraphText text-primary">Check Out Date:</p> <p class="paragraphText" id="i-CheckOutDate"></p><br>
-                                <p class="paragraphText text-primary">Pick Up Time:</p> <p class="paragraphText" id="i-PickUpTime"></p><br>
                                 <p class="paragraphText text-primary">Number of adult guests:</p> <p class="paragraphText" id="i-NoOfAdults"></p><br>
                                 <p class="paragraphText text-primary">Number of child guests:</p> <p class="paragraphText" id="i-NoOfKids"></p><br>
                                 <p class="paragraphText text-primary">Remarks:</p> <p class="paragraphText" id="i-Remarks"></p><br>
@@ -707,7 +530,7 @@
 </div>
 
 <div id="DivModalSendEmail" class="modal">
-    <div class="Modal-content" style="max-width:400px">
+    <div class="Modal-content" style="max-width:600px">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-stats">
@@ -722,7 +545,7 @@
                             <div class="col-md-12">
                                 <div class="form-group label-static">
                                     <label class="control-label">To:</label>
-                                    <input type="text" class="form-control" readonly>
+                                    <input type="text" class="form-control" id="MessageTo" readonly>
                                 </div>
                             </div>
                         </div>
@@ -730,7 +553,7 @@
                             <div class="col-md-12">
                                 <div class="form-group label-static">
                                     <label class="control-label">Email:</label>
-                                    <input type="text" class="form-control" readonly>
+                                    <input type="text" class="form-control" id="MessageEmail" readonly>
                                 </div>
                             </div>
                         </div>
@@ -739,8 +562,7 @@
                                 <div class="form-group">
                                     <div class="form-group label-static">
                                         <label class="control-label">Message</label>
-                                        <textarea class="form-control" rows="5">The Il Sogno Beach Resort would like to remind you to pay the downpayment (PHP540) required for your reservation until September 4, 2017. For any inquiries you may call us at 8-7000 or visit our website at www.ilsognobeachresort.com
-                                        This is a system generated message. Please do not reply</textarea>
+                                        <textarea class="form-control" rows="5" id="MessageBody"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -752,4 +574,34 @@
         </div>
     </div>
 </div>
+
+<div id="DivModalCancelReservation" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="red">
+                            <i class="material-icons">backspace</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h5 class="title">Cancel Reservation?<span class="close" onclick="HideModalCancelReservation()">X</span></h5>
+                            <form method="post" action="/Reservation/Cancel">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="CancelReservationID" id="CancelReservationID" value="">
+                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalCancelReservation()">No</button>
+                                <button type="submit" class="btn btn-danger btn-sm pull-right">Yes</button>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @endsection
