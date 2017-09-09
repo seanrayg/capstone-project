@@ -55,10 +55,187 @@ class ViewResortController extends Controller
         return $ChosenRooms;
     }
     
-    public function ViewUpgradeRoom($id){
-        return view('UpgradeRoom');
+    public function ViewUpgradeRoom($id, $RoomType, $RoomName){
+        $ReservationID = $id;
+        
+        $RoomTypeID = "";
+        $ReservationDates = DB::table('tblReservationDetail')
+                            ->select('dtmResDArrival',
+                                     'dtmResDDeparture')
+                            ->where('strReservationID', $ReservationID)
+                            ->get();
+
+        $ArrivalDate = "";
+        $DepartureDate = "";
+        
+        foreach($ReservationDates as $Dates){
+            $ArrivalDate = $Dates->dtmResDArrival;
+            $DepartureDate = $Dates->dtmResDDeparture;
+        }
+
+        
+        $CheckInDate = Carbon::now('Asia/Manila')->format('Y/m/d h:i:s');
+    
+        $CheckOutDate = str_replace("-","/",$DepartureDate);
+        
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+               
+        $ExistingRooms = DB::table('tblReservationRoom')
+                                ->whereIn('strResRReservationID', $ExistingReservations)
+                                ->where('strResRReservationID', '!=', $ReservationID)
+                                ->pluck('strResRRoomID')
+                                ->toArray();
+
+        $tempArrivalDate = explode(" ", $ArrivalDate);
+        $tempDepartureDate = explode(" ", $DepartureDate);
+        
+        $RoomRate = DB::table('tblRoomType as a')
+            ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+            ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
+                    ['a.intRoomTDeleted',"=", "1"]
+                    ,['a.strRoomType',"=", $RoomType]])
+            ->pluck('b.dblRoomRate')
+            ->first();
+        
+        if($tempArrivalDate[0] != $tempDepartureDate[0]){
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('b.strRoomType',
+                                 'b.strRoomTypeID',
+                                 DB::raw("COUNT(a.strRoomTypeID) as TotalRooms"))
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['b.intRoomTCategory', '=', 1],['b.strRoomType', "!=", $RoomType], ['c.dblRoomRate', ">=", $RoomRate]])
+                         ->groupBy('b.strRoomType', 'b.strRoomTypeID')
+                         ->get();
+        }
+        else{
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('b.strRoomType',
+                                 'b.strRoomTypeID', 
+                                DB::raw("COUNT(a.strRoomTypeID) as TotalRooms"))
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['b.strRoomType', "!=", $RoomType], ['c.dblRoomRate', ">=", $RoomRate]])
+                         ->groupBy('b.strRoomType', 'b.strRoomTypeID')
+                         ->get();
+        }
+        
+        foreach($Rooms as $Room){
+            if($Room->TotalRooms == 0){
+                $Rooms->forget($Room->strRoomType);
+            }
+        }
+        
+        
+        
+        return view('UpgradeRoom', compact('Rooms'));
     }
     
+    //Upgrade Room AJAX
+    public function getAvailableUpgradeRooms(Request $req){
+ 
+        $RoomTypeName = trim($req->input('ChosenRoomType'));
+        $ReservationID = trim($req->input('ReservationID'));
+        
+        $tempRoomTypeID = DB::table('tblRoomType')->select('strRoomTypeID')->where([['intRoomTDeleted', '1'],['strRoomType', $RoomTypeName]])->get();
+        $RoomTypeID = "";
+        $ReservationDates = DB::table('tblReservationDetail')
+                            ->select('dtmResDArrival',
+                                     'dtmResDDeparture')
+                            ->where('strReservationID', $ReservationID)
+                            ->get();
+        
+        $ArrivalDate = "";
+        $DepartureDate = "";
+        
+        foreach($ReservationDates as $Dates){
+            $ArrivalDate = $Dates->dtmResDArrival;
+            $DepartureDate = $Dates->dtmResDDeparture;
+        }
+        
+        foreach($tempRoomTypeID as $tempID){
+            $RoomTypeID = $tempID->strRoomTypeID;
+        }
+        
+        $CheckInDate = Carbon::now('Asia/Manila')->format('Y/m/d h:i:s');
+        $CheckOutDate = str_replace("-","/",$DepartureDate);
+        
+        $Rooms = $this->fnGetAvailableRooms($RoomTypeID, $CheckInDate, $CheckOutDate);
+
+        return response()->json($Rooms);
+    
+    }
+    
+    public function fnGetAvailableRooms($RoomTypeID, $CheckInDate, $CheckOutDate){
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+        $ExistingRooms = DB::table('tblReservationRoom')
+                                ->whereIn('strResRReservationID', $ExistingReservations)
+                                ->pluck('strResRRoomID')
+                                ->toArray();
+
+        $tempArrivalDate = explode(" ", $CheckInDate);
+        $tempDepartureDate = explode(" ", $CheckOutDate);
+
+        $Rooms = DB::table('tblRoom as a')
+                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                    ->select('a.strRoomTypeID',
+                             'a.strRoomName')
+                     ->whereNotIn('strRoomID', $ExistingRooms)
+                     ->where([['a.strRoomStatus','=','Available'],['a.strRoomTypeID', '=', $RoomTypeID]])
+                     ->get();
+        
+        return $Rooms;
+    }
     
     //GET ROOMS AJAX
     public function getChosenRooms(Request $req){
@@ -105,48 +282,39 @@ class ViewResortController extends Controller
         $CheckInDate = str_replace("-","/",$ArrivalDate);
         $CheckOutDate = str_replace("-","/",$DepartureDate);
         
-        $ExistingReservations = DB::table('tblReservationDetail')
-                                ->where(function($query){
-                                    $query->where('intResDStatus', '=', '1')
-                                          ->orWhere('intResDStatus', '=', '2')
-                                          ->orWhere('intResDStatus', '=', '4');
-                                })
-                                ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','>=',$CheckInDate)
-                                          ->where('dtmResDArrival','<=',$CheckOutDate);
-                                })
-                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
-                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
-                                })
-                                ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','<=',$CheckInDate)
-                                          ->where('dtmResDDeparture','>=',$CheckInDate);
-                                })
-                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
-                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
-                                })
-                                ->pluck('strReservationID')
-                                ->toArray();
-        
-        $ExistingRooms = DB::table('tblReservationRoom')
-                                ->whereIn('strResRReservationID', $ExistingReservations)
-                                ->pluck('strResRRoomID')
-                                ->toArray();
-
-        $tempArrivalDate = explode(" ", $CheckInDate);
-        $tempDepartureDate = explode(" ", $CheckOutDate);
-
-        $Rooms = DB::table('tblRoom as a')
-                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
-                    ->select('a.strRoomTypeID',
-                             'a.strRoomName')
-                     ->whereNotIn('strRoomID', $ExistingRooms)
-                     ->where([['a.strRoomStatus','=','Available'],['a.strRoomTypeID', '=', $RoomTypeID]])
-                     ->get();
+        $Rooms = $this->fnGetAvailableRooms($RoomTypeID, $CheckInDate, $CheckOutDate);
 
         return response()->json($Rooms);
+    }
+    
+    public function getRoomPrice(Request $req){
+        $ReservationID = trim($req->input('ReservationID'));
+        $OriginalRoom = trim($req->input('OriginalRoom'));
+        $UpgradeRoom = trim($req->input('UpgradeRoom'));
+        
+        $OriginalRoomPrice = DB::table('tblRoomType as a')
+            ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+            ->select('b.dblRoomRate')
+            ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
+                    ['a.intRoomTDeleted',"=", "1"]
+                    ,['a.strRoomType', '=', $OriginalRoom]])
+            ->get();
+        
+        $UpgradeRoomPrice = DB::table('tblRoomType as a')
+            ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+            ->select('b.dblRoomRate')
+            ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
+                    ['a.intRoomTDeleted',"=", "1"]
+                    ,['a.strRoomType', '=', $UpgradeRoom]])
+            ->get();
+        
+        $ReservationDates = DB::table('tblReservationDetail')
+                            ->select('dtmResDArrival',
+                                     'dtmResDDeparture')
+                            ->where('strReservationID', $ReservationID)
+                            ->get();
+        
+        return response()->json(['OriginalRoomPrice' => $OriginalRoomPrice, 'UpgradeRoomPrice' => $UpgradeRoomPrice, 'ReservationDates' => $ReservationDates]);
     }
     
     

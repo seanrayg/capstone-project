@@ -36,7 +36,7 @@ Route::get('/Billing', 'ViewResortController@ViewBilling');
 
 Route::get('/ChooseRooms/{id}', 'ViewResortController@ViewSelectedRooms');
 
-Route::get('/UpgradeRoom/{id}', 'ViewResortController@ViewUpgradeRoom');
+Route::get('/UpgradeRoom/{id}/{RoomType}/{RoomName}', 'ViewResortController@ViewUpgradeRoom');
 
 Route::get('/Fees', 'ViewResortController@ViewFees');
 
@@ -295,6 +295,17 @@ Route::get('/CheckIn/AvailableRooms', 'ViewResortController@getAvailableRooms');
 Route::post('/CheckIn/SaveRooms', 'ReservationController@saveChosenRooms');
 
 
+/*------------- UPGRADE ROOMS ----------*/
+
+Route::get('/Upgrade/AvailableRooms', 'ViewResortController@getAvailableUpgradeRooms');
+
+Route::get('/Upgrade/Price', 'ViewResortController@getRoomPrice');
+
+Route::get('/Upgrade/RoomTypes', 'ViewResortController@getAvailableRoomTypes');
+
+Route::post('/Upgrade/Save', 'ResortController@saveUpgradeRoom');
+
+Route::post('/Upgrade/Pay', 'ResortController@saveUpgradeRoomPayment');
 
 /*----------- REPORTS ----------------*/
 

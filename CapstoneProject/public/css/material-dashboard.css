@@ -5640,6 +5640,14 @@ th.activeHeader{
   background-color: green;
 }
 
+.push-left{
+    margin-left: 20px;
+}
+
+.push-right{
+    margin-right: 20px;
+}
+
 /*@font-face {
    font-family: 'Material Icons';
    font-style: normal;

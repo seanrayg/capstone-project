@@ -86,7 +86,7 @@ window.onload = function(){
     }
     else{
         ReservationID = localStorage.getItem("ReservationID");
-        //localStorage.removeItem("ReservationID");
+        localStorage.removeItem("ReservationID");
     }
     
     var arrRoomType = [];

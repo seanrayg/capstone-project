@@ -178,7 +178,7 @@
                                                     <button type="button" rel="tooltip" title="Transfer Room" class="btn btn-success btn-simple btn-xs" onclick="TransferRoom('{{$Detail->strReservationID}}')">
                                                         <i class="material-icons">compare_arrows</i>
                                                     </button>
-                                                    <button type="button" rel="tooltip" title="Upgrade Room" class="btn btn-primary btn-simple btn-xs" onclick="UpgradeRoom('{{$Detail->strReservationID}}', '{{$Detail->strRoomType}}', '{{$Detail->Name}}')">
+                                                    <button type="button" rel="tooltip" title="Upgrade Room" class="btn btn-primary btn-simple btn-xs" onclick="UpgradeRoom('{{$Detail->strReservationID}}', '{{$Detail->strRoomType}}', '{{$Detail->strRoomName}}')">
                                                         <i class="material-icons">file_upload</i>
                                                     </button>
                                                     <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs">
