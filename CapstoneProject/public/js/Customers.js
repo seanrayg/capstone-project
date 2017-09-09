@@ -10,7 +10,8 @@ var strChosenRooms;
 var TotalRoomCost = 0;
 var today;
 
-function ShowModalExtendStay(){
+function ShowModalExtendStay(ArrivalDate, ReservationID){
+    document.getElementById("ExtendReservationID").value = ReservationID;
     document.getElementById("DivModalExtendStay").style.display = "block";
 }
 
@@ -74,7 +75,7 @@ function ShowModalAddRoomPayment(){
         diffDays = date2.getDate() - date1.getDate();
         if(diffDays == 0){
             diffDays = 1;
-        }
+        } 
         //Get data from tables
         var pacRooms = document.getElementById('tblChosenRooms'), cellsRooms = pacRooms.getElementsByTagName('td');
         var pacRoomsCells = (document.getElementById('tblChosenRooms').getElementsByTagName("tr").length - 1) * 4;

@@ -94,10 +94,10 @@
                                             <td>{{$Customer->strCustLastName}}</td>
                                             <td>{{$Customer->strCustContact}}</td>
                                             <td>{{$Customer->strCustEmail}}</td>
-                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('Y/m/d h:m:s')}}</td>
-                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDDeparture)->format('Y/m/d h:m:s')}}</td> 
+                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('Y/m/d h:i:s')}}</td>
+                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDDeparture)->format('Y/m/d h:i:s')}}</td> 
                                             <td>
-                                                <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs" onclick="ShowModalExtendStay()">
+                                                <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs" onclick="ShowModalExtendStay('{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('m/d/y h:i:s')}}', '{{$Customer->strReservationID}}')">
                                                     <i class="material-icons">alarm_add</i>
                                                 </button>
                                                 <button type="button" rel="tooltip" title="Add a room" class="btn btn-info btn-simple btn-xs" onclick="ShowModalAddRoom()">
@@ -193,20 +193,16 @@
                                 <p class="category"></p>
                                 <h3 class="title">Extend Stay<span class="close" onclick="HideModalExtendStay()">X</span></h3>
                             </div>
-                            <form method="POST" action="/Fee/Edit" onsubmit="return CheckForm()">
+                            <form method="POST" action="/Customer/Extend" onsubmit="return CheckForm()">
                                 {{ csrf_field() }}
-                                <input type="hidden" name="EditReservationID" id="EditReservationID">
+                                <input type="hidden" name="ExtendReservationID" id="ExtendReservationID">
                                 <div class="row">
+                                    <br>
+                                    <h5 class="title text-center">Extend stay for how many nights?</h5>
                                     <div class="col-sm-12">
-                                        <div class="form-group label-static" id="CheckInDateError">
-                                            <label class="control-label">Check in Date</label>
-                                            <input type="text" class="datepicker form-control" id="CheckInDate" value="08/31/2017" disabled/>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group label-static" id="CheckOutDateError">
-                                            <label class="control-label">Check out Date</label>
-                                            <input type="text" class="datepicker form-control" id="CheckOutDate" readonly/>
+                                        <div class="form-group label-static" id="ExtendNightError">
+                                            <label class="control-label">Number of nights</label>
+                                            <input type="text" class="form-control" id="ExtendNight" name="ExtendNight" onkeyup="ValidateInput(this, 'int', '#ExtendNightError')" onchange="ValidateInput(this, 'int', '#ExtendNightError')">
                                         </div>
                                     </div>
                                 </div>
@@ -679,7 +675,7 @@
                             <div class="col-md-2"></div>
                             <div class="col-md-4">
                                 <button type="button" class="btn btn-success" onclick="ShowModalAddRoomPayNow()">Yes</button>
-                            </div>
+                            </div> 
                             <form method="post" action="/Customer/Rooms" id="formAddRoom">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="AddChosenRooms" id="AddChosenRooms">

@@ -384,6 +384,8 @@ Route::post('/Customer/Rooms', 'ResortController@saveAddRooms');
 
 Route::post('/Customer/RoomsPay', 'ResortController@saveAddRoomsPayment');
 
+Route::post('/Customer/Extend', 'ResortController@saveExtendStay');
+
 
 /*---------- CONTACT INFORMATION----------*/
 

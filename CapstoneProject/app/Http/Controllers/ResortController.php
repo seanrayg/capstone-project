@@ -990,6 +990,7 @@ class ResortController extends Controller
     
     
     /*------------- CUSTOMERS -------------*/
+    
     public function saveAddRooms(Request $req){
    
         $ReservationID = trim($req->input('AddReservationID'));
@@ -1165,6 +1166,47 @@ class ResortController extends Controller
                 break;
 
            }
+        }
+    }
+    
+    public function saveExtendStay(Request $req){
+        $ReservationID = trim($req->input('ExtendReservationID'));
+        $DaysToExtend = trim($req->input('ExtendNight'));
+        
+        $ArrivalDate = Carbon::now('Asia/Manila')->format('Y/m/d h:i:s');
+        $tempDepartureDate = DB::table('tblreservationdetail')->where('strReservationID', '=', $ReservationID)->pluck('dtmResDDeparture')->first();
+     
+        $DepartureDate = Carbon::parse($tempDepartureDate)->addDays($DaysToExtend)->format('Y/m/d h:i:s');
+  
+        $AvailableRooms = $this->fnGetAvailableRooms($ReservationID, $ArrivalDate, $DepartureDate);
+        
+        $ReservedRooms = DB::table('tblReservationRoom as a')
+                         ->join('tblRoom as b', 'a.strResRRoomID', '=', 'b.strRoomID')
+                         ->select('strResRRoomID',
+                                  'strRoomName')
+                         ->where('strResRReservationID', '=', $ReservationID)
+                         ->get();
+            
+        $UnavailableRooms = []; 
+        foreach($ReservedRooms as $Reserved){
+            $found = false;
+            foreach($AvailableRooms as $Available){
+                if($Reserved->strResRRoomID == $Available->strRoomID){
+                    $found = true;
+                    break;
+                }
+            }
+            if(!($found)){
+                $UnavailableRooms[sizeof($UnavailableRooms)] = $Reserved->strRoomName;
+            }
+        }
+        
+        dd($UnavailableRooms);
+        if(sizeof($UnavailableRooms) != 0){
+            //return redirect
+        }
+        else{
+            //save new reservation dates
         }
     }
     
@@ -1415,6 +1457,60 @@ class ResortController extends Controller
             ->update($updateData);
         
         return $RoomPaymentStatus;
+    }
+    
+    public function fnGetAvailableRooms($ReservationID, $CheckInDate, $CheckOutDate){
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','>=',$CheckInDate)
+                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
+                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                })
+                                ->where(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckInDate)
+                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                })
+                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
+                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
+                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+        for($x = 0; $x < sizeof($ExistingReservations); $x++){
+            if($ExistingReservations[$x] == $ReservationID){
+                unset($ExistingReservations[$x]);
+            }
+        }
+        $ExistingReservations = array_values($ExistingReservations);
+   
+        
+        $ExistingRooms = DB::table('tblReservationRoom')
+                                ->whereIn('strResRReservationID', $ExistingReservations)
+                                ->pluck('strResRRoomID')
+                                ->toArray();
+
+        $tempArrivalDate = explode(" ", $CheckInDate);
+        $tempDepartureDate = explode(" ", $CheckOutDate);
+
+        $Rooms = DB::table('tblRoom as a')
+                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                    ->select('a.strRoomTypeID',
+                             'a.strRoomName',
+                             'a.strRoomID')
+                     ->whereNotIn('strRoomID', $ExistingRooms)
+                     ->where('a.strRoomStatus','=','Available')
+                     ->get();
+        
+        return $Rooms;
     }
 }
 

@@ -108,7 +108,7 @@ function ShowModalCheckIn(){
         }
         var TimeToday = tempToday.getHours() + ":" + tempToday.getMinutes() + ":" + tempToday.getSeconds();
         var arrDateInfo = ActiveReservationInfo[7].split(" ");
-        if(DateToday == arrDateInfo[0]){
+        if(DateToday >= arrDateInfo[0]){
             document.getElementById("CheckInReservationID").value = ActiveReservationInfo[0];
             document.getElementById("DivModalCheckIn").style.display = "block";
         }
