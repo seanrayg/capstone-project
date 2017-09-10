@@ -1,6 +1,6 @@
 var BoatInfo = [];
 
-function run(event, table){
+function run(event, table) {
 
 	event = event || window.event; 
     var target = event.target || event.srcElement;
@@ -24,4 +24,12 @@ function run(event, table){
         document.getElementById('BoatScheduleID').value = cells[0].innerHTML;
     }
 
+}
+
+function ShowModalPayBoatRent() {
+    document.getElementById("DivModalPayBoatRent").style.display = "block";
+}
+
+function HideModalPayBoatRent() {
+    document.getElementById("DivModalPayBoatRent").style.display = "none";
 }
