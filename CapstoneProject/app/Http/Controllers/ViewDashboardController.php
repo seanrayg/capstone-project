@@ -142,7 +142,7 @@ class ViewDashboardController extends Controller
             $Customer->dteResDBooking = Carbon::parse($Customer->dteResDBooking)->format('M j, Y');
         }
         
-        $ContactNumber = DB::table('tblContact')->where('strContactName', '=', 'Telephone')->orWhere('strContactName', '=', 'Hotline')->orWhere('strContactName', '=', 'Phone')->pluck('strContactDetails')->first();
+        $ContactNumber = DB::table('tblContact')->where('strContactName', '=', 'Telephone')->orWhere('strContactName', '=', 'Hotline')->orWhere('strContactName', '=', 'Phone')->orWhere('strContactName', '=', 'Cellphone')->pluck('strContactDetails')->first();
         
         return view("Dashboard", compact('ArrivingLength', 'DepartingLength', 'ResortLength', 'BookedLength', 'ArrivingGuests', 'DepartingGuests', 'CustomersOnResort', 'CustomersBooked', 'Customers3rdDay', 'ContactNumber', 'Customers5thDay'));
     }

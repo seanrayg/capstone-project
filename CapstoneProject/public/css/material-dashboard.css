@@ -5648,6 +5648,11 @@ th.activeHeader{
     margin-right: 20px;
 }
 
+.RoomTypeImage{
+    max-height: 300px;
+    max-width: 300px;
+}
+
 /*@font-face {
    font-family: 'Material Icons';
    font-style: normal;

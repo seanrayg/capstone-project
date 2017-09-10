@@ -29,6 +29,25 @@
     </div>
 @endif
 
+<!-- Duplicate Error -->
+@if(Session::has('duplicate_message'))
+    <div class="row">
+        <div class="col-md-5 col-md-offset-7">
+            <div class="alert alert-danger hide-on-click">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">warning</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                  {{ Session::get('duplicate_message') }}
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <h5 id="TitlePage">Customers</h5>
 
 <div class="row">
@@ -80,8 +99,8 @@
                                         <th onclick="sortTable(5, 'tblResortCustomers', 'string')" class="text-center">Lastname</th>
                                         <th onclick="sortTable(6, 'tblResortCustomers', 'string')" class="text-center">Contact #</th>
                                         <th onclick="sortTable(7, 'tblResortCustomers', 'string')" class="text-center">Email</th>
-                                        <th style="display:none">Check In Date</th>
-                                        <th style="display:none">Check Out Date</th>
+                                        <th onclick="sortTable(8, 'tblResortCustomers', 'string')" class="text-center">Check In Date</th>
+                                        <th onclick="sortTable(9, 'tblResortCustomers', 'string')" class="text-center">Check Out Date</th>
                                         <th class="text-center">Action</th>
                                     </thead>
                                     <tbody>
@@ -94,8 +113,8 @@
                                             <td>{{$Customer->strCustLastName}}</td>
                                             <td>{{$Customer->strCustContact}}</td>
                                             <td>{{$Customer->strCustEmail}}</td>
-                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('Y/m/d h:i:s')}}</td>
-                                            <td style="display:none">{{Carbon\Carbon::parse($Customer -> dtmResDDeparture)->format('Y/m/d h:i:s')}}</td> 
+                                            <td >{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('M d, Y')}}</td>
+                                            <td >{{Carbon\Carbon::parse($Customer -> dtmResDDeparture)->format('M d, Y')}}</td> 
                                             <td>
                                                 <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs" onclick="ShowModalExtendStay('{{Carbon\Carbon::parse($Customer -> dtmResDArrival)->format('m/d/y h:i:s')}}', '{{$Customer->strReservationID}}')">
                                                     <i class="material-icons">alarm_add</i>
@@ -135,7 +154,7 @@
                             <div class="col-md-12">
                                 <div class="card">
 
-                                <table class="table" id="tblCustomer">
+                                <table class="table" id="tblCustomer" onclick="run(event, 'Record')">
                                     <thead class="text-primary">
                                         <th style="display:none">Customer ID</th>
                                         <th onclick="sortTable(1, 'tblCustomer', 'string')">Firstname</th>
@@ -179,6 +198,47 @@
 @endsection
     
 @section('modals')
+<div id="DivModalUnavailableRooms" class="modal">
+    <div class="Modal-content" style="max-width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="orange">
+                            <i class="material-icons">highlight_off</i>
+                        </div>
+                        <div class="card-content">
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Warning!<span class="close" onclick="HideModalUnavailableRooms()">X</span></h3>
+                            </div>
+                            <div class="row">
+                                <br>
+                                <h6 class="title text-center">Some of the reserved rooms are unavailable to extend:</h6>
+                                <br>
+                                <div class="col-sm-12">
+                                    <ul id="UnavailableList" style="font-family: 'Roboto'">
+                                    
+                                    </ul>
+                                </div>
+                                <div class="col-sm-12">
+                                <p class="descriptionText text-center" style="font-family: 'Roboto'">If the guest still wishes to extend their stay, they could transfer to another room or upgrade their room</p>
+                                </div>
+                            </div>
+                            <br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <a href="/Rooms"><button type="button" class="btn btn-success pull-right">Manage Rooms</button></a>
+                                </div> 
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+    
 <div id="DivModalExtendStay" class="modal">
     <div class="Modal-content" style="max-width: 500px">
         <div class="row">
@@ -384,62 +444,62 @@
                                 <p class="category"></p>
                                 <h3 class="title">Edit Customer Info<span class="close" onclick="HideModalEditCustomer()">X</span></h3>
                             </div>
-                            <form method="POST" action="/Fee/Edit" onsubmit="return CheckForm()">
+                            <form method="POST" action="/Customer/Edit" onsubmit="return CheckForm()">
                                 {{ csrf_field() }}
-                                <input type="hidden" name="EditReservationID" id="EditReservationID">
+                                <input type="hidden" name="EditCustomerID" id="EditCustomerID">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustFirstNameError">
                                             <label class="control-label">Firstname</label>
-                                            <input type="text" class="form-control" required/>
+                                            <input type="text" class="form-control" id="CustFirstName" name="CustFirstName" onkeyup="ValidateInput(this, 'string2', '#CustFirstNameError')" onchange="ValidateInput(this, 'string2', '#CustFirstNameError')" required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustMiddleNameError">
                                             <label class="control-label">Middlename</label>
-                                            <input type="text" class="form-control" required/>
+                                            <input type="text" class="form-control" id="CustMiddleName" name="CustMiddleName" onkeyup="ValidateInput(this, 'string2', '#CustMiddleNameError')" onchange="ValidateInput(this, 'string2', '#CustMiddleNameError')"  required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustLastNameError">
                                             <label class="control-label">Lastname</label>
-                                            <input type="text" class="form-control" required/>
+                                            <input type="text" class="form-control" id="CustLastName" name="CustLastName" onkeyup="ValidateInput(this, 'string2', '#CustLastNameError')" onchange="ValidateInput(this, 'string2', '#CustLastNameError')" required/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustAddressError">
                                             <label class="control-label">Address</label>
-                                            <input type="text" class="form-control" required/>
+                                            <input type="text" class="form-control" id="CustAddress" name="CustAddress" required/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustContactError">
                                             <label class="control-label">Contact Number</label>
-                                            <input type="text" class="form-control" required/>
+                                            <input type="text" class="form-control" id="CustContact" name="CustContact" onkeyup="ValidateInput(this, 'contact', '#CustContactError')" onchange="ValidateInput(this, 'contact', '#CustContactError')" required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustEmailError">
                                             <label class="control-label">Email</label>
-                                            <input type="text" class="form-control" required/>
+                                            <input type="email" class="form-control" id="CustEmail" name="CustEmail" required/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustNationalityError">
                                             <label class="control-label">Nationality</label>
-                                            <input type="text" class="form-control" required/>
+                                            <input type="text" class="form-control" id="CustNationality" name="CustNationality" onkeyup="ValidateInput(this, 'string2', '#CustNationalityError')" onchange="ValidateInput(this, 'string2', '#CustNationalityError')" required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group label-static">
+                                        <div class="form-group label-static" id="CustBirthdayError">
                                             <label class="control-label">Date of Birth</label>
-                                            <input type="text" class="datepicker form-control"/>
+                                            <input type="text" class="datepicker form-control" id="CustBirthday" name="CustBirthday"/>
                                         </div>
                                     </div>
                                 </div>
@@ -448,7 +508,7 @@
                                     <div class="col-xs-12">
                                        <p id="gender-label">Gender</p>
                                         <div class="selectBox">
-                                            <select id="Gender">
+                                            <select id="CustGender" name="CustGender">
                                               <option>Male</option>
                                               <option>Female</option>
                                             </select>
@@ -492,10 +552,9 @@
                             <p class="category"></p>
                             <h3 class="title"><span class="close" onclick="HideModalDeleteCustomer()">X</span></h3>
                             <h3 class="title">Delete Customer?</h3>
-                            <form method="post" action="/Fee/Delete">
+                            <form method="post" action="/Customer/Delete">
                                 {{ csrf_field() }}
-                                <input type="hidden" id="DeleteFeeID" name="DeleteFeeID">
-                                <input type="hidden" id="DeleteReservationID" name="DeleteReservationID">
+                                <input type="hidden" id="DeleteCustomerID" name="DeleteCustomerID">
                                 <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalCheckout()">Cancel</button>
                                 <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>  
                             </form>            
@@ -663,28 +722,82 @@
                         <i class="material-icons">monetization_on</i>
                     </div>
                     <div class="card-content">
-                        <h4><span class="close" onclick="HideModalExtendPayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h4><span class="close" onclick="HideModalExtendStayPayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
                         <h3 class="title">Pay now?</h3>
-                        <p class="category" style="font-family: Roboto; color:black" id="ExtendTotalAmount"></p>
+                        <br>
+                        <p class="category text-center" style="font-family: Roboto; color:black" id="ExtendTotalAmount"></p>
                         <br><br>
                         <div class = "row">
                             <div class="col-md-2"></div>
                             <div class="col-md-4">
-                                <button type="button" class="btn btn-success" onclick="ShowModalAddRoomPayNow()">Yes</button>
+                                <button type="button" class="btn btn-success" onclick="ShowModalExtendStayPayNow()">Yes</button>
                             </div> 
-                            <form method="post" action="/Customer/Rooms" id="formAddRoom">
+                            <form method="post" action="/Customer/Extend">
                                 {{ csrf_field() }}
-                                <input type="hidden" name="AddChosenRooms" id="AddChosenRooms">
-                                <input type="hidden" name="AddReservationID" id="AddReservationID">
-                                <input type="hidden" name="AddRoomAmount" id="AddRoomAmount">
-                                <input type="hidden" name="AddToday" id="AddToday">
-                                <input type="hidden" name="AddDeparture" id="AddDeparture">
+                                <input type="hidden" name="ExtendLaterReservationID" id="ExtendLaterReservationID">
+                                <input type="hidden" name="ExtendLaterNight" id="ExtendLaterNight">
+                                <input type="hidden" name="ExtendLaterAmount" id="ExtendLaterAmount">
                                 <div class="col-md-4">
                                     <button type="submit" class="btn btn-success">No</button>
                                 </div>
                             </form>
                             <div class="col-md-2"></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalExtendStayPayNow" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Payment<span class="close" onclick="HideModalExtendStayPayNow()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/Customer/ExtendPay" onsubmit="return CheckForm()">
+                            <input type="hidden" name="ExtendNowReservationID" id="ExtendNowReservationID">
+                            <input type="hidden" name="ExtendNowNight" id="ExtendNowNight">
+                            {{ csrf_field() }}
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="ExtendPayTotal" name="ExtendPayTotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static" id="ExtendPayPaymentError">
+                                        <label class="control-label">Payment</label>
+                                        <input type="text" class="form-control" onkeyup="SendExtendPayment(this, 'double', '#ExtendPayPaymentError')" onchange="SendExtendPayment(this, 'double', '#ExtendPayPaymentError')" id="ExtendPayPayment" name="ExtendPayPayment" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Change</label>
+                                        <input type="text" class="form-control" id="ExtendPayChange" name="ExtendPayChange">
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                </div> 
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -107,6 +107,36 @@ function HideModalDeleteRoomType(){
     document.getElementById("DivModalDeleteRoomType").style.display = "none";
 }
 
+function ShowModalImages(){
+    var TableChecker = CheckTable('#RoomTypeTable tr');
+    var TableChecker2 = CheckTable('#CottageTable tr');
+    if(TableChecker || TableChecker2){
+        document.getElementById("DivModalImages").style.display = "block";
+    }
+}
+
+function HideModalImages(){
+    document.getElementById("DivModalImages").style.display = "none";
+}
+
+function ShowModalAddImages(){
+    HideModalImages();
+    document.getElementById("AddImageRoomTypeID").value = RoomTypeInfo[0];
+    document.getElementById("DivModalAddImages").style.display = "block";
+}
+
+function HideModalAddImages(){
+    document.getElementById("DivModalAddImages").style.display = "none";
+}
+
+
+
+//Add room type image
+
+$('#RoomTypeImage').change(function () {
+    alert(this.files[0].mozFullPath);
+});
+
 //DELETE ROOM TYPE
 
 function DeleteRoomType(){

@@ -1170,52 +1170,114 @@ class ResortController extends Controller
     }
     
     public function saveExtendStay(Request $req){
-        $ReservationID = trim($req->input('ExtendReservationID'));
-        $DaysToExtend = trim($req->input('ExtendNight'));
+        $ReservationID = trim($req->input('ExtendLaterReservationID'));
+        $ExtendTotal = trim($req->input('ExtendLaterNight'));
+        $TotalAmount = trim($req->input('ExtendLaterAmount'));
+        $PaymentStatus = 0;
         
-        $ArrivalDate = Carbon::now('Asia/Manila')->format('Y/m/d h:i:s');
-        $tempDepartureDate = DB::table('tblreservationdetail')->where('strReservationID', '=', $ReservationID)->pluck('dtmResDDeparture')->first();
-     
-        $DepartureDate = Carbon::parse($tempDepartureDate)->addDays($DaysToExtend)->format('Y/m/d h:i:s');
-  
-        $AvailableRooms = $this->fnGetAvailableRooms($ReservationID, $ArrivalDate, $DepartureDate);
+        $this->updateExtendStay($ReservationID, $ExtendTotal, $TotalAmount, $PaymentStatus);
+
+        \Session::flash('flash_message','Successfully extended the stay of the customer!');
         
-        $ReservedRooms = DB::table('tblReservationRoom as a')
-                         ->join('tblRoom as b', 'a.strResRRoomID', '=', 'b.strRoomID')
-                         ->select('strResRRoomID',
-                                  'strRoomName')
-                         ->where('strResRReservationID', '=', $ReservationID)
-                         ->get();
-            
-        $UnavailableRooms = []; 
-        foreach($ReservedRooms as $Reserved){
-            $found = false;
-            foreach($AvailableRooms as $Available){
-                if($Reserved->strResRRoomID == $Available->strRoomID){
-                    $found = true;
-                    break;
-                }
-            }
-            if(!($found)){
-                $UnavailableRooms[sizeof($UnavailableRooms)] = $Reserved->strRoomName;
-            }
-        }
-        
-        dd($UnavailableRooms);
-        if(sizeof($UnavailableRooms) != 0){
-            //return redirect
-        }
-        else{
-            $updateData = array('strResRRoomID' => $NewRoomID,
-                            'intResRPayment' => $PaymentStatus);
-    
-            DB::table('tblReservationRoom')
-                ->where([['strResRReservationID', $ReservationID],['strResRRoomID','=', $RoomID]])
-                ->update($updateData);
-        }
+        return redirect('/Customers');
     }
     
+    public function saveExtendStayPay(Request $req){
+        $ReservationID = trim($req->input('ExtendNowReservationID'));
+        $ExtendTotal = trim($req->input('ExtendNowNight'));
+        $TotalAmount = trim($req->input('ExtendPayTotal'));
+        $PaymentStatus = 1;
+        
+        $this->updateExtendStay($ReservationID, $ExtendTotal, $TotalAmount, $PaymentStatus);
+        
+        \Session::flash('flash_message','Successfully extended the stay of the customer!');
+        
+        return redirect('/Customers');
+    }
     
+    public function updateExtendStay($ReservationID, $ExtendTotal, $TotalAmount, $PaymentStatus){
+        
+        $tempDepartureDate = DB::table('tblreservationdetail')->where('strReservationID', '=', $ReservationID)->pluck('dtmResDDeparture')->first();
+        
+        $DepartureDate = Carbon::parse($tempDepartureDate)->addDays($ExtendTotal)->toDateTimeString();
+        
+        $updateData = array('dtmResDDeparture' => $DepartureDate);
+        
+        DB::table('tblReservationDetail')
+                ->where('strReservationID', $ReservationID)
+                ->update($updateData);
+    }
+    
+    public function editCustomerInfo(Request $req){
+        
+        $CustomerID = trim($req->input('EditCustomerID'));
+        $CustFirstName = trim($req->input('CustFirstName'));
+        $CustMiddleName = trim($req->input('CustMiddleName'));
+        $CustLastName = trim($req->input('CustLastName'));
+        $CustAddress = trim($req->input('CustAddress'));
+        $CustContact = trim($req->input('CustContact'));
+        $CustEmail = trim($req->input('CustEmail'));
+        $CustNationality = trim($req->input('CustNationality'));
+        $CustGender = trim($req->input('CustGender'));
+        $CustBirthday = trim($req->input('CustBirthday'));
+        
+        $CustBirthday = Carbon::parse($CustBirthday)->Format('Y/m/d');
+        
+        if($CustGender == "Male"){
+            $CustGender = "M";
+        }
+        else{
+            $CustGender = "F";
+        }
+        
+        $updateData = array('strCustFirstName' => $CustFirstName,
+                            'strCustMiddleName' => $CustMiddleName,
+                            'strCustLastName' => $CustLastName,
+                            'strCustAddress' => $CustAddress,
+                            'strCustContact' => $CustContact,
+                            'strCustEmail' => $CustEmail,
+                            'strCustNationality' => $CustNationality,
+                            'strCustGender' => $CustGender,
+                            'dtmCustBirthday' => $CustBirthday);
+        
+        DB::table('tblCustomer')
+            ->where('strCustomerID', '=', $CustomerID)
+            ->update($updateData);
+        
+        \Session::flash('flash_message','Successfully updated the customer information!');
+        
+        return redirect('/Customers');
+    }
+    
+    public function deleteCustomer(Request $req){
+        $CustomerID = trim($req->input('DeleteCustomerID'));
+        $ExistingReservations = DB::table('tblReservationDetail as a')
+                                ->join ('tblCustomer as b', 'a.strResDCustomerID','=','b.strCustomerID')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where('b.strCustomerID','=',$CustomerID)
+                                ->get();
+        
+        if(sizeof($ExistingReservations) == 0){
+            $updateData = array('intCustStatus' => 0);
+        
+            DB::table('tblCustomer')
+                ->where('strCustomerID', '=', $CustomerID)
+                ->update($updateData);
+            
+            \Session::flash('flash_message','Successfully deleted!');
+        
+        return redirect('/Customers');
+        }
+        else{
+            \Session::flash('duplicate_message','Cannot delete the customer because they still have an active/on going reservation');
+            return redirect('/Customers');
+        }
+        
+    }
     
     /*---------- ROOMS -------------*/
     

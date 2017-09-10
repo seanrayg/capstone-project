@@ -225,6 +225,13 @@ Route::post('/Maintenance/Fee/Delete', 'MaintenanceController@deleteFee');
 
 Route::post('Maintenance/Operation/Delete', 'MaintenanceController@deleteOperation');
 
+
+
+//ROOM IMAGES
+
+Route::post('/Maintenance/RoomType/Image/Add', 'MaintenanceController@addRoomTypeImage');
+
+
 /*----------- RESERVATION -------------*/
 
 //Book Reservation
@@ -386,7 +393,13 @@ Route::post('/Customer/RoomsPay', 'ResortController@saveAddRoomsPayment');
 
 Route::post('/Customer/Extend', 'ResortController@saveExtendStay');
 
+Route::post('/Customer/ExtendPay', 'ResortController@saveExtendStayPay');
+
 Route::get('/Customer/Extend/Availability', 'ViewResortController@checkExtendStay');
+
+Route::post('/Customer/Edit', 'ResortController@editCustomerInfo');
+
+Route::post('/Customer/Delete', 'ResortController@deleteCustomer');
 
 
 /*---------- CONTACT INFORMATION----------*/

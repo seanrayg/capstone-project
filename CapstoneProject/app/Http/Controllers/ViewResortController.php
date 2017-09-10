@@ -336,17 +336,25 @@ class ViewResortController extends Controller
                             ->where('intResDStatus', 4)
                             ->get();
         
-        $DateTimeToday = Carbon::now('Asia/Manila')->format('Y/m/d h:i:s');
-        $DateTimeNextWeek = Carbon::now('Asia/Manila')->addDays(7)->format('Y/m/d h:i:s');
-        $DateTimeFiveDays = Carbon::now('Asia/Manila')->addDays(5)->format('Y/m/d h:i:s');
-        $DateTimeThreeDays = Carbon::now('Asia/Manila')->addDays(3)->format('Y/m/d h:i:s');
-        $DateTimeTomorrow = Carbon::now('Asia/Manila')->addDays(1)->format('Y/m/d h:i:s');
+        $DateTimeToday = Carbon::now('Asia/Manila')->toDateTimeString();
+        $DateTimeNextWeek = Carbon::now('Asia/Manila')->addDays(7)->toDateTimeString();
+        $DateTimeFiveDays = Carbon::now('Asia/Manila')->addDays(5)->toDateTimeString();
+        $DateTimeThreeDays = Carbon::now('Asia/Manila')->addDays(3)->toDateTimeString();
+        $DateTimeTomorrow = Carbon::now('Asia/Manila')->addDays(1)->toDateTimeString();
         
+        $DateTimeToday = str_replace("-","/",$DateTimeToday);
+        $DateTimeNextWeek = str_replace("-","/",$DateTimeNextWeek);
+        $DateTimeFiveDays = str_replace("-","/",$DateTimeFiveDays);
+        $DateTimeThreeDays = str_replace("-","/",$DateTimeThreeDays);
+        $DateTimeTomorrow = str_replace("-","/",$DateTimeTomorrow);
+
+ 
         $RoomsNextWeek = $this->fnGetAvailableRoomsByDate($DateTimeToday, $DateTimeNextWeek);
         $RoomsFiveDays = $this->fnGetAvailableRoomsByDate($DateTimeToday, $DateTimeFiveDays);
         $RoomsThreeDays = $this->fnGetAvailableRoomsByDate($DateTimeToday, $DateTimeThreeDays);
         $RoomsTomorrow = $this->fnGetAvailableRoomsByDate($DateTimeToday, $DateTimeTomorrow);
         
+
         foreach($RoomsNextWeek as $NextWeek){
             $NextWeek->Availability = "Available for the next 7 days";
         }
@@ -410,7 +418,7 @@ class ViewResortController extends Controller
                                 })
                                 ->pluck('strReservationID')
                                 ->toArray();
-        
+    
         $ExistingRooms = DB::table('tblReservationRoom')
                                 ->whereIn('strResRReservationID', $ExistingReservations)
                                 ->pluck('strResRRoomID')

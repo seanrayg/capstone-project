@@ -380,7 +380,7 @@
                                     <tbody class="text-center">
                                         @foreach($CustomersBooked as $Booked)
                                         <tr>
-                                            <td>{{$Booked->strReservationID}}}</td>
+                                            <td>{{$Booked->strReservationID}}</td>
                                             <td>{{$Booked->Name}}</td>   
                                             <td>{{$Booked->dtmResDArrival}}</td>
                                             <td>{{$Booked->dtmResDDeparture}}</td>

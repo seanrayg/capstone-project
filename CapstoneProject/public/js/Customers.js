@@ -9,7 +9,18 @@ var diffDays;
 var strChosenRooms;
 var TotalRoomCost = 0;
 var today;
+var ExtendTotal = 0;
+var CustomerInfo = [];
 
+
+//Modal controller
+function ShowModalUnavailableRooms(){
+    document.getElementById("DivModalUnavailableRooms").style.display = "block";
+}
+
+function HideModalUnavailableRooms(){
+    document.getElementById("DivModalUnavailableRooms").style.display = "none";
+}
 
 function ShowModalExtendStayPayment(){
     var daysToExtend = parseInt(document.getElementById("ExtendNight").value);
@@ -19,13 +30,31 @@ function ShowModalExtendStayPayment(){
         data:{ExtendReservationID: ReservationID,
               ExtendNight: daysToExtend},
         success:function(data){
-          //  if(data.UnavailableRooms != undefined){
-                alert(JSON.stringify(data.ExistingReservations));
-
-          //  }
-           // else{
-                //document.getElementById("DivModalExtendStayPayment").style.display = "block";
-           // }
+            if(data.UnavailableRooms != undefined){
+                $('#UnavailableList').empty();
+                HideModalExtendStay();
+                ShowModalUnavailableRooms();
+                for(var x = 0; x < data.UnavailableRooms.length; x++){
+                    var ul = document.getElementById("UnavailableList");
+                    var li = document.createElement("li");
+                    li.appendChild(document.createTextNode(data.UnavailableRooms[x]));
+                    ul.appendChild(li);
+                }
+            }
+            else{
+                ExtendTotal = 0;
+                for(var x = 0; x < data.ReservedRooms.length; x++){
+                    ExtendTotal += parseInt(data.ReservedRooms[x].dblRoomRate);
+                }
+                
+                ExtendTotal = parseInt(ExtendTotal) * parseInt(daysToExtend);
+                document.getElementById("ExtendTotalAmount").innerHTML = "Additional payment amounting PHP" + ExtendTotal +" is needed to extend the stay";
+                HideModalExtendStay();
+                document.getElementById("ExtendLaterReservationID").value = ReservationID;
+                document.getElementById("ExtendLaterNight").value = daysToExtend;
+                document.getElementById("ExtendLaterAmount").value = ExtendTotal;
+                document.getElementById("DivModalExtendStayPayment").style.display = "block";
+            }
         },
         error:function(response){
             console.log(response);
@@ -48,6 +77,17 @@ function HideModalExtendStay(){
     document.getElementById("DivModalExtendStay").style.display = "none";
 }
 
+function ShowModalExtendStayPayNow(){
+    document.getElementById("ExtendPayTotal").value = ExtendTotal;
+    document.getElementById("ExtendNowReservationID").value = ReservationID;
+    document.getElementById("ExtendNowNight").value = document.getElementById("ExtendLaterNight").value;
+    document.getElementById("DivModalExtendStayPayNow").style.display = "block";
+}
+
+function HideModalExtendStayPayNow(){
+    document.getElementById("DivModalExtendStayPayNow").style.display = "none";
+}
+
 function ShowModalAddRoom(){
     document.getElementById("DivModalAddRoom").style.display = "block";
 }
@@ -65,7 +105,20 @@ function HideModalCheckout(){
 }
 
 function ShowModalEditCustomer(){
-    document.getElementById("DivModalEditCustomer").style.display = "block";
+    var TableChecker = CheckTable("#tblCustomer tr");
+    if(TableChecker){
+        document.getElementById("EditCustomerID").value = CustomerInfo[0];
+        document.getElementById("CustFirstName").value = CustomerInfo[1];
+        document.getElementById("CustMiddleName").value = CustomerInfo[2];
+        document.getElementById("CustLastName").value = CustomerInfo[3];
+        document.getElementById("CustAddress").value = CustomerInfo[4];
+        document.getElementById("CustContact").value = CustomerInfo[5];
+        document.getElementById("CustEmail").value = CustomerInfo[6];
+        document.getElementById("CustNationality").value = CustomerInfo[7];
+        document.getElementById("CustGender").value = CustomerInfo[8];
+        document.getElementById("CustBirthday").value = CustomerInfo[9];
+        document.getElementById("DivModalEditCustomer").style.display = "block";
+    }
 }
 
 function HideModalEditCustomer(){
@@ -73,7 +126,11 @@ function HideModalEditCustomer(){
 }
 
 function ShowModalDeleteCustomer(){
-    document.getElementById("DivModalDeleteCustomer").style.display = "block";
+    var TableChecker = CheckTable("#tblCustomer tr");
+    if(TableChecker){
+        document.getElementById("DeleteCustomerID").value = CustomerInfo[0];
+        document.getElementById("DivModalDeleteCustomer").style.display = "block";
+    }
 }
 
 function HideModalDeleteCustomer(){
@@ -149,6 +206,8 @@ function HideModalAddRoomPayNow(){
     document.getElementById("DivModalAddRoomPayNow").style.display = "none";
 }
 
+
+//misc
 function run(event, sender){
     event = event || window.event; 
     var target = event.target || event.srcElement;
@@ -170,18 +229,10 @@ function run(event, sender){
         getAvailableRooms();
     }
     
-    if(sender == "AvailableRooms"){
-        var x = document.getElementsByClassName("ErrorLabel");
-        for(var i = 0; i < x.length; i++){
-            x[i].innerText="";
-        }
-        document.getElementById("TotalRooms").value = "";
-        AvailableRooms = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML];
+    if(sender == "Record"){
+        CustomerInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML];
     }
-    
-    if(sender == "ChosenRooms"){
-        ChosenRooms = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML];
-    }   
+
 }
 
 /*------------- ADD ROOM ----------------*/
@@ -426,6 +477,25 @@ function SendPayment(field, dataType, holder){
         }
         else{
             document.getElementById("AddPayChange").value = Change;
+        }
+        
+    }
+}
+
+/*---------- EXTEND STAY ---------------*/
+
+function SendExtendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var ExtendTotal = parseInt(document.getElementById("ExtendPayTotal").value);
+        var ExtendPayment = parseInt(field.value);
+        var Change = ExtendPayment - ExtendTotal;
+        if(Change < 0){
+            document.getElementById("ExtendPayChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("ExtendPayChange").value = Change;
         }
         
     }

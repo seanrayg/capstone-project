@@ -141,6 +141,7 @@
                                 <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteRoomType()"><i class="material-icons">delete</i> Delete</button>
                                 <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditRoomType()"><i class="material-icons">create</i> Edit</button>
                                 <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddRoomType()"><i class="material-icons">add</i> Add</button>
+                                <button type="button" class="btn btn-primary pull-right" onclick="ShowModalImages()"><i class="material-icons">insert_photo</i> Images</button>
                             </div>
 
                         </div>
@@ -514,33 +515,129 @@
     </div>
 
 <div id="DivModalDeleteRoomType" class="modal">
-        <div class="Modal-content">
-            <div class="row">
-                <div class="col-md-3">
-                </div>
-	            <div class="col-md-8">
-                    <div class="card card-stats">
-
-                            <div class="card-header" data-background-color="red">
-                                <i class="material-icons">delete</i>
-                            </div>
-                            <div class="card-content">
-                                <p class="category"></p>
-                                <h3 class="title" id="DeleteModalTitle"><span class="close" onclick="HideModalDeleteRoomType()">X</span></h3>
-                                <h3 class="title"></h3>
-                                <form method="post" action="/Maintenance/RoomType/Delete" onsubmit="return DeleteRoomType()">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" id="d-RoomTypeID" name="d-RoomTypeID">
-                                    <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteRoomType()">Cancel</button>
-                                    <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>
-                                    <div class="clearfix"></div>
-                                </form>           
-                            </div>
-                    </div>
-                </div>
-
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-3">
             </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="red">
+                            <i class="material-icons">delete</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title" id="DeleteModalTitle"><span class="close" onclick="HideModalDeleteRoomType()">X</span></h3>
+                            <h3 class="title"></h3>
+                            <form method="post" action="/Maintenance/RoomType/Delete" onsubmit="return DeleteRoomType()">
+                                {{ csrf_field() }}
+                                <input type="hidden" id="d-RoomTypeID" name="d-RoomTypeID">
+                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteRoomType()">Cancel</button>
+                                <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>
+                                <div class="clearfix"></div>
+                            </form>           
+                        </div>
+                </div>
+            </div>
+
         </div>
     </div>
+</div>
+
+<div id="DivModalImages" class="modal">
+    <div class="Modal-content" style="max-width: 800px">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+                        
+                        <div class="card-header" data-background-color="purple">
+                            <i class="material-icons">insert_photo</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title" id="DeleteModalTitle"><span class="close" onclick="HideModalImages()">X</span></h3>
+                            <h3 class="title">Images</h3>
+                            <br><br>
+                            <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddImages()"><i class="material-icons">add</i> Add</button>
+                            <table class="table">
+                                    <thead class="text-primary" style="font-family:'Roboto'">
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Name</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>
+                                                <img src="/img/DefaultImage.png" alt="Rounded Image" class="img-rounded img-responsive RoomTypeImage">
+                                            </td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalEditFee()">
+                                                    <i class="material-icons">edit</i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs" onclick="ShowModalDeleteFee()">
+                                                    <i class="material-icons">close</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr onclick="HighlightRow(this)">
+                                            <td>
+                                                <img src="/img/DefaultImage.png" alt="Rounded Image" class="img-rounded img-responsive RoomTypeImage">
+                                            </td>
+                                            <td>
+                                                <button type="button" rel="tooltip" title="Edit" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalEditFee()">
+                                                    <i class="material-icons">edit</i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs" onclick="ShowModalDeleteFee()">
+                                                    <i class="material-icons">close</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="DivModalAddImages" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="purple">
+                            <i class="material-icons">insert_photo</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title">Add Image<span class="close" onclick="HideModalAddImages()">X</span></h3>
+                            <br>
+                            <form method="post" action="/Maintenance/RoomType/Image/Add">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="AddImageRoomTypeID" id="AddImageRoomTypeID">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label">Image</label>
+                                        <input type="file" accept="image/*" id="RoomTypeImage" name="RoomTypeImage" style="font-family:'Roboto'" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success pull-right" onclick="ShowModalAddImages()"><i class="material-icons">add</i> Add</button>
+                            </form>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
 
 @endsection

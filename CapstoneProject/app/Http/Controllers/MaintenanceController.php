@@ -290,6 +290,15 @@ class MaintenanceController extends Controller
     }
     
     
+    //add room type image
+    public function addRoomTypeImage(Request $req){
+        $RoomTypeImage = trim($req->input('RoomTypeImage'));
+     
+        dd(Input::file('RoomTypeImage')->getRealPath());
+        
+    }
+    
+    
     //BOAT FUNCTIONS
     
     
