@@ -10,8 +10,37 @@ var strChosenRooms;
 var TotalRoomCost = 0;
 var today;
 
-function ShowModalExtendStay(ArrivalDate, ReservationID){
-    document.getElementById("ExtendReservationID").value = ReservationID;
+
+function ShowModalExtendStayPayment(){
+    var daysToExtend = parseInt(document.getElementById("ExtendNight").value);
+    $.ajax({
+        type:'get',
+        url:'/Customer/Extend/Availability',
+        data:{ExtendReservationID: ReservationID,
+              ExtendNight: daysToExtend},
+        success:function(data){
+          //  if(data.UnavailableRooms != undefined){
+                alert(JSON.stringify(data.ExistingReservations));
+
+          //  }
+           // else{
+                //document.getElementById("DivModalExtendStayPayment").style.display = "block";
+           // }
+        },
+        error:function(response){
+            console.log(response);
+            alert(response.status);
+        }
+    });
+    //
+}
+
+function HideModalExtendStayPayment(){
+    document.getElementById("DivModalExtendStayPayment").style.display = "none";
+}
+
+function ShowModalExtendStay(ArrivalDate, tempReservationID){
+    ReservationID = tempReservationID;
     document.getElementById("DivModalExtendStay").style.display = "block";
 }
 

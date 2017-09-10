@@ -193,33 +193,29 @@
                                 <p class="category"></p>
                                 <h3 class="title">Extend Stay<span class="close" onclick="HideModalExtendStay()">X</span></h3>
                             </div>
-                            <form method="POST" action="/Customer/Extend" onsubmit="return CheckForm()">
-                                {{ csrf_field() }}
-                                <input type="hidden" name="ExtendReservationID" id="ExtendReservationID">
-                                <div class="row">
-                                    <br>
-                                    <h5 class="title text-center">Extend stay for how many nights?</h5>
-                                    <div class="col-sm-12">
-                                        <div class="form-group label-static" id="ExtendNightError">
-                                            <label class="control-label">Number of nights</label>
-                                            <input type="text" class="form-control" id="ExtendNight" name="ExtendNight" onkeyup="ValidateInput(this, 'int', '#ExtendNightError')" onchange="ValidateInput(this, 'int', '#ExtendNightError')">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="ErrorLabel"></p>
-                                    </div>
-                                </div>
+                            <div class="row">
                                 <br>
-                                <div class = "row">
-                                    <div class="col-xs-12">
-                                        <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i>Save</button>
-                                    </div> 
+                                <h5 class="title text-center">Extend stay for how many nights?</h5>
+                                <div class="col-sm-12">
+                                    <div class="form-group label-static" id="ExtendNightError">
+                                        <label class="control-label">Number of nights</label>
+                                        <input type="text" class="form-control" id="ExtendNight" name="ExtendNight" onkeyup="ValidateInput(this, 'int', '#ExtendNightError')" onchange="ValidateInput(this, 'int', '#ExtendNightError')">
+                                    </div>
                                 </div>
+                            </div>
 
-                            </form>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
+                                </div>
+                            </div>
+
+                            <br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="button" class="btn btn-success pull-right" onclick="ShowModalExtendStayPayment()"><i class="material-icons">done</i>Save</button>
+                                </div> 
+                            </div>
                         </div>
 
                 </div>
@@ -650,6 +646,44 @@
                                 <button type="button" class="btn btn-info pull-right" onclick="HideModalReservationInfo()">Close</button>
                                 <div class="clearfix"></div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalExtendStayPayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalExtendPayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">Pay now?</h3>
+                        <p class="category" style="font-family: Roboto; color:black" id="ExtendTotalAmount"></p>
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" onclick="ShowModalAddRoomPayNow()">Yes</button>
+                            </div> 
+                            <form method="post" action="/Customer/Rooms" id="formAddRoom">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="AddChosenRooms" id="AddChosenRooms">
+                                <input type="hidden" name="AddReservationID" id="AddReservationID">
+                                <input type="hidden" name="AddRoomAmount" id="AddRoomAmount">
+                                <input type="hidden" name="AddToday" id="AddToday">
+                                <input type="hidden" name="AddDeparture" id="AddDeparture">
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-success">No</button>
+                                </div>
+                            </form>
+                            <div class="col-md-2"></div>
                         </div>
                     </div>
                 </div>

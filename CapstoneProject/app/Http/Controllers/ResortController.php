@@ -1206,7 +1206,12 @@ class ResortController extends Controller
             //return redirect
         }
         else{
-            //save new reservation dates
+            $updateData = array('strResRRoomID' => $NewRoomID,
+                            'intResRPayment' => $PaymentStatus);
+    
+            DB::table('tblReservationRoom')
+                ->where([['strResRReservationID', $ReservationID],['strResRRoomID','=', $RoomID]])
+                ->update($updateData);
         }
     }
     
@@ -1459,59 +1464,7 @@ class ResortController extends Controller
         return $RoomPaymentStatus;
     }
     
-    public function fnGetAvailableRooms($ReservationID, $CheckInDate, $CheckOutDate){
-        $ExistingReservations = DB::table('tblReservationDetail')
-                                ->where(function($query){
-                                    $query->where('intResDStatus', '=', '1')
-                                          ->orWhere('intResDStatus', '=', '2')
-                                          ->orWhere('intResDStatus', '=', '4');
-                                })
-                                ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','>=',$CheckInDate)
-                                          ->where('dtmResDArrival','<=',$CheckOutDate);
-                                })
-                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
-                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
-                                })
-                                ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','<=',$CheckInDate)
-                                          ->where('dtmResDDeparture','>=',$CheckInDate);
-                                })
-                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
-                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
-                                })
-                                ->pluck('strReservationID')
-                                ->toArray();
-        
-        for($x = 0; $x < sizeof($ExistingReservations); $x++){
-            if($ExistingReservations[$x] == $ReservationID){
-                unset($ExistingReservations[$x]);
-            }
-        }
-        $ExistingReservations = array_values($ExistingReservations);
-   
-        
-        $ExistingRooms = DB::table('tblReservationRoom')
-                                ->whereIn('strResRReservationID', $ExistingReservations)
-                                ->pluck('strResRRoomID')
-                                ->toArray();
-
-        $tempArrivalDate = explode(" ", $CheckInDate);
-        $tempDepartureDate = explode(" ", $CheckOutDate);
-
-        $Rooms = DB::table('tblRoom as a')
-                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
-                    ->select('a.strRoomTypeID',
-                             'a.strRoomName',
-                             'a.strRoomID')
-                     ->whereNotIn('strRoomID', $ExistingRooms)
-                     ->where('a.strRoomStatus','=','Available')
-                     ->get();
-        
-        return $Rooms;
-    }
+    
 }
 
    
