@@ -237,6 +237,9 @@ Route::post('/Maintenance/RoomType/Image/Add', 'MaintenanceController@addRoomTyp
 //Book Reservation
 Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
+//Book Reservation with package
+Route::post('/Reservation/Add/Package', 'ReservationController@addReservationPackage');
+
 //Cancel Reservation
 
 Route::post('/Reservation/Cancel', 'ReservationController@cancelReservation');

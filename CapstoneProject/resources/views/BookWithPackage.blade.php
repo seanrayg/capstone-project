@@ -342,7 +342,7 @@
                                                     <div class="col-xs-4">
                                                         <div class="form-group label-floating" id="ContactError">
                                                             <label class="control-label">Contact Number</label>
-                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'int2', '#ContactError')" onchange="ValidateInput(this, 'int2', '#ContactError')" id="ContactNumber">
+                                                            <input type="text" class="form-control" onkeyup="ValidateInput(this, 'contact', '#ContactError')" onchange="ValidateInput(this, 'contact', '#ContactError')" id="ContactNumber">
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-4">
@@ -369,6 +369,21 @@
                                                               <option>Female</option>
                                                             </select>
                                                         </div> 
+                                                    </div>
+                                                </div>
+                                            
+                                                <div class="row">
+                                                    <div class="col-xs-6">
+                                                        <div class="form-group label-floating" id="NoOfAdultsError">
+                                                            <label class="control-label">Number of Adults</label>
+                                                            <input type="text" class="form-control" onkeyup="ValidateGuests(this, 'int', '#NoOfAdultsError')" onchange="ValidateGuests(this, 'int', '#NoOfAdultsError')" id="NoOfAdults">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6">
+                                                        <div class="form-group label-floating" id="NoOfKidsError">
+                                                            <label class="control-label">Number of Children</label>
+                                                            <input type="text" class="form-control" onkeyup="ValidateGuests(this, 'int2', '#NoOfKidsError')" onchange="ValidateGuests(this, 'int2', '#NoOfKidsError')" id="NoOfKids">
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -419,21 +434,21 @@
                                                 <div class="col-xs-10">
 
                                                     <small><h3 class="text-primary">Accomodation</h3></small>
-                                                    <p class="paragraphText">Check in date:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Check out date:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Time of arrival:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Package Availed:</p> <a href="#"><p class="paragraphText text-primary" rel="tooltip" title="Show package information">aaa</p></a><br>
-                                                    <p class="paragraphText">Package Price:</p> <p class="paragraphText"></p><br>
+                                                    <p class="paragraphText">Check in date:</p> <p class="paragraphText" id="i-CheckInDate"></p><br>
+                                                    <p class="paragraphText">Check out date:</p> <p class="paragraphText" id="i-CheckOutDate"></p><br>
+                                                    <p class="paragraphText">Time of arrival:</p> <p class="paragraphText" id="i-PickUpTime"></p><br>
+                                                    <p class="paragraphText">Package Availed:</p> <a href="/Maintenance/Package" target="_blank"><p class="paragraphText text-primary" rel="tooltip" title="Show package information" id="i-PackageName"></p></a><br>
+                                                    <p class="paragraphText">Package Price:</p> <p class="paragraphText" id="i-PackagePrice"></p><br>
 
                                                     <small><h3 class="text-primary">Customer Information</h3></small>
-                                                    <p class="paragraphText">Customer Name:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Address:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Email:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Contact Number:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Nationality:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Date of birth:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Gender:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Remarks:</p> <p class="paragraphText"></p><br>
+                                                    <p class="paragraphText">Customer Name:</p> <p class="paragraphText" id="i-CustomerName"></p><br>
+                                                    <p class="paragraphText">Address:</p> <p class="paragraphText" id='i-Address'></p><br>
+                                                    <p class="paragraphText">Email:</p> <p class="paragraphText" id="i-Email"></p><br>
+                                                    <p class="paragraphText">Contact Number:</p> <p class="paragraphText" id="i-Contact"></p><br>
+                                                    <p class="paragraphText">Nationality:</p> <p class="paragraphText" id="i-Nationality"></p><br>
+                                                    <p class="paragraphText">Date of birth:</p> <p class="paragraphText" id="i-Birthday"></p><br>
+                                                    <p class="paragraphText">Gender:</p> <p class="paragraphText" id="i-Gender"></p><br>
+                                                    <p class="paragraphText">Remarks:</p> <p class="paragraphText" id="i-Remarks"></p><br>
                                                 </div>
                                             </div>
                                         </div>
@@ -454,51 +469,10 @@
                                             <div class="row">
                                                 <div class="col-xs-1"></div>
                                                 <div class="col-xs-10">
-                                                    <small><h3 class="text-primary">Accomodation Fee</h3></small>
-                                                    <div class="row"></div>
-                                                    <table class="table">
-                                                        <thead class="text-primary">
-                                                            <tr>
-                                                                <th>Room</th>
-                                                                <th>Quantity</th>
-                                                                <th>Rate per day</th>
-                                                                <th>Price</th>
-                                                            </tr>
-
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <th>Room</th>
-                                                                <th>Quantity</th>
-                                                                <th>Rate per day</th>
-                                                                <th>Price</th>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Room</th>
-                                                                <th>Quantity</th>
-                                                                <th>Rate per day</th>
-                                                                <th>Price</th>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Room</th>
-                                                                <th>Quantity</th>
-                                                                <th>Rate per day</th>
-                                                                <th>Price</th>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table><br><br>
-                                                    <strong><p class="paragraphText">Total Accomodation Fee:</p><p class="paragraphText"></p></strong><br>
-
-                                                    <small><h3 class="text-primary">Miscellaneous Fee</h3></small>
-                                                    <p class="paragraphText">Total Adult Guests:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Entrance Fee:</p><p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Transportation Fee:</p> <p class="paragraphText"></p><br><br>
-                                                    <strong><p class="paragraphText">Total Miscellaneous Fee:</p> <p class="paragraphText"></p></strong><br>
-
-                                                    <small><h3 class="text-primary">Grand Total</h3></small>
-                                                    <p class="paragraphText">Accomodation Fee:</p> <p class="paragraphText"></p><br>
-                                                    <p class="paragraphText">Miscellaneous Fee:</p> <p class="paragraphText"></p><br>
-                                                    <strong><h6 class="paragraphText text-primary">Grand Total:</h6> <h6 class="paragraphText"></h6></strong><br>
+                                                    <p class="paragraphText">Package Availed:</p><p class="paragraphText text-primary" rel="tooltip" title="Show package information" id="p-PackageName"></p><br>
+                                                    <p class="paragraphText">Package Price:</p> <p class="paragraphText" id="p-PackagePrice"></p><br>
+                                                    
+                                                    <strong><h6 class="paragraphText text-primary">Grand Total:</h6> <h6 class="paragraphText" id="p-GrandTotal"></h6></strong><br>
                                                 </div>
                                             </div>
                                         </div>
@@ -506,8 +480,28 @@
                                 </div>
                             </div>
                     </div>
-                    <button type="button" class="btn btn-info pull-left" onclick="ChangeClass('#ReservationBill', '#BillList', '#ReservationInfo', '#InfoList', 'back')">Back</button>
-                    <button type="button" class="btn btn-success pull-right" onclick="#">Book Reservation</button>
+
+                        <button type="button" class="btn btn-info pull-left" onclick="ChangeClass('#ReservationBill', '#BillList', '#ReservationInfo', '#InfoList', 'back')">Back</button>
+                        <form method="post" action="/Reservation/Add/Package">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="s-CheckInDate" id="s-CheckInDate" value = "">
+                            <input type="hidden" name="s-CheckOutDate" id="s-CheckOutDate" value = "">
+                            <input type="hidden" name="s-PickUpTime" id="s-PickUpTime" value = "">
+                            <input type="hidden" name="s-BoatsUsed" id="s-BoatsUsed" value = "">
+                            <input type="hidden" name="s-FirstName" id="s-FirstName" value = "">
+                            <input type="hidden" name="s-MiddleName" id="s-MiddleName" value = "">
+                            <input type="hidden" name="s-LastName" id="s-LastName" value = "">
+                            <input type="hidden" name="s-Address" id="s-Address" value = "">
+                            <input type="hidden" name="s-Email" id="s-Email" value = "">
+                            <input type="hidden" name="s-Contact" id="s-Contact" value = "">
+                            <input type="hidden" name="s-Nationality" id="s-Nationality" value = "">
+                            <input type="hidden" name="s-DateOfBirth" id="s-DateOfBirth" value = "">
+                            <input type="hidden" name="s-Gender" id="s-Gender" value = "">
+                            <input type="hidden" name="s-Remarks" id="s-Remarks" value = "">
+                            <input type="hidden" name="s-InitialBill" id="s-InitialBill" value = "">
+                            <input type="hidden" name="s-PackageID" id="s-PackageID" value = "">
+                            <button type="submit" class="btn btn-success pull-right">Book Reservation</button>
+                        </form>
                 </div>
 
                 <div class="row">
@@ -567,7 +561,7 @@
                             <div class="row">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" id="BtnWithoutBoats2">Continue without reserving boats</button>
+                                    <button type="button" class="btn btn-success btn-sm" id="BtnWithoutBoats2" onclick="switchTab('WithoutBoats')">Continue without reserving boats</button>
                                 </div>
                             </div>
                         </div>
@@ -603,7 +597,7 @@
                             <div class="row">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" id="BtnWithoutBoats3">Continue without reserving boats</button>
+                                    <button type="button" class="btn btn-success btn-sm" id="BtnWithoutBoats3" onclick="switchTab('WithoutBoats')">Continue without reserving boats</button>
                                 </div>
                             </div>
                         </div>
@@ -639,7 +633,7 @@
                             <div class="row">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" id="ButtonWithoutBoats1">Continue without reserving boats</button>
+                                    <button type="button" class="btn btn-success btn-sm" id="ButtonWithoutBoats1" onclick="switchTab('WithoutBoats')">Continue without reserving boats</button>
                                 </div>
                             </div>
                         </div>

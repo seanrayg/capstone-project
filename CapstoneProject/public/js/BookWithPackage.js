@@ -314,8 +314,12 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
         if(sender == "#ReservationDate"){
             var TableChecker = CheckTable('#PackageTable tr');
             if(TableChecker){
-                getAvailableBoats();
-                //switchTab = true;
+                if(PackageInfo[6] == "Free"){
+                    getAvailableBoats();
+                }
+                else{
+                    switchTab = true;
+                }
             }
             else{
                 document.getElementById("ErrorMessage").innerHTML = "Please choose a package";
@@ -330,7 +334,7 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
             }
             
             
-            if((document.getElementById("FirstName").value == "")||(document.getElementById("MiddleName").value == "") ||           (document.getElementById("LastName").value == "")||(document.getElementById("ContactNumber").value == "") || (document.getElementById("Nationality").value == "")||(document.getElementById("DateOfBirth").value == "") || (document.getElementById("Address").value == "")||(document.getElementById("Email").value == "")){
+            if((document.getElementById("FirstName").value == "")||(document.getElementById("MiddleName").value == "") ||           (document.getElementById("LastName").value == "")||(document.getElementById("ContactNumber").value == "") || (document.getElementById("Nationality").value == "")||(document.getElementById("DateOfBirth").value == "") || (document.getElementById("Address").value == "")||(document.getElementById("Email").value == "")||(document.getElementById("NoOfAdults").value == "")||(document.getElementById("NoOfKids").value == "")){
                 switchTab = false;
                 document.getElementById("ErrorMessage").innerHTML = "Please fill out all fields";
             }
@@ -343,6 +347,7 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
                 document.getElementById("ErrorMessage").innerHTML = "Customers only 18 years old and above are allowed to book a reservation";
             }
             else{
+                fillReservationSummary();
                 switchTab = true;
             }
         }// Reservation Info
@@ -416,7 +421,7 @@ function processBoat(data, TotalGuests){
                 break;
             }
         }
-        alert(BoatsUsed);
+
         if(!BoatFound){
             ShowModalMultipleBoats();
             $('#BtnMultipleBoats, #BtnWithoutBoats2').click(function () {
@@ -443,7 +448,7 @@ function processBoat(data, TotalGuests){
                         $('#BtnWithoutBoats3').click(function () {
                             if (this.id == 'BtnWithoutBoats3') {
                                 HideModalNoMultipleBoats();
-                                switchTab('WithoutBoats');
+                                //switchTab('WithoutBoats');
                             }
                         });
                     }//!Multiple Boats found
@@ -453,7 +458,7 @@ function processBoat(data, TotalGuests){
                 }//Button Avail Multiple Boats
                 else if (this.id == 'BtnWithoutBoats2') {
                     HideModalMultipleBoats();
-                    switchTab('WithoutBoats');
+                    //switchTab('WithoutBoats');
                 }
             });
         }//!BoatFound
@@ -466,7 +471,7 @@ function processBoat(data, TotalGuests){
         $('#BtnWithoutBoats1').click(function () {
             if (this.id == 'BtnWithoutBoats1') {
                 HideModalNoBoats();
-                switchTab('WithoutBoats');
+                //switchTab('WithoutBoats');
             }
         });
     }
@@ -477,7 +482,9 @@ function switchTab(GuestChoice){
     if(GuestChoice == "WithoutBoats"){
         BoatsUsed = "";
     }
-
+    HideModalNoMultipleBoats();
+    HideModalMultipleBoats();
+    HideModalNoBoats();
     $('.alert').hide();
     $('#ReservationDate').removeClass('active');
     $('#DateList').removeClass('active');
@@ -485,3 +492,90 @@ function switchTab(GuestChoice){
     $('#ReservationInfo').addClass('active');
 }
 
+function getEntranceFee(){
+    $.ajax({
+        type:'get',
+        url:'/Reservation/Fees',
+        success:function(data){
+            fillReservationSummary(data);
+        },
+        error:function(response){
+            console.log(response);
+            alert("error");
+        }
+    });   
+}
+
+function fillReservationSummary(data){
+    var tempHour = document.getElementById("PickUpTime").value;
+    var tempMinute = document.getElementById("PickUpMinute").value;
+    var tempMerridean = document.getElementById("PickUpMerridean").value;
+    
+    document.getElementById("i-CheckInDate").innerHTML = document.getElementById("CheckInDate").value;
+    document.getElementById("i-CheckOutDate").innerHTML = document.getElementById("CheckOutDate").value;
+    document.getElementById("i-PickUpTime").innerHTML = tempHour + ":" + tempMinute + " " +tempMerridean;
+    document.getElementById("i-PackageName").innerHTML = PackageInfo[1];
+    document.getElementById("i-PackagePrice").innerHTML = PackageInfo[2];
+    document.getElementById("i-CustomerName").innerHTML = document.getElementById("FirstName").value + " " + document.getElementById("LastName").value;
+    document.getElementById("i-Address").innerHTML = document.getElementById("Address").value;
+    document.getElementById("i-Email").innerHTML = document.getElementById("Email").value;
+    document.getElementById("i-Contact").innerHTML = document.getElementById("ContactNumber").value;
+    document.getElementById("i-Nationality").innerHTML = document.getElementById("Nationality").value;
+    document.getElementById("i-Birthday").innerHTML = document.getElementById("DateOfBirth").value;
+    document.getElementById("i-Gender").innerHTML = document.getElementById("Gender").value;
+    document.getElementById("i-Remarks").innerHTML = document.getElementById("Remarks").value;
+    
+    document.getElementById("p-PackageName").innerHTML = PackageInfo[1];
+    document.getElementById("p-PackagePrice").innerHTML = PackageInfo[2];
+    
+    document.getElementById("p-GrandTotal").innerHTML = PackageInfo[2];
+    
+    document.getElementById("s-CheckInDate").value = document.getElementById("CheckInDate").value;
+    document.getElementById("s-CheckOutDate").value = document.getElementById("CheckOutDate").value;
+    document.getElementById("s-PickUpTime").value = tempHour + ":" + tempMinute + " " +tempMerridean;
+    document.getElementById("s-PackageID").value = PackageInfo[0];
+    document.getElementById("s-InitialBill").value = PackageInfo[2];
+    document.getElementById("s-BoatsUsed").value = BoatsUsed;
+    document.getElementById("s-FirstName").value = document.getElementById("FirstName").value;
+    document.getElementById("s-MiddleName").value = document.getElementById("MiddleName").value;
+    document.getElementById("s-LastName").value = document.getElementById("LastName").value;
+    document.getElementById("s-Address").value = document.getElementById("Address").value;
+    document.getElementById("s-Email").value = document.getElementById("Email").value;
+    document.getElementById("s-Contact").value = document.getElementById("ContactNumber").value;
+    document.getElementById("s-Nationality").value = document.getElementById("Nationality").value;
+    document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
+    document.getElementById("s-Gender").value = document.getElementById("Gender").value;
+    document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
+}
+
+function ValidateGuests(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+            if(document.getElementById("NoOfAdults").value != "" && document.getElementById("NoOfKids").value != ""){
+                var NoOfAdults = parseInt(document.getElementById("NoOfAdults").value);
+                var NoOfKids = parseInt(document.getElementById("NoOfKids").value);
+                
+                var TotalGuests = NoOfKids + NoOfAdults;
+                
+                if(parseInt(PackageInfo[3]) >= parseInt(TotalGuests)){
+                    $('#NoOfKidsError').removeClass('has-warning');
+                    $('#NoOfAdultsError').removeClass('has-warning');
+                    var x = document.getElementsByClassName("ErrorLabel");
+                    for(var i = 0; i < x.length; i++){
+                        x[i].innerText="";
+                    }
+                }
+                else{
+                    $('#NoOfKidsError').addClass('has-warning');
+                    $('#NoOfAdultsError').addClass('has-warning');
+                    
+                    var x = document.getElementsByClassName("ErrorLabel");
+                    for(var i = 0; i < x.length; i++){
+                        x[i].innerText="Number of guests exceeds pax of the package";
+                    }
+                }
+                
+    
+            }
+       }
+}
