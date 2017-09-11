@@ -631,6 +631,41 @@ class ViewController extends Controller
     
      //Reservation
     
+    public function getAvailablePackages(Request $req){
+        $CheckInDate = trim($req->input('CheckInDate'));
+        $Packages = $this->getPackages();
+        foreach($Packages as $Package){
+            
+            $CheckOutDate = carbon::parse($CheckInDate)->addDays($Package->intPackageDuration)->toDateTimeString();
+            $CheckOutDate = str_replace('-','/', $CheckOutDate);
+            
+            $Rooms = $this->fnGetAvailableRooms($CheckInDate, $CheckOutDate);
+            $RoomPackage = $this->getRoomInclusion($Package->strPackageID);
+        
+            
+            
+            foreach($RoomPackage as $RPackage){
+                $found = false;
+                foreach($Rooms as $Room){
+                    if($RPackage->strRoomType == $Room->strRoomType){
+                        $found = true;
+                        if($RPackage->intPackageRQuantity > $Room->TotalRooms){
+                            $Package->strPackageName = "";
+                        }
+                    }
+                }
+                if(!($found)){
+                    $Package->strPackageName = "";
+                }
+            }
+        }
+        
+        $newPackage = $Packages->where('strPackageName', '!=', "");
+        $newPackage = $newPackage->values();
+        
+        return response()->json($newPackage);
+    }
+    
     public function ViewReservations(){
         $Reservations = DB::table('tblReservationDetail as a')
                         ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')

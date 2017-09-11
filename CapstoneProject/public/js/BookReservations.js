@@ -11,7 +11,7 @@ var TotalCapacity = 0;
 var BoatList;
 var tempTotal = 0;
 var GrandTotal = 0;
-/*---------- Modal controller -------*/
+/*---------- Modal controller -------*/ 
 
 function ShowModalAvailBoat(){
     document.getElementById("DivModalAvailBoat").style.display = "block";
@@ -1000,3 +1000,5 @@ function SaveReservation(){
     
     return true;
 }
+
+
