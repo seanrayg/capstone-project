@@ -40,6 +40,11 @@ class ViewUtilitiesController extends Controller
         return View('ContactInformation', compact('Contacts', 'ContactID'));
     }
     
+    public function ViewContentManagement(){
+        
+        return View('ContentManagement');
+    }
+    
     /*----------- MISC ----------------*/
     
     //SmartCounter

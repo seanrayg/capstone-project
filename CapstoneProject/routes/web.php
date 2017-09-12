@@ -423,6 +423,10 @@ Route::post('Contact/Edit', 'UtilitiesController@editContactInfo');
 
 Route::post('Contact/Delete', 'UtilitiesController@deleteContactInfo');
 
+
+/*---------- CONTENT MANAGEMENT ---------*/
+Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement');
+
 //testing reports
 Route::post('/sample', function(){
 	$customPaper = array(0,0,360,200);
