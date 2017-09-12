@@ -347,7 +347,7 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
                 document.getElementById("ErrorMessage").innerHTML = "Customers only 18 years old and above are allowed to book a reservation";
             }
             else{
-                fillReservationSummary();
+                getEntranceFee();
                 switchTab = true;
             }
         }// Reservation Info
@@ -507,6 +507,32 @@ function getEntranceFee(){
 }
 
 function fillReservationSummary(data){
+    var RentTotal = 0;
+    var TransportationFee = 0;
+    var EntranceFee = 0;
+    var arrFeeContent = [];
+    var EntranceFound = false;
+    if(data.length >= 1){
+        EntranceFee = data[0].dblFeeAmount;
+    }
+    else{
+        EntranceFee = 0;
+    }
+    
+  
+    $('#tblIncludedFees tr').each(function() {
+        if($(this).find("td:first").html() != null){
+            arrFeeContent[arrFeeContent.length] = $(this).find("td:first").html();
+        }
+    });
+    
+    for(var x = 0; x < arrFeeContent.length; x++){
+        if(arrFeeContent[x] == "Entrance Fee"){
+            EntranceFound = true;
+            break;
+        }
+    }
+    
     var tempHour = document.getElementById("PickUpTime").value;
     var tempMinute = document.getElementById("PickUpMinute").value;
     var tempMerridean = document.getElementById("PickUpMerridean").value;
@@ -530,11 +556,25 @@ function fillReservationSummary(data){
     
     document.getElementById("p-GrandTotal").innerHTML = PackageInfo[2];
     
+    document.getElementById("p-EntranceFee").innerHTML = EntranceFee;
+    document.getElementById("p-NoOfAdults").innerHTML = document.getElementById("NoOfAdults").value;
+    
+    if(EntranceFound){
+        document.getElementById("p-TotalEntranceFee").innerHTML = "0";
+    }
+    else{
+        document.getElementById("p-TotalEntranceFee").innerHTML = parseInt(EntranceFee) * parseInt(document.getElementById("NoOfAdults").value);
+    }
+    
+    document.getElementById("p-AccomodationFee").innerHTML = PackageInfo[2];
+    document.getElementById("p-MiscellaneousFee").innerHTML = document.getElementById("p-TotalEntranceFee").innerHTML;
+    document.getElementById("p-GrandTotal").innerHTML = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[2]);
+    
     document.getElementById("s-CheckInDate").value = document.getElementById("CheckInDate").value;
     document.getElementById("s-CheckOutDate").value = document.getElementById("CheckOutDate").value;
     document.getElementById("s-PickUpTime").value = tempHour + ":" + tempMinute + " " +tempMerridean;
     document.getElementById("s-PackageID").value = PackageInfo[0];
-    document.getElementById("s-InitialBill").value = PackageInfo[2];
+    document.getElementById("s-InitialBill").value = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[2]);
     document.getElementById("s-BoatsUsed").value = BoatsUsed;
     document.getElementById("s-FirstName").value = document.getElementById("FirstName").value;
     document.getElementById("s-MiddleName").value = document.getElementById("MiddleName").value;
@@ -546,6 +586,8 @@ function fillReservationSummary(data){
     document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
     document.getElementById("s-Gender").value = document.getElementById("Gender").value;
     document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
+    document.getElementById("s-NoOfKids").value = document.getElementById("NoOfKids").value;
+    document.getElementById("s-NoOfAdults").value = document.getElementById("NoOfAdults").value;
 }
 
 function ValidateGuests(field, dataType, holder){

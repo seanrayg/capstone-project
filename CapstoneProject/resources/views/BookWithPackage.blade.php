@@ -467,12 +467,22 @@
                                             </div>
 
                                             <div class="row">
+                                                
                                                 <div class="col-xs-1"></div>
                                                 <div class="col-xs-10">
-                                                    <p class="paragraphText">Package Availed:</p><p class="paragraphText text-primary" rel="tooltip" title="Show package information" id="p-PackageName"></p><br>
-                                                    <p class="paragraphText">Package Price:</p> <p class="paragraphText" id="p-PackagePrice"></p><br>
+                                                    <small><h3 class="text-primary">Accomodation</h3></small>
+                                                    <p class="paragraphText">Package Availed:</p><p class="paragraphText" id="p-PackageName"></p><br>
+                                                    <strong><p class="paragraphText">Package Price:</p> <p class="paragraphText" id="p-PackagePrice"></p></strong><br>
+                                                    <small><h3 class="text-primary">Miscellaneous</h3></small>
+                                                    <p class="paragraphText">Number of adult guests:</p><p class="paragraphText" id="p-NoOfAdults"></p><br>
+                                                    <p class="paragraphText">Entrance Fee:</p> <p class="paragraphText" id="p-EntranceFee"></p><br>
+                                                    <strong><p class="paragraphText">Total Entrance Fee:</p> <p class="paragraphText" id="p-TotalEntranceFee"></p></strong><br>
                                                     
-                                                    <strong><h6 class="paragraphText text-primary">Grand Total:</h6> <h6 class="paragraphText" id="p-GrandTotal"></h6></strong><br>
+                                                    <small><h3 class="text-primary">Grand Total</h3></small>
+                                                    <p class="paragraphText">Accomodation Fee:</p> <p class="paragraphText" id="p-AccomodationFee"></p><br>
+                                                    <p class="paragraphText">Miscellaneous Fee:</p> <p class="paragraphText" id="p-MiscellaneousFee"></p><br>
+                                                    <strong><h5 class="paragraphText text-primary">Grand Total:</h5> <h5 class="paragraphText" id="p-GrandTotal"></h5></strong><br>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -500,6 +510,8 @@
                             <input type="hidden" name="s-Remarks" id="s-Remarks" value = "">
                             <input type="hidden" name="s-InitialBill" id="s-InitialBill" value = "">
                             <input type="hidden" name="s-PackageID" id="s-PackageID" value = "">
+                            <input type="hidden" name="s-NoOfKids" id="s-NoOfKids" value = "">
+                            <input type="hidden" name="s-NoOfAdults" id="s-NoOfAdults" value = "">
                             <button type="submit" class="btn btn-success pull-right">Book Reservation</button>
                         </form>
                 </div>

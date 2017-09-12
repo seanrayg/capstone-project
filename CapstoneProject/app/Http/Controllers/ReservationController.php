@@ -72,7 +72,7 @@ class ReservationController extends Controller
         $PickOutTime;
         //gets customer id
     
-        
+                dd($ChosenRooms);
         if(($req->input('s-Gender')) == "Male"){
             $Gender = "M";
         }
@@ -133,15 +133,8 @@ class ReservationController extends Controller
                $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);          
         }
         
-        //Save Transaction
-        $TransactionData = array('strPaymentID'=>$PaymentID,
-                              'strPayReservationID'=>$ReservationID,
-                              'dblPayAmount'=>$InitialBill,
-                              'strPayTypeID'=> 1,
-                              'dtePayDate'=>$DateBooked->toDateString());
-        
-        DB::table('tblPayment')->insert($TransactionData);
-        
+      
+        $this->saveReservationTransaction($PaymentID, $ReservationID, $InitialBill, $DateBooked);
         
         //Check if there is an entrance fee
         $EntranceFeeID = DB::table('tblFee as a')
@@ -186,6 +179,9 @@ class ReservationController extends Controller
         $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d');
         
         $PickUpTime = Carbon::parse($tempPickUpTime)->format('H:i:s');
+        $PickUpTime2 = Carbon::parse($tempPickUpTime)->addHours(1)->format('H:i:s');
+        
+        dd($PickUpTime2);
         
         $PickOutTime = $PickUpTime;
         
@@ -199,6 +195,25 @@ class ReservationController extends Controller
         
         $ReservationCode = $this->getReservationCode();
         
+        $PackageRoomInfo = DB::table('tblRoomType as a')
+                        ->join('tblPackageRoom as b', 'a.strRoomTypeID', '=', 'b.strPackageRRoomTypeID')
+                        ->join('tblRoomRate as c', 'a.strRoomTypeID', '=', 'c.strRoomTypeID')
+                        ->select('a.strRoomType',
+                                 'a.intRoomTCapacity',
+                                 'b.intPackageRQuantity',
+                                 'c.dblRoomRate')
+                        ->where([['b.strPackageRPackageID', '=', $PackageID], ['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                        ->get();
+        
+
+        $ChosenRooms = "";
+        foreach($PackageRoomInfo as $Info){
+            $ChosenRooms .= $Info -> strRoomType . "-" . $Info -> intRoomTCapacity ."-". $Info -> dblRoomRate ."-".$Info->intPackageRQuantity.",";
+        }
+        
+        $ChosenRooms = rtrim($ChosenRooms,",");
+        
+        dd($ChosenRooms);
         if($Gender == "Male"){
             $Gender = "M";
         }
@@ -218,8 +233,21 @@ class ReservationController extends Controller
         
         $this->saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday);
         
-            
-   
+        $this->saveReservationData($ReservationID, $CustomerID, $CheckInDate, $PickUpTime, $CheckOutDate, $PickOutTime, $NoOfAdults, $NoOfKids, $Remarks, $DateBooked, $ReservationCode);
+        
+        $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
+        $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
+
+        $PaymentStatus = 10;
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
+        
+        //Save Reserved Boats
+        if($BoatsUsed != null){
+               $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);          
+        }
+        
+        
+        $this->saveReservationTransaction($PaymentID, $ReservationID, $InitialBill, $DateBooked);
     }
     
     public function saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday){
@@ -256,6 +284,17 @@ class ReservationController extends Controller
                               'strReservationCode'=>$ReservationCode);
         
         DB::table('tblReservationDetail')->insert($ReservationData);
+    }
+    
+    public function saveReservationTransaction($PaymentID, $ReservationID, $InitialBill, $DateBooked){
+          //Save Transaction
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$InitialBill,
+                              'strPayTypeID'=> 1,
+                              'dtePayDate'=>$DateBooked->toDateString());
+        
+        DB::table('tblPayment')->insert($TransactionData);
     }
 
     public function getCustomerID(){
