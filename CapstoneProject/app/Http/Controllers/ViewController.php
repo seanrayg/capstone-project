@@ -947,26 +947,6 @@ class ViewController extends Controller
     }
     
     public function fnGetAvailableRooms($ArrivalDate, $DepartureDate){
-        
-       
-        /*
-        ->where('duty_start','>=',$dt)
-            ->where('duty_end','<=',$dt)
-        return $query->whereDate('commenters.created_at', '>=', $from)
-        ->whereDate('commenters.created_at', '<=', $to);
-        $ExistingReservations = DB::table('tblReservationDetail')
-                                ->where(function($query){
-                                    $query->where('intResDStatus', '=', '1')
-                                          ->orWhere('intResDStatus', '=', '2')
-                                          ->orWhere('intResDStatus', '=', '4');
-                                })
-                                ->where(function($query) use($ArrivalDate, $DepartureDate){
-                                    $query->whereBetween('dtmResDArrival', [$ArrivalDate, $DepartureDate])
-                                          ->orWhereBetween('dtmResDDeparture', [$ArrivalDate, $DepartureDate]);
-                                })
-                                ->pluck('strReservationID')
-                                ->toArray();*/
-        
            
         $ExistingReservations = DB::table('tblReservationDetail')
                                 ->where(function($query){

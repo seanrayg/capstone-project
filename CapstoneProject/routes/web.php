@@ -293,6 +293,10 @@ Route::post('/Reservation/Downpayment', 'ReservationController@saveDownpayment')
 //Save Walk In
 Route::post('/Walkin/Add', 'ReservationController@addWalkIn');
 
+//Save Walk in with package
+Route::post('/Walkin/Add/Package', 'ReservationController@addWalkInPackage');
+
+//View walk in package page
 Route::get('/Walkin/Package', 'ViewResortController@ViewWalkInPackage');
 
 //get fee amount ajax

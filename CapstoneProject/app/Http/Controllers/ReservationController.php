@@ -1052,6 +1052,10 @@ class ReservationController extends Controller
         return redirect('/ChooseRooms/'.$ReservationID);
     }
     
+    public function addWalkInPackage(Request $req){
+        dd(Input::all());
+    }
+    
     //Edit rooms
     public function saveChosenRooms(Request $req){
         $ReservationID = trim($req->input('s-ReservationID'));
