@@ -72,7 +72,7 @@ class ReservationController extends Controller
         $PickOutTime;
         //gets customer id
     
-                dd($ChosenRooms);
+
         if(($req->input('s-Gender')) == "Male"){
             $Gender = "M";
         }
@@ -174,15 +174,13 @@ class ReservationController extends Controller
         $Remarks = trim($req->input('s-Remarks'));
         $NoOfKids = trim($req->input('s-NoOfKids'));
         $NoOfAdults = trim($req->input('s-NoOfAdults'));
-        
+
+        $Birthday = Carbon::parse($tempDateOfBirth)->format('Y/m/d');
         $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d');
         $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d');
-        
         $PickUpTime = Carbon::parse($tempPickUpTime)->format('H:i:s');
         $PickUpTime2 = Carbon::parse($tempPickUpTime)->addHours(1)->format('H:i:s');
-        
-        dd($PickUpTime2);
-        
+  
         $PickOutTime = $PickUpTime;
         
         $DateBooked = Carbon::now();
@@ -212,8 +210,7 @@ class ReservationController extends Controller
         }
         
         $ChosenRooms = rtrim($ChosenRooms,",");
-        
-        dd($ChosenRooms);
+  
         if($Gender == "Male"){
             $Gender = "M";
         }
@@ -230,15 +227,17 @@ class ReservationController extends Controller
             $PickOutTime = "23:59:59";
         }
         
-        
+        //save customer data
         $this->saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday);
         
+        //save reservation data
         $this->saveReservationData($ReservationID, $CustomerID, $CheckInDate, $PickUpTime, $CheckOutDate, $PickOutTime, $NoOfAdults, $NoOfKids, $Remarks, $DateBooked, $ReservationCode);
         
+        //save reserved rooms
         $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
         $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
 
-        $PaymentStatus = 10;
+        $PaymentStatus = 0;
         $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
         
         //Save Reserved Boats
@@ -246,8 +245,35 @@ class ReservationController extends Controller
                $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);          
         }
         
-        
+        //save reservation transaction payment
         $this->saveReservationTransaction($PaymentID, $ReservationID, $InitialBill, $DateBooked);
+        
+        //Check if there is an entrance fee
+        $EntranceFeeID = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('a.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '=', 'Active'],['a.strFeeName', '=', 'Entrance Fee']])
+                ->pluck('strFeeID')->first();
+        
+        $EntranceIncluded = DB::table('tblPackageFee')
+                            ->where([['strPackageFFeeID', '=', $EntranceFeeID],['strPackageFPackageID', '=', $PackageID]])
+                            ->get();
+        
+        //saves entrance fee
+        if(sizeof($EntranceFeeID) != 0){
+            if(sizeof($EntranceIncluded) != 0){
+                $PaymentStatus = 1;
+            }   
+            $this->addFees($EntranceFeeID, $NoOfAdults, $PaymentStatus, $ReservationID);
+        }
+        
+        $PackageData = array('strAvailPReservationID'=>$ReservationID,
+                              'strAvailPackageID'=>$PackageID);
+        
+        DB::table('tblAvailPackage')->insert($PackageData);
+        
+        \Session::flash('flash_message','Reservation successfully booked! The reservation code of '. $FirstName . ' ' . $LastName . ' is ' . $ReservationCode.'.');
+         return redirect('/Reservations');
     }
     
     public function saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday){

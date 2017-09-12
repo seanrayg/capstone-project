@@ -649,6 +649,13 @@ class ViewResortController extends Controller
         return view ('Walkin', compact('Fees'));
     }
     
+    public function ViewWalkInPackage(){
+        $CheckInDate = Carbon::now()->toDateTimeString();
+        $CheckInDate = str_replace('-','/',$CheckInDate);
+        
+        return view('WalkinPackage');
+    }
+    
     //Get Fees AJAX
     public function getFeeAmount(Request $req){
         $FeeName = trim($req->input('SelectedFee'));

@@ -813,11 +813,12 @@ class ViewController extends Controller
         $ReservationID = trim($req->input('id'));
 
         $ReservationInfo = $this->getReservation($ReservationID);
+        $ReservationPackage = $this->getReservationPackage($ReservationID);
         $ChosenRooms = $this->getReservedRooms($ReservationID);
         $ChosenBoats = $this->getReservedBoats($ReservationID);
         $InitialBill = $this->getInitialBill($ReservationID);
      
-        return response()->json(['ReservationInfo' => $ReservationInfo, 'ChosenRooms' => $ChosenRooms, 'ChosenBoats' => $ChosenBoats, 'InitialBill' => $InitialBill]);
+        return response()->json(['ReservationInfo' => $ReservationInfo, 'ChosenRooms' => $ChosenRooms, 'ChosenBoats' => $ChosenBoats, 'InitialBill' => $InitialBill, 'ReservationPackage' => $ReservationPackage]);
     }
     
     
@@ -851,6 +852,17 @@ class ViewController extends Controller
         }
         
         return $ReservationInfo;
+    }
+    
+    public function getReservationPackage($ReservationID){
+        
+        $ReservationPackage = DB::table('tblAvailPackage as a')
+                        ->join ('tblPackage as b', 'b.strPackageID','=' ,'a.strAvailPackageID')
+                        ->select('b.strPackageName')
+                        ->where('a.strAvailPReservationID', '=', $ReservationID)
+                        ->get();
+        
+        return $ReservationPackage;
     }
     
     public function getReservedRooms($ReservationID){

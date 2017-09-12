@@ -52,7 +52,7 @@
                             <div class = "row">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-4">
-                                    <a href="#"><button type="button" class="btn btn-success">Yes</button></a>
+                                    <a href="/Walkin/Package"><button type="button" class="btn btn-success">Yes</button></a>
                                 </div>
                                 <div class="col-md-4">
                                     <a href="/Walkin"><button type="button" class="btn btn-success">No</button></a>

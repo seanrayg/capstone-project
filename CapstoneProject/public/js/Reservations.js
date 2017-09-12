@@ -221,6 +221,13 @@ function getReservationInfo(){
                 PickUpTime = tempPickUpTime[1] + " AM";
             }
             
+            if(data.ReservationPackage.length != 0){
+                document.getElementById("i-PackageAvailed").innerHTML = data.ReservationPackage[0].strPackageName;
+            }
+            else{
+                document.getElementById("i-PackageAvailed").innerHTML = "None";
+            }
+            
             document.getElementById("i-ReservationID").innerHTML = data.ReservationInfo[0].strReservationID;
             document.getElementById("i-ReservationCode").innerHTML = PendingReservationInfo[8];
             document.getElementById("i-CheckInDate").innerHTML = PendingReservationInfo[4];
