@@ -4,31 +4,43 @@ var TotalCapacity = 0;
 var BoatList;
 var tempTotal = 0;
 var GrandTotal = 0;
-
-
-function ShowModalNoBoats(){
-    document.getElementById("DivModalNoBoats").style.display = "block";
+var CheckInDate;
+var CheckOutDate;
+function ShowModalPaymentChoice(){
+    document.getElementById("DivModalPaymentChoice").style.display = "block";
 }
 
-function HideModalNoBoats(){
-    document.getElementById("DivModalNoBoats").style.display = "none";
+function HideModalPaymentChoice(){
+    document.getElementById("DivModalPaymentChoice").style.display = "none";
 }
 
-function ShowModalMultipleBoats(){
-    document.getElementById("DivModalMultipleBoats").style.display = "block";
+function ShowModalPayNow(){
+    HideModalPaymentChoice();
+    document.getElementById("PayTotal").value = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[2]);
+    document.getElementById("pn-CheckInDate").value = CheckInDate;
+    document.getElementById("pn-CheckOutDate").value = CheckOutDate;
+    document.getElementById("pn-PackageID").value = PackageInfo[0];
+    document.getElementById("pn-InitialBill").value = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[2]);
+    document.getElementById("pn-FirstName").value = document.getElementById("FirstName").value;
+    document.getElementById("pn-MiddleName").value = document.getElementById("MiddleName").value;
+    document.getElementById("pn-LastName").value = document.getElementById("LastName").value;
+    document.getElementById("pn-Address").value = document.getElementById("Address").value;
+    document.getElementById("pn-Email").value = document.getElementById("Email").value;
+    document.getElementById("pn-Contact").value = document.getElementById("ContactNumber").value;
+    document.getElementById("pn-Nationality").value = document.getElementById("Nationality").value;
+    document.getElementById("pn-DateOfBirth").value = document.getElementById("DateOfBirth").value;
+    document.getElementById("pn-Gender").value = document.getElementById("Gender").value;
+    document.getElementById("pn-Remarks").value = document.getElementById("Remarks").value;
+    document.getElementById("pn-NoOfKids").value = document.getElementById("NoOfKids").value;
+    document.getElementById("pn-NoOfAdults").value = document.getElementById("NoOfAdults").value;
+    document.getElementById("DivModalPayNow").style.display = "block";
 }
 
-function HideModalMultipleBoats(){
-    document.getElementById("DivModalMultipleBoats").style.display = "none";  
+function HideModalPayNow(){
+    ShowModalPayNow();
+    document.getElementById("DivModalPayNow").style.display = "none";
 }
 
-function ShowModalNoMultipleBoats(){
-    document.getElementById("DivModalNoMultipleBoats").style.display = "block";
-}
-
-function HideModalNoMultipleBoats(){
-    document.getElementById("DivModalNoMultipleBoats").style.display = "none";  
-}
 
 //MISC
 function getAge(dateString) {
@@ -285,7 +297,7 @@ function fillReservationSummary(data){
     }
    
     var temp = new Date();
-    var CheckInDate = (parseInt(temp.getMonth()) + 1) + "/" + temp.getDate() + "/" + temp.getFullYear();
+    CheckInDate = (parseInt(temp.getMonth()) + 1) + "/" + temp.getDate() + "/" + temp.getFullYear();
     
     Date.prototype.addDays = function(days) {
       var dat = new Date(this.valueOf());
@@ -316,7 +328,7 @@ function fillReservationSummary(data){
         day = tempday;
     }
     var formatted=month+"/"+day+"/"+year;
-    var CheckOutDate = formatted;
+    CheckOutDate = formatted;
     
     document.getElementById("i-CheckInDate").innerHTML = CheckInDate;
     document.getElementById("i-CheckOutDate").innerHTML = CheckOutDate;
@@ -398,4 +410,25 @@ function ValidateGuests(field, dataType, holder){
     
             }
        }
+}
+
+function SaveTransaction(){
+    document.getElementById("WalkInForm").submit();
+}
+
+function SendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var Total = parseInt(document.getElementById("PayTotal").value);
+        var Payment = parseInt(field.value);
+        var Change = Payment - Total;
+        if(Change < 0){
+            document.getElementById("PayChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("PayChange").value = Change;
+        }
+        
+    }
 }

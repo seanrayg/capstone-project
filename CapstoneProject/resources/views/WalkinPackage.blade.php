@@ -419,10 +419,8 @@
                                 </div>
                             </div>
                     </div>
-
                         <button type="button" class="btn btn-info pull-left" onclick="ChangeClass('#ReservationBill', '#BillList', '#ReservationInfo', '#InfoList', 'back')">Back</button>
-                        <button type="button" class="btn btn-info pull-left" onclick="ChangeClass('#ReservationBill', '#BillList', '#ReservationInfo', '#InfoList', 'back')">Back</button>
-                        <form method="post" action="/Walkin/Add/Package">
+                        <form method="post" action="/Walkin/Add/Package" id="WalkInForm">
                             {{ csrf_field() }}
                             <input type="hidden" name="s-CheckInDate" id="s-CheckInDate" value = "">
                             <input type="hidden" name="s-CheckOutDate" id="s-CheckOutDate" value = "">
@@ -440,7 +438,7 @@
                             <input type="hidden" name="s-PackageID" id="s-PackageID" value = "">
                             <input type="hidden" name="s-NoOfKids" id="s-NoOfKids" value = "">
                             <input type="hidden" name="s-NoOfAdults" id="s-NoOfAdults" value = "">
-                            <button type="submit" class="btn btn-success pull-right">Book Reservation</button>
+                            <button type="button" class="btn btn-success pull-right" onclick="ShowModalPaymentChoice()">Book Reservation</button>
                         </form>
                 </div>
 
@@ -470,118 +468,109 @@
 @endsection
 
 @section('modals')
-<!---- 3rd Modal ---->
-<div id="DivModalMultipleBoats" class="modal">
-    <div class="Modal-content">
+<div id="DivModalPaymentChoice" class="modal">
+    <div class="Modal-contentChoice">
         <div class="row">
-            <div class="col-md-3">
-            </div>
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card card-stats">
-                        <div class="card-content">
-                            <br>
-                            <div class="row">
-                                <div class="col-md-1"></div>
-                                <div class="col-md-10">
-                                    <p class="paragraphText">There are no boats that can accomodate the total number of guests, would the guest like to avail multiple boats?</p>
-                                </div>  
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">pages</i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="title">Pay now?</h3>
+                        <br><br>
+                        <div class = "row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <button type="button" class="btn btn-success pull-left" onclick="ShowModalPayNow()">Yes, Pay now.</button>
                             </div>
-                            <div class = "row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" id="BtnMultipleBoats">Reserve Multiple Boats</button>
-                                </div>
+                            <div class="col-md-5">
+                                <button type="button" class="btn btn-success pull-right" onclick="SaveTransaction()">Pay at Checkout</button>
                             </div>
-                            <div class = "row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" onclick="HideModalMultipleBoats()">Change date and time</button>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" id="BtnWithoutBoats2" onclick="switchTab('WithoutBoats')">Continue without reserving boats</button>
-                                </div>
-                            </div>
+                            <div class="col-md-1"></div>    
                         </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
-<!---- 4th Modal ---->
-<div id="DivModalNoMultipleBoats" class="modal">
-    <div class="Modal-content">
+<div id="DivModalPayNow" class="modal">
+    <div class="Modal-content" style="width: 500px">
         <div class="row">
-            <div class="col-md-3">
-            </div>
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card card-stats">
-                        <div class="card-content">
-                            <br>
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-10">
-                                    <p class="paragraphText">There are still no available boats that can accomodate the total number of guests.</p>
-                                </div>  
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Extend Rent<span class="close" onclick="HideModalPayNow()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/Walkin/Add/Package/Pay" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="pn-CheckInDate" id="pn-CheckInDate" value = "">
+                            <input type="hidden" name="pn-CheckOutDate" id="pn-CheckOutDate" value = "">
+                            <input type="hidden" name="pn-FirstName" id="pn-FirstName" value = "">
+                            <input type="hidden" name="pn-MiddleName" id="pn-MiddleName" value = "">
+                            <input type="hidden" name="pn-LastName" id="pn-LastName" value = "">
+                            <input type="hidden" name="pn-Address" id="pn-Address" value = "">
+                            <input type="hidden" name="pn-Email" id="pn-Email" value = "">
+                            <input type="hidden" name="pn-Contact" id="pn-Contact" value = "">
+                            <input type="hidden" name="pn-Nationality" id="pn-Nationality" value = "">
+                            <input type="hidden" name="pn-DateOfBirth" id="pn-DateOfBirth" value = "">
+                            <input type="hidden" name="pn-Gender" id="pn-Gender" value = "">
+                            <input type="hidden" name="pn-Remarks" id="pn-Remarks" value = "">
+                            <input type="hidden" name="pn-InitialBill" id="pn-InitialBill" value = "">
+                            <input type="hidden" name="pn-PackageID" id="pn-PackageID" value = "">
+                            <input type="hidden" name="pn-NoOfKids" id="pn-NoOfKids" value = "">
+                            <input type="hidden" name="pn-NoOfAdults" id="pn-NoOfAdults" value = "">
+      
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="PayTotal" name="PayTotal" readonly>
+                                    </div>
+                                </div>
                             </div>
                             <div class = "row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" onclick="HideModalNoMultipleBoats()">Change date and time</button>
+                                <div class="col-md-12">
+                                    <div class="form-group label-static" id="PayPaymentError">
+                                        <label class="control-label">Payment</label>
+                                        <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#PayPaymentError')" onchange="SendPayment(this, 'double', '#PayPaymentError')" id="PayPayment" name="PayPayment" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" id="BtnWithoutBoats3" onclick="switchTab('WithoutBoats')">Continue without reserving boats</button>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-    
-<!---- 2nd Modal ---->
-<div id="DivModalNoBoats" class="modal">
-    <div class="Modal-content">
-        <div class="row">
-            <div class="col-md-3">
-            </div>
-            <div class="col-md-8">
-                <div class="card card-stats">
-                        <div class="card-content">
-                            <br>
-                            <div class="row">
-                                <div class="col-md-1"></div>
-                                <div class="col-md-10">
-                                    <p class="paragraphText">There are no available boats based on the given date and time.</p>
-                                </div>  
                             </div>
                             <div class = "row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" onclick="HideModalNoBoats()">Change date and time</button>
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Change</label>
+                                        <input type="text" class="form-control" id="PayChange" name="PayChange">
+                                    </div>
                                 </div>
                             </div>
+                            
                             <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-sm" id="ButtonWithoutBoats1" onclick="switchTab('WithoutBoats')">Continue without reserving boats</button>
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
                                 </div>
                             </div>
-                        </div>
+
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
-</div>
+</div> 
 
 @endsection

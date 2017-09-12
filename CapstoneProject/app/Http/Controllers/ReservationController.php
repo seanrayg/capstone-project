@@ -237,7 +237,7 @@ class ReservationController extends Controller
         $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
         $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
 
-        $PaymentStatus = 0;
+        $PaymentStatus = 1;
         $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
         
         //Save Reserved Boats
@@ -1052,8 +1052,107 @@ class ReservationController extends Controller
         return redirect('/ChooseRooms/'.$ReservationID);
     }
     
+    public function addWalkInPackagePayNow(Request $req){
+        dd(Input::all());
+    }
+    
     public function addWalkInPackage(Request $req){
         dd(Input::all());
+        $tempCheckInDate = trim($req->input('s-CheckInDate'));
+        $tempCheckOutDate = trim($req->input('s-CheckOutDate'));
+        $FirstName = trim($req->input('s-FirstName'));
+        $MiddleName = trim($req->input('s-MiddleName'));
+        $LastName = trim($req->input('s-LastName'));
+        $Address = trim($req->input('s-Address'));
+        $Email = trim($req->input('s-Email'));
+        $Contact = trim($req->input('s-Contact'));
+        $Nationality = trim($req->input('s-Nationality'));
+        $Gender = trim($req->input('s-Gender'));
+        $tempDateOfBirth = trim($req->input('s-DateOfBirth'));
+        $InitialBill = trim($req->input('s-InitialBill'));
+        $PackageID = trim($req->input('s-PackageID'));
+        $Remarks = trim($req->input('s-Remarks'));
+        $NoOfKids = trim($req->input('s-NoOfKids'));
+        $NoOfAdults = trim($req->input('s-NoOfAdults'));
+
+        $Birthday = Carbon::parse($tempDateOfBirth)->format('Y/m/d');
+        $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d');
+        $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d');
+        $PickUpTime = Carbon::now()->format('H:i:s');
+  
+        $PickOutTime = $PickUpTime;
+        
+        $DateBooked = Carbon::now();
+        
+        $CustomerID = $this->getCustomerID();
+                
+        $ReservationID = $this->getReservationID();
+        
+        $PaymentID = $this->getPaymentID();
+        
+        $ReservationCode = $this->getReservationCode();
+        
+        $PackageRoomInfo = DB::table('tblRoomType as a')
+                        ->join('tblPackageRoom as b', 'a.strRoomTypeID', '=', 'b.strPackageRRoomTypeID')
+                        ->join('tblRoomRate as c', 'a.strRoomTypeID', '=', 'c.strRoomTypeID')
+                        ->select('a.strRoomType',
+                                 'a.intRoomTCapacity',
+                                 'b.intPackageRQuantity',
+                                 'c.dblRoomRate')
+                        ->where([['b.strPackageRPackageID', '=', $PackageID], ['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                        ->get();
+        
+
+        $ChosenRooms = "";
+        foreach($PackageRoomInfo as $Info){
+            $ChosenRooms .= $Info -> strRoomType . "-" . $Info -> intRoomTCapacity ."-". $Info -> dblRoomRate ."-".$Info->intPackageRQuantity.",";
+        }
+        
+        $ChosenRooms = rtrim($ChosenRooms,",");
+  
+        if($Gender == "Male"){
+            $Gender = "M";
+        }
+        else{
+            $Gender = "F";
+        }
+        
+        
+        if($Remarks == null){
+            $Remarks = "N/A";
+        }
+        
+        if($CheckInDate == $CheckOutDate){
+            $PickOutTime = "23:59:59";
+        }
+        
+        //save customer data
+        $this->saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday);
+        
+        $ReservationData = array('strReservationID'=>$ReservationID,
+                              'intWalkIn'=>'0',
+                              'strResDCustomerID'=>$CustomerID,
+                              'dtmResDArrival'=>$CheckInDate." ".$PickUpTime,
+                              'dtmResDDeparture'=>$CheckOutDate." ".$PickOutTime,
+                              'intResDNoOfAdults'=>$NoOfAdults,
+                              'intResDNoOfKids'=>$NoOfKids,
+                              'strResDRemarks'=>$Remarks,
+                              'intResDStatus'=>'4',
+                              'dteResDBooking'=>$DateBooked->toDateString(),
+                              'strReservationCode'=>$ReservationCode);
+        
+        DB::table('tblReservationDetail')->insert($ReservationData);
+        
+        //save reserved rooms
+        $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
+        $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
+
+        $PaymentStatus = 1;
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
+        
+        \Session::flash('flash_message','Booked successfully!');
+        \Session::flash('ReservationID', $ReservationID);
+        return redirect('/ChooseRooms/'.$ReservationID);
     }
     
     //Edit rooms

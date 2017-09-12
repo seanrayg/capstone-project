@@ -296,6 +296,8 @@ Route::post('/Walkin/Add', 'ReservationController@addWalkIn');
 //Save Walk in with package
 Route::post('/Walkin/Add/Package', 'ReservationController@addWalkInPackage');
 
+Route::post('/Walkin/Add/Package/Pay', 'ReservationController@addWalkInPackagePayNow');
+
 //View walk in package page
 Route::get('/Walkin/Package', 'ViewResortController@ViewWalkInPackage');
 
