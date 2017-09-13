@@ -27,9 +27,35 @@ function run(event, table) {
 }
 
 function ShowModalPayBoatRent() {
+    var intHours = parseInt(document.getElementById('PickUpTime').value);
+    var intHours = intHours / 2;
+
+    var intBoatRate = parseInt(document.getElementById('BoatRate').value);
+
+    var intPrice = intBoatRate * intHours;
+
+    document.getElementById('BoatRentPrice').value = intPrice;
+    
     document.getElementById("DivModalPayBoatRent").style.display = "block";
 }
 
 function HideModalPayBoatRent() {
     document.getElementById("DivModalPayBoatRent").style.display = "none";
+}
+
+function SendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var ActivityTotal = parseInt(document.getElementById("ActivityTotalPrice").value);
+        var ActivityPayment = parseInt(field.value);
+        var Change = ActivityPayment - ActivityTotal;
+        if(Change < 0){
+            document.getElementById("ActivityChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("ActivityChange").value = Change;
+        }
+        
+    }
 }

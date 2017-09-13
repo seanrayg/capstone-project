@@ -1313,7 +1313,7 @@ class ViewResortController extends Controller
             
             $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount;
         }
-        
+
         return view('Billing', compact('ReservationInfo'));
     }
     

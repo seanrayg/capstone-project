@@ -435,7 +435,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group label-static">
                                             <label class="control-label">Total Amount</label>
-                                            <input type="text" class="form-control" id="ActivityTotalPrice" name="ActivityTotalPrice" readonly>
+                                            <input type="text" class="form-control" id="BoatRentPrice" name="BoatRentPrice" readonly>
                                         </div>
                                     </div>
                                 </div>
