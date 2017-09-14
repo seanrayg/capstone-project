@@ -126,6 +126,40 @@ class ResortController extends Controller
         return redirect('ItemRental');
     }
     
+    //rent item with package
+    public function storeRentalItemPackage(Request $req){
+        $PaymentStatus = 3;
+        $DateToday = Carbon::now()->toDateString();
+        $ReservationID = trim($req->input('RentPackageReservationID'));
+        $ItemID = trim($req->input('RentPackageItemID'));
+        $RentQuantity = trim($req->input('RentPackageQuantity'));
+        $RentDuration = trim($req->input('RentPackageDuration'));
+        $CustomerName = trim($req->input('RentPackageCustomerName'));
+      
+        $RentedItemID = $this->saveRentalItem($ItemID, $CustomerName, $RentQuantity, $RentDuration, $PaymentStatus);
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>0,
+                              'strPayTypeID'=> 26,
+                              'dtePayDate'=>$DateToday,
+                              'strPaymentRemarks'=>$RentedItemID);
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        \Session::flash('flash_message','Successfully rented the item!');
+        
+        return redirect('ItemRental');
+    }
+    
     //save rental item to db
     public function saveRentalItem($ItemID, $CustomerName, $RentQuantity, $RentDuration, $PaymentStatus){
         $ReservationID = $this->getReservationID($CustomerName);

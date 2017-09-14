@@ -239,6 +239,10 @@
                                         <th onclick="sortTable(1, 'tblPackageItems', 'string')">Customer</th>
                                         <th onclick="sortTable(2, 'tblPackageItems', 'int')">Quantity included</th>
                                         <th onclick="sortTable(3, 'tblPackageItems', 'int')">Duration</th>
+                                        <th onclick="sortTable(4, 'tblPackageItems', 'int')">Quantity Left</th>
+                                        <th style="display: none">Item ID</th>
+                                        <th style="display: none">Reservation ID</th>
+                                        <th>Action</th>
                                     </thead>
                                     <tbody>
                                         @foreach($PackageItems as $Item)
@@ -247,17 +251,20 @@
                                                 <td>{{$Item->Name}}</td>
                                                 <td>{{$Item->intPackageIQuantity}}</td>
                                                 <td>{{$Item->flPackageIDuration}}</td>
+                                                <td>{{$Item->intItemQuantity}}</td>
+                                                <td style="display:none">{{$Item->strItemID}}</td>
+                                                <td style="display:none">{{$Item->strReservationID}}</td>
+                                                <td>
+                                                    <button type="button" rel="tooltip" title="Rent Item" class="btn btn-success btn-simple btn-xs" onclick="ShowModalRentPackageItem('{{$Item->strItemName}}', '{{$Item->Name}}', '{{$Item->intPackageIQuantity}}', '{{$Item->flPackageIDuration}}', '{{$Item->intItemQuantity}}', '{{$Item->strItemID}}', '{{$Item->strReservationID}}')">
+                                                        <i class="material-icons">playlist_add_check</i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div class = "row">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalRentPackagedItem()"><i class="material-icons">done</i> Avail</button>
-                            </div> 
-                        </div>  
                     </div>
 
                     </div>
@@ -364,6 +371,89 @@
                                 </div> 
                                 <div class="col-xs-6">
                                     <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i> Pay at check out</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalRentPackageItem" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">loyalty</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Rent Item<span class="close" onclick="HideModalRentPackageItem()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/ItemRental/Rent/Package" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="RentPackageReservationID" id="RentPackageReservationID">
+                            <input type="hidden" name="RentPackageItemID" id="RentPackageItemID">
+                            <input type="hidden" name="RentPackageQuantityLeft" id="RentPackageQuantityLeft">
+                            
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Item</label>
+                                        <input type="text" class="form-control" id="RentPackageItemName" name="RentPackageItemName" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Name</label>
+                                        <input type="text" class="form-control" id="RentPackageCustomerName" name="RentPackageCustomerName" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class = "row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Quantity Included</label>
+                                        <input type="text" class="form-control" id="RentPackageQuantityIncluded" name="RentPackageQuantityIncluded" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Duration</label>
+                                        <input type="text" class="form-control" id="RentPackageDuration" name="RentPackageDuration" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-floating" id="RentPackageQuantityError">
+                                        <label class="control-label">Quantity to rent</label>
+                                        <input type="text" class="form-control" onkeyup="SendPackageQuantityInput(this, 'int', '#RentPackageQuantityError')"
+                                        onchange="SendPackageQuantityInput(this, 'int', '#RentPackageQuantityError')" id="RentPackageQuantity" name="RentPackageQuantity" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
+                                </div>
+                            </div>
+
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Rent Item</button>
                                 </div> 
                             </div>
                         </form>

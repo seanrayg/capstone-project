@@ -37,7 +37,8 @@ class DatabaseSeeder extends Seeder
              array('strPaymentTypeID'=>'22', 'strPaymentType'=>'Upgrade Room Bill'),
              array('strPaymentTypeID'=>'23', 'strPaymentType'=>'Upgrade Room Payment'),
              array('strPaymentTypeID'=>'24', 'strPaymentType'=>'Extend Stay Bill'),
-             array('strPaymentTypeID'=>'25', 'strPaymentType'=>'Extend Stay Payment')
+             array('strPaymentTypeID'=>'25', 'strPaymentType'=>'Extend Stay Payment'),
+             array('strPaymentTypeID'=>'26', 'strPaymentType'=>'Item Rental Package Reference')
         ));
         
         //for verification

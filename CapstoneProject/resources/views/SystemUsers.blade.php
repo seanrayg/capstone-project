@@ -97,15 +97,15 @@
                     <thead class="text-success">
                         <th style="display:none">Contact ID</th>
                         <th onclick="sortTable(1, 'tblUsers', 'string')" class="text-center">User</th>
-                        <th onclick="sortTable(2, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Can view, add, edit or cancel reservation/walkin and upgrade/transfer room of guests">Room Management</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Can view, add, edit or cancel boat schedules">Boat Schedule</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Can view, add, edit or delete fees to the guests">Fees</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Can view, add or edit item rental of guests">Item Rental</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Can view, add or edit beach activities of guests">Activities</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Can view all of the bills of the guests">Billing</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Has an access to the maintenance of the system">Maintenance</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Has an access to the utilities of the system">Utilities</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center" rel="tooltip" title="Can generate reports">Reports</th>
+                        <th onclick="sortTable(2, 'tblUsers', 'string')" class="text-center">Room Management</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Boat Schedule</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Fees</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Item Rental</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Activities</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Billing</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Maintenance</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Utilities</th>
+                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Reports</th>
                     </thead>
                     <tbody class="text-center">
                         <tr>
@@ -159,20 +159,20 @@
                                     <h3 class="title">Add User<span class="close" onclick="HideModalAddUser()">X</span></h3>
                                 </div>
                                 
-                                <form onsubmit="return CheckForm()" method="post" action="/Contact/Save">
+                                <form onsubmit="return CheckForm()" method="post" action="/Contact/Save" id="AddUserForm">
                                     {{ csrf_field() }}
                                
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group label-floating" id="ContactNameError">
                                                 <label class="control-label">Username</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ContactNameError')" onchange="ValidateInput(this, 'string', '#ContactNameError')" id="ContactName" name="ContactName" required>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#Username')" onchange="ValidateInput(this, 'string', '#UsernameError')" id="Username" name="Username" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="form-group label-floating" id="ContactNameError">
+                                            <div class="form-group label-floating">
                                                 <label class="control-label">Password</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#ContactNameError')" onchange="ValidateInput(this, 'string', '#ContactNameError')" id="ContactName" name="ContactName" required>
+                                                <input type="text" class="form-control" id="password" name="password" required>
                                             </div>
                                         </div>
                                     </div>

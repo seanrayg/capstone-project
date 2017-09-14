@@ -3,6 +3,7 @@ function ShowModalAddUser(){
 }
 
 function HideModalAddUser(){
+    document.getElementById("AddUserForm").reset();
     document.getElementById("DivModalAddUser").style.display = "none";
 }
 

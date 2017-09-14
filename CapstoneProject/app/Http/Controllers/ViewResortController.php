@@ -840,7 +840,7 @@ class ViewResortController extends Controller
                 ->where([['a.intRentedIReturned', '=', 0], ['e.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = b.strItemID)")]])
                 ->get();
         
-        $PackageItems = DB::table('tblPackageItem as a')
+        $tempPackageItems = DB::table('tblPackageItem as a')
                         ->join ('tblAvailPackage as b', 'a.strPackageIPackageID', '=', 'b.strAvailPackageID')
                         ->join ('tblItem as c', 'c.strItemID', '=' , 'a.strPackageIItemID')
                         ->join ('tblReservationDetail as d', 'd.strReservationID', '=' , 'b.strAvailPReservationID')
@@ -848,9 +848,40 @@ class ViewResortController extends Controller
                         ->select('c.strItemName',
                                  DB::raw('CONCAT(e.strCustFirstName , " " , e.strCustLastName) AS Name'),
                                  'a.intPackageIQuantity',
-                                 'a.flPackageIDuration')
+                                 'a.flPackageIDuration',
+                                 'c.intItemQuantity',
+                                 'c.strItemID',
+                                 'd.strReservationID')
                         ->where('d.intResDStatus', '=', 4)
                         ->get();
+        
+        $RentedPackageItems = DB::table('tblPayment')
+                            ->select('strPayReservationID',
+                                     'strPaymentRemarks')
+                            ->where('strPayTypeID', '=', 26)
+                            ->get();
+        
+        
+        
+        foreach($tempPackageItems as $Package){
+            foreach($RentedPackageItems as $Rent){
+                if($Package->strReservationID == $Rent->strPayReservationID){
+                    $tempRentedItem = DB::table('tblRentedItem')
+                                      ->where('strRentedItemID', '=', $Rent->strPaymentRemarks)
+                                      ->get();
+ 
+                    foreach($tempRentedItem as $tempRent){
+                        if($tempRent->strRentedIReservationID == $Package->strReservationID){
+                            if($tempRent->strRentedIItemID == $Package->strItemID){
+                                $Package->intPackageIQuantity = $Package->intPackageIQuantity - $tempRent->intRentedIQuantity;
+                            }
+                        }           
+                    }
+                }   
+            }
+        }
+        
+        $PackageItems = $tempPackageItems->where('intPackageIQuantity' ,"!=", 0);
  
         $DateTimeToday = Carbon::now('HongKong');
         foreach($RentedItems as $Items){
