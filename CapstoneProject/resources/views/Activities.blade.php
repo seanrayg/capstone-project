@@ -180,42 +180,19 @@
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
                                 <table class="table">
-                                    <thead class="text-primary">
-                                        <th>Activity</th>
-                                        <th>Customer</th>
-                                        <th>Quantity included</th>
+                                    <thead class="text-primary" id="tblPackageActivities">
+                                        <th onclick="sortTable(0, 'tblPackageActivities', 'string')">Activity</th>
+                                        <th onclick="sortTable(1, 'tblPackageActivities', 'string')">Customer</th>
+                                        <th onclick="sortTable(2, 'tblPackageActivities', 'int')">Quantity included</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Activity</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                        </tr>
+                                        @foreach($PackageActivities as $Activity)
+                                            <tr>
+                                                <td>{{$Activity -> strBeachAName}}</td>
+                                                <td>{{$Activity -> Name}}</td>
+                                                <td>{{$Activity -> intPackageAQuantity}}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>

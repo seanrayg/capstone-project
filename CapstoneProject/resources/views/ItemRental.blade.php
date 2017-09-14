@@ -233,50 +233,22 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive scrollable-table" id="style-1">
-                                <table class="table">
+                                <table class="table" id='tblPackageItems'>
                                     <thead class="text-primary">
-                                        <th>Item</th>
-                                        <th>Customer</th>
-                                        <th>Quantity included</th>
-                                        <th>Duration</th>
+                                        <th onclick="sortTable(0, 'tblPackageItems', 'string')">Item</th>
+                                        <th onclick="sortTable(1, 'tblPackageItems', 'string')">Customer</th>
+                                        <th onclick="sortTable(2, 'tblPackageItems', 'int')">Quantity included</th>
+                                        <th onclick="sortTable(3, 'tblPackageItems', 'int')">Duration</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Item</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                            <td>Duration</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Item</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                            <td>Duration</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Item</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                            <td>Duration</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Item</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                            <td>Duration</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Item</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                            <td>Duration</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Item</td>
-                                            <td>Customer</td>
-                                            <td>Quantity included</td>
-                                            <td>Duration</td>
-                                        </tr>
+                                        @foreach($PackageItems as $Item)
+                                            <tr>
+                                                <td>{{$Item->strItemName}}</td>
+                                                <td>{{$Item->Name}}</td>
+                                                <td>{{$Item->intPackageIQuantity}}</td>
+                                                <td>{{$Item->flPackageIDuration}}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>

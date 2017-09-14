@@ -121,6 +121,7 @@ function getBillBreakdown(){
         url:'/Billing/Info',
         data:{id:BillInfo[0]},
         success:function(data){
+            $('#tblBillPackage tbody').empty();
             $('#tblBillAccommodation tbody').empty();
             $('#tblBillItem tbody').empty();
             $('#tblBillBoat tbody').empty();
@@ -157,6 +158,19 @@ function getBillBreakdown(){
                 newCell1.innerHTML = data.AdditionalRooms[x].strRoomType;
                 newCell2.innerHTML = data.AdditionalRooms[x].strRoomName;
                 newCell3.innerHTML = data.AdditionalRooms[x].dblRoomRate;
+
+            }
+            
+            tableRef = document.getElementById('tblBillPackage').getElementsByTagName('tbody')[0];
+
+            for(var x = 0; x < data.PackageInfo.length; x++){
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+                
+                newCell1.innerHTML = data.PackageInfo[x].strPackageName;
+                newCell2.innerHTML = data.PackageInfo[x].intPackagePax;
 
             }
             

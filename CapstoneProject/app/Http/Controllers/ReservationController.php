@@ -1034,8 +1034,6 @@ class ReservationController extends Controller
             }
         }
         
-        
-        
         //Check if there is an entrance fee
         $EntranceFeeID = DB::table('tblFee as a')
                 ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
@@ -1057,7 +1055,7 @@ class ReservationController extends Controller
     }
     
     public function addWalkInPackage(Request $req){
-        dd(Input::all());
+
         $tempCheckInDate = trim($req->input('s-CheckInDate'));
         $tempCheckOutDate = trim($req->input('s-CheckOutDate'));
         $FirstName = trim($req->input('s-FirstName'));
@@ -1149,6 +1147,33 @@ class ReservationController extends Controller
 
         $PaymentStatus = 1;
         $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
+        
+        //save reservation transaction payment
+        $this->saveReservationTransaction($PaymentID, $ReservationID, $InitialBill, $DateBooked);
+        
+        //Check if there is an entrance fee
+        $EntranceFeeID = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('a.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '=', 'Active'],['a.strFeeName', '=', 'Entrance Fee']])
+                ->pluck('strFeeID')->first();
+        
+        $EntranceIncluded = DB::table('tblPackageFee')
+                            ->where([['strPackageFFeeID', '=', $EntranceFeeID],['strPackageFPackageID', '=', $PackageID]])
+                            ->get();
+        
+        //saves entrance fee
+        if(sizeof($EntranceFeeID) != 0){
+            if(sizeof($EntranceIncluded) != 0){
+                $PaymentStatus = 1;
+            }   
+            $this->addFees($EntranceFeeID, $NoOfAdults, $PaymentStatus, $ReservationID);
+        }
+        
+        $PackageData = array('strAvailPReservationID'=>$ReservationID,
+                              'strAvailPackageID'=>$PackageID);
+        
+        DB::table('tblAvailPackage')->insert($PackageData);
         
         \Session::flash('flash_message','Booked successfully!');
         \Session::flash('ReservationID', $ReservationID);

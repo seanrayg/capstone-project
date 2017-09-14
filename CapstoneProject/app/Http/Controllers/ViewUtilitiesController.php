@@ -45,6 +45,10 @@ class ViewUtilitiesController extends Controller
         return View('ContentManagement');
     }
     
+    public function ViewSystemUsers(){
+        return View('SystemUsers');
+    }
+    
     /*----------- MISC ----------------*/
     
     //SmartCounter
@@ -99,4 +103,5 @@ class ViewUtilitiesController extends Controller
         
         return $strSmartCounter;
     }
+    
 }

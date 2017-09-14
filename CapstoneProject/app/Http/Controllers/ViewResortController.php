@@ -840,6 +840,18 @@ class ViewResortController extends Controller
                 ->where([['a.intRentedIReturned', '=', 0], ['e.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = b.strItemID)")]])
                 ->get();
         
+        $PackageItems = DB::table('tblPackageItem as a')
+                        ->join ('tblAvailPackage as b', 'a.strPackageIPackageID', '=', 'b.strAvailPackageID')
+                        ->join ('tblItem as c', 'c.strItemID', '=' , 'a.strPackageIItemID')
+                        ->join ('tblReservationDetail as d', 'd.strReservationID', '=' , 'b.strAvailPReservationID')
+                        ->join ('tblCustomer as e', 'd.strResDCustomerID', '=' , 'e.strCustomerID')
+                        ->select('c.strItemName',
+                                 DB::raw('CONCAT(e.strCustFirstName , " " , e.strCustLastName) AS Name'),
+                                 'a.intPackageIQuantity',
+                                 'a.flPackageIDuration')
+                        ->where('d.intResDStatus', '=', 4)
+                        ->get();
+ 
         $DateTimeToday = Carbon::now('HongKong');
         foreach($RentedItems as $Items){
             $Items->tmsCreated = Carbon::parse($Items->tmsCreated)->format('M j, Y g:i A');
@@ -898,7 +910,7 @@ class ViewResortController extends Controller
                 }
             }
         }
-        //dd($RentalItems);
+      
 
         $Guests = DB::table('tblReservationDetail as a')
                         ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
@@ -907,7 +919,9 @@ class ViewResortController extends Controller
                         ->orderBy('Name')
                         ->get();
         
-        return view('ItemRental', compact('RentalItems', 'Guests', 'RentedItems', 'BrokenItems'));
+        
+        
+        return view('ItemRental', compact('RentalItems', 'Guests', 'RentedItems', 'BrokenItems', 'PackageItems'));
     }
     
     
@@ -1121,7 +1135,20 @@ class ViewResortController extends Controller
                 ->where([['e.intBoatSStatus', '=', '1'], ['a.strAvailBABoatID', '!=', null]])
                 ->get();
         
-        return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable', 'AvailedActivities'));
+        $PackageActivities = DB::table('tblPackageActivity as a')
+                        ->join ('tblAvailPackage as b', 'a.strPackageAPackageID', '=', 'b.strAvailPackageID')
+                        ->join ('tblBeachActivity as c', 'c.strBeachActivityID', '=' , 'a.strPackageABeachActivityID')
+                        ->join ('tblReservationDetail as d', 'd.strReservationID', '=' , 'b.strAvailPReservationID')
+                        ->join ('tblCustomer as e', 'd.strResDCustomerID', '=' , 'e.strCustomerID')
+                        ->select('c.strBeachAName',
+                                 DB::raw('CONCAT(e.strCustFirstName , " " , e.strCustLastName) AS Name'),
+                                 'a.intPackageAQuantity')
+                        ->where('d.intResDStatus', '=', 4)
+                        ->get();
+        
+
+        
+        return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable', 'AvailedActivities', 'PackageActivities'));
     }
     
     
@@ -1194,7 +1221,10 @@ class ViewResortController extends Controller
             $TotalExtend = 0;
             $AdditionalRoomAmount = 0;
             $UpgradeRoomAmount = 0;
-            
+            $PackagePayment = 0;
+            $PackageInitialBill = 0;
+            $PackageInitialPayment = 0;
+            $PackageDownPayment = 0;
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
                             ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
@@ -1215,6 +1245,39 @@ class ViewResortController extends Controller
             
             if($DaysOfStay == 0){
                 $DaysOfStay = 1;
+            }
+            
+            //Package Computation
+            $PackageExist = DB::table('tblAvailPackage')
+                            ->where('strAvailPReservationID', '=', $Info->strReservationID)
+                            ->get();
+            
+            if(sizeof($PackageExist) > 0){
+                $PackageInitialBill = DB::table('tblPayment')
+                                    ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 1]])
+                                    ->pluck('dblPayAmount')
+                                    ->first();
+                
+                $PackageDownPayment = DB::table('tblPayment')
+                                    ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 2]])
+                                    ->pluck('dblPayAmount')
+                                    ->first();
+                
+                if($PackageDownPayment != null){
+                    $PackageInitialBill = (int)$PackageInitialBill - (int)$PackageDownPayment;
+                }
+                
+                $PackageInitialPayment = DB::table('tblPayment')
+                                    ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 3]])
+                                    ->pluck('dblPayAmount')
+                                    ->first();
+                
+                if($PackageInitialPayment != null){
+                    $PackagePayment = 0;
+                }
+                else{
+                    $PackagePayment = $PackageInitialBill;
+                }
             }
             
             $TotalRoom = $TotalRoom * $DaysOfStay;
@@ -1311,7 +1374,7 @@ class ViewResortController extends Controller
             
             //Compute Boat Rental
             
-            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount;
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment;
         }
 
         return view('Billing', compact('ReservationInfo'));
@@ -1386,7 +1449,51 @@ class ViewResortController extends Controller
                     ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 22]])
                     ->get();
         
-        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo, 'AdditionalRooms' => $AdditionalRooms, 'UpgradeRooms' => $UpgradeRooms]);
+        //Package Computation
+        $PackageInfo = DB::table('tblAvailPackage as a')
+                        ->join('tblPackage as b', 'b.strPackageID', '=', 'a.strAvailPackageID')
+                        ->select('b.strPackageName',
+                                 'b.intPackagePax')
+                        ->where('a.strAvailPReservationID', '=', $ReservationID)
+                        ->get();
+        
+        $PackageInitialBill = 0;
+        $PackageDownPayment = 0;
+        $PackageInitialPayment = 0;
+
+        if(sizeof($PackageInfo) > 0){
+            $PackageInitialBill = DB::table('tblPayment')
+                                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
+                                ->pluck('dblPayAmount')
+                                ->first();
+
+            $PackageDownPayment = DB::table('tblPayment')
+                                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 2]])
+                                ->pluck('dblPayAmount')
+                                ->first();
+
+            if($PackageDownPayment != null){
+                $PackageInitialBill = (int)$PackageInitialBill - (int)$PackageDownPayment;
+            }
+
+            $PackageInitialPayment = DB::table('tblPayment')
+                                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 3]])
+                                ->pluck('dblPayAmount')
+                                ->first();
+
+            if($PackageInitialPayment != null){
+                $PackagePayment = 0;
+            }
+            else{
+                $PackagePayment = $PackageInitialBill;
+            }
+            
+            foreach($PackageInfo as $Info){
+                $Info->intPackagePax = $PackagePayment;
+            }
+        }
+        
+        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo, 'AdditionalRooms' => $AdditionalRooms, 'UpgradeRooms' => $UpgradeRooms,'PackageInfo' => $PackageInfo]);
     }
     
     

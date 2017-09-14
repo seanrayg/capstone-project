@@ -427,6 +427,12 @@ Route::post('Contact/Delete', 'UtilitiesController@deleteContactInfo');
 /*---------- CONTENT MANAGEMENT ---------*/
 Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement');
 
+
+
+/*---------- SYSTEM USERS ------------*/
+
+Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
+
 //testing reports
 Route::post('/sample', function(){
 	$customPaper = array(0,0,360,200);

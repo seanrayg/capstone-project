@@ -90,6 +90,20 @@
                         <div class="row">
                             <h3 class="title">Bill Breakdown<span class="close" onclick="HideModalBillBreakdown()">X</span></h3>
                         </div>
+                        <h5>Package Availed</h5>
+                        <table class="table" style="font-family:'Roboto'" id="tblBillPackage">
+                            <thead class="text-success">
+                                <tr>
+                                    <th class="text-center">Package</th>
+                                    <th class="text-center">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+     
+                            </tbody>
+                        </table>
+                        <br><br>
+                        
                         <h5>Reserved Rooms/Cottages</h5>
                         <table class="table" style="font-family:'Roboto'" id="tblBillAccommodation">
                             <thead class="text-success">
