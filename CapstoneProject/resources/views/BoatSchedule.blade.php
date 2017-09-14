@@ -124,6 +124,7 @@
 
     </script>
     <script src="/js/BoatSchedule.js" type="text/javascript"></script>
+    <script src="/js/input-validator.js" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -421,15 +422,6 @@
                             </div>
                             <form id="AvailActivityForm" method="POST" action="/Activity/AvailPay" onsubmit="return CheckForm()">
                                 {{ csrf_field() }}
-                                <input type="hidden" id="PayActivityType" name="PayActivityType">
-                                <input type="hidden" id="PayActivityID" name="PayActivityID">
-                                <input type="hidden" id="PayReservationID" name="PayReservationID">
-                                <input type="hidden" id="PayLandQuantity" name="PayLandQuantity">
-                                <input type="hidden" id="PayLandActivityRate" name="PayLandQuantityRate">
-                                <input type="hidden" id="PayWaterActivityRate" name="PayActivityRate">
-                                <input type="hidden" id="PayDurationTime" name="PayDurationTime">
-                                <input type="hidden" id="PayDurationMinute" name="PayDurationMinute">
-                                <input type="hidden" id="PayAvailBoat" name="PayAvailBoat">
 
                                 <div class = "row">
                                     <div class="col-md-12">
