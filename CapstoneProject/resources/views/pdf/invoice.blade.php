@@ -7,18 +7,58 @@
 </head>
 <body>
 	<div class="header">
-		<p class="header">
-			<span id="heading">Il Sogno Beach Resort</span><br>
-			Nangkaan Locloc, Bauan, Batangas<br>
-			OLIVIA R. VILLANUEVA - Prop<br>
-			NON VAT Reg. TIN 279-535-010-000<br>
-		</p>
+		<div class="column-left">
+			<p class="title">INVOICE</p>
+		</div>
+		<div class="column-right">
+			<p class="resort">
+				Il Sogno Beach Resort<br>
+				Nagkaan Locloc, Bauan, Batangas<br>
+				OLIVIA R. VILLANUEVA - Prop.
+			</p>
+		</div>
 	</div>
 
-	<div class="footer">
-		<p class="footer">
-			Date Issued: <u>date today</u> Valid Until <u>5 yrs</u><br>
-		</p>
+	<br>
+
+	<div class="info">
+		<div class="column-left">
+			<div style="padding-left: 20px;">
+				<label class="parent">Billed To</label><br>
+				<label id="CustomerName">Sean Ray T. Garcia</label>
+			</div>
+		</div>
+		<div class="column-right">
+			<label class="parent">Invoice Number</label><br>
+			<label id="CustomerName">00000000</label><br>
+			<label class="parent">Date Of Issue</label><br>
+			<label id="CustomerName">January 1, 2001</label>
+		</div>
 	</div>
+
+	<br>
+	<br>
+	<br>
+	<br>
+	<hr style="clear: left;">
+
+	<table>
+	  <tr>
+	    <th>Description</th>
+	    <th>Price/Rate</th>
+	    <th>Qty</th>
+	    <th>Amount</th>
+	  </tr>
+	  <tbody>
+	  	<tr>
+	  		<td>Room Venice</td>
+	  		<td>1200</td>
+	  		<td>1</td>
+	  		<td>1200</td>
+	  	</tr>
+	  </tbody>
+	</table>
+
+	<div>hehe</div>
 </body>
 </html>
