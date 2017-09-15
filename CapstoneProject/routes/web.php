@@ -374,6 +374,8 @@ Route::post('/BoatSchedule/RentDone', 'ScheduleController@RentDone');
 
 Route::post('/Activity/Avail', 'ResortController@AvailActivity');
 
+Route::post('/Activity/Avail/Package', 'ResortController@AvailActivityPackage');
+
 Route::post('/Activity/AvailPay', 'ResortController@AvailActivityPayment');
 
 Route::post('/Activity/Done', 'ResortController@ActivityDone');

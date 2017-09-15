@@ -773,6 +773,11 @@ class ResortController extends Controller
         return redirect('/Activities');
     }
     
+    //avail activity with package
+    public function AvailActivityPackage(){
+        dd(Input::all());
+    }
+    
     //save availed activity to db
     public function saveAvailedActivity($DateTimeToday, $ActivityID, $ActivityType, $ReservationID, $PaymentStatus, $ActivityPrice, $HoursToAdd, $MinutesToAdd, $BoatName, $AvailQuantity){
         $AvailedActivities = DB::table('tblavailbeachactivity')->get();

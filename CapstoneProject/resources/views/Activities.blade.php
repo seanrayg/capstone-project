@@ -184,6 +184,10 @@
                                         <th onclick="sortTable(0, 'tblPackageActivities', 'string')">Activity</th>
                                         <th onclick="sortTable(1, 'tblPackageActivities', 'string')">Customer</th>
                                         <th onclick="sortTable(2, 'tblPackageActivities', 'int')">Quantity included</th>
+                                        <th>Boat</th>
+                                        <th>Activity ID</th>
+                                        <th>Reservation ID</th>
+                                        <th>Action</th>
                                     </thead>
                                     <tbody>
                                         @foreach($PackageActivities as $Activity)
@@ -191,6 +195,14 @@
                                                 <td>{{$Activity -> strBeachAName}}</td>
                                                 <td>{{$Activity -> Name}}</td>
                                                 <td>{{$Activity -> intPackageAQuantity}}</td>
+                                                <td>{{$Activity -> intBeachABoat}}</td>
+                                                <td>{{$Activity -> strBeachActivityID}}</td>
+                                                <td>{{$Activity -> strReservationID}}</td>
+                                                <td>
+                                                    <button type="button" rel="tooltip" title="Avail Activity" class="btn btn-success btn-simple btn-xs" onclick="ShowModalAvailActivityPackage('{{$Activity -> strBeachAName}}', '{{$Activity -> Name}}', '{{$Activity -> intPackageAQuantity}}', '{{$Activity -> intBeachABoat}}', '{{$Activity -> strBeachActivityID}}', '{{$Activity -> strReservationID}}')">
+                                                        <i class="material-icons">playlist_add_check</i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -282,7 +294,7 @@
                                         <div class="col-xs-6">
                                             <div class="form-group label-static">
                                                 <label class="control-label">Chosen Boat</label>
-                                                <input type="text" class="form-control" id="AvailBoat" name="AvailBoat" value="Please choose a boat" onclick="ShowModalAvailableBoat()" rel="tooltip" title="Please specify number of guests to avail before choosing a boat" readonly>
+                                                <input type="text" class="form-control" id="AvailBoat" name="AvailBoat" value="Please choose a boat" onclick="ShowModalAvailableBoat('Not Package')" rel="tooltip" title="Please specify number of guests to avail before choosing a boat" readonly>
                                             </div>
                                         </div>
                                         <div class="col-xs-3">
@@ -325,6 +337,112 @@
                             </form>
                         </div>
 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalAvailActivityPackage" class="modal">
+    <div class="Modal-content" style="max-width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="green">
+                            <i class="material-icons">rowing</i>
+                        </div>
+                        <div class="card-content">
+                            <div class="row">
+                                <p class="category"></p>
+                                <h3 class="title">Avail Activity<span class="close" onclick="HideModalAvailActivityPackage()">X</span></h3>
+                            </div>
+                            <form id="AvailActivityForm" method="POST" action="/Activity/Avail/Package" onsubmit="return CheckAvailPackageForm()">
+                                {{ csrf_field() }}
+                                <input type="hidden" id="PackageReservationID" name="PackageReservationID">
+                                <input type="hidden" id="PackageActivityID" name="PackageActivityID">
+                                <input type="hidden" id="PackageActivityType" name="PackageActivityType">
+                                <input type="hidden" id="PackageQuantityIncluded" name="PackageQuantityIncluded">
+                                
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Activity to avail</label>
+                                            <input type="text" class="form-control" id="PackageActivityName" name="PackageActivityName" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static">
+                                            <label class="control-label">Name</label>
+                                            <input type="text" class="form-control" id="PackageCustomerName" name="PackageCustomerName" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="DivPackageLandActivity" style="display:none">
+                                   <div class = "row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-static" id="PackageLandQuantityError">
+                                                <label class="control-label">Quantity</label>
+                                                <input type="text" class="form-control" onkeyup="ValidatePackageQuantity(this, 'int', '#PackageLandQuantityError')" onchange="ValidatePackageQuantity(this, 'int', '#PackageLandQuantityError')" id="PackageLandQuantity" name="PackageLandQuantity" value="0" required>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div id="DivPackageWaterActivity" style="display:none">
+                                    <div class = "row">
+                                        <div class="col-md-12">
+                                            <div class="form-group label-static" id="PackageGuestQuantityError">
+                                                <label class="control-label">No. of guests to avail</label>
+                                                <input type="text" class="form-control" onkeyup="SendGuestPackageInput(this, 'int', '#PackageGuestQuantityError')" onchange="SendGuestPackageInput(this, 'int', '#PackageGuestQuantityError')" id="PackageGuestQuantity" name="PackageGuestQuantity" value="0" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <div class="form-group label-static">
+                                                <label class="control-label">Chosen Boat</label>
+                                                <input type="text" class="form-control" id="PackageAvailBoat" name="PackageAvailBoat" value="Please choose a boat" onclick="ShowModalAvailableBoat('Package')" rel="tooltip" title="Please specify number of guests to avail before choosing a boat" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <p id="time-label">Expected Duration</p>
+                                            <div class="selectBox">
+                                                <select id="DurationTime" name="PackageDurationTime">
+                                                  <option>0</option>
+                                                  <option selected>1</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <p id="time-label2">Minute</p>
+                                            <div class="selectBox">
+                                                <select id="DurationMinute" name="PackageDurationMinute">
+                                                  <option>00</option>
+                                                  <option>15</option>
+                                                  <option>30</option>
+                                                  <option>45</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="ErrorLabel" id="PackageError"></p>
+                                    </div>
+                                </div>
+                                
+                                <div class = "row">
+                                    <div class="col-xs-12">
+                                        <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Avail</button>
+                                    </div> 
+                                </div>
+                            </form>
+                        </div>
                 </div>
             </div>
         </div>

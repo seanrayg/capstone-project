@@ -1173,11 +1173,12 @@ class ViewResortController extends Controller
                         ->join ('tblCustomer as e', 'd.strResDCustomerID', '=' , 'e.strCustomerID')
                         ->select('c.strBeachAName',
                                  DB::raw('CONCAT(e.strCustFirstName , " " , e.strCustLastName) AS Name'),
-                                 'a.intPackageAQuantity')
+                                 'a.intPackageAQuantity',
+                                 'c.strBeachActivityID',
+                                 'c.intBeachABoat',
+                                 'd.strReservationID')
                         ->where('d.intResDStatus', '=', 4)
                         ->get();
-        
-
         
         return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable', 'AvailedActivities', 'PackageActivities'));
     }
