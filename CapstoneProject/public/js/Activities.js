@@ -11,11 +11,9 @@ function ShowModalAvailActivityPackage(ActivityName, CustomerName, ActivityQuant
     document.getElementById("PackageCustomerName").value = CustomerName;
     if(ActivityType == 1){
         document.getElementById("DivPackageWaterActivity").style.display = "block";
-        document.getElementById("DivPackageLandActivity").style.display = "none";
     }
     else{
         document.getElementById("DivPackageWaterActivity").style.display = "none";
-        document.getElementById("DivPackageLandActivity").style.display = "block";
     }
     document.getElementById("DivModalAvailActivityPackage").style.display = "block";
 }

@@ -380,26 +380,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div id="DivPackageLandActivity" style="display:none">
-                                   <div class = "row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static" id="PackageLandQuantityError">
-                                                <label class="control-label">Quantity</label>
-                                                <input type="text" class="form-control" onkeyup="ValidatePackageQuantity(this, 'int', '#PackageLandQuantityError')" onchange="ValidatePackageQuantity(this, 'int', '#PackageLandQuantityError')" id="PackageLandQuantity" name="PackageLandQuantity" value="0" required>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                </div>
-                                <div id="DivPackageWaterActivity" style="display:none">
-                                    <div class = "row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static" id="PackageGuestQuantityError">
-                                                <label class="control-label">No. of guests to avail</label>
-                                                <input type="text" class="form-control" onkeyup="SendGuestPackageInput(this, 'int', '#PackageGuestQuantityError')" onchange="SendGuestPackageInput(this, 'int', '#PackageGuestQuantityError')" id="PackageGuestQuantity" name="PackageGuestQuantity" value="0" required>
-                                            </div>
+
+                               <div class = "row">
+                                    <div class="col-md-12">
+                                        <div class="form-group label-static" id="PackageGuestQuantityError">
+                                            <label class="control-label">No. of guests to avail</label>
+                                            <input type="text" class="form-control" onkeyup="SendGuestPackageInput(this, 'int', '#PackageGuestQuantityError')" onchange="SendGuestPackageInput(this, 'int', '#PackageGuestQuantityError')" id="PackageGuestQuantity" name="PackageGuestQuantity" value="0" required>
                                         </div>
                                     </div>
+                                </div>
+                                <div id="DivPackageWaterActivity" style="display:none">
                                     <div class="row">
                                         <div class="col-xs-6">
                                             <div class="form-group label-static">
