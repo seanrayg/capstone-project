@@ -347,6 +347,8 @@ Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
 Route::post('/ItemRental/Rent', 'ResortController@storeRentalItem');
 
+Route::post('/ItemRental/Rent/Package', 'ResortController@storeRentalItemPackage');
+
 Route::post('/ItemRental/RentPay', 'ResortController@storeRentalItemPayment');
 
 Route::post('/ItemRental/Return', 'ResortController@storeReturnItem');
@@ -371,6 +373,8 @@ Route::post('/BoatSchedule/RentDone', 'ScheduleController@RentDone');
 /*------------ ACTIVITY ------------*/
 
 Route::post('/Activity/Avail', 'ResortController@AvailActivity');
+
+Route::post('/Activity/Avail/Package', 'ResortController@AvailActivityPackage');
 
 Route::post('/Activity/AvailPay', 'ResortController@AvailActivityPayment');
 
@@ -426,6 +430,12 @@ Route::post('Contact/Delete', 'UtilitiesController@deleteContactInfo');
 
 /*---------- CONTENT MANAGEMENT ---------*/
 Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement');
+
+
+
+/*---------- SYSTEM USERS ------------*/
+
+Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
 
 //testing reports
 Route::post('/sample', function(){

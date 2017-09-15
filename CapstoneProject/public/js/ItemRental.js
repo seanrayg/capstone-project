@@ -5,6 +5,22 @@ var BrokenItemInfo = [];
 
 /*----------- MODAL CONTROLLER ------------*/
 
+function ShowModalRentPackageItem(ItemName, CustomerName, ItemQuantity, ItemDuration, QuantityLeft, ItemID, ReservationID){
+ 
+    document.getElementById("RentPackageItemName").value = ItemName;
+    document.getElementById("RentPackageItemID").value = ItemID;
+    document.getElementById("RentPackageQuantityLeft").value = QuantityLeft;
+    document.getElementById("RentPackageReservationID").value = ReservationID;
+    document.getElementById("RentPackageCustomerName").value = CustomerName;
+    document.getElementById("RentPackageQuantityIncluded").value = ItemQuantity;
+    document.getElementById("RentPackageDuration").value = ItemDuration;
+    document.getElementById("DivModalRentPackageItem").style.display = "block";
+}
+
+function HideModalRentPackageItem(){
+    document.getElementById("DivModalRentPackageItem").style.display = "none";
+}
+
 function ShowModalRentItem(){
     document.getElementById("DivModalRentItem").style.display = "block";
 }
@@ -461,6 +477,41 @@ function SendExtendPayment(field, dataType, holder){
             document.getElementById("ExtendPayChange").value = Change;
         }
         
+    }
+}
+
+
+/*-------------- RENT PACKAGE ITEM ------------*/
+
+function SendPackageQuantityInput(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    var InputError = false;
+    if(!($(holder).hasClass('has-warning'))){
+        var QuantityLeft = parseInt(document.getElementById("RentPackageQuantityLeft").value);
+        if(parseInt(QuantityLeft) < parseInt(field.value)){
+            InputError = true;
+        }
+        else{
+            var QuantityIncluded = parseInt(document.getElementById("RentPackageQuantityIncluded").value);
+            if(parseInt(QuantityIncluded) < parseInt(field.value)){
+                InputError = true;
+            }
+        }
+    }
+    
+    if(InputError){
+        $(holder).addClass('has-warning');
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="Invalid input!";
+        }
+    }
+    else{
+        $(holder).removeClass('has-warning');
+        var x = document.getElementsByClassName("ErrorLabel");
+        for(var i = 0; i < x.length; i++){
+            x[i].innerText="";
+        }
     }
 }
 

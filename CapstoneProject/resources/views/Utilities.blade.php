@@ -41,18 +41,19 @@
             </div>
         </div>
     </a>
+    <a href="/SystemUsers">
+        <div class="col-md-4 cursor-pointer">
+            <div class="card">
+                <div class="card-header card-chart" data-background-color="purple">
+                    <div class="ct-chart text-center"><i class="material-icons icon-header" style="font-size: 100px;">supervisor_account</i></div>
+                </div>
+                <div class="card-content">
+                    <h4 class="title text-center">Users</h4>
+                </div>
 
-    <div class="col-md-4 cursor-pointer">
-        <div class="card">
-            <div class="card-header card-chart" data-background-color="purple">
-                <div class="ct-chart text-center"><i class="material-icons icon-header" style="font-size: 100px;">supervisor_account</i></div>
             </div>
-            <div class="card-content">
-                <h4 class="title text-center">Users</h4>
-            </div>
-
         </div>
-    </div>
+    </a>
     
 </div>
 
