@@ -14,7 +14,11 @@
 use Illuminate\Support\Facades\Input;
 
 //Misc
-Route::get('/', 'ViewDashboardController@getDashboard');
+Route::get('/', function () {
+    return view('Login');
+});
+
+Route::get('/Dashboard', 'ViewDashboardController@getDashboard');
 
 Route::get('/Walkin', 'ViewResortController@ViewWalkIn');
 
@@ -394,6 +398,8 @@ Route::post('/Fee/Edit', 'ResortController@EditFee');
 Route::post('/Fee/Delete', 'ResortController@DeleteFee');
 
 Route::post('/Fee/Pay', 'ResortController@PayFee');
+
+Route::get('/Fee/Package', 'ViewResortController@getPackageFees');
 
 /*------------ BILLING ------------*/
 

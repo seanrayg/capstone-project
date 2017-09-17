@@ -9,6 +9,41 @@ function HideModalAddFees(){
     document.getElementById("DivModalAddFees").style.display = "none";
 }
 
+function ShowModalPackageFees(ReservationID){
+    $.ajax({
+        type:'get',
+        url:'/Fee/Package',
+        data:{ReservationID: ReservationID},
+        success:function(data){
+            $('#tblPackageFees tbody').empty();
+
+            var tableRef = document.getElementById('tblPackageFees').getElementsByTagName('tbody')[0];
+
+            console.log(data);
+
+            for(var x = 0; x < data.length; x++){
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+
+                newCell1.innerHTML = data[x].strFeeID;
+                newCell2.innerHTML = data[x].strFeeName;
+
+            }
+        },
+        error:function(response){
+            console.log(response);
+            alert("error");
+        }
+    });   
+    document.getElementById("DivModalPackageFees").style.display = "block";
+}
+
+function HideModalPackageFees(){
+    document.getElementById("DivModalPackageFees").style.display = "none";
+}
+
 function ShowModalCustomerFees(field){
      $.ajax({
         type:'get',

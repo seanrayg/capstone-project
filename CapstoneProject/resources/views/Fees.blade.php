@@ -82,6 +82,9 @@
                                         <button type="button" rel="tooltip" title="View Fees" class="btn btn-info btn-simple btn-xs" value="{{$Customer->strReservationID}}" onclick="ShowModalCustomerFees(this)">
                                             <i class="material-icons">content_paste</i>
                                         </button>
+                                        <button type="button" rel="tooltip" title="Included Fees in Package" class="btn btn-success btn-simple btn-xs" onclick="ShowModalPackageFees('{{$Customer->strReservationID}}')">
+                                            <i class="material-icons">launch</i>
+                                        </button>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -356,6 +359,35 @@
 
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+    
+<div id="DivModalPackageFees" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+                            <div class="card-header" data-background-color="teal">
+                                <i class="material-icons">pages</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">Packaged Fees<span class="close" onclick="HideModalPackageFees()">X</span></h3>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event, 'Package')" style="font-family: Roboto" id="tblPackageFees">
+                                <thead class="text-primary">
+                                    <th class="text-center">Fee ID</th>
+                                    <th class="text-center">Fee Name</th>   
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 </div>

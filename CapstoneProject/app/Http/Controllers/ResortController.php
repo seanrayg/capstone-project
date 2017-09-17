@@ -784,7 +784,7 @@ class ResortController extends Controller
         $BoatName = trim($req->input('PackageAvailBoat'));
         $HoursToAdd = trim($req->input('PackageDurationTime'));
         $MinutesToAdd = trim($req->input('PackageDurationMinute'));
-        
+
         $AvailedActivities = DB::table('tblavailbeachactivity')->get();
         $PaymentStatus = 1;
         if((sizeof($AvailedActivities) == 0)){

@@ -1166,7 +1166,7 @@ class ViewResortController extends Controller
                 ->where([['e.intBoatSStatus', '=', '1'], ['a.strAvailBABoatID', '!=', null]])
                 ->get();
         
-        $PackageActivities = DB::table('tblPackageActivity as a')
+        $tempPackageActivities = DB::table('tblPackageActivity as a')
                         ->join ('tblAvailPackage as b', 'a.strPackageAPackageID', '=', 'b.strAvailPackageID')
                         ->join ('tblBeachActivity as c', 'c.strBeachActivityID', '=' , 'a.strPackageABeachActivityID')
                         ->join ('tblReservationDetail as d', 'd.strReservationID', '=' , 'b.strAvailPReservationID')
@@ -1179,6 +1179,34 @@ class ViewResortController extends Controller
                                  'd.strReservationID')
                         ->where('d.intResDStatus', '=', 4)
                         ->get();
+        
+        $RentedPackageActivities = DB::table('tblPayment')
+                            ->select('strPayReservationID',
+                                     'strPaymentRemarks')
+                            ->where('strPayTypeID', '=', 27)
+                            ->get();
+        
+        
+        
+        foreach($tempPackageActivities as $Package){
+            foreach($RentedPackageActivities as $Rent){
+                if($Package->strReservationID == $Rent->strPayReservationID){
+                    $tempAvailedActivities = DB::table('tblAvailBeachActivity')
+                                      ->where('strAvailBeachActivityID', '=', $Rent->strPaymentRemarks)
+                                      ->get();
+ 
+                    foreach($tempAvailedActivities as $tempAvailed){
+                        if($tempAvailed->strAvailBAReservationID == $Package->strReservationID){
+                            if($tempAvailed->strAvailBABeachActivityID== $Package->strBeachActivityID){
+                                $Package->intPackageAQuantity = $Package->intPackageAQuantity - $tempAvailed->intAvailBAQuantity;
+                            }
+                        }           
+                    }
+                }   
+            }
+        }
+        
+        $PackageActivities = $tempPackageActivities->where('intPackageAQuantity' ,"!=", 0);
         
         return view('Activities', compact('Activities', 'Guests', 'BoatsAvailable', 'AvailedActivities', 'PackageActivities'));
     }
@@ -1225,6 +1253,21 @@ class ViewResortController extends Controller
                 ->get();
         
         return response()->json($FeeAmount);
+    }
+    
+    public function getPackageFees(Request $req){
+        $ReservationID = trim($req->input('ReservationID'));
+        $PackageFees = DB::table('tblPackageFee as a')
+                        ->join ('tblAvailPackage as b', 'a.strPackageFPackageID', '=', 'b.strAvailPackageID')
+                        ->join ('tblFee as c', 'c.strFeeID', '=' , 'a.strPackageFFeeID')
+                        ->join ('tblReservationDetail as d', 'd.strReservationID', '=' , 'b.strAvailPReservationID')
+                        ->join ('tblCustomer as e', 'd.strResDCustomerID', '=' , 'e.strCustomerID')
+                        ->select('c.strFeeID',
+                                 'c.strFeeName')
+                        ->where([['d.intResDStatus', '=', 4],['d.strReservationID', '=', $ReservationID]])
+                        ->get();
+        
+         return response()->json($PackageFees);
     }
     
     
