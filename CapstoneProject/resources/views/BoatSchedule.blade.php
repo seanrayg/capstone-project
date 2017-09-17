@@ -317,7 +317,7 @@
                             <div class="card-content">
                                 <p class="category"></p>
                                 <h3 class="title">Rent Boat<span class="close" onclick="HideModalRentBoat()">X</span></h3>
-                                <form method="post" action="/BoatSchedule/RentBoat">
+                                <form method="POST" action="/BoatSchedule/RentBoat" onsubmit="return CheckSelectedCustomer()">
                                     {{ csrf_field() }}
                                     <div class="row">
                                         <div class="col-md-12">
@@ -340,7 +340,7 @@
                                     <div class="row">
                                         <div class="col-xs-12">
                                          <p style="font-family: 'Roboto'">Rented By:</p>
-                                            <input id="CustomerName" name="CustomerName" list="GuestsList" class="inputlist">
+                                            <input id="CustomerName" name="CustomerName" list="GuestsList" class="inputlist" required>
                                             <input type="hidden" id="CustomerID" name="CustomerID">
                                             <datalist id="GuestsList">
                                               @foreach($ActiveCustomers as $ActiveCustomer)
@@ -390,75 +390,82 @@
 
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <p class="ErrorLabel"></p>
+                                            <p id="CustomerErrorLabel" class="ErrorLabel"></p>
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-success pull-right">Pay at Checkout</button>
+                                    <input type="submit" name="action" class="btn btn-success pull-right" value="Pay At Checkout" />
                                     <button type="button" class="btn btn-success pull-left" onclick="ShowModalPayBoatRent()">Pay Now</button>
+
+                                    <div id="DivModalPayBoatRent" class="modal">
+                                        <div class="Modal-content" style="max-width: 500px">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="card card-stats">
+
+                                                            <div class="card-header" data-background-color="green">
+                                                                <i class="material-icons">rowing</i>
+                                                            </div>
+                                                            <div class="card-content">
+                                                                <div class="row">
+                                                                    <p class="category"></p>
+                                                                    <h3 class="title">Rent Boat<span class="close" onclick="HideModalPayBoatRent()">X</span></h3>
+                                                                </div>
+                                                                
+                                                                <div class = "row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group label-static">
+                                                                            <label class="control-label">Total Amount</label>
+                                                                            <input type="text" class="form-control" id="BoatRentPrice" name="BoatRentPrice" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class = "row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group label-static" id="ActivityPaymentError">
+                                                                            <label class="control-label">Payment</label>
+                                                                            <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#ActivityPaymentError')" onchange="SendPayment(this, 'double', '#ActivityPaymentError')" id="ActivityPayment" name="ActivityPayment" value="0" required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class = "row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group label-static">
+                                                                            <label class="control-label">Change</label>
+                                                                            <input type="text" class="form-control" id="BoatRentChange" name="BoatRentChange">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <br><br>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <p class="ErrorLabel"></p>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div class = "row">
+                                                                    <div class="col-xs-12">
+                                                                        <input type="submit" name="action" class="btn btn-success pull-right" value="Continue" />
+                                                                    </div> 
+                                                                </div>
+                                                            </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
 
                     </div>
                 </div>
-        </div>
-    </div>
-</div>
-
-<div id="DivModalPayBoatRent" class="modal">
-    <div class="Modal-content" style="max-width: 500px">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-stats">
-
-                        <div class="card-header" data-background-color="green">
-                            <i class="material-icons">rowing</i>
-                        </div>
-                        <div class="card-content">
-                            <div class="row">
-                                <p class="category"></p>
-                                <h3 class="title">Rent Boat<span class="close" onclick="HideModalPayBoatRent()">X</span></h3>
-                            </div>
-                            <form id="AvailActivityForm" method="POST" action="/Activity/AvailPay" onsubmit="return CheckForm()">
-                                {{ csrf_field() }}
-
-                                <div class = "row">
-                                    <div class="col-md-12">
-                                        <div class="form-group label-static">
-                                            <label class="control-label">Total Amount</label>
-                                            <input type="text" class="form-control" id="BoatRentPrice" name="BoatRentPrice" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class = "row">
-                                    <div class="col-md-12">
-                                        <div class="form-group label-static" id="ActivityPaymentError">
-                                            <label class="control-label">Payment</label>
-                                            <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#ActivityPaymentError')" onchange="SendPayment(this, 'double', '#ActivityPaymentError')" id="ActivityPayment" name="ActivityPayment" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class = "row">
-                                    <div class="col-md-12">
-                                        <div class="form-group label-static">
-                                            <label class="control-label">Change</label>
-                                            <input type="text" class="form-control" id="ActivityChange" name="ActivityChange">
-                                        </div>
-                                    </div>
-                                </div>
-                                <br><br>
-                                <div class = "row">
-                                    <div class="col-xs-12">
-                                        <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
-                                    </div> 
-                                </div>
-                                
-                            </form>
-                        </div>
-
-                </div>
-            </div>
         </div>
     </div>
 </div>

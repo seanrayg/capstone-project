@@ -10,106 +10,120 @@ use Carbon\Carbon;
 class ScheduleController extends Controller
 {
     public function RentBoat(Request $request){
-    // 	$strBoatID = $request->input('BoatID');
-    // 	$strCustomerID = $request->input('CustomerID');
-    // 	$intPassengers = $request->input('NumberOfPassengers');
-    // 	$strBoatPurpose = 'Rental';
-    // 	$strPickUpTime = $request->input('time1');
-    // 	$strDropOffTime = $request->input('time2');
-    //     $dblBoatRate = $request->input('BoatRate');
+    	$strBoatID = $request->input('BoatID');
+    	$strCustomerID = $request->input('CustomerID');
+    	$intPassengers = $request->input('NumberOfPassengers');
+    	$strBoatPurpose = 'Rental';
+    	$strPickUpTime = $request->input('time1');
+    	$strDropOffTime = $request->input('time2');
+        $dblBoatRate = $request->input('BoatRate');
 
-    // 	$tempPickUpTime = explode(" ", $strPickUpTime);
+    	$tempPickUpTime = explode(" ", $strPickUpTime);
 
-    // 	if($tempPickUpTime[1] == 'am'){
-    // 		$tempTime = explode(":", $tempPickUpTime[0]);
+    	if($tempPickUpTime[1] == 'am'){
+    		$tempTime = explode(":", $tempPickUpTime[0]);
 
-    //         if($tempTime[0] == 12){
-    //             $PickUpTime = '00:' . $tempTime[1] . ':00';
-    //         }else{
-    //             $PickUpTime = $tempPickUpTime[0] . ':00';
-    //         }
-    // 	}else if($tempPickUpTime[1] == 'pm'){
-    // 		$tempTime = explode(":", $tempPickUpTime[0]);
+            if($tempTime[0] == 12){
+                $PickUpTime = '00:' . $tempTime[1] . ':00';
+            }else{
+                $PickUpTime = $tempPickUpTime[0] . ':00';
+            }
+    	}else if($tempPickUpTime[1] == 'pm'){
+    		$tempTime = explode(":", $tempPickUpTime[0]);
 
-    // 		if($tempTime[0] == 12){
-    //             $PickUpTime = $tempPickUpTime[0] . ':00';
-    //         }else{
-    //             $intNewHour = 12 + $tempTime[0];
-    //             $PickUpTime = $intNewHour . ':' . $tempTime[1] . ':00';
-    //         }
-    // 	}
+    		if($tempTime[0] == 12){
+                $PickUpTime = $tempPickUpTime[0] . ':00';
+            }else{
+                $intNewHour = 12 + $tempTime[0];
+                $PickUpTime = $intNewHour . ':' . $tempTime[1] . ':00';
+            }
+    	}
 
-    //     $tempDropOffTime = explode(" ", $strDropOffTime);
+        $tempDropOffTime = explode(" ", $strDropOffTime);
 
-    //     if($tempDropOffTime[1] == 'am'){
-    //         $tempTime = explode(":", $tempDropOffTime[0]);
+        if($tempDropOffTime[1] == 'am'){
+            $tempTime = explode(":", $tempDropOffTime[0]);
 
-    //         if($tempTime[0] == 12){
-    //             $DropOffTime = '00:' . $tempTime[1] . ':00';
-    //         }else{
-    //             $DropOffTime = $tempDropOffTime[0] . ':00';
-    //         }
-    //     }else if($tempDropOffTime[1] == 'pm'){
-    //         $tempTime = explode(":", $tempDropOffTime[0]);
+            if($tempTime[0] == 12){
+                $DropOffTime = '00:' . $tempTime[1] . ':00';
+            }else{
+                $DropOffTime = $tempDropOffTime[0] . ':00';
+            }
+        }else if($tempDropOffTime[1] == 'pm'){
+            $tempTime = explode(":", $tempDropOffTime[0]);
 
-    //         if($tempTime[0] == 12){
-    //             $DropOffTime = $tempDropOffTime[0] . ':00';
-    //         }else{
-    //             $intNewHour = 12 + $tempTime[0];
-    //             $DropOffTime = $intNewHour . ':' . $tempTime[1] . ':00';
-    //         }
-    //     }
+            if($tempTime[0] == 12){
+                $DropOffTime = $tempDropOffTime[0] . ':00';
+            }else{
+                $intNewHour = 12 + $tempTime[0];
+                $DropOffTime = $intNewHour . ':' . $tempTime[1] . ':00';
+            }
+        }
 
-    // 	$dtmNow = Carbon::now('Asia/Manila');
-    //     $dtNow = $dtmNow->toDateString();
+    	$dtmNow = Carbon::now('Asia/Manila');
+        $dtNow = $dtmNow->toDateString();
 
-    //     $dtmBoatSPickUp = $dtNow . ' ' . $PickUpTime;
-    //     $dtmBoatSDropOff = $dtNow . ' ' . $DropOffTime;
+        $dtmBoatSPickUp = $dtNow . ' ' . $PickUpTime;
+        $dtmBoatSDropOff = $dtNow . ' ' . $DropOffTime;
 
-    //     $strReservationID = DB::table('tblReservationDetail')
-    //         ->where('strResDCustomerID', '=', $strCustomerID)
-    //         ->select('strReservationID')
-    //         ->first();
+        $strReservationID = DB::table('tblReservationDetail')
+            ->where('strResDCustomerID', '=', $strCustomerID)
+            ->select('strReservationID')
+            ->first();
 
-    //     $strReservationID = $strReservationID->strReservationID;
+        $strReservationID = $strReservationID->strReservationID;
 
-    // 	$strBoatScheduleID = $this->SmartCounter('tblBoatSchedule', 'strBoatScheduleID');
+    	$strBoatScheduleID = $this->SmartCounter('tblBoatSchedule', 'strBoatScheduleID');
 
-    // 	$BoatSchedule = array(
-    // 		'strBoatScheduleID'=>$strBoatScheduleID,
-    // 		'strBoatSBoatID'=>$strBoatID,
-    // 		'strBoatSPurpose'=>$strBoatPurpose,
-    // 		'dtmBoatSPickUp'=>$dtmBoatSPickUp,
-    //         'dtmBoatSDropOff'=>$dtmBoatSDropOff,
-    //         'intBoatSStatus'=>1,
-    //         'strBoatSReservationID'=>$strReservationID
-    // 	);
+    	$BoatSchedule = array(
+    		'strBoatScheduleID'=>$strBoatScheduleID,
+    		'strBoatSBoatID'=>$strBoatID,
+    		'strBoatSPurpose'=>$strBoatPurpose,
+    		'dtmBoatSPickUp'=>$dtmBoatSPickUp,
+            'dtmBoatSDropOff'=>$dtmBoatSDropOff,
+            'intBoatSStatus'=>1,
+            'strBoatSReservationID'=>$strReservationID
+    	);
 
-    //     DB::table('tblBoatSchedule')->insert($BoatSchedule);
+        DB::table('tblBoatSchedule')->insert($BoatSchedule);
 
-    //     $strPaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        $strPaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
 
-    //     $BoatScheduleBill = array(
-    //         'strPaymentID'=>$strPaymentID,
-    //         'strPayReservationID'=>$strReservationID,
-    //         'dblPayAmount'=>$dblBoatRate,
-    //         'strPayTypeID'=>8,
-    //         'dtePayDate'=>Carbon::now('Asia/Manila')->toDateString(),
-    //         'strPaymentRemarks'=>null,
-    //         'tmsCreated'=>Carbon::now('Asia/Manila')
-    //     );
+        $BoatScheduleBill = array(
+            'strPaymentID'=>$strPaymentID,
+            'strPayReservationID'=>$strReservationID,
+            'dblPayAmount'=>$dblBoatRate,
+            'strPayTypeID'=>8,
+            'dtePayDate'=>Carbon::now('Asia/Manila')->toDateString(),
+            'strPaymentRemarks'=>null,
+            'tmsCreated'=>Carbon::now('Asia/Manila')
+        );
 
-    //     DB::table('tblPayment')->insert($BoatScheduleBill);
+        $BoatSchedulePayment = array(
+            'strPaymentID'=>$strPaymentID,
+            'strPayReservationID'=>$strReservationID,
+            'dblPayAmount'=>$dblBoatRate,
+            'strPayTypeID'=>9,
+            'dtePayDate'=>Carbon::now('Asia/Manila')->toDateString(),
+            'strPaymentRemarks'=>null,
+            'tmsCreated'=>Carbon::now('Asia/Manila')
+        );
 
-    // 	return redirect('BoatSchedule');
-    // }
+        if($request->input('action') == 'Continue'){
+            DB::table('tblPayment')->insert($BoatSchedulePayment);
+        }else{
+            DB::table('tblPayment')->insert($BoatScheduleBill);
+        }
 
-    // public function RentDone(Request $request){
-    //     $strBoatScheduleID = $request->input('BoatScheduleID');
+    	return redirect('BoatSchedule');
+    }
 
-    //     DB::table('tblBoatSchedule')
-    //     ->where('strBoatScheduleID', $strBoatScheduleID)
-    //     ->update(['intBoatSStatus' => 0]);
+    public function RentDone(Request $request){
+        $strBoatScheduleID = $request->input('BoatScheduleID');
+
+        DB::table('tblBoatSchedule')
+        ->where('strBoatScheduleID', $strBoatScheduleID)
+        ->update(['intBoatSStatus' => 0]);
 
         return redirect('BoatSchedule');
     }

@@ -27,16 +27,20 @@ function run(event, table) {
 }
 
 function ShowModalPayBoatRent() {
-    var intHours = parseInt(document.getElementById('PickUpTime').value);
-    var intHours = intHours / 2;
+    var boolCustomerFound = CheckSelectedCustomer();
 
-    var intBoatRate = parseInt(document.getElementById('BoatRate').value);
+    if(boolCustomerFound) {
+        var intHours = parseInt(document.getElementById('PickUpTime').value);
+        var intHours = intHours / 2;
 
-    var intPrice = intBoatRate * intHours;
+        var intBoatRate = parseInt(document.getElementById('BoatRate').value);
 
-    document.getElementById('BoatRentPrice').value = intPrice;
-    
-    document.getElementById("DivModalPayBoatRent").style.display = "block";
+        var intPrice = intBoatRate * intHours;
+
+        document.getElementById('BoatRentPrice').value = intPrice;
+        
+        document.getElementById("DivModalPayBoatRent").style.display = "block";
+    }
 }
 
 function HideModalPayBoatRent() {
@@ -47,15 +51,32 @@ function SendPayment(field, dataType, holder){
     ValidateInput(field, dataType, holder);
     if(!($(holder).hasClass('has-warning'))){
         
-        var ActivityTotal = parseInt(document.getElementById("ActivityTotalPrice").value);
-        var ActivityPayment = parseInt(field.value);
-        var Change = ActivityPayment - ActivityTotal;
+        var BoatRentTotal = parseInt(document.getElementById("BoatRentPrice").value);
+        var BoatRentPayment = parseInt(field.value);
+        var Change = BoatRentPayment - BoatRentTotal;
         if(Change < 0){
-            document.getElementById("ActivityChange").value = "Insufficient Payment";
+            document.getElementById("BoatRentChange").value = "Insufficient Payment";
         }
         else{
-            document.getElementById("ActivityChange").value = Change;
+            document.getElementById("BoatRentChange").value = Change;
         }
         
     }
+}
+
+function CheckSelectedCustomer(){
+    var strCustomer = document.getElementById('CustomerName').value;
+    var arrCustomer = document.getElementById('GuestsList').options;
+    
+    for(i = 0; i < arrCustomer.length; i++){
+        if(strCustomer == arrCustomer[i].value){
+            document.getElementById('CustomerErrorLabel').innerHTML = '';
+
+            return true;
+        }
+    }
+
+    document.getElementById('CustomerErrorLabel').innerHTML = 'Please check the customer name';
+
+    return false;
 }

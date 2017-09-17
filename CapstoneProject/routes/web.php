@@ -439,7 +439,6 @@ Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
 
 //testing reports
 Route::post('/sample', function(){
-	$customPaper = array(0,0,360,200);
-	$pdf = PDF::loadview('pdf.invoice')->setPaper($customPaper);
+	$pdf = PDF::loadview('pdf.invoice');
 	return $pdf->stream();
 });

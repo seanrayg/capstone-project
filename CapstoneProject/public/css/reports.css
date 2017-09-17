@@ -1,23 +1,55 @@
-html {
-	margin: 0;
+.header {
+    background-color: #9494b8;
+    width: 100%;
+    height: 100px;
 }
 
-#heading {
-	font-size: 20px;
-	font-weight: bold;
+p.title {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 50px;
+    color: white;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 40px;
 }
 
-p.header {
-	text-align: center;
-	font: "Times New Roman";
-	font-size: 10px;
+p.resort {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: white;
+    font-size: 12px;
+    padding-top: 15px;
 }
 
-div.footer {
-	margin-left: 10px;
+.column-left {
+    float: left; width: 33%;
+}
+.column-right {
+    float: right; width: 30%;
 }
 
-p.footer {
-	font: "Times New Roman";
-	font-size: 9px;
+label.parent {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: gray;
+    font-size: 13px;
+}
+
+label {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    padding: 20px;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
 }
