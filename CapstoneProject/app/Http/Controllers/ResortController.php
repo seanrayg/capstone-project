@@ -41,6 +41,20 @@ class ResortController extends Controller
     
     */
     
+    // Room Payment Status reference
+    
+    // 1 3 5 7 paid 
+    // 0 2 4 6 not paid
+
+    // 3 paid add rooms
+
+    // 2 not paid add rooms
+
+    // 7 paid add rooms and paid upgrade room ---- paid add rooms and paid upgrade room
+
+    // 6 not paid add rooms and not paid upgrade room ------ not paid add rooms and not paid upgrade room
+        
+    
     
     /*------------ ITEM RENTAL -------------*/
     
@@ -1337,6 +1351,40 @@ class ResortController extends Controller
         DB::table('tblReservationDetail')
                 ->where('strReservationID', $ReservationID)
                 ->update($updateData);
+        
+        $DateToday = Carbon::now('Asia/Manila')->format('Y/m/d');
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+
+        if($PaymentStatus == 1){
+
+            $TransactionData = array('strPaymentID'=>$PaymentID,
+                                      'strPayReservationID'=>$ReservationID,
+                                      'dblPayAmount'=>$TotalAmount,
+                                      'strPayTypeID'=> 21,
+                                      'dtePayDate'=>$DateToday,
+                                      'strPaymentRemarks'=>$ExtendTotal);
+
+            DB::table('tblPayment')->insert($TransactionData);
+        }
+        
+        else if($PaymentStatus == 0){
+
+            $TransactionData = array('strPaymentID'=>$PaymentID,
+                                      'strPayReservationID'=>$ReservationID,
+                                      'dblPayAmount'=>$TotalAmount,
+                                      'strPayTypeID'=> 20,
+                                      'dtePayDate'=>$DateToday,
+                                      'strPaymentRemarks'=>$ExtendTotal);
+
+            DB::table('tblPayment')->insert($TransactionData);
+        }
     }
     
     public function editCustomerInfo(Request $req){

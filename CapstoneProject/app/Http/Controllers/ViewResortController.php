@@ -656,6 +656,7 @@ class ViewResortController extends Controller
         $CheckInDate = str_replace('-','/',$CheckInDate);
 
         $Packages = $this->getPackages();
+
         foreach($Packages as $Package){
             
             $CheckOutDate = carbon::parse($CheckInDate)->addDays($Package->intPackageDuration)->toDateTimeString();
@@ -684,7 +685,7 @@ class ViewResortController extends Controller
         
         $newPackage = $Packages->where('strPackageName', '!=', "");
         $newPackage = $newPackage->values();
-        
+      
         return view('WalkinPackage', compact('newPackage'));
     }
     
@@ -1302,6 +1303,8 @@ class ViewResortController extends Controller
             $PackageInitialBill = 0;
             $PackageInitialPayment = 0;
             $PackageDownPayment = 0;
+            $ExtendStayAmount = 0;
+            
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
                             ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
@@ -1377,7 +1380,16 @@ class ViewResortController extends Controller
             foreach($UpgradeRoomBills as $Bill){
                 $UpgradeRoomAmount += $Bill->dblPayAmount;
             }
-           
+            
+            //Days Extend
+            $ExtendStayBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 20]])
+                            ->get();
+            
+            foreach($ExtendStayBills as $Bill){
+                $ExtendStayAmount += $Bill->dblPayAmount;
+            }
+                
             //Compute Item
             $RentedItems = DB::table('tblItem as a')
                         ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
@@ -1451,7 +1463,7 @@ class ViewResortController extends Controller
             
             //Compute Boat Rental
             
-            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment;
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount;
         }
 
         return view('Billing', compact('ReservationInfo'));
