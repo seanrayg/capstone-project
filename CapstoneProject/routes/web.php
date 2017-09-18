@@ -451,8 +451,5 @@ Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement'
 
 Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
 
-//testing reports
-Route::post('/sample', function(){
-	$pdf = PDF::loadview('pdf.invoice');
-	return $pdf->stream();
-});
+//Reports
+Route::post('/QueryReports/Print', 'ReportsController@PrintQueryReports');
