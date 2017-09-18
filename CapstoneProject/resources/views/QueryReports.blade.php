@@ -433,20 +433,20 @@
                             <label class="control-label">Report</label>
                             <div class="selectBox">
                                 <select name="SelectQuery" id="SelectQuery" onchange="SelectPrintAction()">
-                                    <option value="Accomodations">Accomodations</option>
-                                    <option value="BeachActivities">Beach Activities</option>
-                                    <option value="Boats">Boats</option>
-                                    <option value="CottagesOnly">Cottages Only</option>
-                                    <option value="CottagesTypesOnly">Cottage Types Only</option>
-                                    <option value="Customers">Customers</option>
-                                    <option value="Fees">Fees</option>
-                                    <option value="InoperationalDates">Inoperational Dates</option>
-                                    <option value="Packages">Packages</option>
-                                    <option value="RentalItems">Rental Items</option>
-                                    <option value="Reservations">Reservations</option>
-                                    <option value="RoomsCottages">Rooms &amp; Cottages</option>
-                                    <option value="RoomsOnly">Rooms Only</option>
-                                    <option value="RoomTypesOnly">Room Types Only</option>
+                                    <option>Accomodations</option>
+                                    <option>Beach Activities</option>
+                                    <option>Boats</option>
+                                    <option>Cottages Only</option>
+                                    <option>Cottage Types Only</option>
+                                    <option>Customers</option>
+                                    <option>Fees</option>
+                                    <option>Inoperational Dates</option>
+                                    <option>Packages</option>
+                                    <option>Rental Items</option>
+                                    <option>Reservations</option>
+                                    <option>Rooms &amp; Cottages</option>
+                                    <option>Rooms Only</option>
+                                    <option>Room Types Only</option>
                                 </select>
                               </div>
                         </div>
@@ -487,8 +487,10 @@
                     </tbody>
                 </table>    
             </div>
-            <form id="print" method="post" action="/sample" target="_blank">
+            <form method="post" action="/QueryReports/Print" target="_blank">
                 {{ csrf_field() }}
+                <input type="hidden" name="PrintSelectedReport" id="PrintSelectedReport">
+                <input type="hidden" name="PrintIncludDeleted" id="PrintIncludDeleted">
                 <button type="submit" class="btn btn-success pull-right">Print</button>
             </form>
         </div>
