@@ -471,6 +471,8 @@ class ViewResortController extends Controller
         $ArrivalDate = trim($req->input('ArrivalDate'));
         $DepartureDate = trim($req->input('DepartureDate'));
         
+        $DepartureDate = Carbon::parse($DepartureDate)->format('Y/m/d h:i:s');
+        
         $ExistingReservations = DB::table('tblReservationDetail')
                                 ->where(function($query){
                                     $query->where('intResDStatus', '=', '1')
@@ -654,6 +656,7 @@ class ViewResortController extends Controller
         $CheckInDate = str_replace('-','/',$CheckInDate);
 
         $Packages = $this->getPackages();
+
         foreach($Packages as $Package){
             
             $CheckOutDate = carbon::parse($CheckInDate)->addDays($Package->intPackageDuration)->toDateTimeString();
@@ -682,7 +685,7 @@ class ViewResortController extends Controller
         
         $newPackage = $Packages->where('strPackageName', '!=', "");
         $newPackage = $newPackage->values();
-        
+      
         return view('WalkinPackage', compact('newPackage'));
     }
     
@@ -1300,6 +1303,8 @@ class ViewResortController extends Controller
             $PackageInitialBill = 0;
             $PackageInitialPayment = 0;
             $PackageDownPayment = 0;
+            $ExtendStayAmount = 0;
+            
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
                             ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
@@ -1375,7 +1380,16 @@ class ViewResortController extends Controller
             foreach($UpgradeRoomBills as $Bill){
                 $UpgradeRoomAmount += $Bill->dblPayAmount;
             }
-           
+            
+            //Days Extend
+            $ExtendStayBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 24]])
+                            ->get();
+            
+            foreach($ExtendStayBills as $Bill){
+                $ExtendStayAmount += $Bill->dblPayAmount;
+            }
+                
             //Compute Item
             $RentedItems = DB::table('tblItem as a')
                         ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
@@ -1396,7 +1410,7 @@ class ViewResortController extends Controller
                                 ->join ('tblAvailBeachActivity as c', 'c.strAvailBABeachActivityID', '=', 'b.strBeachActivityID')
                                 ->select('b.dblBeachARate',
                                          'c.intAvailBAQuantity')
-                                ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $Info->strReservationID]])
+                                ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $Info->strReservationID], ['c.intAvailBAQuantity', '=', 0]])
                                 ->get();
             
             foreach($AvailedActivities as $Activity){
@@ -1449,7 +1463,7 @@ class ViewResortController extends Controller
             
             //Compute Boat Rental
             
-            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment;
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount;
         }
 
         return view('Billing', compact('ReservationInfo'));
@@ -1484,7 +1498,7 @@ class ViewResortController extends Controller
                     ->select('b.dblBeachARate',
                              'c.intAvailBAQuantity',
                              'a.strBeachAName')
-                    ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $ReservationID]])
+                    ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $ReservationID], ['c.intAvailBAQuantity', '=', 0]])
                     ->get();
         
         $FeeInfo = DB::table('tblFee as a')
@@ -1524,6 +1538,13 @@ class ViewResortController extends Controller
                     ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 22]])
                     ->get();
         
+        $ExtendStay = DB::table('tblPayment as a')
+                    ->join ('tblPaymentType as b', 'a.strPayTypeID', '=', 'b.strPaymentTypeID')
+                    ->select('a.dblPayAmount',
+                             'a.strPaymentRemarks')
+                    ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 24]])
+                    ->get();
+
         //Package Computation
         $PackageInfo = DB::table('tblAvailPackage as a')
                         ->join('tblPackage as b', 'b.strPackageID', '=', 'a.strAvailPackageID')
@@ -1568,9 +1589,364 @@ class ViewResortController extends Controller
             }
         }
         
-        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo, 'AdditionalRooms' => $AdditionalRooms, 'UpgradeRooms' => $UpgradeRooms,'PackageInfo' => $PackageInfo]);
+        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo, 'AdditionalRooms' => $AdditionalRooms, 'UpgradeRooms' => $UpgradeRooms,'PackageInfo' => $PackageInfo, 'ExtendStay' => $ExtendStay]);
     }
     
     
+    /*-------------- CHECKOUT ------------------*/
+    public function ViewCheckout($id){
+        $ReservationID = $id;
+      
+        $ReservationInfo = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select('a.strReservationID',
+                                 DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                                 'a.dtmResDArrival',
+                                 'a.dtmResDDeparture',
+                                 DB::raw('b.strCustEmail AS TotalBill'))
+                        ->where([['a.intResDStatus', '=', '4'],['a.strReservationID', '=', $ReservationID]])
+                        ->get();
+        
+        foreach($ReservationInfo as $Info){
+            $TotalRoom = 0;
+            $TotalItem = 0;
+            $TotalActivity = 0;
+            $TotalFee = 0;
+            $TotalPenalty = 0;
+            $TotalBoat = 0;
+            $TimePenalties = 0;
+            $BrokenPenalties = 0;
+            $TotalExtend = 0;
+            $AdditionalRoomAmount = 0;
+            $UpgradeRoomAmount = 0;
+            $PackagePayment = 0;
+            $PackageInitialBill = 0;
+            $PackageInitialPayment = 0;
+            $PackageDownPayment = 0;
+            $ExtendStayAmount = 0;
+            
+            //Compute Rooms
+            $ReservedRooms = DB::table('tblRoom as a')
+                            ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                            ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                            ->join ('tblReservationRoom as d', 'a.strRoomID', '=', 'd.strResRRoomID')
+                             ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['d.strResRReservationID', '=', $Info->strReservationID], ['intResRPayment', '=', 0]])
+                             ->pluck('c.dblRoomRate')
+                             ->toArray();
+            
+            for($x = 0; $x < sizeof($ReservedRooms); $x++){
+                $TotalRoom += $ReservedRooms[$x];
+            }
+            
+            $ArrivalDate = Carbon::parse($Info->dtmResDArrival);
+            $DepartureDate = Carbon::parse($Info->dtmResDDeparture);
+            
+            $DaysOfStay = $ArrivalDate->diffInDays($DepartureDate);
+            
+            if($DaysOfStay == 0){
+                $DaysOfStay = 1;
+            }
+            
+            //Package Computation
+            $PackageExist = DB::table('tblAvailPackage')
+                            ->where('strAvailPReservationID', '=', $Info->strReservationID)
+                            ->get();
+            
+            if(sizeof($PackageExist) > 0){
+                $PackageInitialBill = DB::table('tblPayment')
+                                    ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 1]])
+                                    ->pluck('dblPayAmount')
+                                    ->first();
+                
+                $PackageDownPayment = DB::table('tblPayment')
+                                    ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 2]])
+                                    ->pluck('dblPayAmount')
+                                    ->first();
+                
+                if($PackageDownPayment != null){
+                    $PackageInitialBill = (int)$PackageInitialBill - (int)$PackageDownPayment;
+                }
+                
+                $PackageInitialPayment = DB::table('tblPayment')
+                                    ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 3]])
+                                    ->pluck('dblPayAmount')
+                                    ->first();
+                
+                if($PackageInitialPayment != null){
+                    $PackagePayment = 0;
+                }
+                else{
+                    $PackagePayment = $PackageInitialBill;
+                }
+            }
+            
+            $TotalRoom = $TotalRoom * $DaysOfStay;
+            
+            //Additional Rooms
+            $AdditionalRoomBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 20]])
+                            ->get();
+            
+            foreach($AdditionalRoomBills as $Bill){
+                $AdditionalRoomAmount += $Bill->dblPayAmount;
+            }
+            
+            
+            //Upgrade Rooms
+            $UpgradeRoomBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 22]])
+                            ->get();
+            
+            foreach($UpgradeRoomBills as $Bill){
+                $UpgradeRoomAmount += $Bill->dblPayAmount;
+            }
+            
+            //Days Extend
+            $ExtendStayBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 24]])
+                            ->get();
+            
+            foreach($ExtendStayBills as $Bill){
+                $ExtendStayAmount += $Bill->dblPayAmount;
+            }
+                
+            //Compute Item
+            $RentedItems = DB::table('tblItem as a')
+                        ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
+                        ->join ('tblRentedItem as c', 'a.strItemID', '=', 'c.strRentedIItemID')
+                        ->select('b.dblItemRate',
+                                 'c.intRentedIQuantity',
+                                 'c.intRentedIDuration')
+                        ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],['c.strRentedIReservationID',"=", $Info->strReservationID],['c.intRentedIPayment',"=", 0]])
+                        ->get();
+            
+            foreach($RentedItems as $Item){
+                $TotalItem += ($Item->dblItemRate * $Item->intRentedIQuantity) * $Item->intRentedIDuration;
+            }
+            
+            //Compute Activities
+            $AvailedActivities = DB::table('tblBeachActivity as a')
+                                ->join ('tblBeachActivityRate as b', 'a.strBeachActivityID', '=' , 'b.strBeachActivityID')
+                                ->join ('tblAvailBeachActivity as c', 'c.strAvailBABeachActivityID', '=', 'b.strBeachActivityID')
+                                ->select('b.dblBeachARate',
+                                         'c.intAvailBAQuantity')
+                                ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $Info->strReservationID], ['c.intAvailBAPayment', '=', 0]])
+                                ->get();
+            
+            foreach($AvailedActivities as $Activity){
+                $TotalActivity += $Activity->dblBeachARate * $Activity->intAvailBAQuantity;
+            }
+            
+            //Compute Fees
+            $AvailedFees = DB::table('tblFee as a')
+                            ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                            ->join ('tblReservationFee as c', 'c.strResFFeeID', '=', 'a.strFeeID')
+                            ->select('b.dblFeeAmount',
+                                     'c.intResFQuantity')
+                            ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['c.strResFReservationID', '=', $Info->strReservationID], ['c.intResFPayment', '=', 0]])
+                            ->get();
+            
+            foreach($AvailedFees as $Fee){
+                $TotalFee += $Fee->dblFeeAmount * $Fee->intResFQuantity;
+            }
+            
+            //Time Penalties
+            $TimePenaltyBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 6]])
+                            ->get();
+            
+            foreach($TimePenaltyBills as $Bill){
+                $TimePenalties += $Bill->dblPayAmount;
+            }
+            
+            //Broken Penalties
+            $BrokenPenaltyBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 7]])
+                            ->get();
+            
+            foreach($BrokenPenaltyBills as $Bill){
+                $BrokenPenalties += $Bill->dblPayAmount;
+            }
+            
+            //Extend Item Rental Bills
+            $ExtendBills = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 10]])
+                            ->get();
+            
+       
+            foreach($ExtendBills as $Bill){
+                $TotalExtend += $Bill->dblPayAmount;
+            }
+            
+            //Total Penalties
+            $TotalPenalties = $TotalExtend + $BrokenPenalties + $TimePenalties;
+            
+            //Compute Boat Rental
+            
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount;
+        }
+        
+        $RoomInfo = DB::table('tblRoom as a')
+                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                    ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                    ->join ('tblReservationRoom as d', 'a.strRoomID', '=', 'd.strResRRoomID')
+                    ->select('b.strRoomType',
+                             'a.strRoomName',
+                             'c.dblRoomRate')
+                     ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['d.strResRReservationID', '=', $ReservationID], ['intResRPayment', '=', 0]])
+                     ->get();
+        
+        $ItemInfo = DB::table('tblItem as a')
+                    ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
+                    ->join ('tblRentedItem as c', 'a.strItemID', '=', 'c.strRentedIItemID')
+                    ->select('b.dblItemRate',
+                             'c.intRentedIQuantity',
+                             'c.intRentedIDuration',
+                             'a.strItemName')
+                    ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],['c.strRentedIReservationID',"=", $ReservationID],['c.intRentedIPayment',"=", 0]])
+                    ->get();
+        
+        $ActivityInfo = DB::table('tblBeachActivity as a')
+                    ->join ('tblBeachActivityRate as b', 'a.strBeachActivityID', '=' , 'b.strBeachActivityID')
+                    ->join ('tblAvailBeachActivity as c', 'c.strAvailBABeachActivityID', '=', 'b.strBeachActivityID')
+                    ->select('b.dblBeachARate',
+                             'c.intAvailBAQuantity',
+                             'a.strBeachAName')
+                    ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $ReservationID], ['c.intAvailBAPayment', '=', 0]])
+                    ->get();
+        
+        
+        
+        $FeeInfo = DB::table('tblFee as a')
+                    ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                    ->join ('tblReservationFee as c', 'c.strResFFeeID', '=', 'a.strFeeID')
+                    ->select('b.dblFeeAmount',
+                             'c.intResFQuantity',
+                             'a.strFeeName')
+                    ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['c.strResFReservationID', '=', $ReservationID],['c.intResFPayment', '=', 0]])
+                    ->get();
+
+        $MiscellaneousInfo = DB::table('tblPayment as a')
+                    ->join ('tblPaymentType as b', 'a.strPayTypeID', '=', 'b.strPaymentTypeID')
+                    ->select('a.dblPayAmount',
+                             'b.strPaymentType',
+                             'a.strPaymentRemarks')
+                    ->where('strPayReservationID', '=', $ReservationID)
+                    ->where('strPayTypeID', '=', 6)
+                    ->orWhere('strPayTypeID', '=', 7)
+                    ->orWhere('strPayTypeID', '=', 10)
+                    ->get();
+        
+        $AdditionalRooms = DB::table('tblRoom as a')
+                    ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                    ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                    ->join ('tblReservationRoom as d', 'a.strRoomID', '=', 'd.strResRRoomID')
+                    ->select('b.strRoomType',
+                             'a.strRoomName',
+                             'c.dblRoomRate')
+                     ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['d.strResRReservationID', '=', $ReservationID], ['intResRPayment', '=', 2]])
+                     ->get();
+        
+        $UpgradeRooms = DB::table('tblPayment as a')
+                    ->join ('tblPaymentType as b', 'a.strPayTypeID', '=', 'b.strPaymentTypeID')
+                    ->select('a.dblPayAmount',
+                             'a.strPaymentRemarks')
+                    ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 22]])
+                    ->get();
+        
+        foreach($UpgradeRooms as $Rooms){
+            $UpgradeRemarks = json_decode($Rooms->strPaymentRemarks);
+            $Rooms->strPaymentRemarks = $UpgradeRemarks->UpgradeRoom;
+        }
+        
+        $ExtendStay = DB::table('tblPayment as a')
+                    ->join ('tblPaymentType as b', 'a.strPayTypeID', '=', 'b.strPaymentTypeID')
+                    ->select('a.dblPayAmount',
+                             'a.strPaymentRemarks')
+                    ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 24]])
+                    ->get();
+
+        //initial bill deduction
+        $InitialBill = DB::table('tblPayment')
+                                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
+                                ->pluck('dblPayAmount')
+                                ->first();
+
+        $DownPayment = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 2]])
+                            ->pluck('dblPayAmount')
+                            ->first();
+
+        if($InitialBill == null){
+            $InitialBill = 0;
+        }
+        
+        if($DownPayment == null){
+            $DownPayment = 0;
+        }
+        
+        if($DownPayment != null){
+            $InitialBill = (int)$InitialBill - (int)$DownPayment;
+        }
+
+        $InitialPayment = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 3]])
+                            ->pluck('dblPayAmount')
+                            ->first();
+
+        if($InitialPayment != null){
+            $Payment = 0;
+        }
+        else{
+            $InitialPayment = 0;
+            $Payment = $InitialBill;
+        }
+        
+        //Package Computation
+        $PackageInfo = DB::table('tblAvailPackage as a')
+                        ->join('tblPackage as b', 'b.strPackageID', '=', 'a.strAvailPackageID')
+                        ->select('b.strPackageName',
+                                 'b.intPackagePax')
+                        ->where('a.strAvailPReservationID', '=', $ReservationID)
+                        ->get();
+        
+        $PackageInitialBill = 0;
+        $PackageDownPayment = 0;
+        $PackageInitialPayment = 0;
+
+        if(sizeof($PackageInfo) > 0){
+            $PackageInitialBill = DB::table('tblPayment')
+                                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
+                                ->pluck('dblPayAmount')
+                                ->first();
+
+            $PackageDownPayment = DB::table('tblPayment')
+                                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 2]])
+                                ->pluck('dblPayAmount')
+                                ->first();
+
+            if($PackageDownPayment != null){
+                $PackageInitialBill = (int)$PackageInitialBill - (int)$PackageDownPayment;
+            }
+
+            $PackageInitialPayment = DB::table('tblPayment')
+                                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 3]])
+                                ->pluck('dblPayAmount')
+                                ->first();
+
+            if($PackageInitialPayment != null){
+                $PackagePayment = 0;
+            }
+            else{
+                $PackagePayment = $PackageInitialBill;
+            }
+            
+            foreach($PackageInfo as $Info){
+                $Info->intPackagePax = $PackagePayment;
+            }
+        }
+
+        return view('Checkout', compact('ReservationInfo', 'RoomInfo', 'ItemInfo', 'ActivityInfo', 'FeeInfo', 'MiscellaneousInfo', 'AdditionalRooms', 'UpgradeRooms', 'ExtendStay', 'PackageInfo', 'DaysOfStay', 'Payment', 'DownPayment', 'InitialBill' ,'InitialPayment'));
+    }
     
 }

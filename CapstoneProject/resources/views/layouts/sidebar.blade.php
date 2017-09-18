@@ -8,7 +8,7 @@
     <div class="sidebar-wrapper" id="sidebar-items">
         <ul class="nav">
             <li id="SB-Dashboard">
-                <a href="/">
+                <a href="/Dashboard">
                     <i class="material-icons">dashboard</i>
                     <p>Dashboard</p>
                 </a>

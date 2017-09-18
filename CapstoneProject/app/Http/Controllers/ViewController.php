@@ -272,6 +272,17 @@ class ViewController extends Controller
         return response()->json($CottageTypes);
     }
     
+    //get Room Image
+    public function getRoomImage(Request $req){
+        $RoomTypeID = trim($req->input('RoomTypeID'));
+        
+        $RoomImages = DB::table('tblRoomPicture')
+                    ->where('strRoomPRoomTID', '=', $RoomTypeID)
+                    ->get();
+        
+        return response()->json($RoomImages);
+    }
+    
     
     //Package
     
@@ -709,15 +720,23 @@ class ViewController extends Controller
         
         $PaidReservations = DB::table('tblReservationDetail as a')
                     ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                    ->join ('tblPayment as c', 'a.strReservationID', '=', 'c.strPayReservationID')
                     ->select('a.strReservationID',
                              DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
                              'a.dtmResDArrival',
                              'a.dtmResDDeparture',
                              'b.strCustContact',
                              'b.strCustEmail',
-                             'a.strReservationCode')
-                    ->where([['a.intResDStatus', '=', '2'], ['a.intWalkIn', '=', '0']])
+                             'a.strReservationCode',
+                             'c.dblPayAmount')
+                    ->where([['a.intResDStatus', '=', '2'], ['a.intWalkIn', '=', '0'], ['c.strPayTypeID', '=', 1]])
                     ->get();
+        
+        foreach($PaidReservations as $Paid){
+            $DownPayment = DB::table('tblPayment')->where([['strPayReservationID', '=', $Paid->strReservationID], ['strPayTypeID', '=', 2]])->pluck('dblPayAmount')->first();
+            
+            $Paid->dblPayAmount = $Paid->dblPayAmount - $DownPayment;
+        }
         
         return view('Reservations', compact('FloatingReservations', 'PaidReservations'));
     }

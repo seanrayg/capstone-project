@@ -2,6 +2,18 @@ var PendingReservationInfo = [];
 var ActiveReservationInfo = [];
 var InitialBill = 0;
 
+
+function ShowModalPayNow(){
+    HideModalPayment();
+    document.getElementById("PayTotal").value = ActiveReservationInfo[9];
+    document.getElementById("PayReservationID").value = ActiveReservationInfo[0];
+    document.getElementById("DivModalPayNow").style.display = "block";
+}
+
+function HideModalPayNow(){
+    document.getElementById("DivModalPayNow").style.display = "none";
+}
+
 function ShowModalReservationOptions(){
     document.getElementById("DivModalReservationOptions").style.display = "block";
 }
@@ -175,7 +187,7 @@ function run(event, sender){
     }
     else if(sender == "Active"){
         document.getElementById("CheckInError").innerHTML = "";
-        ActiveReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML];
+        ActiveReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML];
     }
 
 }
@@ -383,5 +395,22 @@ function getConfirmedReservationInfo(){
             alert(response.status);
         }
     });  
+}
+
+function SendPayment(field, dataType, holder){
+    ValidateInput(field, dataType, holder);
+    if(!($(holder).hasClass('has-warning'))){
+        
+        var Total = parseInt(document.getElementById("PayTotal").value);
+        var Payment = parseInt(field.value);
+        var Change = Payment - Total;
+        if(Change < 0){
+            document.getElementById("PayChange").value = "Insufficient Payment";
+        }
+        else{
+            document.getElementById("PayChange").value = Change;
+        }
+        
+    }
 }
 

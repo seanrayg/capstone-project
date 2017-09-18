@@ -759,6 +759,34 @@ class ReservationController extends Controller
         return redirect('/ChooseRooms/'.$ReservationID);
     }
     
+    //Check in Reservation with Payment
+    public function checkInReservationPayment(Request $req){
+        $ReservationID = trim($req->input('PayReservationID'));
+        
+        $updateData = array("intResDStatus" => "4");   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', $ReservationID)
+            ->update($updateData);
+        
+        DB::table('tblReservationRoom')
+            ->where('strResRReservationID', $ReservationID)
+            ->update(['intResRPayment' => 1]);
+        
+        DB::table('tblReservationBoat')
+            ->where('strResBReservationID', $ReservationID)
+            ->update(['intResBPayment' => 1]);
+        
+        DB::table('tblReservationFee')
+            ->where('strResFReservationID', $ReservationID)
+            ->update(['intResFPayment' => 1]);
+        
+        \Session::flash('flash_message','Booked successfully!');
+        \Session::flash('ReservationID', $ReservationID);
+        return redirect('/ChooseRooms/'.$ReservationID);
+        
+    }
+    
     
     //Save Downpayment
     
@@ -1051,7 +1079,136 @@ class ReservationController extends Controller
     }
     
     public function addWalkInPackagePayNow(Request $req){
-        dd(Input::all());
+
+        $tempCheckInDate = trim($req->input('pn-CheckInDate'));
+        $tempCheckOutDate = trim($req->input('pn-CheckOutDate'));
+        $NoOfAdults = trim($req->input('pn-NoOfAdults'));
+        $NoOfKids = trim($req->input('pn-NoOfKids'));
+        $FirstName = trim($req->input('pn-FirstName'));
+        $MiddleName = trim($req->input('pn-MiddleName'));
+        $LastName = trim($req->input('pn-LastName'));
+        $Address = trim($req->input('pn-Address'));
+        $Email = trim($req->input('pn-Email'));
+        $Contact = trim($req->input('pn-Contact'));
+        $Nationality = trim($req->input('pn-Nationality'));
+        $tempDateOfBirth = trim($req->input('pn-DateOfBirth'));
+        $Gender = trim($req->input('pn-Gender'));
+        $Remarks = trim($req->input('pn-Remarks'));
+        $TotalAmount = trim($req->input('pn-InitialBill'));
+        $PackageID = trim($req->input('pn-PackageID'));
+        
+        $Birthday = Carbon::parse($tempDateOfBirth)->format('Y/m/d');
+        $CheckInDate = Carbon::parse($tempCheckInDate)->format('Y/m/d');
+        $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d');
+        $PickUpTime = Carbon::now()->format('H:i:s');
+        $PickUpTime2 = Carbon::now()->addHours(1)->format('H:i:s');
+  
+        $PickOutTime = $PickUpTime;
+        
+        $DateBooked = Carbon::now();
+        
+        $CustomerID = $this->getCustomerID();
+                
+        $ReservationID = $this->getReservationID();
+        
+        $PaymentID = $this->getPaymentID();
+        
+        $ReservationCode = null;
+        
+        $PackageRoomInfo = DB::table('tblRoomType as a')
+                        ->join('tblPackageRoom as b', 'a.strRoomTypeID', '=', 'b.strPackageRRoomTypeID')
+                        ->join('tblRoomRate as c', 'a.strRoomTypeID', '=', 'c.strRoomTypeID')
+                        ->select('a.strRoomType',
+                                 'a.intRoomTCapacity',
+                                 'b.intPackageRQuantity',
+                                 'c.dblRoomRate')
+                        ->where([['b.strPackageRPackageID', '=', $PackageID], ['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                        ->get();
+        
+
+        $ChosenRooms = "";
+        foreach($PackageRoomInfo as $Info){
+            $ChosenRooms .= $Info -> strRoomType . "-" . $Info -> intRoomTCapacity ."-". $Info -> dblRoomRate ."-".$Info->intPackageRQuantity.",";
+        }
+        
+        $ChosenRooms = rtrim($ChosenRooms,",");
+  
+        if($Gender == "Male"){
+            $Gender = "M";
+        }
+        else{
+            $Gender = "F";
+        }
+        
+        
+        if($Remarks == null){
+            $Remarks = "N/A";
+        }
+        
+        if($CheckInDate == $CheckOutDate){
+            $PickOutTime = "23:59:59";
+        }
+        
+        //save customer data
+        $this->saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday);
+        
+        //save reservation data
+        $ReservationData = array('strReservationID'=>$ReservationID,
+                              'intWalkIn'=>'0',
+                              'strResDCustomerID'=>$CustomerID,
+                              'dtmResDArrival'=>$CheckInDate." ".$PickUpTime,
+                              'dtmResDDeparture'=>$CheckOutDate." ".$PickOutTime,
+                              'intResDNoOfAdults'=>$NoOfAdults,
+                              'intResDNoOfKids'=>$NoOfKids,
+                              'strResDRemarks'=>$Remarks,
+                              'intResDStatus'=>'4',
+                              'dteResDBooking'=>$DateBooked->toDateString(),
+                              'strReservationCode'=>$ReservationCode);
+        
+        DB::table('tblReservationDetail')->insert($ReservationData);
+        
+        //save reserved rooms
+        $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
+        $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
+
+        $PaymentStatus = 1;
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
+        
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                              'strPayReservationID'=>$ReservationID,
+                              'dblPayAmount'=>$TotalAmount,
+                              'strPayTypeID'=> 3,
+                              'dtePayDate'=>$DateBooked->toDateString());
+        
+        DB::table('tblPayment')->insert($TransactionData);
+        
+        //Check if there is an entrance fee
+        $EntranceFeeID = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->select('a.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '=', 'Active'],['a.strFeeName', '=', 'Entrance Fee']])
+                ->pluck('strFeeID')->first();
+        
+        $EntranceIncluded = DB::table('tblPackageFee')
+                            ->where([['strPackageFFeeID', '=', $EntranceFeeID],['strPackageFPackageID', '=', $PackageID]])
+                            ->get();
+        
+        //saves entrance fee
+        if(sizeof($EntranceFeeID) != 0){
+            if(sizeof($EntranceIncluded) != 0){
+                $PaymentStatus = 1;
+            }
+            $this->addFees($EntranceFeeID, $NoOfAdults, $PaymentStatus, $ReservationID);
+        }
+        
+        $PackageData = array('strAvailPReservationID'=>$ReservationID,
+                              'strAvailPackageID'=>$PackageID);
+        
+        DB::table('tblAvailPackage')->insert($PackageData);
+        
+        \Session::flash('flash_message','Booked successfully!');
+        \Session::flash('ReservationID', $ReservationID);
+        return redirect('/ChooseRooms/'.$ReservationID);
     }
     
     public function addWalkInPackage(Request $req){

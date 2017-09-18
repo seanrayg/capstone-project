@@ -122,7 +122,7 @@
                                                 <button type="button" rel="tooltip" title="Add a room" class="btn btn-info btn-simple btn-xs" onclick="ShowModalAddRoom()">
                                                     <i class="material-icons">add_location</i>
                                                 </button>
-                                                <button type="button" rel="tooltip" title="Checkout" class="btn btn-success btn-simple btn-xs" onclick="ShowModalCheckout()">
+                                                <button type="button" rel="tooltip" title="Checkout" class="btn btn-success btn-simple btn-xs" onclick="ShowModalCheckout('{{$Customer->strReservationID}}')">
                                                     <i class="material-icons">done_all</i>
                                                 </button>
                                             </td>
@@ -299,13 +299,9 @@
                             <p class="category"></p>
                             <h3 class="title"><span class="close" onclick="HideModalCheckout()">X</span></h3>
                             <h3 class="title">Checkout the guest?</h3>
-                            <form method="post" action="/Fee/Delete">
-                                {{ csrf_field() }}
-                                <input type="hidden" id="DeleteFeeID" name="DeleteFeeID">
-                                <input type="hidden" id="DeleteReservationID" name="DeleteReservationID">
+                                <input type="hidden" id="CheckoutReservationID" name="CheckoutReservationID">
                                 <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalCheckout()">Cancel</button>
-                                <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>  
-                            </form>            
+                                <button type="button" class="btn btn-danger btn-sm pull-right" onclick="RedirectCheckout()">Checkout</button>  
                             <div class="clearfix"></div>
                         </div>
                 </div>
@@ -555,7 +551,7 @@
                             <form method="post" action="/Customer/Delete">
                                 {{ csrf_field() }}
                                 <input type="hidden" id="DeleteCustomerID" name="DeleteCustomerID">
-                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalCheckout()">Cancel</button>
+                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteCustomer()">Cancel</button>
                                 <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>  
                             </form>            
                             <div class="clearfix"></div>

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 use DateTime;
 use DatePeriod;
 use DateInterval;
+use File;
  
 class MaintenanceController extends Controller
 {
@@ -292,10 +293,74 @@ class MaintenanceController extends Controller
     
     //add room type image
     public function addRoomTypeImage(Request $req){
-        $RoomTypeImage = trim($req->input('RoomTypeImage'));
-     
-        dd(Input::file('RoomTypeImage')->getRealPath());
+            $RoomTypeImage = Input::file('RoomTypeImage');
+            $RoomTypeID = $req->input("AddImageRoomTypeID");
+   
+            $RoomTypeImage->move("Accommodation", $RoomTypeImage->getClientOriginalName());
         
+            $ImageID = DB::table('tblRoomPicture')->pluck('strRoomPictureID')->first();
+            if(!$ImageID){
+                $ImageID = "AIMG1";
+            }
+            else{
+                $ImageID = $this->SmartCounter2('tblRoomPicture', 'strRoomPictureID');
+            }
+        
+            $RoomTypeImagePath = "/Accommodation/" . $RoomTypeImage->getClientOriginalName();
+        
+            $data = array('strRoomPictureID'=>$ImageID,
+                         'strRoomPRoomTID'=>$RoomTypeID,
+                         'blobRoomPPicture'=>$RoomTypeImagePath);
+
+            DB::table('tblRoomPicture')->insert($data);
+        
+            \Session::flash('flash_message','Successfully uploaded an image!');
+
+            return redirect('Maintenance/RoomType');
+    }
+    
+    //edit room type image
+    public function editRoomTypeImage(Request $req){
+        $RoomPictureID = trim($req->input('EditRoomPictureID'));
+        $RoomTypeImage = Input::file('EditRoomTypeImage');
+      
+        $RoomImage = DB::table('tblRoomPicture')
+                    ->where('strRoomPictureID', '=', $RoomPictureID)
+                    ->pluck('blobRoomPPicture')
+                    ->first();
+        
+        File::delete(public_path().'/'.$RoomImage);
+        
+        $RoomTypeImage->move("Accommodation", $RoomTypeImage->getClientOriginalName());
+        
+        $RoomTypeImagePath = "/Accommodation/" . $RoomTypeImage->getClientOriginalName();
+        
+        DB::table('tblRoomPicture')
+            ->where('strRoomPictureID', '=', $RoomPictureID)
+            ->update(['blobRoomPPicture' => $RoomTypeImagePath]);
+        
+        \Session::flash('flash_message','Successfully updated an image!');
+
+        return redirect('Maintenance/RoomType');
+    }
+    
+    //delete room type image
+    public function deleteRoomTypeImage(Request $req){
+
+        $RoomPictureID = trim($req->input('DeleteRoomPictureID'));
+        
+        $RoomImage = DB::table('tblRoomPicture')
+                    ->where('strRoomPictureID', '=', $RoomPictureID)
+                    ->pluck('blobRoomPPicture')
+                    ->first();
+        
+        File::delete(public_path().'/'.$RoomImage);
+        
+        DB::table('tblRoomPicture')->where('strRoomPictureID', '=', $RoomPictureID)->delete();
+        
+        \Session::flash('flash_message','Successfully delete an image!');
+
+        return redirect('Maintenance/RoomType');
     }
     
     
@@ -1940,6 +2005,60 @@ class MaintenanceController extends Controller
         \Session::flash('flash_message','Successfully deleted!');
 
         return redirect('Maintenance/Operations');
+    }
+    
+    
+    //MISC
+    
+    public function SmartCounter2($strTableName, $strColumnName){
+        $endLoop = false;
+        $latestID = DB::table($strTableName)->pluck($strColumnName)->first();
+        
+        $SmartCounter = $this->getID2($latestID);
+        
+        do{
+            $DuplicateError = DB::table($strTableName)->where($strColumnName, $SmartCounter)->pluck($strColumnName)->first();
+            if($DuplicateError == null){
+                $endLoop = true;
+            }
+            else{
+                $SmartCounter = $this->getID2($SmartCounter);
+            }       
+        }while($endLoop == false);
+        
+        return $SmartCounter;
+    }
+    
+    public function getID2($latestID){
+        $arrTempID = str_split($latestID);
+
+        $intArrSize = sizeof($arrTempID) - 1;
+        $arrNumbers = Array();
+        for($i = $intArrSize; $i > 0; $i--){
+            if(is_numeric($arrTempID[$i])){
+                array_push($arrNumbers, $arrTempID[$i]);
+            }else{
+                break;
+            }
+        }
+
+        $arrRevNumbers = array_reverse($arrNumbers);
+        $intCounter = implode($arrRevNumbers);
+        $intCounterOLen = strlen($intCounter);
+        $intCounter += 1;
+        $intCounterNLen = strlen($intCounter);
+        if($intCounterOLen > $intCounterNLen){
+            $intZeroes = $intCounterOLen - $intCounterNLen;
+            for($i = 0; $i < $intZeroes; $i++){
+                $intCounter = "0" . $intCounter;
+            }
+        }
+        
+        array_splice($arrTempID, (sizeof($arrTempID) - sizeof($arrNumbers)), sizeof($arrNumbers));
+
+        $strSmartCounter = implode($arrTempID) . $intCounter;
+        
+        return $strSmartCounter;
     }
 }
 
