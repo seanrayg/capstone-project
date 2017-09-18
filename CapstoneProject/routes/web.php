@@ -230,10 +230,15 @@ Route::post('/Maintenance/Fee/Delete', 'MaintenanceController@deleteFee');
 Route::post('Maintenance/Operation/Delete', 'MaintenanceController@deleteOperation');
 
 
-
 //ROOM IMAGES
 
 Route::post('/Maintenance/RoomType/Image/Add', 'MaintenanceController@addRoomTypeImage');
+
+Route::post('/Maintenance/RoomType/Image/Edit', 'MaintenanceController@editRoomTypeImage');
+
+Route::post('/Maintenance/RoomType/Image/Delete', 'MaintenanceController@deleteRoomTypeImage');
+
+Route::get('/Accommodation/Images/Get', 'ViewController@getRoomImage');
 
 
 /*----------- RESERVATION -------------*/
@@ -250,6 +255,9 @@ Route::post('/Reservation/Cancel', 'ReservationController@cancelReservation');
 
 //Checkin Reservation
 Route::post('/Reservation/CheckIn', 'ReservationController@checkInReservation');
+
+//Check in with payment
+Route::post('/Reservation/CheckIn/Payment', 'ReservationController@checkInReservationPayment');
 
 //Edit Reservation
 Route::post('/Reservation/Info/Edit', 'ReservationController@updateReservationInfo');

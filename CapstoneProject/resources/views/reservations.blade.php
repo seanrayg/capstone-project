@@ -106,6 +106,7 @@
                                         <th onclick="sortTable(6, 'ConfirmedReservationTable', 'string')">Reservation Code</th>
                                         <th style="display:none">Email Address</th>
                                         <th style="display:none">Reservation Code</th>
+                                        <th onclick="sortTable(9, 'ConfirmedReservationTable', 'string')">Initial Bill</th>
                                     </thead>
                                     <tbody>
                                         @foreach($PaidReservations as $Reservation)
@@ -119,6 +120,7 @@
                                             <td>{{$Reservation -> strReservationCode}}</td>
                                             <td style="display:none">{{Carbon\Carbon::parse($Reservation -> dtmResDArrival)->format('m/d/Y h:m:s')}}</td>
                                             <td style="display:none">{{Carbon\Carbon::parse($Reservation -> dtmResDArrival)->format('m/d/Y h:m:s')}}</td>
+                                            <td>{{$Reservation -> dblPayAmount}}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -498,12 +500,66 @@
                             <div class = "row">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-4">
-                                    <button type="button" class="btn btn-success">Yes</button>
+                                    <button type="button" class="btn btn-success" onclick="ShowModalPayNow()">Yes</button>
                                 </div>
                                 <div class="col-md-4">
                                     <button type="submit" class="btn btn-success">No</button>
                                 </div>
                                 <div class="col-md-2"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalPayNow" class="modal">
+    <div class="Modal-content" style="width: 500px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="category"></p>
+                            <h3 class="title">Payment<span class="close" onclick="HideModalPayNow()">X</span></h3>
+                        </div>
+                        <form method="POST" action="/Reservation/CheckIn/Payment" onsubmit="return CheckForm()">
+                            <input type="hidden" name="PayReservationID" id="PayReservationID" value="">
+                            {{ csrf_field() }}
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="PayTotal" name="PayTotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static" id="PayPaymentError">
+                                        <label class="control-label">Payment</label>
+                                        <input type="text" class="form-control" onkeyup="SendPayment(this, 'double', '#PayPaymentError')" onchange="SendPayment(this, 'double', '#PayPaymentError')" id="PayPayment" name="PayPayment" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-static">
+                                        <label class="control-label">Change</label>
+                                        <input type="text" class="form-control" id="PayChange" name="PayChange">
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                </div> 
                             </div>
                         </form>
                     </div>

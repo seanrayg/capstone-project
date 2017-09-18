@@ -759,6 +759,34 @@ class ReservationController extends Controller
         return redirect('/ChooseRooms/'.$ReservationID);
     }
     
+    //Check in Reservation with Payment
+    public function checkInReservationPayment(Request $req){
+        $ReservationID = trim($req->input('PayReservationID'));
+        
+        $updateData = array("intResDStatus" => "4");   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', $ReservationID)
+            ->update($updateData);
+        
+        DB::table('tblReservationRoom')
+            ->where('strResRReservationID', $ReservationID)
+            ->update(['intResRPayment' => 1]);
+        
+        DB::table('tblReservationBoat')
+            ->where('strResBReservationID', $ReservationID)
+            ->update(['intResBPayment' => 1]);
+        
+        DB::table('tblReservationFee')
+            ->where('strResFReservationID', $ReservationID)
+            ->update(['intResFPayment' => 1]);
+        
+        \Session::flash('flash_message','Booked successfully!');
+        \Session::flash('ReservationID', $ReservationID);
+        return redirect('/ChooseRooms/'.$ReservationID);
+        
+    }
+    
     
     //Save Downpayment
     

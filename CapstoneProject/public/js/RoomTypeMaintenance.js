@@ -111,7 +111,36 @@ function ShowModalImages(){
     var TableChecker = CheckTable('#RoomTypeTable tr');
     var TableChecker2 = CheckTable('#CottageTable tr');
     if(TableChecker || TableChecker2){
-        document.getElementById("DivModalImages").style.display = "block";
+        $.ajax({
+            type:'get',
+            url:'/Accommodation/Images/Get',
+            data:{RoomTypeID: RoomTypeInfo[0]},
+            success:function(data){
+
+                $('#tblRoomTypeImages tbody').empty();
+
+                var tableRef = document.getElementById('tblRoomTypeImages').getElementsByTagName('tbody')[0];
+
+                for(var x = 0; x < data.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+
+                    newCell1.innerHTML = "<img src='" + data[x].blobRoomPPicture + "' alt='Rounded Image' class='img-rounded img-responsive RoomTypeImage'>";
+                    newCell2.innerHTML = "<button type='button' rel='tooltip' title='Edit' class='btn btn-primary btn-simple btn-xs' value ='"+data[x].strRoomPictureID+"' onclick='ShowModalEditImages(this)'><i class='material-icons'>edit</i></button><button type='button' rel='tooltip' title='Remove' class='btn btn-danger btn-simple btn-xs' value ='"+data[x].strRoomPictureID+"'  onclick='ShowModalDeleteImages(this)'><i class='material-icons'>close</i></button>";
+
+                }
+
+                 document.getElementById("DivModalImages").style.display = "block";
+            },
+            error:function(response){
+                console.log(response);
+                alert("error");
+            }
+        });   
+        
+       
     }
 }
 
@@ -129,13 +158,26 @@ function HideModalAddImages(){
     document.getElementById("DivModalAddImages").style.display = "none";
 }
 
+function ShowModalEditImages(RoomPictureID){
+    document.getElementById("EditRoomPictureID").value = RoomPictureID.value;
+    HideModalImages();
+    document.getElementById("DivModalEditImages").style.display = "block";
+}
 
+function HideModalEditImages(){
+    document.getElementById("DivModalEditImages").style.display = "none";
+}
 
-//Add room type image
+function ShowModalDeleteImages(RoomPictureID){
+    document.getElementById("DeleteRoomPictureID").value = RoomPictureID.value;
+    HideModalImages();
+    document.getElementById("DivModalDeleteImages").style.display = "block";
+}
 
-$('#RoomTypeImage').change(function () {
-    alert(this.files[0].mozFullPath);
-});
+function HideModalDeleteImages(){
+    document.getElementById("DivModalDeleteImages").style.display = "none";
+}
+
 
 //DELETE ROOM TYPE
 

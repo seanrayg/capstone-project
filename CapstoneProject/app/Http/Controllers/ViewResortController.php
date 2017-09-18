@@ -471,6 +471,8 @@ class ViewResortController extends Controller
         $ArrivalDate = trim($req->input('ArrivalDate'));
         $DepartureDate = trim($req->input('DepartureDate'));
         
+        $DepartureDate = Carbon::parse($DepartureDate)->format('Y/m/d h:i:s');
+        
         $ExistingReservations = DB::table('tblReservationDetail')
                                 ->where(function($query){
                                     $query->where('intResDStatus', '=', '1')

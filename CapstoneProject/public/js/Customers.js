@@ -181,7 +181,7 @@ function ShowModalAddRoomPayment(){
         document.getElementById("AddRoomAmount").value = TotalRoomCost;
         document.getElementById("AddToday").value = today;
         document.getElementById("AddDeparture").value = DepartureDate;
-        document.getElementById("AddTotalAmount").innerHTML = "Total cost is PHP" +TotalRoomCost;
+        document.getElementById("AddTotalAmount").innerHTML = "Total cost is PHP" + Math.abs(TotalRoomCost);
         
         document.getElementById("DivModalAddRoomPayment").style.display = "block";
     }
@@ -232,6 +232,14 @@ function run(event, sender){
     if(sender == "Record"){
         CustomerInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML];
     }
+    
+    if(sender == "AvailableRooms"){
+        AvailableRooms = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML];
+    }
+    
+    if(sender == "ChosenRooms"){
+        ChosenRooms = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML];
+    }   
 
 }
 
@@ -240,7 +248,7 @@ function run(event, sender){
 function getAvailableRooms(){
     var tempDate  = new Date();
     var DateTimeToday = tempDate.getFullYear() + "/" + (parseInt(tempDate.getMonth())+1) + "/" + tempDate.getDate() + " " + tempDate.getHours() + ":" + tempDate.getMinutes() + ":" + tempDate.getSeconds();
-    
+    alert();
     today = DateTimeToday;
     $.ajax({
         type:'get',
