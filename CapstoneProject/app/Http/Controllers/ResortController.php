@@ -1367,7 +1367,7 @@ class ResortController extends Controller
             $TransactionData = array('strPaymentID'=>$PaymentID,
                                       'strPayReservationID'=>$ReservationID,
                                       'dblPayAmount'=>$TotalAmount,
-                                      'strPayTypeID'=> 21,
+                                      'strPayTypeID'=> 25,
                                       'dtePayDate'=>$DateToday,
                                       'strPaymentRemarks'=>$ExtendTotal);
 
@@ -1379,7 +1379,7 @@ class ResortController extends Controller
             $TransactionData = array('strPaymentID'=>$PaymentID,
                                       'strPayReservationID'=>$ReservationID,
                                       'dblPayAmount'=>$TotalAmount,
-                                      'strPayTypeID'=> 20,
+                                      'strPayTypeID'=> 24,
                                       'dtePayDate'=>$DateToday,
                                       'strPaymentRemarks'=>$ExtendTotal);
 

@@ -96,7 +96,8 @@ function HideModalAddRoom(){
     document.getElementById("DivModalAddRoom").style.display = "none";
 }
 
-function ShowModalCheckout(){
+function ShowModalCheckout(ReservationID){
+    document.getElementById("CheckoutReservationID").value = ReservationID;
     document.getElementById("DivModalCheckout").style.display = "block";
 }
 
@@ -507,4 +508,11 @@ function SendExtendPayment(field, dataType, holder){
         }
         
     }
+}
+
+/*-------------- CHECKOUT ------------*/
+
+function RedirectCheckout(){
+    var ReservationID = document.getElementById("CheckoutReservationID").value;
+    window.location.href = "/Checkout/"+ReservationID;
 }

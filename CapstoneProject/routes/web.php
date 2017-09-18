@@ -451,5 +451,9 @@ Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement'
 
 Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
 
+
+/*----------- CHECKOUT ----------*/
+Route::get('/Checkout/{id}', 'ViewResortController@ViewCheckout');
+
 //Reports
 Route::post('/QueryReports/Print', 'ReportsController@PrintQueryReports');

@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('WebpageTitle')
-    <title>Payment</title>
+    <title>Billing</title>
 @endsection
 
 @section('scripts')
