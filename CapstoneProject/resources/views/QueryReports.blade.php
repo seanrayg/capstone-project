@@ -487,10 +487,10 @@
                     </tbody>
                 </table>    
             </div>
-            <form method="post" action="/QueryReports/Print" target="_blank">
+            <form method="POST" action="/QueryReports/Print" target="_blank" onsubmit="IncludeDeleted()">
                 {{ csrf_field() }}
-                <input type="hidden" name="PrintSelectedReport" id="PrintSelectedReport">
-                <input type="hidden" name="PrintIncludDeleted" id="PrintIncludDeleted">
+                <input type="hidden" name="PrintSelectedReport" id="PrintSelectedReport" value="Accomodations">
+                <input type="hidden" name="PrintIncludeDeleted" id="PrintIncludeDeleted">
                 <button type="submit" class="btn btn-success pull-right">Print</button>
             </form>
         </div>

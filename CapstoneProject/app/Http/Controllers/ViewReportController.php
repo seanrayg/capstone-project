@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
+use PDF;
 
 class ViewReportController extends Controller
 {
@@ -57,6 +58,23 @@ class ViewReportController extends Controller
             $GeneratedReport = $this->getRoomTypes($IncludeDeleted);
         }
         return response()->json($GeneratedReport);
+    }
+
+    public function PrintQueryReport(Request $request) {
+
+        $SelectedReport = $request->input('PrintSelectedReport');
+        $IncludeDeleted = $request->input('PrintIncludeDeleted');
+
+        if($SelectedReport == "Accomodations"){
+            $GeneratedReport = $this->getAccomodations($IncludeDeleted);
+        }
+
+        $dtmNow = Carbon::now('Asia/Manila');
+        $dateNow = $dtmNow->toFormattedDateString();
+
+        $pdf = PDF::loadview('pdf.query_report', ['name' => $SelectedReport, 'date' => $dateNow, 'queries' => $GeneratedReport])->setPaper('letter', 'landscape');
+        return $pdf->stream();
+
     }
     
     //get accomodations

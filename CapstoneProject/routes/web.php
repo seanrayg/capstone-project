@@ -443,5 +443,5 @@ Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement'
 
 Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
 
-//Reports
-Route::post('/QueryReports/Print', 'ReportsController@PrintQueryReports');
+//Print Report
+Route::post('/QueryReports/Print', 'ViewReportController@PrintQueryReport');

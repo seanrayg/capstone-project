@@ -21,10 +21,14 @@ p.resort {
 }
 
 .column-left {
-    float: left; width: 33%;
+    float: left; width: 50%;
 }
 .column-right {
     float: right; width: 30%;
+}
+
+.column-right-date {
+    float: right; width: 15%;
 }
 
 label.parent {
@@ -48,6 +52,15 @@ td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+}
+
+th {
+    font-size: 14px;
+    text-align: center;
+}
+
+td {
+    font-size: 12px;
 }
 
 tr:nth-child(even) {

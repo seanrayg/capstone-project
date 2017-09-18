@@ -8,11 +8,9 @@ use PDF;
 class ReportsController extends Controller
 {
     public function ViewInvoice() {
-    	$pdf = PDF::loadview('pdf.invoice');
-    	return $pdf->stream();
-    }
 
-    public function PrintQueryReports() {
-    	
+        $pdf = PDF::loadview('pdf.invoice')->setPaper('letter', 'landscape');
+        return $pdf->stream();
+
     }
 }
