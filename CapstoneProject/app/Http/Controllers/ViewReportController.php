@@ -65,8 +65,34 @@ class ViewReportController extends Controller
         $SelectedReport = $request->input('PrintSelectedReport');
         $IncludeDeleted = $request->input('PrintIncludeDeleted');
 
-        if($SelectedReport == "Accomodations"){
+        if($SelectedReport == "Accomodations") {
             $GeneratedReport = $this->getAccomodations($IncludeDeleted);
+        }else if($SelectedReport == "Beach Activities") {
+            $GeneratedReport = $this->getBeachActivities($IncludeDeleted);
+        }else if($SelectedReport == "Boats") {
+            $GeneratedReport = $this->getBoats($IncludeDeleted);
+        }else if($SelectedReport == "Cottages Only") {
+            $GeneratedReport = $this->getCottages($IncludeDeleted);
+        }else if($SelectedReport == "Cottage Types Only") {
+            $GeneratedReport = $this->getCottageTypes($IncludeDeleted);
+        }else if($SelectedReport == "Customers") {
+            $GeneratedReport = $this->getCustomers($IncludeDeleted);
+        }else if($SelectedReport == "Fees") {
+            $GeneratedReport = $this->getFees($IncludeDeleted);
+        }else if($SelectedReport == "Inoperational Dates") {
+            $GeneratedReport = $this->getInoperationalDates($IncludeDeleted);
+        }else if($SelectedReport == "Packages") {
+            $GeneratedReport = $this->getPackages($IncludeDeleted);
+        }else if($SelectedReport == "Rental Items") {
+            $GeneratedReport = $this->getItems($IncludeDeleted);
+        }else if($SelectedReport == "Reservations") {
+            $GeneratedReport = $this->getReservations($IncludeDeleted);
+        }else if($SelectedReport == "Rooms & Cottages") {
+            $GeneratedReport = $this->getRoomsCottages($IncludeDeleted);
+        }else if($SelectedReport == "Rooms Only") {
+            $GeneratedReport = $this->getRooms($IncludeDeleted);
+        }else if($SelectedReport == "Room Types Only") {
+            $GeneratedReport = $this->getRoomTypes($IncludeDeleted);
         }
 
         $dtmNow = Carbon::now('Asia/Manila');
