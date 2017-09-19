@@ -1463,15 +1463,16 @@ class ResortController extends Controller
     //Upgrade Rooms
     
     public function saveUpgradeRoom(Request $req){
+       
         $ReservationID = trim($req->input('ReservationID'));
         $RoomName = trim($req->input('RoomName'));
         $NewRoomName = trim($req->input('NewRoomName'));
         $AmountPaid = trim($req->input('TotalAmount'));
        
-        $PaymentStatus = 4;
+        $PaymentStatus = 0;
         
         $OriginalPaymentStatus = $this->fnSaveUpgradeRoom($ReservationID, $RoomName, $NewRoomName, $AmountPaid, $PaymentStatus);
-        
+   
         //get original room price
         $OriginalRoomPrice = DB::table('tblRoomType as a')
             ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
@@ -1504,7 +1505,7 @@ class ResortController extends Controller
         $DepartureDate = "";
         
         foreach($ReservationDates as $Dates){
-            $ArrivalDate = Carbon::parse($Dates->dtmResDArrival);
+            $ArrivalDate = Carbon::now();
             $DepartureDate = Carbon::parse($Dates->dtmResDDeparture);
         }
         
@@ -1542,16 +1543,14 @@ class ResortController extends Controller
         }
         
         if($OriginalPaymentStatus == 0){
-            $OriginalRoomTotal = $OriginalRoomPrice * $daysOfStay;
-            $RemainingAmount = abs($OriginalRoomTotal + $AmountPaid);
- 
+
             $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
 
             $jsonRemarks = $PaymentRemarks->toJson();
 
             $TransactionData = array('strPaymentID'=>$PaymentID,
                                       'strPayReservationID'=>$ReservationID,
-                                      'dblPayAmount'=>$RemainingAmount,
+                                      'dblPayAmount'=>$AmountPaid,
                                       'strPayTypeID'=> 22,
                                       'dtePayDate'=>$DateToday,
                                       'strPaymentRemarks'=>$jsonRemarks);
@@ -1565,13 +1564,14 @@ class ResortController extends Controller
     }
     
     public function saveUpgradeRoomPayment(Request $req){
+   
         $ReservationID = trim($req->input('PayReservationID'));
         $RoomName = trim($req->input('PayRoomName'));
         $NewRoomName = trim($req->input('PayNewRoomName'));
         $AmountPaid = trim($req->input('PayTotal'));
         $NewRoomID = DB::table('tblRoom')->where([['strRoomName', '=', $NewRoomName],['strRoomStatus','=','Available']])->pluck("strRoomID")->first();
     
-        $PaymentStatus = 5;
+        $PaymentStatus = 1;
         
         //save upgraded room to the database
         $OriginalPaymentStatus = $this->fnSaveUpgradeRoom($ReservationID, $RoomName, $NewRoomName, $AmountPaid, $PaymentStatus);
@@ -1646,16 +1646,14 @@ class ResortController extends Controller
         }
         
         if($OriginalPaymentStatus == 0){
-            $OriginalRoomTotal = $OriginalRoomPrice * $daysOfStay;
-            $RemainingAmount = abs($OriginalRoomTotal - $AmountPaid);
- 
+
             $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
 
             $jsonRemarks = $PaymentRemarks->toJson();
 
             $TransactionData = array('strPaymentID'=>$PaymentID,
                                       'strPayReservationID'=>$ReservationID,
-                                      'dblPayAmount'=>$RemainingAmount,
+                                      'dblPayAmount'=>$AmountPaid,
                                       'strPayTypeID'=> 22,
                                       'dtePayDate'=>$DateToday,
                                       'strPaymentRemarks'=>$jsonRemarks);
@@ -1689,57 +1687,33 @@ class ResortController extends Controller
         // 6 not paid add rooms and not paid upgrade room ------ not paid add rooms and not paid upgrade room
         
         // if initial bill is paid and paid now
-        if($RoomPaymentStatus == 1 && $PaymentStatus == 5){
-            $PaymentStatus = 7;
+        
+
+        if(($RoomPaymentStatus % 2) == 0 && $PaymentStatus == 0){
+            $PaymentStatus = 6;
             $updateData = array('strResRRoomID' => $NewRoomID,
                             'intResRPayment' => $PaymentStatus);
         }
         
         //if initial bill is not paid and paid now
-        else if($RoomPaymentStatus == 0 && $PaymentStatus == 5){
-            $updateData = array('strResRRoomID' => $NewRoomID,
-                            'intResRPayment' => $PaymentStatus);
-        }
-        
-        //if initial bill is paid and pay later
-        else if($RoomPaymentStatus == 1 && $PaymentStatus == 4){
-            $updateData = array('strResRRoomID' => $NewRoomID,
-                            'intResRPayment' => $PaymentStatus);
-        }
-        
-        //if initial bill is not paid and pay later
-        else if($RoomPaymentStatus == 0 && $PaymentStatus == 4){
-            $PaymentStatus = 6;
-            $updateData = array('strResRRoomID' => $NewRoomID,
-                            'intResRPayment' => $PaymentStatus);
-        }
-        
-        // if add room bill is not paid and pay later
-        else if($RoomPaymentStatus == 2 && $PaymentStatus == 4){
-            $PaymentStatus = 6;
-            $updateData = array('strResRRoomID' => $NewRoomID,
-                            'intResRPayment' => $PaymentStatus);
-        }
-        
-        // if paid add room and pay now
-        else if($RoomPaymentStatus == 3 && $PaymentStatus == 5){
+        else if(($RoomPaymentStatus % 2) == 0 && $PaymentStatus == 1){
             $PaymentStatus = 7;
             $updateData = array('strResRRoomID' => $NewRoomID,
                             'intResRPayment' => $PaymentStatus);
         }
         
-        // if add room bill is not paid and pay now
-        else if($RoomPaymentStatus == 2 && $PaymentStatus == 5){
+        else if(($RoomPaymentStatus % 2) != 0 && $PaymentStatus == 1){
+            $PaymentStatus = 7;
             $updateData = array('strResRRoomID' => $NewRoomID,
                             'intResRPayment' => $PaymentStatus);
         }
         
-        //if add room is paid and pay later
-        else if($RoomPaymentStatus == 3 && $PaymentStatus == 4){
+        else if(($RoomPaymentStatus % 2) != 0 && $PaymentStatus == 0){
+            $PaymentStatus = 6;
             $updateData = array('strResRRoomID' => $NewRoomID,
                             'intResRPayment' => $PaymentStatus);
         }
-        
+  
         DB::table('tblReservationRoom')
             ->where([['strResRReservationID', $ReservationID],['strResRRoomID','=', $RoomID]])
             ->update($updateData);

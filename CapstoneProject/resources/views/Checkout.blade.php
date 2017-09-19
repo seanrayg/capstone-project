@@ -66,7 +66,7 @@
                     @if(sizeof($RoomInfo) > 0)
                         <div class="col-lg-6" style="min-height:200px">
                             <h4 class="title text-success">Reserved Rooms</h4><br>
-                            <table class="table">
+                            <table class="table table-responsive">
                                 <thead class="text-success">
                                     <th class="text-center">Type</th>
                                     <th class="text-center">Name</th>
@@ -87,7 +87,7 @@
                     @if(sizeof($ItemInfo) > 0)
                     <div class="col-lg-6" style="min-height:200px">
                         <h4 class="title text-success">Rented Items</h4><br>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Item</th>
                                 <th class="text-center">Quantity</th>
@@ -110,7 +110,7 @@
                     @if(sizeof($ActivityInfo) > 0)
                     <div class="col-md-6" style="min-height:200px">
                         <h4 class="title text-success">Availed Activities</h4><br>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Activity</th>
                                 <th class="text-center">Quantity</th>
@@ -131,7 +131,7 @@
                     @if(sizeof($FeeInfo) > 0)
                     <div class="col-md-6" style="min-height:200px">
                         <h4 class="title text-success">Fees</h4><br>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Fee</th>
                                 <th class="text-center">Quantity</th>
@@ -152,7 +152,7 @@
                     @if(sizeof($MiscellaneousInfo) > 0)
                     <div class="col-md-6" style="min-height:200px">
                         <h4 class="title text-success">Miscellaneous</h4><br>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Title</th>
                                 <th class="text-center">Remarks</th>
@@ -173,11 +173,11 @@
                     @if(sizeof($AdditionalRooms) > 0)
                     <div class="col-md-6" style="min-height:200px">
                         <h4 class="title text-success">Additional Rooms</h4><br>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Type</th>
                                 <th class="text-center">Name</th>
-                                <th class="text-center">Rate Per Day</th>
+                                <th class="text-center">Payment Needed</th>
                             </thead>
                             <tbody class="text-center">
                                 @foreach($AdditionalRooms as $Info)
@@ -194,7 +194,7 @@
                     @if(sizeof($UpgradeRooms) > 0)
                     <div class="col-md-6" style="min-height:200px">
                         <h4 class="title text-success">Upgrade Rooms</h4><br>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Room</th>
                                 <th class="text-center">Amount</th>
@@ -213,7 +213,7 @@
                     @if(sizeof($ExtendStay) > 0)
                     <div class="col-md-6" style="min-height:200px">
                         <h4 class="title text-success">Extend Stay</h4><br>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Days Extended</th>
                                 <th class="text-center">Amount</th>
@@ -228,6 +228,33 @@
                             </tbody>
                         </table>
                     </div>
+                    @endif
+                </div><br>
+                <div class="row">
+                    <h4 class="title text-success">Grand Total</h4><br>
+                    @if($TotalPenalties != 0)
+                        <p class="paragraphText text-success">Total Miscellaneous Fee:</p> <p class="paragraphText">{{$TotalPenalties}}</p><br>
+                    @endif
+                    @if($TotalFee != 0)
+                        <p class="paragraphText text-success">Total Fees:</p> <p class="paragraphText">{{$TotalFee}}</p><br>
+                    @endif
+                    @if($TotalActivity != 0)
+                        <p class="paragraphText text-success">Total Activities:</p> <p class="paragraphText">{{$TotalActivity}}</p><br>
+                    @endif
+                    @if($TotalItem != 0)
+                        <p class="paragraphText text-success">Total Items:</p> <p class="paragraphText">{{$TotalItem}}</p><br>
+                    @endif
+                    @if($TotalRoom != 0)
+                        <p class="paragraphText text-success">Total Rooms:</p> <p class="paragraphText">{{$TotalRoom}}</p><br>
+                    @endif
+                    @if($AdditionalRoomAmount != 0)
+                        <p class="paragraphText text-success">Total Additional Rooms:</p> <p class="paragraphText">{{$AdditionalRoomAmount}}</p><br>
+                    @endif
+                    @if($UpgradeRoomAmount != 0)
+                        <p class="paragraphText text-success">Total Upgrade Rooms:</p> <p class="paragraphText">{{$UpgradeRoomAmount}}</p><br>
+                    @endif
+                    @if($ExtendStayAmount != 0)
+                        <p class="paragraphText text-success">Total Extend Days:</p> <p class="paragraphText">{{$ExtendStayAmount}}</p><br>
                     @endif
                 </div>
             </div>

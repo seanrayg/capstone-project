@@ -19,18 +19,19 @@ function HideModalPayNow(){
 function ShowModalUpgradeRoom(){
     var TableChecker = CheckTable('#tblRooms tr');
     if(TableChecker){
+        var RoomName = document.getElementById("i-RoomName").innerHTML;
         $.ajax({
         type:'get',
         url:'/Upgrade/Price',
         data:{ReservationID:ReservationID,
               OriginalRoom:RoomType,
-              UpgradeRoom:UpgradeRoomType},
+              UpgradeRoom:UpgradeRoomType,
+              RoomName:RoomName},
         success:function(data){
                 var OriginalRoomPrice = data.OriginalRoomPrice[0].dblRoomRate;
                 var UpgradeRoomPrice = data.UpgradeRoomPrice[0].dblRoomRate;
                 var ArrivalDate = data.ReservationDates[0].dtmResDArrival;
                 var DepartureDate = data.ReservationDates[0].dtmResDDeparture;
-                
                 var date1 = new Date();
                 var date2 = new Date(DepartureDate);
                 diffDays = date2.getDate() - date1.getDate();
@@ -38,10 +39,18 @@ function ShowModalUpgradeRoom(){
                     diffDays = 1;
                 }
                 var OriginalRoomTotal = parseFloat(OriginalRoomPrice) * diffDays;
-                
+
                 var UpgradeRoomTotal = parseFloat(UpgradeRoomPrice) * diffDays;
             
-                var AdditionalPayment = UpgradeRoomTotal - OriginalRoomTotal;
+                if(parseInt(data.RoomPaymentStatus[0].intResRPayment) % 2 == 0){
+                    var AmountPaid = UpgradeRoomTotal - OriginalRoomTotal;
+                    var RemainingAmount = Math.abs(OriginalRoomTotal + AmountPaid);
+      
+                    var AdditionalPayment = RemainingAmount;       
+                }
+                else{
+                    var AdditionalPayment = UpgradeRoomTotal - OriginalRoomTotal;
+                }
                 
                 document.getElementById("AdditionalPayment").innerHTML = "Additional payment amounting PHP" +AdditionalPayment +" is needed to upgrade the room";
             
