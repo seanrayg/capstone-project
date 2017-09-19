@@ -255,8 +255,7 @@ function getBillBreakdown(){
                 var newCell3  = newRow.insertCell(2);
 
                 newCell1.innerHTML = data.MiscellaneousInfo[x].strPaymentType;
-                var MiscellaneousObject = $.parseJSON('[' + data.MiscellaneousInfo[x].strPaymentRemarks + ']');
-                newCell2.innerHTML = MiscellaneousObject[0].Description + " for " + MiscellaneousObject[0].ItemName;
+                newCell2.innerHTML = data.MiscellaneousInfo[x].strPaymentRemarks;
                 newCell3.innerHTML = data.MiscellaneousInfo[x].dblPayAmount;
             }
         },

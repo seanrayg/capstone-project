@@ -286,7 +286,8 @@ class ResortController extends Controller
                 DB::table('tblRentedItem')
                     ->where('strRentedItemID', '=', $RentedItemID)
                     ->update($updateData);
-
+                
+                $newRentItemID = $this->SmartCounter('tblrenteditem', 'strRentedItemID');
                 foreach($RentalInfo as $Item){
                     $data = array('strRentedItemID'=>$newRentItemID,
                              'strRentedIReservationID'=>$ReservationID,
