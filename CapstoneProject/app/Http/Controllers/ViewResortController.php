@@ -291,6 +291,7 @@ class ViewResortController extends Controller
         $ReservationID = trim($req->input('ReservationID'));
         $OriginalRoom = trim($req->input('OriginalRoom'));
         $UpgradeRoom = trim($req->input('UpgradeRoom'));
+        $RoomName = trim($req->input('RoomName'));
         
         $OriginalRoomPrice = DB::table('tblRoomType as a')
             ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
@@ -314,7 +315,14 @@ class ViewResortController extends Controller
                             ->where('strReservationID', $ReservationID)
                             ->get();
         
-        return response()->json(['OriginalRoomPrice' => $OriginalRoomPrice, 'UpgradeRoomPrice' => $UpgradeRoomPrice, 'ReservationDates' => $ReservationDates]);
+        $RoomID = DB::table('tblRoom')
+                  ->where([['strRoomName', '=', $RoomName], ['strRoomStatus', '=', 'Available']])
+                  ->pluck('strRoomID')
+                  ->first();
+        
+        $RoomPaymentStatus = DB::table('tblReservationRoom')->where([['strResRReservationID', $ReservationID],['strResRRoomID','=', $RoomID]])->get();
+        
+        return response()->json(['OriginalRoomPrice' => $OriginalRoomPrice, 'UpgradeRoomPrice' => $UpgradeRoomPrice, 'ReservationDates' => $ReservationDates, 'RoomPaymentStatus' => $RoomPaymentStatus]);
     }
     
     
@@ -1410,7 +1418,7 @@ class ViewResortController extends Controller
                                 ->join ('tblAvailBeachActivity as c', 'c.strAvailBABeachActivityID', '=', 'b.strBeachActivityID')
                                 ->select('b.dblBeachARate',
                                          'c.intAvailBAQuantity')
-                                ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $Info->strReservationID], ['c.intAvailBAQuantity', '=', 0]])
+                                ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $Info->strReservationID], ['c.intAvailBAPayment', '=', 0]])
                                 ->get();
             
             foreach($AvailedActivities as $Activity){
@@ -1464,6 +1472,7 @@ class ViewResortController extends Controller
             //Compute Boat Rental
             
             $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount;
+    
         }
 
         return view('Billing', compact('ReservationInfo'));
@@ -1521,6 +1530,25 @@ class ViewResortController extends Controller
                     ->orWhere('strPayTypeID', '=', 10)
                     ->get();
         
+        foreach($MiscellaneousInfo as $Info){
+            if($Info->strPaymentType == "Time Penalty Bill"){
+                $infoPaymentRemarks = json_decode($Info->strPaymentRemarks);
+                
+                $Info->strPaymentRemarks = $infoPaymentRemarks->Description . ' for the item ' . $infoPaymentRemarks->ItemName;
+
+            }
+            else if($Info->strPaymentType == "Broken/Lost Penalty Bill"){
+                $infoPaymentRemarks = json_decode($Info->strPaymentRemarks);
+                
+                $Info->strPaymentRemarks = 'Penalty for breaking/losing the ' . $infoPaymentRemarks->ItemName;
+            }
+            else if($Info->strPaymentType == "Extend Item Bill"){
+                $infoPaymentRemarks = json_decode($Info->strPaymentRemarks);
+                
+                $Info->strPaymentRemarks = 'Bill for extending the rental of ' . $infoPaymentRemarks->ItemName . ' ' . $infoPaymentRemarks->ExtendQuantity . 'pc(s) for ' . $infoPaymentRemarks->ExtendTime . ' hours';
+            }
+        }
+        
         $AdditionalRooms = DB::table('tblRoom as a')
                     ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
                     ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
@@ -1537,6 +1565,11 @@ class ViewResortController extends Controller
                              'a.strPaymentRemarks')
                     ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 22]])
                     ->get();
+        
+        foreach($UpgradeRooms as $Rooms){
+            $UpgradeRemarks = json_decode($Rooms->strPaymentRemarks);
+            $Rooms->strPaymentRemarks = $UpgradeRemarks->UpgradeRoom;
+        }
         
         $ExtendStay = DB::table('tblPayment as a')
                     ->join ('tblPaymentType as b', 'a.strPayTypeID', '=', 'b.strPaymentTypeID')
@@ -1784,6 +1817,7 @@ class ViewResortController extends Controller
             //Compute Boat Rental
             
             $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount;
+            
         }
         
         $RoomInfo = DB::table('tblRoom as a')
@@ -1837,6 +1871,25 @@ class ViewResortController extends Controller
                     ->orWhere('strPayTypeID', '=', 10)
                     ->get();
         
+        foreach($MiscellaneousInfo as $Info){
+            if($Info->strPaymentType == "Time Penalty Bill"){
+                $infoPaymentRemarks = json_decode($Info->strPaymentRemarks);
+                
+                $Info->strPaymentRemarks = $infoPaymentRemarks->Description . ' for the item ' . $infoPaymentRemarks->ItemName;
+
+            }
+            else if($Info->strPaymentType == "Broken/Lost Penalty Bill"){
+                $infoPaymentRemarks = json_decode($Info->strPaymentRemarks);
+                
+                $Info->strPaymentRemarks = 'Penalty for breaking/losing the ' . $infoPaymentRemarks->ItemName;
+            }
+            else if($Info->strPaymentType == "Extend Item Bill"){
+                $infoPaymentRemarks = json_decode($Info->strPaymentRemarks);
+                
+                $Info->strPaymentRemarks = 'Bill for extending the rental of ' . $infoPaymentRemarks->ItemName . ' ' . $infoPaymentRemarks->ExtendQuantity . 'pc(s) for ' . $infoPaymentRemarks->ExtendTime . ' hours';
+            }
+        }
+
         $AdditionalRooms = DB::table('tblRoom as a')
                     ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
                     ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
@@ -1945,8 +1998,8 @@ class ViewResortController extends Controller
                 $Info->intPackagePax = $PackagePayment;
             }
         }
-
-        return view('Checkout', compact('ReservationInfo', 'RoomInfo', 'ItemInfo', 'ActivityInfo', 'FeeInfo', 'MiscellaneousInfo', 'AdditionalRooms', 'UpgradeRooms', 'ExtendStay', 'PackageInfo', 'DaysOfStay', 'Payment', 'DownPayment', 'InitialBill' ,'InitialPayment'));
+        
+        return view('Checkout', compact('ReservationInfo', 'RoomInfo', 'ItemInfo', 'ActivityInfo', 'FeeInfo', 'MiscellaneousInfo', 'AdditionalRooms', 'UpgradeRooms', 'ExtendStay', 'PackageInfo', 'DaysOfStay', 'Payment', 'DownPayment', 'InitialBill' ,'InitialPayment', 'TotalPenalties', 'TotalFee', 'TotalActivity', 'TotalItem', 'TotalRoom', 'AdditionalRoomAmount', 'UpgradeRoomAmount', 'PacakgePayment', 'ExtendStayAmount'));
     }
     
 }

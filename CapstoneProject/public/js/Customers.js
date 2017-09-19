@@ -163,6 +163,7 @@ function ShowModalAddRoomPayment(){
         if(diffDays == 0){
             diffDays = 1;
         } 
+
         //Get data from tables
         var pacRooms = document.getElementById('tblChosenRooms'), cellsRooms = pacRooms.getElementsByTagName('td');
         var pacRoomsCells = (document.getElementById('tblChosenRooms').getElementsByTagName("tr").length - 1) * 4;
