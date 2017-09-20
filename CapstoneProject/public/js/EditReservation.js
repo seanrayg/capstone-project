@@ -19,6 +19,17 @@ var dateSender = false;
 
 /*---------- Modal controller -------*/
 
+function ShowModalReschedulePayment(TotalRoomAmount, OrigRoomAmount){
+    document.getElementById("RescheduleAmount").innerHTML = "The total price of room(s) will be PHP" + TotalRoomAmount + " instead of " + OrigRoomAmount;
+    document.getElementById("TotalRoomAmount").value = TotalRoomAmount;
+    document.getElementById("OrigRoomAmount").value = OrigRoomAmount;
+    document.getElementById("DivModalReschedulePayment").style.display = "block";
+}
+
+function HideModalReschedulePayment(){
+    document.getElementById("DivModalReschedulePayment").style.display = "none";
+}
+
 function ShowModalAvailBoat(){
     document.getElementById("DivModalAvailBoat").style.display = "block";
 }
@@ -892,6 +903,8 @@ function CheckReservedAmenities(){
     var tempHour = document.getElementById("SelectHour");
     var tempMinute = document.getElementById("SelectMinute");
     var tempMerridean = document.getElementById("SelectMerridean");
+    var OriginalCheckInDate = document.getElementById("h-CheckInDate").value;
+    var OriginalCheckOutDate = document.getElementById("h-CheckOutDate").value;
     var ChosenHour;
     if(tempMerridean.value == "PM"){
       ChosenHour = parseInt(tempHour.value) + 12;
@@ -909,6 +922,31 @@ function CheckReservedAmenities(){
                   PickUpTime:tempPickUpTime,
                   TotalGuests:TotalGuests},
             success:function(data){
+                var TotalRoomAmount = 0;
+                var OrigRoomAmount = 0;
+                var date1 = new Date(document.getElementById("CheckInDate").value);
+                var date2 = new Date(document.getElementById("CheckOutDate").value);
+                var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+                var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+      
+                if(diffDays == 0){
+                    diffDays = 1;
+                }
+                
+                var date3 = new Date(OriginalCheckInDate);
+                var date4 = new Date(OriginalCheckOutDate);
+                var OrigTimeDiff = Math.abs(date4.getTime() - date3.getTime());
+                var OrigDiffDays = Math.ceil(OrigTimeDiff / (1000 * 3600 * 24)); 
+                
+                if(OrigDiffDays == 0){
+                    OrigDiffDays = 1;
+                }
+                
+                for(var x = 0; x < data.ChosenRooms.length; x++){
+                    TotalRoomAmount += (parseInt(data.ChosenRooms[x].TotalRooms) * parseInt(data.ChosenRooms[x].dblRoomRate)) * parseInt(diffDays);
+                    OrigRoomAmount += (parseInt(data.ChosenRooms[x].TotalRooms) * parseInt(data.ChosenRooms[x].dblRoomRate)) * parseInt(OrigDiffDays);
+                }
+               
                 if(data.ChosenBoats.length != 0){
                     if(data.errorBoat && !data.errorRoom){
                         ShowModalAvailBoat();
@@ -933,7 +971,8 @@ function CheckReservedAmenities(){
                     
                     else if(!data.errorBoat && !data.errorRoom){
                         document.getElementById("d-ReservationID").value = document.getElementById("info-ReservationID").value;
-                        document.getElementById("frmReschedule").submit();
+                        ShowModalReschedulePayment(TotalRoomAmount, OrigRoomAmount);
+                        //document.getElementById("frmReschedule").submit();
                     }
                     
                     else if(data.errorBoat && data.errorRoom){
@@ -963,7 +1002,8 @@ function CheckReservedAmenities(){
                     }
                     else{
                         document.getElementById("d-ReservationID").value = document.getElementById("info-ReservationID").value;
-                        document.getElementById("frmReschedule").submit();
+                        ShowModalReschedulePayment(TotalRoomAmount, OrigRoomAmount);
+                        //document.getElementById("frmReschedule").submit();
                     }
                 }
                 
@@ -995,4 +1035,8 @@ function RescheduleReservation(){
 function btnEditReschedRoomsListener(){
     includeDate = true;
     ShowModalEditResRoom("date");
+}
+
+function SubmitRescheduleForm(){
+    document.getElementById("frmReschedule").submit();
 }

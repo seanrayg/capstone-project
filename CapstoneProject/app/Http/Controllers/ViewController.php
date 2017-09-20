@@ -1085,21 +1085,21 @@ class ViewController extends Controller
                                           ->orWhere('intResDStatus', '=', '2')
                                           ->orWhere('intResDStatus', '=', '4');
                                 })
-                                ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','>=',$CheckInDate)
-                                          ->where('dtmResDArrival','<=',$CheckOutDate);
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','>=',$ArrivalDate)
+                                          ->where('dtmResDArrival','<=',$DepartureDate);
                                 })
-                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDDeparture','>=',$CheckInDate)
-                                          ->where('dtmResDDeparture','<=',$CheckOutDate);
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDDeparture','>=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','<=',$DepartureDate);
                                 })
-                                ->where(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','<=',$CheckInDate)
-                                          ->where('dtmResDDeparture','>=',$CheckInDate);
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','>=',$DepartureDate);
                                 })
-                                ->orWhere(function($query) use($CheckInDate, $CheckOutDate){
-                                    $query->where('dtmResDArrival','<=',$CheckOutDate)
-                                          ->where('dtmResDDeparture','>=',$CheckOutDate);
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$DepartureDate)
+                                          ->where('dtmResDDeparture','>=',$DepartureDate);
                                 })
                                 ->pluck('strReservationID')
                                 ->toArray();
@@ -1141,7 +1141,7 @@ class ViewController extends Controller
             $errorRoom = true;
         }
         
-        return response()->json(['ChosenBoats' => $ChosenBoats, 'errorBoat' => $errorBoat, 'errorRoom' => $errorRoom]);
+        return response()->json(['ChosenBoats' => $ChosenBoats, 'errorBoat' => $errorBoat, 'errorRoom' => $errorRoom, 'ChosenRooms' => $ChosenRooms]);
     }
 
     public function getReschedAvailBoats($ReservationID, $ArrivalDate, $PickUpTime){

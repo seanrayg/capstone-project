@@ -579,12 +579,15 @@ class ReservationController extends Controller
     //Edit Reservation Date
     
     public function updateReservationDate(Request $req){
+   
         $tempCheckInDate = trim($req->input('CheckInDate'));
         $tempCheckOutDate = trim($req->input('CheckOutDate'));
         $PickUpHour = trim($req->input('SelectHour'));
         $PickUpMinute = trim($req->input('SelectMinute'));
         $PickUpMerridean = trim($req->input('SelectMerridean'));
         $ReservationID = trim($req->input('d-ReservationID'));
+        $TotalRoomAmount = trim($req->input('TotalRoomAmount'));
+        $OrigRoomAmount = trim($req->input('OrigRoomAmount'));
    
         $tempCheckInDate2 = explode('/', $tempCheckInDate);
         $tempCheckOutDate2 = explode('/', $tempCheckOutDate);
@@ -616,6 +619,24 @@ class ReservationController extends Controller
             DB::table('tblBoatSchedule')
             ->where([['strBoatSReservationID', $ReservationID],['strBoatSPurpose', 'Reservation']])
             ->update($boatSchedData);
+        }
+        
+        if($TotalRoomAmount != $OrigRoomAmount){
+            $InitialPayment = DB::table('tblPayment')
+                              ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
+                              ->get();
+            
+            $NewTotal = 0;
+            
+            foreach($InitialPayment as $Payment){
+                $Payment->dblPayAmount = $Payment->dblPayAmount - $OrigRoomAmount;
+                $Payment->dblPayAmount = $Payment->dblPayAmount + $TotalRoomAmount;
+                $NewTotal = $Payment->dblPayAmount;
+            }
+            
+            DB::table('tblPayment')
+            ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
+            ->update(['dblPayAmount' => $NewTotal]);
         }
         
         \Session::flash('flash_message','Reservation successfully updated!');
