@@ -145,6 +145,8 @@
                                     {{ csrf_field() }}
                                     <input type="hidden" name="d-ReservationID" id="d-ReservationID">
                                     <input type="hidden" name="d-BoatsUsed" id="d-BoatsUsed">
+                                    <input type="hidden" name="TotalRoomAmount" id="TotalRoomAmount">
+                                    <input type="hidden" name="OrigRoomAmount" id="OrigRoomAmount">
                                     <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group label-static" id="CheckInDateError">
@@ -592,4 +594,30 @@
     </div>
 </div>
 
+
+<!----- Modal for reschedule payment ----->
+<div id="DivModalReschedulePayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalReschedulePayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">New Payment</h3>
+                        <br>
+                        <p class="category text-center" style="font-family: Roboto; color:black" id="RescheduleAmount"></p>
+                        <br><br>
+                        <div class = "row">
+                            <button type="button" class="btn btn-success pull-right push-right" onclick="SubmitRescheduleForm()">Continue</button>
+                            <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalReschedulePayment()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
