@@ -992,7 +992,7 @@ class ViewResortController extends Controller
             AND '$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSDropoff, INTERVAL 1 HOUR)) AND TIME(dtmBoatSDropoff)
             OR '$dtmTime' BETWEEN TIME(dtmBoatSDropoff) AND TIME(DATE_ADD(dtmBoatSDropoff, INTERVAL 1 HOUR))
         ");
-        
+
         $UnavailableBoats = [];
         foreach($ScheduledBoats as $Boat){
             $UnavailableBoats[sizeof($UnavailableBoats)] = $Boat->strBoatSBoatID;
