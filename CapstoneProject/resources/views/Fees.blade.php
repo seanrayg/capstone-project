@@ -183,6 +183,7 @@
                             <div class="card-content">
                                 <div class="row">
                                     <h3 class="title">Customer Fees<span class="close" onclick="HideModalCustomerFees()">X</span></h3>
+                                    <p class="category">Only unpaid fees are displayed</p>
                                 </div>
                                 <br>
                                 <table class="table table-hover" onclick="run(event, 'Details')" style="font-family: Roboto" id="tblCustomerFees">
@@ -350,7 +351,8 @@
                                 <br>
                                 <div class = "row">
                                     <div class="col-xs-12">
-                                        <button type="submit" class="btn btn-success pull-right"><i class="material-icons">done</i>Continue</button>
+                                        <button type="button" class="btn btn-success pull-left push-left"><i class="material-icons">done</i>Print Invoice</button>
+                                        <button type="submit" class="btn btn-success pull-right push-left"><i class="material-icons">done</i>Continue</button>
                                     </div> 
                                 </div>
 

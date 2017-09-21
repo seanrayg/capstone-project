@@ -790,7 +790,8 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
+                                    <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
                         </form>
@@ -885,7 +886,8 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
+                                    <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
                         </form>

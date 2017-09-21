@@ -95,13 +95,7 @@
                                 </table>
                             </div>
                         </div>
-
-                        <div class = "row">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-warning pull-right" onclick="#"><i class="material-icons">class</i> Book a Reservation</button>
-                                <button type="button" class="btn btn-primary pull-right" onclick="#"><i class="material-icons">class</i> Rent for Walk in</button>
-                            </div> 
-                        </div>                             
+                           
                     </div>
 
                     <div class="tab-pane" id="OccupiedRooms">
@@ -119,17 +113,17 @@
                                 <table class="table" id="tblOccupiedRooms" onclick="run(event, 'Occupied')">
                                     <thead class="text-primary">
                                         <th style="display:none">Reservation ID</th>
-                                        <th onclick="sortTable(1, 'tblOccupiedRooms', 'string')">Room Type</th>
-                                        <th onclick="sortTable(2, 'tblOccupiedRooms', 'string')">Room Name</th>
-                                        <th onclick="sortTable(3, 'tblOccupiedRooms', 'string')">Guest</th>
-                                        <th onclick="sortTable(4, 'tblOccupiedRooms', 'string')">Guest's Contact #</th>
-                                        <th onclick="sortTable(5, 'tblOccupiedRooms', 'string')">Check In Date</th>
-                                        <th onclick="sortTable(6, 'tblOccupiedRooms', 'string')">Check Out Date</th>
+                                        <th onclick="sortTable(1, 'tblOccupiedRooms', 'string')" class="text-center">Room Type</th>
+                                        <th onclick="sortTable(2, 'tblOccupiedRooms', 'string')" class="text-center">Room Name</th>
+                                        <th onclick="sortTable(3, 'tblOccupiedRooms', 'string')" class="text-center">Guest</th>
+                                        <th onclick="sortTable(4, 'tblOccupiedRooms', 'string')" class="text-center">Guest's Contact #</th>
+                                        <th onclick="sortTable(5, 'tblOccupiedRooms', 'string')" class="text-center">Check In Date</th>
+                                        <th onclick="sortTable(6, 'tblOccupiedRooms', 'string')" class="text-center">Check Out Date</th>
                                         <th style="display:none">Check In Date 2</th>
                                         <th style="display:none">Check Out Date 2</th>
                                         <th class="text-center">Action</th>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="text-center">
                                         @foreach($RoomDetails as $Detail)
                                             <tr>
                                                 <td style="display:none">{{$Detail->strReservationID}}</td>
@@ -142,17 +136,11 @@
                                                 <td style="display:none">{{Carbon\Carbon::parse($Detail -> dtmResDArrival)->format('m/d/Y')}}</td>
                                                 <td style="display:none">{{Carbon\Carbon::parse($Detail -> dtmResDDeparture)->format('m/d/Y')}}</td>
                                                 <td>
-                                                    <button type="button" rel="tooltip" title="Check Out" class="btn btn-info btn-simple btn-xs">
-                                                        <i class="material-icons">done_all</i>
-                                                    </button>
                                                     <button type="button" rel="tooltip" title="Transfer Room" class="btn btn-success btn-simple btn-xs" onclick="TransferRoom('{{$Detail->strReservationID}}')">
                                                         <i class="material-icons">compare_arrows</i>
                                                     </button>
                                                     <button type="button" rel="tooltip" title="Upgrade Room" class="btn btn-primary btn-simple btn-xs" onclick="UpgradeRoom('{{$Detail->strReservationID}}', '{{$Detail->strRoomType}}', '{{$Detail->strRoomName}}')">
                                                         <i class="material-icons">file_upload</i>
-                                                    </button>
-                                                    <button type="button" rel="tooltip" title="Extend Stay" class="btn btn-warning btn-simple btn-xs">
-                                                        <i class="material-icons">alarm_add</i>
                                                     </button>
                                                 </td>
                                             </tr>

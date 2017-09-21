@@ -131,133 +131,190 @@ function getBillBreakdown(){
             $('#tblBillAdditional tbody').empty();
             $('#tblBillUpgrade tbody').empty();
             $('#tblBillExtend tbody').empty();
-            
-            var tableRef = document.getElementById('tblBillAccommodation').getElementsByTagName('tbody')[0];
+            var tableRef;
+            if(data.RoomInfo.length == 0){
+                document.getElementById("AccommodationDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("AccommodationDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillAccommodation').getElementsByTagName('tbody')[0];
 
-            for(var x = 0; x < data.RoomInfo.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
+                for(var x = 0; x < data.RoomInfo.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
 
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
-                var newCell3  = newRow.insertCell(2);
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+                    var newCell3  = newRow.insertCell(2);
 
-                newCell1.innerHTML = data.RoomInfo[x].strRoomType;
-                newCell2.innerHTML = data.RoomInfo[x].strRoomName;
-                newCell3.innerHTML = data.RoomInfo[x].dblRoomRate;
+                    newCell1.innerHTML = data.RoomInfo[x].strRoomType;
+                    newCell2.innerHTML = data.RoomInfo[x].strRoomName;
+                    newCell3.innerHTML = data.RoomInfo[x].dblRoomRate;
 
+                }
             }
             
-            tableRef = document.getElementById('tblBillExtend').getElementsByTagName('tbody')[0];
+            if(data.ExtendStay.length == 0){
+                document.getElementById("ExtendDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("ExtendDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillExtend').getElementsByTagName('tbody')[0];
 
-            for(var x = 0; x < data.AdditionalRooms.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
+                for(var x = 0; x < data.ExtendStay.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
 
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
 
-                newCell1.innerHTML = data.ExtendStay[x].strPaymentRemarks;
-                newCell2.innerHTML = data.ExtendStay[x].dblPayAmount;
+                    newCell1.innerHTML = data.ExtendStay[x].strPaymentRemarks;
+                    newCell2.innerHTML = data.ExtendStay[x].dblPayAmount;
 
+                }
             }
             
-            tableRef = document.getElementById('tblBillAdditional').getElementsByTagName('tbody')[0];
-
-            for(var x = 0; x < data.AdditionalRooms.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
-                var newCell3  = newRow.insertCell(2);
-
-                newCell1.innerHTML = data.AdditionalRooms[x].strRoomType;
-                newCell2.innerHTML = data.AdditionalRooms[x].strRoomName;
-                newCell3.innerHTML = data.AdditionalRooms[x].dblRoomRate;
-
+            if(data.AdditionalRooms.length == 0){
+                document.getElementById("AdditionalDiv").style.display = "none";
             }
             
-            tableRef = document.getElementById('tblBillPackage').getElementsByTagName('tbody')[0];
+            else{
+                document.getElementById("AdditionalDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillAdditional').getElementsByTagName('tbody')[0];
 
-            for(var x = 0; x < data.PackageInfo.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
+                for(var x = 0; x < data.AdditionalRooms.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
 
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+                    var newCell3  = newRow.insertCell(2);
+
+                    newCell1.innerHTML = data.AdditionalRooms[x].strRoomType;
+                    newCell2.innerHTML = data.AdditionalRooms[x].strRoomName;
+                    newCell3.innerHTML = data.AdditionalRooms[x].dblRoomRate;
+
+                }
+            }
+            
+            if(data.PackageInfo.length == 0){
+                document.getElementById("PackageDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("PackageDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillPackage').getElementsByTagName('tbody')[0];
+
+                for(var x = 0; x < data.PackageInfo.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+
+                    newCell1.innerHTML = data.PackageInfo[x].strPackageName;
+                    newCell2.innerHTML = data.PackageInfo[x].intPackagePax;
+
+                }
+            }
+            
+            if(data.UpgradeRooms.length == 0){
+                document.getElementById("UpgradeDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("UpgradeDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillUpgrade').getElementsByTagName('tbody')[0];
+
+                for(var x = 0; x < data.UpgradeRooms.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+
+                    newCell1.innerHTML = data.UpgradeRooms[x].strPaymentRemarks;
+                    newCell2.innerHTML = data.UpgradeRooms[x].dblPayAmount;
+
+                }
+            }
+
+            if(data.ItemInfo.length == 0){
+                document.getElementById("ItemsDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("ItemsDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillItem').getElementsByTagName('tbody')[0];
+
+                for(var x = 0; x < data.ItemInfo.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+                    var newCell3  = newRow.insertCell(2);
+                    var newCell4  = newRow.insertCell(3);
+
+                    newCell1.innerHTML = data.ItemInfo[x].strItemName;
+                    newCell2.innerHTML = data.ItemInfo[x].intRentedIQuantity;
+                    newCell3.innerHTML = data.ItemInfo[x].intRentedIDuration;
+                    newCell4.innerHTML = data.ItemInfo[x].dblItemRate;
+                }
+            }
+            
+            if(data.ActivityInfo.length == 0){
+                document.getElementById("ActivitiesDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("ActivitiesDiv").style.display = "block";
                 
-                newCell1.innerHTML = data.PackageInfo[x].strPackageName;
-                newCell2.innerHTML = data.PackageInfo[x].intPackagePax;
+                tableRef = document.getElementById('tblBillActivity').getElementsByTagName('tbody')[0];
 
+                for(var x = 0; x < data.ActivityInfo.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+                    var newCell3  = newRow.insertCell(2);
+
+                    newCell1.innerHTML = data.ActivityInfo[x].strBeachAName;
+                    newCell2.innerHTML = data.ActivityInfo[x].intAvailBAQuantity;
+                    newCell3.innerHTML = data.ActivityInfo[x].dblBeachARate;
+                }
             }
             
-            tableRef = document.getElementById('tblBillUpgrade').getElementsByTagName('tbody')[0];
+            if(data.FeeInfo.length == 0){
+                document.getElementById("FeesDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("FeesDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillFee').getElementsByTagName('tbody')[0];
 
-            for(var x = 0; x < data.UpgradeRooms.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
+                for(var x = 0; x < data.FeeInfo.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
 
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
-                
-                newCell1.innerHTML = data.UpgradeRooms[x].strPaymentRemarks;
-                newCell2.innerHTML = data.UpgradeRooms[x].dblPayAmount;
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+                    var newCell3  = newRow.insertCell(2);
 
+                    newCell1.innerHTML = data.FeeInfo[x].strFeeName;
+                    newCell2.innerHTML = data.FeeInfo[x].intResFQuantity;
+                    newCell3.innerHTML = data.FeeInfo[x].dblFeeAmount;
+                }
             }
             
-            tableRef = document.getElementById('tblBillItem').getElementsByTagName('tbody')[0];
-
-            for(var x = 0; x < data.ItemInfo.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
-                var newCell3  = newRow.insertCell(2);
-                var newCell4  = newRow.insertCell(3);
-
-                newCell1.innerHTML = data.ItemInfo[x].strItemName;
-                newCell2.innerHTML = data.ItemInfo[x].intRentedIQuantity;
-                newCell3.innerHTML = data.ItemInfo[x].intRentedIDuration;
-                newCell4.innerHTML = data.ItemInfo[x].dblItemRate;
+            if(data.ActivityInfo.length == 0){
+                document.getElementById("MiscellaneousDiv").style.display = "none";
             }
-            
-            tableRef = document.getElementById('tblBillActivity').getElementsByTagName('tbody')[0];
+            else{
+                document.getElementById("MiscellaneousDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillMiscellaneous').getElementsByTagName('tbody')[0];
 
-            for(var x = 0; x < data.ActivityInfo.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
+                for(var x = 0; x < data.MiscellaneousInfo.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
 
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
-                var newCell3  = newRow.insertCell(2);
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+                    var newCell3  = newRow.insertCell(2);
 
-                newCell1.innerHTML = data.ActivityInfo[x].strBeachAName;
-                newCell2.innerHTML = data.ActivityInfo[x].intAvailBAQuantity;
-                newCell3.innerHTML = data.ActivityInfo[x].dblBeachARate;
+                    newCell1.innerHTML = data.MiscellaneousInfo[x].strPaymentType;
+                    newCell2.innerHTML = data.MiscellaneousInfo[x].strPaymentRemarks;
+                    newCell3.innerHTML = data.MiscellaneousInfo[x].dblPayAmount;
+                }
             }
-            
-            tableRef = document.getElementById('tblBillFee').getElementsByTagName('tbody')[0];
 
-            for(var x = 0; x < data.FeeInfo.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
-                var newCell3  = newRow.insertCell(2);
-
-                newCell1.innerHTML = data.FeeInfo[x].strFeeName;
-                newCell2.innerHTML = data.FeeInfo[x].intResFQuantity;
-                newCell3.innerHTML = data.FeeInfo[x].dblFeeAmount;
-            }
-            
-            tableRef = document.getElementById('tblBillMiscellaneous').getElementsByTagName('tbody')[0];
-
-            for(var x = 0; x < data.MiscellaneousInfo.length; x++){
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-                var newCell1  = newRow.insertCell(0);
-                var newCell2  = newRow.insertCell(1);
-                var newCell3  = newRow.insertCell(2);
-
-                newCell1.innerHTML = data.MiscellaneousInfo[x].strPaymentType;
-                newCell2.innerHTML = data.MiscellaneousInfo[x].strPaymentRemarks;
-                newCell3.innerHTML = data.MiscellaneousInfo[x].dblPayAmount;
-            }
         },
         error:function(response){
             console.log(response);

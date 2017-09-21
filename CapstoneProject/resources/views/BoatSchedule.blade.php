@@ -449,7 +449,8 @@
                                                                 
                                                                 <div class = "row">
                                                                     <div class="col-xs-12">
-                                                                        <input type="submit" name="action" class="btn btn-success pull-right" value="Continue" />
+                                                                        <input type="button" name="action" class="btn btn-success pull-left push-left" value="Print Invoice" />
+                                                                        <input type="submit" name="action" class="btn btn-success pull-right push-right" value="Continue" />
                                                                     </div> 
                                                                 </div>
                                                             </div>

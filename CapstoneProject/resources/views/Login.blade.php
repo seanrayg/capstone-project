@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-
+    <title>Login</title>
 	<style>body{padding-top: 60px;}</style>
 	
     <link href="/Login/bootstrap3/css/bootstrap.css" rel="stylesheet" />
