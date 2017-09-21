@@ -42,7 +42,49 @@ class ViewUtilitiesController extends Controller
     
     public function ViewContentManagement(){
         
-        return View('ContentManagement');
+        //HOME PAGE
+        $HomePageContents = DB::table('tblWebContent')->where('strPageTitle', 'Home Page')->get();
+ 
+        $HomePagePictures;
+        $tempHomePagePictures;
+        foreach($HomePageContents as $Content){
+            $tempHomePagePictures = json_decode($Content->strBodyImage, true);
+        }
+        $arrHomePictures = [];
+        foreach($tempHomePagePictures as $Picture){
+            $arrHomePictures[sizeof($arrHomePictures)] = $Picture;
+        }
+        
+        $HomePagePictures = DB::table('tblWebContent')
+                        ->select(DB::raw('strHeaderDescription as HomeBodyImage1'),
+                                DB::raw('strBodyDescription as HomeBodyImage2'),
+                                DB::raw('strHeaderImage as HomeBodyImage3'))
+                        ->where('strPageTitle', 'Home Page')
+                        ->get();
+        
+        foreach($HomePagePictures as $Picture){
+            $Picture->HomeBodyImage1 = $arrHomePictures[0];
+            $Picture->HomeBodyImage2 = $arrHomePictures[1];
+            $Picture->HomeBodyImage3 = $arrHomePictures[2];
+            break;
+        }
+       
+        //ACCOMMODATION
+        $AccommodationContents = DB::table('tblWebContent')->where('strPageTitle', 'Accommodation')->get();
+        
+        //PACKAGES
+        $PackagesContents = DB::table('tblWebContent')->where('strPageTitle', 'Packages')->get();
+        
+        //ACTIVITIES
+        $ActivitiesContents = DB::table('tblWebContent')->where('strPageTitle', 'Activities')->get();
+        
+        //CONTACT US
+        $ContactsContents = DB::table('tblWebContent')->where('strPageTitle', 'Contact Us')->get();
+        
+        //CONTACT US
+        $LocationContents = DB::table('tblWebContent')->where('strPageTitle', 'Location')->get();
+        
+        return View('ContentManagement', compact('HomePageContents', 'HomePagePictures', 'AccommodationContents', 'PackagesContents', 'ActivitiesContents', 'ContactsContents', 'LocationContents'));
     }
     
     public function ViewSystemUsers(){

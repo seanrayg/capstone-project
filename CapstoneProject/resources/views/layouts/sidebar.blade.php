@@ -61,6 +61,12 @@
                     <p>Activities</p>
                 </a>
             </li>
+            <li id="SB-Deductions">
+                <a href="/Deductions">
+                    <i class="material-icons">tab</i>
+                    <p>Bill Deductions</p>
+                </a>
+            </li>
             <li id="SB-Billing">
                 <a href="/Billing">
                     <i class="material-icons">local_atm</i>

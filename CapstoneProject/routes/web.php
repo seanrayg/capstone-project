@@ -32,6 +32,8 @@ Route::get('/ItemRental', 'ViewResortController@getAvailableItems');
 
 Route::get('/Activities', 'ViewResortController@getAvailableActivities');
 
+Route::get('/Deductions', 'ViewResortController@ViewDeductions');
+
 Route::get('/Reports', function () {
     return view('Reports');
 });
@@ -444,6 +446,18 @@ Route::post('Contact/Delete', 'UtilitiesController@deleteContactInfo');
 
 /*---------- CONTENT MANAGEMENT ---------*/
 Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement');
+
+Route::post('/Utilities/Web/HomePage', 'UtilitiesController@saveHomePage');
+
+Route::post('/Utilities/Web/Accommodation', 'UtilitiesController@saveAccommodation');
+
+Route::post('/Utilities/Web/Packages', 'UtilitiesController@savePackages');
+
+Route::post('/Utilities/Web/Activities', 'UtilitiesController@saveActivities');
+
+Route::post('/Utilities/Web/Contacts', 'UtilitiesController@saveContacts');
+
+Route::post('/Utilities/Web/Location', 'UtilitiesController@saveLocation');
 
 
 

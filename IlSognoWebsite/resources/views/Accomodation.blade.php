@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('WebpageTitle')
-    <title>Accomodation</title>
+    <title>Accommodation</title>
 @endsection
 
 @section('scripts')
@@ -15,7 +15,7 @@
     <div class="container">
         <div class="content-center brand">
             <h1 class="h1-seo">Il Sogno</h1>
-            <h3>Accomodation</h3>
+            <h3>Accommodation</h3>
         </div>
     </div>
 </div>
@@ -28,7 +28,7 @@
                     
                     <div class="row">
                         <div class="col-md-8 offset-md-2 text-center">
-                            <h2 class="title">Accomodation</h2>
+                            <h2 class="title">Accommodation</h2>
                             <h5 class="description">Sed at tortor ut eros suscipit tincidunt. Sed blandit massa arcu, nec mattis mi commodo sit amet.</h5>
                         </div>
                     </div>
@@ -47,11 +47,7 @@
                             <div class="card-block">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        @if($RoomType -> intRoomTCategory == 'Room')
-                                        <img src="/img/Rooms/Room1.jpg" alt="Raised Image" class="rounded img-raised med-image">
-                                        @else
-                                        <img src="/img/Rooms/Cottage1.jpg" alt="Raised Image" class="rounded img-raised med-image">
-                                        @endif
+                                        <img src="{{$RoomType->RoomImage}}" alt="Raised Image" class="rounded img-raised med-image cursor-pointer" rel="tooltip" title="Click image to see more" onclick="ShowImages('{{$RoomType->strRoomTypeID}}')">
                                     </div>                         
                                 </div>
                                 <div class="row">

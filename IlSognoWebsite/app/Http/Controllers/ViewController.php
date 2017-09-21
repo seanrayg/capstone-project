@@ -22,10 +22,13 @@ class ViewController extends Controller
                      'a.intRoomTAirconditioned', 
                      'b.dblRoomRate', 
                      'a.strRoomDescription',
-                     'a.intRoomTCategory')
+                     'a.intRoomTCategory',
+                     DB::raw("b.dtmRoomRateAsOf AS RoomImage"))
             ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
                     ['a.intRoomTDeleted',"=", "1"]])
             ->get();
+        
+       
         
         foreach ($RoomTypes as $RoomType) {
 
@@ -42,8 +45,20 @@ class ViewController extends Controller
             else{
                 $RoomType->intRoomTCategory = 'Cottage';
             }
-
+            
+            $RoomPicture = DB::table('tblRoomPicture')
+            ->where('strRoomPRoomTID', '=', $RoomType->strRoomTypeID)
+            ->pluck("blobRoomPPicture")
+            ->first();
+            
+            if(sizeof($RoomPicture) == 0){
+                $RoomType->RoomImage = "/Accommodation/DefaultImage.png";
+            }
+            else{
+                $RoomType->RoomImage = $RoomPicture;
+            }
         }
+
 
         return view('Accomodation', compact('RoomTypes'));
     }

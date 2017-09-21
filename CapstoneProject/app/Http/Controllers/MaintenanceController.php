@@ -295,8 +295,18 @@ class MaintenanceController extends Controller
     public function addRoomTypeImage(Request $req){
             $RoomTypeImage = Input::file('RoomTypeImage');
             $RoomTypeID = $req->input("AddImageRoomTypeID");
-   
-            $RoomTypeImage->move("Accommodation", $RoomTypeImage->getClientOriginalName());
+            $RoomTypeImage2 = $RoomTypeImage;
+            
+            //set ilsognowebsite path
+            $IlSognoPath = public_path("Accommodation");
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+            $IlSognoPath = $IlSognoPath . "/";
+            
+            //save image to capstoneproject
+            $req->file('RoomTypeImage')->move("Accommodation", $RoomTypeImage->getClientOriginalName());
+            
+            //save image to ilsognowebsite
+            copy(public_path("Accommodation/").$RoomTypeImage->getClientOriginalName(), $IlSognoPath.$RoomTypeImage->getClientOriginalName());    
         
             $ImageID = DB::table('tblRoomPicture')->pluck('strRoomPictureID')->first();
             if(!$ImageID){
@@ -306,6 +316,7 @@ class MaintenanceController extends Controller
                 $ImageID = $this->SmartCounter2('tblRoomPicture', 'strRoomPictureID');
             }
         
+      
             $RoomTypeImagePath = "/Accommodation/" . $RoomTypeImage->getClientOriginalName();
         
             $data = array('strRoomPictureID'=>$ImageID,
@@ -329,9 +340,26 @@ class MaintenanceController extends Controller
                     ->pluck('blobRoomPPicture')
                     ->first();
         
+        //delete image from capstone folder
         File::delete(public_path().'/'.$RoomImage);
         
-        $RoomTypeImage->move("Accommodation", $RoomTypeImage->getClientOriginalName());
+        $IlSognoPath = public_path();
+    
+        $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+        
+        //delete image from ilsognowebsite folder
+        File::delete($IlSognoPath.'/'.$RoomImage);
+        
+        //set ilsognowebsite path
+        $IlSognoPath = public_path("Accommodation");
+        $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+        $IlSognoPath = $IlSognoPath . "/";
+
+        //save image to capstoneproject
+        $req->file('EditRoomTypeImage')->move("Accommodation", $RoomTypeImage->getClientOriginalName());
+
+        //save image to ilsognowebsite
+        copy(public_path("Accommodation/").$RoomTypeImage->getClientOriginalName(), $IlSognoPath.$RoomTypeImage->getClientOriginalName()); 
         
         $RoomTypeImagePath = "/Accommodation/" . $RoomTypeImage->getClientOriginalName();
         
@@ -355,6 +383,13 @@ class MaintenanceController extends Controller
                     ->first();
         
         File::delete(public_path().'/'.$RoomImage);
+        
+        $IlSognoPath = public_path();
+    
+        $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+        
+        //delete image from ilsognowebsite folder
+        File::delete($IlSognoPath.'/'.$RoomImage);
         
         DB::table('tblRoomPicture')->where('strRoomPictureID', '=', $RoomPictureID)->delete();
         

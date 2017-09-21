@@ -226,6 +226,27 @@
                     @endif
                 </div>
                 <div class="row">
+                    @if(sizeof($BoatInfo) > 0)
+                    <div class="col-md-12">
+                        <h4 class="title text-success">Rented Boats</h4><br>
+                        <table class="table table-responsive">
+                            <thead class="text-success">
+                                <th class="text-center">Boat Name</th>
+                                <th class="text-center">Rate</th>
+                            </thead>
+                            <tbody class="text-center">
+                                @foreach($BoatInfo as $Info)
+                                    <tr>
+                                        <td>{{$Info->strBoatName}}</td>
+                                        <td>{{$Info->dblBoatRate}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
+                </div>
+                <div class="row">
                 </div><br>
                 <div class="row">
                     <div class = "col-md-10">
@@ -240,6 +261,8 @@
                         <p class="paragraphText text-success">Total Items:</p> <p class="paragraphText">{{$TotalItem}}</p><br>
 
                         <p class="paragraphText text-success">Total Rooms:</p> <p class="paragraphText">{{$TotalRoom}}</p><br>
+                        
+                        <p class="paragraphText text-success">Total Boats:</p> <p class="paragraphText">{{$TotalBoat}}</p><br>
 
                         <p class="paragraphText text-success">Total Additional Rooms:</p> <p class="paragraphText">{{$AdditionalRoomAmount}}</p><br>
 
