@@ -454,6 +454,7 @@ Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
 /*----------- REPORTS ----------*/
 
 Route::post('/QueryReports/Print', 'ViewReportController@PrintQueryReport');
+Route::post('/Reservation/Invoice', 'InvoiceController@GenerateInvoice');
 
 /*----------- CHECKOUT ----------*/
 Route::get('/Checkout/{id}', 'ViewResortController@ViewCheckout');

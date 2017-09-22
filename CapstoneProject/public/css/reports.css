@@ -55,14 +55,15 @@ td, th {
 }
 
 th {
+    background-color: #f2f2f2;
     font-size: 14px;
-    text-align: center;
 }
 
 td {
     font-size: 12px;
 }
 
-tr:nth-child(even) {
-    background-color: #f2f2f2;
+.total {
+    font-family: arial, sans-serif;
+    padding-left: 520px;
 }

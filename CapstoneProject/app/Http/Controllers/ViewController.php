@@ -903,12 +903,12 @@ class ViewController extends Controller
     
     public function getReservedBoats($ReservationID){
         $ChosenBoats = DB::table('tblReservationBoat as a')
-                            ->join ('tblBoat as b', 'a.strResBBoatID', '=' , 'b.strBoatID')
-                            ->select('b.strBoatID',
-                                     'b.strBoatName',
-                                     'b.intBoatCapacity')
-                            ->where('strResBReservationID', "=", $ReservationID)
-                            ->get();
+            ->join ('tblBoat as b', 'a.strResBBoatID', '=' , 'b.strBoatID')
+            ->select('b.strBoatID',
+                     'b.strBoatName',
+                     'b.intBoatCapacity')
+            ->where('strResBReservationID', "=", $ReservationID)
+            ->get();
         
         return $ChosenBoats;
     }

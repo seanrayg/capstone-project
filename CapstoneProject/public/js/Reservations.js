@@ -414,3 +414,19 @@ function SendPayment(field, dataType, holder){
     }
 }
 
+function setReservationID() {
+
+    document.getElementById("ReservationID").value = document.getElementById("i-ReservationID").innerHTML;
+
+    if(document.getElementById("i-PackageAvailed").innerHTML == 'None') {
+
+        document.getElementById("IsPackaged").value = 0;
+
+    }else {
+
+        document.getElementById("IsPackaged").value = 1;
+
+    }
+
+}
+

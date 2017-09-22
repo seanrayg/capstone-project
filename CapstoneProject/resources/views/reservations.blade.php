@@ -373,6 +373,14 @@
                         <div class="row">
                             <div class="col-xs-1"></div>
                             <div class="col-xs-10">
+                                <br>
+                                <form method="POST" action="/Reservation/Invoice" onsubmit="setReservationID()" target="_blank">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="InvoiceType" value="Reservation">
+                                    <input type="hidden" name="ReservationID" id="ReservationID">
+                                    <input type="hidden" name="IsPackaged" id="IsPackaged">
+                                    <button type="submit" class="btn btn-success">Generate Invoice</button>
+                                </form>
                                 <small><h4>Reservation Info:</h4></small>
                                 <p class="paragraphText text-primary">Reservation ID:</p> <p class="paragraphText" id="i-ReservationID"></p><br>
                                 <p class="paragraphText text-primary">Reservation Code:</p> <p class="paragraphText" id="i-ReservationCode"></p><br>

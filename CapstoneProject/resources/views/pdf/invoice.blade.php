@@ -25,14 +25,14 @@
 		<div class="column-left">
 			<div style="padding-left: 20px;">
 				<label class="parent">Billed To</label><br>
-				<label id="CustomerName">Sean Ray T. Garcia</label>
+				<label id="CustomerName">{{ $CustomerName }}</label>
 			</div>
 		</div>
 		<div class="column-right">
 			<label class="parent">Invoice Number</label><br>
 			<label id="CustomerName">00000000</label><br>
 			<label class="parent">Date Of Issue</label><br>
-			<label id="CustomerName">January 1, 2001</label>
+			<label id="CustomerName">{{ $date }}</label>
 		</div>
 	</div>
 
@@ -43,22 +43,42 @@
 	<hr style="clear: left;">
 
 	<table>
-	  <tr>
-	    <th>Description</th>
-	    <th>Price/Rate</th>
-	    <th>Qty</th>
-	    <th>Amount</th>
-	  </tr>
-	  <tbody>
-	  	<tr>
-	  		<td>Room Venice</td>
-	  		<td>1200</td>
-	  		<td>1</td>
-	  		<td>1200</td>
-	  	</tr>
-	  </tbody>
+	<tr>
+		<th>Description</th>
+		<th>Price/Rate</th>
+		<th>Qty</th>
+		<th>Amount</th>
+	</tr>
+	<tbody>
+		@if($InvoiceType == 'Reservation')
+		  	@foreach($rooms as $room)
+				<tr>
+					<td style="width: 60%;">{{ $room->strRoomType }}</td>
+					<td style="width: 20%;">{{ $room->dblRoomRate }}</td>
+					<td style="width: 20%;">{{ $room->quantity }}</td>
+					<td style="width: 20%;">{{ $room->amount }}</td>
+				</tr>
+		  	@endforeach
+		  	@foreach($fees as $fee)
+				<tr>
+					<td>{{ $fee->name }}</td>
+					<td>{{ $fee->price }}</td>
+					<td>{{ $fee->quantity }}</td>
+					<td>{{ $fee->amount }}</td>
+				</tr>
+		  	@endforeach
+		  	@foreach($boats as $boat)
+				<tr>
+					<td>{{ $boat->strBoatName }}</td>
+					<td>{{ $boat->dblBoatRate }}</td>
+					<td>{{ $boat->quantity }}</td>
+					<td>{{ $boat->amount }}</td>
+				</tr>
+		  	@endforeach
+		@endif
+	</tbody>
 	</table>
 
-	<div>hehe</div>
+	<label class="total">Total Due: {{ $total }}</label>
 </body>
 </html>
