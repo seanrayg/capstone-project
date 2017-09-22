@@ -25,6 +25,33 @@ class ViewDashboardController extends Controller
             Artisan::call('db:seed');
         }
         
+        $WebContents = DB::table('tblWebContent')->get();
+       
+        if(sizeof($WebContents) == 0){
+            
+            $arrHomePageImage = collect(['HomeBodyImage1' => '/img/filler-1.jpg', 'HomeBodyImage2' => '/img/filler-2.jpg', 'HomeBodyImage3' => '/img/filler-3.jpg']);
+            
+            $arrAboutDescription = collect(['AboutDescription1' => '/img/filler-1.jpg', 'AboutDescription2' => '/img/filler-2.jpg', 'AboutDescription3' => '/img/filler-3.jpg']);
+            
+            $jsonAboutDescription = $arrAboutDescription->toJson();
+            
+            $jsonHomePageImage = $arrHomePageImage->toJson();
+         
+            $arrContentInsert = array(
+                array('strPageTitle' => 'Home Page', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-1.jpeg', 'strBodyImage' => $jsonHomePageImage, 'strBodyDescription' => 'Body Description'),
+                array('strPageTitle' => 'Accommodation', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-2.jpg', 'strBodyImage' => null, 'strBodyDescription' => null),
+                array('strPageTitle' => 'Packages', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-6.jpg', 'strBodyImage' => null, 'strBodyDescription' => null),
+                array('strPageTitle' => 'Activities', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-7.jpg', 'strBodyImage' => null, 'strBodyDescription' => null),
+                array('strPageTitle' => 'Location', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-3.jpg', 'strBodyImage' => null, 'strBodyDescription' => null),
+                array('strPageTitle' => 'About Us', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-4.jpg', 'strBodyImage' => null, 'strBodyDescription' => $jsonAboutDescription),
+                array('strPageTitle' => 'Contact Us', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-5.jpg', 'strBodyImage' => null, 'strBodyDescription' => null)
+            );
+            
+     
+            
+             DB::table('tblWebContent')->insert($arrContentInsert);
+        }
+    
         $ArrivingGuests = DB::table('tblReservationDetail as a')
                             ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
                             ->select('a.strReservationID',

@@ -153,6 +153,26 @@ function getBillBreakdown(){
                 }
             }
             
+            if(data.BoatInfo.length == 0){
+                document.getElementById("BoatsDiv").style.display = "none";
+            }
+            else{
+                document.getElementById("BoatsDiv").style.display = "block";
+                tableRef = document.getElementById('tblBillBoat').getElementsByTagName('tbody')[0];
+
+                for(var x = 0; x < data.BoatInfo.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+
+                    newCell1.innerHTML = data.BoatInfo[x].strBoatName;
+                    newCell2.innerHTML = data.BoatInfo[x].dblBoatRate;
+
+                }
+            }
+            
+            
             if(data.ExtendStay.length == 0){
                 document.getElementById("ExtendDiv").style.display = "none";
             }

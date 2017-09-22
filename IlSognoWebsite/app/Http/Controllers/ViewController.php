@@ -10,8 +10,45 @@ class ViewController extends Controller
 {
     //
     
+    //Home Page
+    public function getHomePage(){
+        //HOME PAGE
+        $HomePageContents = DB::table('tblWebContent')->where('strPageTitle', 'Home Page')->get();
+ 
+        $HomePagePictures;
+        $tempHomePagePictures;
+        foreach($HomePageContents as $Content){
+            $tempHomePagePictures = json_decode($Content->strBodyImage, true);
+        }
+        $arrHomePictures = [];
+        foreach($tempHomePagePictures as $Picture){
+            $arrHomePictures[sizeof($arrHomePictures)] = $Picture;
+        }
+        
+        $HomePagePictures = DB::table('tblWebContent')
+                        ->select(DB::raw('strHeaderDescription as HomeBodyImage1'),
+                                DB::raw('strBodyDescription as HomeBodyImage2'),
+                                DB::raw('strHeaderImage as HomeBodyImage3'))
+                        ->where('strPageTitle', 'Home Page')
+                        ->get();
+        
+        foreach($HomePagePictures as $Picture){
+            $Picture->HomeBodyImage1 = $arrHomePictures[0];
+            $Picture->HomeBodyImage2 = $arrHomePictures[1];
+            $Picture->HomeBodyImage3 = $arrHomePictures[2];
+            break;
+        }
+        
+        
+        return view('index', compact('HomePageContents', 'HomePagePictures'));
+    }
+    
+    
     //Accomodation
     public function getRooms(){
+        
+        $AccommodationContents = DB::table('tblWebContent')->where('strPageTitle', 'Accommodation')->get();
+        
         $RoomTypes = DB::table('tblRoomType as a')
             ->join ('tblRoomRate as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
             ->select('a.strRoomTypeID', 
@@ -22,10 +59,13 @@ class ViewController extends Controller
                      'a.intRoomTAirconditioned', 
                      'b.dblRoomRate', 
                      'a.strRoomDescription',
-                     'a.intRoomTCategory')
+                     'a.intRoomTCategory',
+                     DB::raw("b.dtmRoomRateAsOf AS RoomImage"))
             ->where([['b.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],
                     ['a.intRoomTDeleted',"=", "1"]])
             ->get();
+        
+       
         
         foreach ($RoomTypes as $RoomType) {
 
@@ -42,14 +82,71 @@ class ViewController extends Controller
             else{
                 $RoomType->intRoomTCategory = 'Cottage';
             }
-
+            
+            $RoomPicture = DB::table('tblRoomPicture')
+            ->where('strRoomPRoomTID', '=', $RoomType->strRoomTypeID)
+            ->pluck("blobRoomPPicture")
+            ->first();
+            
+            if(sizeof($RoomPicture) == 0){
+                $RoomType->RoomImage = "/Accommodation/DefaultImage.png";
+            }
+            else{
+                $RoomType->RoomImage = $RoomPicture;
+            }
         }
 
-        return view('Accomodation', compact('RoomTypes'));
+
+        return view('Accomodation', compact('RoomTypes', 'AccommodationContents'));
+    }
+    
+    public function getLocation(){
+        $LocationContents = DB::table('tblWebContent')->where('strPageTitle', 'Location')->get();
+        
+        return view('Location', compact('LocationContents'));
+    }
+    
+    public function getAboutUs(){
+        $AboutContents = DB::table('tblWebContent')->where('strPageTitle', 'About Us')->get();
+        
+        $AboutDescriptions;
+        $tempAboutDescriptions;
+        foreach($AboutContents as $Content){
+            $tempAboutDescriptions = json_decode($Content->strBodyDescription, true);
+        }
+        $arrAboutDescription = [];
+        foreach($tempAboutDescriptions as $Description){
+            $arrAboutDescription[sizeof($arrAboutDescription)] = $Description;
+        }
+        
+        $AboutDescriptions = DB::table('tblWebContent')
+                        ->select(DB::raw('strHeaderDescription as AboutDescription1'),
+                                DB::raw('strBodyImage as AboutDescription2'),
+                                DB::raw('strHeaderImage as AboutDescription3'))
+                        ->where('strPageTitle', 'About Us')
+                        ->get();
+        
+        foreach($AboutDescriptions as $Descriptions){
+            $Descriptions->AboutDescription1 = $arrAboutDescription[0];
+            $Descriptions->AboutDescription2 = $arrAboutDescription[1];
+            $Descriptions->AboutDescription3 = $arrAboutDescription[2];
+            break;
+        }
+        
+        return view('AboutUs', compact('AboutContents', 'AboutDescriptions'));
+    }
+    
+    public function getContactUs(){
+        
+        $ContactsContents = DB::table('tblWebContent')->where('strPageTitle', 'Contact Us')->get();
+        
+        return view('ContactUs', compact('ContactsContents'));
     }
     
     //Packages
     public function getPackages(){
+        $PackagesContents = DB::table('tblWebContent')->where('strPageTitle', 'Packages')->get();
+        
         $Packages = DB::table('tblPackage as a')
                     ->join ('tblPackagePrice as b', 'a.strPackageID', '=' , 'b.strPackageID')
                     ->select('a.strPackageID',
@@ -107,11 +204,13 @@ class ViewController extends Controller
                         ->where('c.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)"))
                         ->get();
         
-        return view('Packages', compact('Packages', 'PackageRoomInfo', 'PackageActivityInfo', 'PackageItemInfo', 'PackageFeeInfo'));
+        return view('Packages', compact('Packages', 'PackageRoomInfo', 'PackageActivityInfo', 'PackageItemInfo', 'PackageFeeInfo', 'PackagesContents'));
     }
     
     //Activities
     public function getActivities(){
+        $ActivitiesContents = DB::table('tblWebContent')->where('strPageTitle', 'Activities')->get();
+        
         $Activities = DB::table('tblBeachActivity as a')
                 ->join ('tblBeachActivityRate as b', 'a.strBeachActivityID', '=' , 'b.strBeachActivityID')
                 ->select('a.strBeachActivityID',
@@ -134,7 +233,7 @@ class ViewController extends Controller
 
         }
         
-        return view('Activities', compact('Activities'));
+        return view('Activities', compact('Activities', 'ActivitiesContents'));
     }
     
     //Packages Room AJAX

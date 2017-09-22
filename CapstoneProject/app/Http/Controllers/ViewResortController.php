@@ -1335,6 +1335,17 @@ class ViewResortController extends Controller
                 $DaysOfStay = 1;
             }
             
+            $UsedBoats = DB::table('tblBoat as a')
+                         ->join ('tblBoatRate as b', 'a.strBoatID', '=', 'b.strBoatID')
+                         ->join ('tblBoatSchedule as c', 'c.strBoatSBoatID', '=', 'a.strBoatID')
+                         ->where([['c.intBoatSPayment', '=', '0'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")], ['strBoatSReservationID', '=', $Info->strReservationID]])
+                         ->pluck('b.dblBoatRate')
+                         ->toArray();
+            
+            for($x = 0; $x < sizeof($UsedBoats); $x++){
+                $TotalBoat += $UsedBoats[$x];
+            }
+            
             //Package Computation
             $PackageExist = DB::table('tblAvailPackage')
                             ->where('strAvailPReservationID', '=', $Info->strReservationID)
@@ -1471,7 +1482,7 @@ class ViewResortController extends Controller
             
             //Compute Boat Rental
             
-            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount;
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount + $TotalBoat;
     
         }
 
@@ -1500,6 +1511,14 @@ class ViewResortController extends Controller
                              'a.strItemName')
                     ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],['c.strRentedIReservationID',"=", $ReservationID],['c.intRentedIPayment',"=", 0]])
                     ->get();
+        
+        $BoatInfo = DB::table('tblBoat as a')
+                         ->join ('tblBoatRate as b', 'a.strBoatID', '=', 'b.strBoatID')
+                         ->join ('tblBoatSchedule as c', 'c.strBoatSBoatID', '=', 'a.strBoatID')
+                         ->select('a.strBoatName',
+                                  'b.dblBoatRate')
+                         ->where([['c.intBoatSPayment', '=', '0'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")], ['strBoatSReservationID', '=', $ReservationID]])
+                         ->get();
         
         $ActivityInfo = DB::table('tblBeachActivity as a')
                     ->join ('tblBeachActivityRate as b', 'a.strBeachActivityID', '=' , 'b.strBeachActivityID')
@@ -1622,7 +1641,7 @@ class ViewResortController extends Controller
             }
         }
         
-        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo, 'AdditionalRooms' => $AdditionalRooms, 'UpgradeRooms' => $UpgradeRooms,'PackageInfo' => $PackageInfo, 'ExtendStay' => $ExtendStay]);
+        return response()->json(['RoomInfo' => $RoomInfo, 'ItemInfo' => $ItemInfo, 'ActivityInfo' => $ActivityInfo, 'FeeInfo' => $FeeInfo, 'MiscellaneousInfo' => $MiscellaneousInfo, 'AdditionalRooms' => $AdditionalRooms, 'UpgradeRooms' => $UpgradeRooms,'PackageInfo' => $PackageInfo, 'ExtendStay' => $ExtendStay, 'BoatInfo' => $BoatInfo]);
     }
     
     
@@ -1678,6 +1697,17 @@ class ViewResortController extends Controller
             
             if($DaysOfStay == 0){
                 $DaysOfStay = 1;
+            }
+            
+            $UsedBoats = DB::table('tblBoat as a')
+                         ->join ('tblBoatRate as b', 'a.strBoatID', '=', 'b.strBoatID')
+                         ->join ('tblBoatSchedule as c', 'c.strBoatSBoatID', '=', 'a.strBoatID')
+                         ->where([['c.intBoatSPayment', '=', '0'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")], ['strBoatSReservationID', '=', $Info->strReservationID]])
+                         ->pluck('b.dblBoatRate')
+                         ->toArray();
+            
+            for($x = 0; $x < sizeof($UsedBoats); $x++){
+                $TotalBoat += $UsedBoats[$x];
             }
             
             //Package Computation
@@ -1816,7 +1846,7 @@ class ViewResortController extends Controller
             
             //Compute Boat Rental
             
-            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount;
+            $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount + $TotalBoat;
             
         }
         
@@ -1870,6 +1900,14 @@ class ViewResortController extends Controller
                     ->orWhere('strPayTypeID', '=', 7)
                     ->orWhere('strPayTypeID', '=', 10)
                     ->get();
+        
+        $BoatInfo = DB::table('tblBoat as a')
+                     ->join ('tblBoatRate as b', 'a.strBoatID', '=', 'b.strBoatID')
+                     ->join ('tblBoatSchedule as c', 'c.strBoatSBoatID', '=', 'a.strBoatID')
+                     ->select('a.strBoatName',
+                              'b.dblBoatRate')
+                     ->where([['c.intBoatSPayment', '=', '0'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")], ['strBoatSReservationID', '=', $ReservationID]])
+                     ->get();
         
         foreach($MiscellaneousInfo as $Info){
             if($Info->strPaymentType == "Time Penalty Bill"){
@@ -1999,7 +2037,7 @@ class ViewResortController extends Controller
             }
         }
         
-        return view('Checkout', compact('ReservationInfo', 'RoomInfo', 'ItemInfo', 'ActivityInfo', 'FeeInfo', 'MiscellaneousInfo', 'AdditionalRooms', 'UpgradeRooms', 'ExtendStay', 'PackageInfo', 'DaysOfStay', 'Payment', 'DownPayment', 'InitialBill' ,'InitialPayment', 'TotalPenalties', 'TotalFee', 'TotalActivity', 'TotalItem', 'TotalRoom', 'AdditionalRoomAmount', 'UpgradeRoomAmount', 'PacakgePayment', 'ExtendStayAmount'));
+        return view('Checkout', compact('ReservationInfo', 'RoomInfo', 'ItemInfo', 'ActivityInfo', 'FeeInfo', 'MiscellaneousInfo', 'AdditionalRooms', 'UpgradeRooms', 'ExtendStay', 'PackageInfo', 'DaysOfStay', 'Payment', 'DownPayment', 'InitialBill' ,'InitialPayment', 'TotalPenalties', 'TotalFee', 'TotalActivity', 'TotalItem', 'TotalRoom', 'AdditionalRoomAmount', 'UpgradeRoomAmount', 'PackagePayment', 'ExtendStayAmount', 'BoatInfo', 'TotalBoat'));
     }
     
 }

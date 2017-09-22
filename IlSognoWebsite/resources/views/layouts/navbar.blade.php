@@ -14,7 +14,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="/Accomodation">
-                        <p>Accomodation</p>
+                        <p>Accommodation</p>
                     </a>
                 </li>
                 <li class="nav-item">

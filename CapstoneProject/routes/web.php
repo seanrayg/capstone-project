@@ -32,6 +32,8 @@ Route::get('/ItemRental', 'ViewResortController@getAvailableItems');
 
 Route::get('/Activities', 'ViewResortController@getAvailableActivities');
 
+Route::get('/Deductions', 'ViewResortController@ViewDeductions');
+
 Route::get('/Reports', function () {
     return view('Reports');
 });
@@ -50,7 +52,7 @@ Route::get('/Fees', 'ViewResortController@ViewFees');
 
 Route::get('/ContactInformation', 'ViewUtilitiesController@ViewContact');
 
-
+Route::post('/UserLogin', 'UtilitiesController@AuthenticateUser');
 
 /*-------------- MAINTENANCE --------------*/
 
@@ -445,11 +447,31 @@ Route::post('Contact/Delete', 'UtilitiesController@deleteContactInfo');
 /*---------- CONTENT MANAGEMENT ---------*/
 Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement');
 
+Route::post('/Utilities/Web/HomePage', 'UtilitiesController@saveHomePage');
+
+Route::post('/Utilities/Web/Accommodation', 'UtilitiesController@saveAccommodation');
+
+Route::post('/Utilities/Web/Packages', 'UtilitiesController@savePackages');
+
+Route::post('/Utilities/Web/Activities', 'UtilitiesController@saveActivities');
+
+Route::post('/Utilities/Web/Contacts', 'UtilitiesController@saveContacts');
+
+Route::post('/Utilities/Web/Location', 'UtilitiesController@saveLocation');
+
+Route::post('/Utilities/Web/AboutUs', 'UtilitiesController@saveAboutUs');
+
 
 
 /*---------- SYSTEM USERS ------------*/
 
 Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
+
+Route::post('/Users/Add', 'UtilitiesController@AddUser');
+
+Route::post('/Users/Edit', 'UtilitiesController@EditUser');
+
+Route::post('/Users/Delete', 'UtilitiesController@DeleteUser');
 
 /*----------- REPORTS ----------*/
 

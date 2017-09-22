@@ -597,6 +597,7 @@
                             <form method="post" action="/Maintenance/RoomType/Image/Add" enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="AddImageRoomTypeID" id="AddImageRoomTypeID">
+
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label class="control-label">Image</label>

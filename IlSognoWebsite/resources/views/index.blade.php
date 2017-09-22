@@ -9,8 +9,9 @@
 @endsection
 
 @section('content')
+@foreach($HomePageContents as $Content)
 <div class="page-header clear-filter" filter-color="orange">
-    <div class="page-header-image" data-parallax="true" style="background-image: url('/img/header-1.jpeg');">
+    <div class="page-header-image" data-parallax="true" style="background-image: url('{{$Content->strHeaderImage}}');">
     </div>
     <div class="container">
         <div class="content-center brand">
@@ -27,38 +28,39 @@
             <div class="row">
                 <div class="col-md-8 offset-md-2 text-center">
                     <h2 class="title">Welcome to Il Sogno!</h2>
-                    <h5 class="description">Sed at tortor ut eros suscipit tincidunt. Sed blandit massa arcu, nec mattis mi commodo sit amet. Nam at blandit ex. Fusce ex libero, tempus vel tincidunt nec, volutpat ut est. Sed viverra tempor lacus id vulputate.</h5>
+                    <h5 class="description">{{$Content->strHeaderDescription}}</h5>
                 </div>
             </div>
+@endforeach
             <div class="separator separator-primary"></div>
             <div class="section-story-overview">
+                @foreach($HomePagePictures as $Picture)
                 <div class="row">
                     <div class="col-md-6">
                         <div class="image-container image-left">
                             <!-- First image on the left side -->
-                            <img src="/img/filler-1.jpg" alt="" class="rounded img-fluid img-raised">
+                            <img src="{{$Picture->HomeBodyImage1}}" alt="" class="rounded img-fluid img-raised" style="max-height: 400px; max-width: 700px">
 
                         </div>
                         <div class="col-md-12">
                         <!-- Second image on the left side of the article -->
                         <div class="image-container image-right">
-                            <img src="/img/filler-2.jpg" alt="" class="img-fluid rounded img-raised">
+                            <img src="{{$Picture->HomeBodyImage2}}" alt="" class="img-fluid rounded img-raised" style="max-height: 400px; max-width: 700px">
                         </div>
                         </div>
                     </div>
                     <div class="col-md-5">
                         <!-- First image on the right side, above the article -->
                         <div class="image-container image-right">
-                            <img src="/img/filler-3.jpg" alt="" class="rounded img-fluid img-raised">
+                            <img src="{{$Picture->HomeBodyImage3}}" alt="" class="rounded img-fluid img-raised" style="max-height: 400px; max-width: 700px">
                         </div>
+                @endforeach
                         <div class="card text-center place-on-top">
                             <div class="description-center">
                                 <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ornare, dui eu interdum venenatis, mi purus viverra ex, vitae tincidunt orci urna a nibh. Pellentesque in mattis tellus, iaculis accumsan diam. Cras nec diam vitae orci maximus aliquam at nec dui. Morbi vitae molestie quam. Vivamus vitae eleifend massa, non venenatis risus. Integer commodo a est a ornare. Duis placerat venenatis sem, ac maximus sem varius vel. Aliquam cursus ipsum eu est convallis dignissim. Mauris iaculis sem vitae lacus molestie tempus.
-                                </p>
-                                <p>
-                                    Quisque finibus massa quis sollicitudin tincidunt. Mauris sodales imperdiet egestas. Morbi sed augue id orci porta malesuada non nec orci. Ut congue dui sodales odio placerat, quis facilisis sapien sollicitudin. Morbi lobortis ipsum et lorem malesuada, sit amet venenatis tellus varius. Vestibulum at lacus vitae odio ornare lacinia. Aenean viverra mattis sapien. Ut at mi consectetur, feugiat justo sit amet, dictum quam.
-                                </p>
+                                @foreach($HomePageContents as $Content)
+                                <p>{{$Content->strBodyDescription}}</p>
+                                @endforeach
                             </div>
                         </div>
 
