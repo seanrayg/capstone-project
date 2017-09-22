@@ -115,7 +115,84 @@ class ViewUtilitiesController extends Controller
     }
     
     public function ViewSystemUsers(){
-        return View('SystemUsers');
+        $SystemUsers = DB::table('tblUser')->get();
+        
+        if(sizeof($SystemUsers) != 0){
+            $UserID = $this->SmartCounter('tblUser', 'strUserID');
+        }
+        else{
+            $UserID = "USER1";
+        }
+        
+        $SystemUsers = DB::table('tblUser')
+                ->where('intUserStatus', '!=', '0')
+                ->get();
+        
+        foreach($SystemUsers as $User){
+            if($User->intRoom == "1"){
+                $User->intRoom = "Yes";
+            }
+            else{
+                $User->intRoom = "No";
+            }
+            
+            if($User->intBoat == "1"){
+                $User->intBoat = "Yes";
+            }
+            else{
+                $User->intBoat = "No";
+            }
+            
+            if($User->intItem == "1"){
+                $User->intItem = "Yes";
+            }
+            else{
+                $User->intItem = "No";
+            }
+            
+            if($User->intActivity == "1"){
+                $User->intActivity = "Yes";
+            }
+            else{
+                $User->intActivity = "No";
+            }
+            
+            if($User->intFee == "1"){
+                $User->intFee = "Yes";
+            }
+            else{
+                $User->intFee = "No";
+            }
+            
+            if($User->intMaintenance == "1"){
+                $User->intMaintenance = "Yes";
+            }
+            else{
+                $User->intMaintenance = "No";
+            }
+            
+            if($User->intBilling == "1"){
+                $User->intBilling = "Yes";
+            }
+            else{
+                $User->intBilling = "No";
+            }
+            
+            if($User->intUtilities == "1"){
+                $User->intUtilities = "Yes";
+            }
+            else{
+                $User->intUtilities = "No";
+            }
+            
+            if($User->intReports == "1"){
+                $User->intReports = "Yes";
+            }
+            else{
+                $User->intReports = "No";
+            }
+        }
+        return View('SystemUsers', compact('UserID', 'SystemUsers'));
     }
     
     /*----------- MISC ----------------*/

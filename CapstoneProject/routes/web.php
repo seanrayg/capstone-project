@@ -52,7 +52,7 @@ Route::get('/Fees', 'ViewResortController@ViewFees');
 
 Route::get('/ContactInformation', 'ViewUtilitiesController@ViewContact');
 
-
+Route::post('/UserLogin', 'UtilitiesController@AuthenticateUser');
 
 /*-------------- MAINTENANCE --------------*/
 
@@ -466,6 +466,12 @@ Route::post('/Utilities/Web/AboutUs', 'UtilitiesController@saveAboutUs');
 /*---------- SYSTEM USERS ------------*/
 
 Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
+
+Route::post('/Users/Add', 'UtilitiesController@AddUser');
+
+Route::post('/Users/Edit', 'UtilitiesController@EditUser');
+
+Route::post('/Users/Delete', 'UtilitiesController@DeleteUser');
 
 /*----------- REPORTS ----------*/
 

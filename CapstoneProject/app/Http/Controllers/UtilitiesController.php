@@ -534,5 +534,174 @@ class UtilitiesController extends Controller
             ->where('strPageTitle', '=', $PageTitle)
             ->update($updateData);
     }
+    
+    
+    /*------------ SYSTEM USERS -------------*/
+    
+    public function ChangeValue($valueToChange){
+        if($valueToChange == "on"){
+            $valueToChange = 1;
+        }
+        else{
+            $valueToChange = 0;
+        }
+        
+        return $valueToChange;
+    }
+    
+    public function addUser(Request $req){
+    
+        $UserID = trim($req->input('UserID'));
+        $Username = trim($req->input('Username'));
+        $Password = trim($req->input('UserPassword'));
+        
+        $ToggleRoom = $req->input('ToggleRoom');
+        $ToggleBoat = $req->input('ToggleBoat');
+        $ToggleFee = $req->input('ToggleFee');
+        $ToggleItem = $req->input('ToggleItem');
+        $ToggleActivity = $req->input('ToggleActivity');
+        $ToggleBilling = $req->input('ToggleBilling');
+        $ToggleMaintenance = $req->input('ToggleMaintenance');
+        $ToggleUtilities = $req->input('ToggleUtilities');
+        $ToggleReports = $req->input('ToggleReports');
+        
+        $UsernameError = DB::table('tblUser')->where([['intUserStatus',"!=", '0'],['strUsername', $Username]])->first();
+                
+        if($UsernameError){
+            \Session::flash('duplicate_message','User already exists. Please enter a new one to continue.');
+            return redirect('/SystemUsers')->withInput();
+        }
+        else{
+            $ToggleRoom = $this->ChangeValue($ToggleRoom);
+            $ToggleBoat = $this->ChangeValue($ToggleBoat);
+            $ToggleFee = $this->ChangeValue($ToggleFee);
+            $ToggleItem = $this->ChangeValue($ToggleItem);
+            $ToggleActivity = $this->ChangeValue($ToggleActivity);
+            $ToggleBilling = $this->ChangeValue($ToggleBilling);
+            $ToggleMaintenance = $this->ChangeValue($ToggleMaintenance);
+            $ToggleUtilities = $this->ChangeValue($ToggleUtilities);
+            $ToggleReports = $this->ChangeValue($ToggleReports);
+            
+            $data = array('strUserID'=>$UserID,
+                         'strUsername'=>$Username,
+                         'strUserPassword'=>$Password,
+                         'intUserStatus'=>1,
+                         'intRoom' => $ToggleRoom,
+                         'intBoat' => $ToggleBoat,
+                         'intItem' => $ToggleItem,
+                         'intActivity' => $ToggleActivity,
+                         'intFee' => $ToggleFee,
+                         'intMaintenance' => $ToggleMaintenance,
+                         'intBilling' => $ToggleBilling,
+                         'intUtilities' => $ToggleUtilities,
+                         'intReports' => $ToggleReports);
 
+            DB::table('tblUser')->insert($data);
+            
+            \Session::flash('flash_message','Successfully added a user!');
+        
+            return redirect('SystemUsers');
+        }
+        
+    }
+    
+    public function EditUser(Request $req){
+   
+        $UserID = trim($req->input('EditUserID'));
+        $Username = trim($req->input('EditUsername'));
+        $Password = trim($req->input('EditUserPassword'));
+        $OldPassword = trim($req->input('EditOldPassword'));
+        $OldUsername = trim($req->input('EditOldUsername'));
+        
+        $ToggleRoom = $req->input('EditToggleRoom');
+        $ToggleBoat = $req->input('EditToggleBoat');
+        $ToggleFee = $req->input('EditToggleFee');
+        $ToggleItem = $req->input('EditToggleItem');
+        $ToggleActivity = $req->input('EditToggleActivity');
+        $ToggleBilling = $req->input('EditToggleBilling');
+        $ToggleMaintenance = $req->input('EditToggleMaintenance');
+        $ToggleUtilities = $req->input('EditToggleUtilities');
+        $ToggleReports = $req->input('EditToggleReports');
+        
+        $duplicateError = false;
+        if($OldUsername != $Username){
+            $UsernameError = DB::table('tblUser')->where([['intUserStatus',"!=", '0'],['strUsername', $Username]])->first();
+            if($UsernameError){
+                $duplicateError = true; 
+                \Session::flash('duplicate_message','User already exists. Please enter a new one to continue.');
+                return redirect('/SystemUsers')->withInput();
+            }
+        }
+        
+        if(!($duplicateError)){
+
+            $ToggleRoom = $this->ChangeValue($ToggleRoom);
+            $ToggleBoat = $this->ChangeValue($ToggleBoat);
+            $ToggleFee = $this->ChangeValue($ToggleFee);
+            $ToggleItem = $this->ChangeValue($ToggleItem);
+            $ToggleActivity = $this->ChangeValue($ToggleActivity);
+            $ToggleBilling = $this->ChangeValue($ToggleBilling);
+            $ToggleMaintenance = $this->ChangeValue($ToggleMaintenance);
+            $ToggleUtilities = $this->ChangeValue($ToggleUtilities);
+            $ToggleReports = $this->ChangeValue($ToggleReports);
+            
+            $NewPassword;
+            if($Password != null){
+                $NewPassword = $Password;
+            }
+            else{
+                $NewPassword = $OldPassword;
+            }
+            
+            $updateData = array('strUsername'=>$Username,
+                                 'strUserPassword'=>$NewPassword,
+                                 'intUserStatus'=>1,
+                                 'intRoom' => $ToggleRoom,
+                                 'intBoat' => $ToggleBoat,
+                                 'intItem' => $ToggleItem,
+                                 'intActivity' => $ToggleActivity,
+                                 'intFee' => $ToggleFee,
+                                 'intMaintenance' => $ToggleMaintenance,
+                                 'intBilling' => $ToggleBilling,
+                                 'intUtilities' => $ToggleUtilities,
+                                 'intReports' => $ToggleReports);
+            
+            DB::table('tblUser')
+                ->where('strUserID', '=', $UserID)
+                ->update($updateData);
+            
+            \Session::flash('flash_message','Successfully updated the user!');
+        
+            return redirect('SystemUsers');
+        }
+    }
+    
+    public function DeleteUser(Request $req){
+        $UserID = trim($req->input('DeleteUserID'));
+        
+        $updateData = array('intUserStatus'=>0);
+
+        DB::table('tblUser')
+            ->where('strUserID', '=', $UserID)
+            ->update($updateData);
+        
+        \Session::flash('flash_message','Successfully deleted the user!');
+        
+        return redirect('SystemUsers');
+    }
+    
+    public function AuthenticateUser(Request $req){
+        $Username = trim($req->input('Username'));
+        $Password = trim($req->input('Password'));
+        
+        $UserInfo = DB::table('tblUser')->where([['intUserStatus',"!=", '0'],['strUsername', $Username], ['strUserPassword', $Password]])->first();
+    
+        if($UserInfo == null){
+            \Session::flash('duplicate_message','User does not exist');
+            return redirect('/');
+        }
+        else{
+            return redirect('/Dashboard');
+        }
+    }
 }
