@@ -459,6 +459,8 @@ Route::post('/Utilities/Web/Contacts', 'UtilitiesController@saveContacts');
 
 Route::post('/Utilities/Web/Location', 'UtilitiesController@saveLocation');
 
+Route::post('/Utilities/Web/AboutUs', 'UtilitiesController@saveAboutUs');
+
 
 
 /*---------- SYSTEM USERS ------------*/

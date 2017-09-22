@@ -84,7 +84,34 @@ class ViewUtilitiesController extends Controller
         //CONTACT US
         $LocationContents = DB::table('tblWebContent')->where('strPageTitle', 'Location')->get();
         
-        return View('ContentManagement', compact('HomePageContents', 'HomePagePictures', 'AccommodationContents', 'PackagesContents', 'ActivitiesContents', 'ContactsContents', 'LocationContents'));
+        //ABOUT US
+        $AboutContents = DB::table('tblWebContent')->where('strPageTitle', 'About Us')->get();
+        
+        $AboutDescriptions;
+        $tempAboutDescriptions;
+        foreach($AboutContents as $Content){
+            $tempAboutDescriptions = json_decode($Content->strBodyDescription, true);
+        }
+        $arrAboutDescription = [];
+        foreach($tempAboutDescriptions as $Description){
+            $arrAboutDescription[sizeof($arrAboutDescription)] = $Description;
+        }
+        
+        $AboutDescriptions = DB::table('tblWebContent')
+                        ->select(DB::raw('strHeaderDescription as AboutDescription1'),
+                                DB::raw('strBodyImage as AboutDescription2'),
+                                DB::raw('strHeaderImage as AboutDescription3'))
+                        ->where('strPageTitle', 'About Us')
+                        ->get();
+        
+        foreach($AboutDescriptions as $Descriptions){
+            $Descriptions->AboutDescription1 = $arrAboutDescription[0];
+            $Descriptions->AboutDescription2 = $arrAboutDescription[1];
+            $Descriptions->AboutDescription3 = $arrAboutDescription[2];
+            break;
+        }
+
+        return View('ContentManagement', compact('HomePageContents', 'HomePagePictures', 'AccommodationContents', 'PackagesContents', 'ActivitiesContents', 'ContactsContents', 'LocationContents', 'AboutContents', 'AboutDescriptions'));
     }
     
     public function ViewSystemUsers(){

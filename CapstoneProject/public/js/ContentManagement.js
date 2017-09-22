@@ -48,6 +48,10 @@ $( document ).ready(function() {
     $("#LocationBody").change(function(){
         readURL(this, '#LocationBodyPicture');
     });
+    
+    $("#AboutUsHeader").change(function(){
+        readURL(this, '#AboutUsPicture');
+    });
 });
 
 

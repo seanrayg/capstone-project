@@ -95,6 +95,9 @@ class UtilitiesController extends Controller
         return redirect('ContactInformation');
     }
     
+    
+    /*------------ CONTENT MANAGEMENT ---------*/
+    
     public function saveHomePage(Request $req){
         $HeaderImage = Input::file('HomePageHeader');
         $BodyImage1 = Input::file('HomeBodyImage1');
@@ -102,7 +105,7 @@ class UtilitiesController extends Controller
         $BodyImage3 = Input::file('HomeBodyImage3');
         $HeaderDescription = trim($req->input('HomePageHeaderDesc'));
         $BodyDescription = trim($req->input('HomePageBodyDesc'));
-        
+
         if($HeaderImage != null){
             $this->removeImage("Home Page");
             
@@ -119,41 +122,156 @@ class UtilitiesController extends Controller
             $HeaderImagePath = "/img/" . $HeaderImage->getClientOriginalName();
             
             $updateData = array('strHeaderImage' => $HeaderImagePath);
+            
+            DB::table('tblWebContent')
+            ->where('strPageTitle', '=', 'Home Page')
+            ->update($updateData);
         }
         
         if($BodyImage1 != null){
-            /*$HomePageContents = DB::table('tblWebContent')->where('strPageTitle', 'Home Page')->get();
- 
-            $HomePagePictures;
-            $tempHomePagePictures;
-            foreach($HomePageContents as $Content){
-                $tempHomePagePictures = json_decode($Content->strBodyImage, true);
-            }
+            $HomeBodyImages = DB::table('tblWebContent')->where('strPageTitle', 'Home Page')->pluck('strBodyImage')->first();
+       
+            $tempHomePagePictures = json_decode($HomeBodyImages, true);
+            
             $arrHomePictures = [];
+            
             foreach($tempHomePagePictures as $Picture){
                 $arrHomePictures[sizeof($arrHomePictures)] = $Picture;
             }
+        
+            //File::delete(public_path().'/'.$arrHomePicture[0]);
 
-            $HomePagePictures = DB::table('tblWebContent')
-                            ->select(DB::raw('strHeaderDescription as HomeBodyImage1'),
-                                    DB::raw('strBodyDescription as HomeBodyImage2'),
-                                    DB::raw('strHeaderImage as HomeBodyImage3'))
-                            ->where('strPageTitle', 'Home Page')
-                            ->get();
+            $IlSognoPath = public_path();
 
-            foreach($HomePagePictures as $Picture){
-                $Picture->HomeBodyImage1 = $arrHomePictures[0];
-                $Picture->HomeBodyImage2 = $arrHomePictures[1];
-                $Picture->HomeBodyImage3 = $arrHomePictures[2];
-                break;
-            }*/
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+
+            //delete image from ilsognowebsite folder
+            //File::delete($IlSognoPath.'/'.$arrHomePicture[0]);
+            
+            $IlSognoPath = public_path("img");
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+            $IlSognoPath = $IlSognoPath . "/";
+
+            //save image to capstoneproject
+            $req->file('HomeBodyImage1')->move("img", $BodyImage1->getClientOriginalName());
+
+            //save image to ilsognowebsite
+            copy(public_path("img/").$BodyImage1->getClientOriginalName(), $IlSognoPath.$BodyImage1->getClientOriginalName()); 
+
+            $BodyImagePath = "/img/" . $BodyImage1->getClientOriginalName();
+            
+            $arrHomePictures[0] = $BodyImagePath;
+         
+            $arrHomePageImage = collect($arrHomePictures);
+            
+            $jsonHomePageImage = $arrHomePageImage->toJson();
+ 
+            $updateData = array('strBodyImage' => $jsonHomePageImage);
+            
+            DB::table('tblWebContent')
+            ->where('strPageTitle', '=', 'Home Page')
+            ->update($updateData);
+            
         }
-   
-            $updateData = array('strHeaderDescription' => $HeaderDescription,
-                                'strBodyDescription' => $BodyDescription);
         
+        if($BodyImage2 != null){
+            $HomeBodyImages = DB::table('tblWebContent')->where('strPageTitle', 'Home Page')->pluck('strBodyImage')->first();
+       
+            $tempHomePagePictures = json_decode($HomeBodyImages, true);
+            
+            $arrHomePictures = [];
+            
+            foreach($tempHomePagePictures as $Picture){
+                $arrHomePictures[sizeof($arrHomePictures)] = $Picture;
+            }
         
+            //File::delete(public_path().'/'.$arrHomePicture[1]);
+
+            $IlSognoPath = public_path();
+
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+
+            //delete image from ilsognowebsite folder
+            //File::delete($IlSognoPath.'/'.$arrHomePicture[1]);
+            
+            $IlSognoPath = public_path("img");
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+            $IlSognoPath = $IlSognoPath . "/";
+
+            //save image to capstoneproject
+            $req->file('HomeBodyImage2')->move("img", $BodyImage2->getClientOriginalName());
+
+            //save image to ilsognowebsite
+            copy(public_path("img/").$BodyImage2->getClientOriginalName(), $IlSognoPath.$BodyImage2->getClientOriginalName()); 
+
+            $BodyImagePath = "/img/" . $BodyImage2->getClientOriginalName();
+            
+            $arrHomePictures[1] = $BodyImagePath;
+         
+            $arrHomePageImage = collect($arrHomePictures);
+            
+            $jsonHomePageImage = $arrHomePageImage->toJson();
+ 
+            $updateData = array('strBodyImage' => $jsonHomePageImage);
+            
+            DB::table('tblWebContent')
+            ->where('strPageTitle', '=', 'Home Page')
+            ->update($updateData);
+            
+        }
         
+        if($BodyImage3 != null){
+            $HomeBodyImages = DB::table('tblWebContent')->where('strPageTitle', 'Home Page')->pluck('strBodyImage')->first();
+       
+            $tempHomePagePictures = json_decode($HomeBodyImages, true);
+            
+            $arrHomePictures = [];
+            
+            foreach($tempHomePagePictures as $Picture){
+                $arrHomePictures[sizeof($arrHomePictures)] = $Picture;
+            }
+        
+            //File::delete(public_path().'/'.$arrHomePicture[2]);
+
+            $IlSognoPath = public_path();
+
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+
+            //delete image from ilsognowebsite folder
+            //File::delete($IlSognoPath.'/'.$arrHomePicture[2]);
+            
+            $IlSognoPath = public_path("img");
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+            $IlSognoPath = $IlSognoPath . "/";
+
+            //save image to capstoneproject
+            $req->file('HomeBodyImage3')->move("img", $BodyImage3->getClientOriginalName());
+
+            //save image to ilsognowebsite
+            copy(public_path("img/").$BodyImage3->getClientOriginalName(), $IlSognoPath.$BodyImage3->getClientOriginalName()); 
+
+            $BodyImagePath = "/img/" . $BodyImage3->getClientOriginalName();
+            
+            $arrHomePictures[2] = $BodyImagePath;
+         
+            $arrHomePageImage = collect($arrHomePictures);
+            
+            $jsonHomePageImage = $arrHomePageImage->toJson();
+ 
+            $updateData = array('strBodyImage' => $jsonHomePageImage);
+            
+            DB::table('tblWebContent')
+            ->where('strPageTitle', '=', 'Home Page')
+            ->update($updateData);
+            
+        }
+        
+        $updateData = array('strHeaderDescription' => $HeaderDescription,
+                            'strBodyDescription' => $BodyDescription);
+
+        DB::table('tblWebContent')
+        ->where('strPageTitle', '=', 'Home Page')
+        ->update($updateData);
         
         $this->saveWebChanges('Home Page', $updateData);
         
@@ -357,6 +475,43 @@ class UtilitiesController extends Controller
         
     }
     
+    public function saveAboutUs(Request $req){
+        $HeaderImage = Input::file('AboutUsHeader');
+        $BodyDescription1 = trim($req->input('AboutDescription1'));
+        $BodyDescription2 = trim($req->input('AboutDescription2'));
+        $BodyDescription3 = trim($req->input('AboutDescription3'));
+        
+        if($HeaderImage != null){
+            $this->removeImage("About Us");
+            
+            $IlSognoPath = public_path("img");
+            $IlSognoPath = str_replace('CapstoneProject', 'IlSognoWebsite', $IlSognoPath);
+            $IlSognoPath = $IlSognoPath . "/";
+
+            //save image to capstoneproject
+            $req->file('AboutUsHeader')->move("img", $HeaderImage->getClientOriginalName());
+
+            //save image to ilsognowebsite
+            copy(public_path("img/").$HeaderImage->getClientOriginalName(), $IlSognoPath.$HeaderImage->getClientOriginalName()); 
+
+            $HeaderImagePath = "/img/" . $HeaderImage->getClientOriginalName();
+            
+            $updateData = array('strHeaderImage' => $HeaderImagePath);
+            $this->saveWebChanges('About Us', $updateData);
+        }
+        
+        $arrAboutDescription = collect(['AboutDescription1' => $BodyDescription1, 'AboutDescription2' => $BodyDescription2, 'AboutDescription3' => $BodyDescription3]);
+            
+        $jsonAboutDescription = $arrAboutDescription->toJson();
+        
+        $updateData = array('strBodyDescription' => $jsonAboutDescription);
+        
+        $this->saveWebChanges('About Us', $updateData);
+        
+        \Session::flash('flash_message','Successfully updated the page!');
+        return redirect('/ContentManagement');
+    }
+    
     public function removeImage($PageTitle){
         
         $OrigHeaderImage = DB::table('tblWebContent')
@@ -379,4 +534,5 @@ class UtilitiesController extends Controller
             ->where('strPageTitle', '=', $PageTitle)
             ->update($updateData);
     }
+
 }

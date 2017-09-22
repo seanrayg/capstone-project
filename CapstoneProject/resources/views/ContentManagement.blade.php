@@ -287,20 +287,27 @@
                     <div class="tab-pane" id="AboutUs">
                         <h5>About Us</h5>
                         <br>
+                        <form method="post" action="/Utilities/Web/AboutUs" enctype="multipart/form-data">
+                        @foreach($AboutContents as $Content)
+                        {{ csrf_field() }}
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Header Image</h5>
-                                <img src="/img/header-4.jpg" alt="Rounded Image" class="img-rounded img-responsive RoomTypeImage">
-                                <button type="button" rel="tooltip" title="Replace Image" class="btn btn-success btn-xs">Replace</button>
+                                <img src="{{$Content->strHeaderImage}}" alt="Rounded Image" id="AboutUsPicture" class="img-rounded img-responsive RoomTypeImage">
+                                <br>
+                                <input type="file" id="AboutUsHeader" name="AboutUsHeader" class="ContentImage" style="display:none">
+                                <button type="button" rel="tooltip" title="Replace Image" class="btn btn-success btn-xs" onclick="ShowInputFile('AboutUsHeader')">Replace</button>
                             </div>
                         </div>
+                        @endforeach
+                        @foreach($AboutDescriptions as $Description)
                         <div class="row">
                             <div class="col-md-4">
                                 <h5>Body Description 1</h5>
                                 <div class="form-group">
                                     <div class="form-group label-floating">
                                         <label class="control-label">Description</label>
-                                        <textarea class="form-control" rows="5" name="RoomDescription"></textarea>
+                                        <textarea class="form-control" rows="5" name="AboutDescription1">{{$Description->AboutDescription1}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -309,7 +316,7 @@
                                 <div class="form-group">
                                     <div class="form-group label-floating">
                                         <label class="control-label">Description</label>
-                                        <textarea class="form-control" rows="5" name="RoomDescription"></textarea>
+                                        <textarea class="form-control" rows="5" name="AboutDescription2">{{$Description->AboutDescription2}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -318,11 +325,14 @@
                                 <div class="form-group">
                                     <div class="form-group label-floating">
                                         <label class="control-label">Description</label>
-                                        <textarea class="form-control" rows="5" name="RoomDescription"></textarea>
+                                        <textarea class="form-control" rows="5" name="AboutDescription3">{{$Description->AboutDescription3}}</textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @endforeach
+                        <button type="submit" class="btn btn-success pull-right push-right">Save Changes</button>
+                        </form>
                     </div>
                     
                     <div class="tab-pane" id="ContactUs">
