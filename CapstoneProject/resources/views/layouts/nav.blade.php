@@ -12,6 +12,11 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
+                    @if (session('Username'))
+                            {{ session('Username') }}
+                    @endif
+                </li>
+                <li>
                     <a href="/" class="dropdown-toggle push-right" rel="tooltip" title="Logout" data-placement="bottom">
                         <i class="material-icons">launch</i>
                         <p class="hidden-lg hidden-md">Logout</p>

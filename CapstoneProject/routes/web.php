@@ -473,6 +473,8 @@ Route::post('/Users/Edit', 'UtilitiesController@EditUser');
 
 Route::post('/Users/Delete', 'UtilitiesController@DeleteUser');
 
+Route::get('SystemUsers/Restrictions', 'ViewUtilitiesController@getUserRestrictions');
+
 /*----------- REPORTS ----------*/
 
 Route::post('/QueryReports/Print', 'ViewReportController@PrintQueryReport');

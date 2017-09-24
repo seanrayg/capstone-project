@@ -195,6 +195,16 @@ class ViewUtilitiesController extends Controller
         return View('SystemUsers', compact('UserID', 'SystemUsers'));
     }
     
+    public function getUserRestrictions(Request $req){
+        $Username = trim($req->input('Username'));
+        
+        $UserRestrictions = DB::table('tblUser')
+                ->where([['intUserStatus', '!=', '0'],['strUsername', '=', $Username]])
+                ->get();
+        
+        return response()->json($UserRestrictions);
+    }
+    
     /*----------- MISC ----------------*/
     
     //SmartCounter

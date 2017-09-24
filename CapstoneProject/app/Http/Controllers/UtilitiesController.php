@@ -694,7 +694,7 @@ class UtilitiesController extends Controller
         $Username = trim($req->input('Username'));
         $Password = trim($req->input('Password'));
         
-        $UserInfo = DB::table('tblUser')->where([['intUserStatus',"!=", '0'],['strUsername', $Username], ['strUserPassword', $Password]])->first();
+        $UserInfo = DB::table('tblUser')->where([['intUserStatus',"!=", '0'],['strUsername', $Username], ['strUserPassword', $Password]])->pluck('strUsername')->first();
     
         if($UserInfo == null){
             \Session::flash('duplicate_message','User does not exist');
