@@ -15,13 +15,23 @@ class InvoiceController extends Controller
         $strReservationID = $request->input('ReservationID');
         $intIsPackaged = $request->input('IsPackaged');
 
+        $CustomerName = DB::table('tblReservationDetail as a')
+            ->join('tblCustomer as b', 'a.strResDCustomerID', '=', 'b.strCustomerID')
+            ->select(
+                DB::raw("CONCAT(b.strCustFirstName, ' ', b.strCustLastName) as name"),
+                'b.strCustAddress')
+            ->where('a.strReservationID', '=', $strReservationID)
+            ->first();
+
+        $CustomerAddress = $CustomerName->strCustAddress;
+        $CustomerName = $CustomerName->name;
+
         $dtmNow = Carbon::now('Asia/Manila');
         $dateNow = $dtmNow->toFormattedDateString();
+
         $intTotal = 0;
 
         $boolIsPackaged;
-
-        $InvoiceNumber = $dtmNow->year;
 
         if($intIsPackaged == 0) {
 
@@ -35,20 +45,28 @@ class InvoiceController extends Controller
 
         if($strInvoiceType == 'Reservation') {
 
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $strReservationID);
+
             if($boolIsPackaged) {
 
-                
+                $Packages = DB::table('tblAvailPackage as a')
+                    ->join('tblPackage as b', 'a.strAvailPackageID', '=', 'b.strPackageID')
+                    ->join('tblPackagePrice as c', 'b.strPackageID', '=', 'c.strPackageID')
+                    ->select(
+                        'b.strPackageName',
+                        'c.dblPackagePrice',
+                        DB::raw("COUNT(b.strPackageName) as quantity"),
+                        DB::raw("(COUNT(b.strPackageName) * c.dblPackagePrice) as amount"))
+                    ->where([['a.strAvailPReservationID' , '=', $strReservationID], ['c.dtmPackagePriceAsOf', '=' , DB::raw("(SELECT max(dtmPackagePriceAsOf) FROM tblPackagePrice WHERE strPackageID = c.strPackageID)")]])
+                    ->groupBy('b.strPackageName', 'c.dblPackagePrice')
+                    ->get();
+
+                $intTotal = $this->GetTotal($intTotal, $Packages);
+
+                $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'boolIsPackaged' => true, 'packages' => $Packages]);
+                return $pdf->stream();
                 
             }else {
-
-                $CustomerName = DB::table('tblReservationDetail as a')
-                    ->join('tblCustomer as b', 'a.strResDCustomerID', '=', 'b.strCustomerID')
-                    ->select(
-                        DB::raw("CONCAT(b.strCustFirstName, ' ', b.strCustLastName) as name"))
-                    ->where('a.strReservationID', '=', $strReservationID)
-                    ->first();
-
-                $CustomerName = $CustomerName->name;
 
                 $rooms = DB::table('tblReservationRoom as a')
                     ->join('tblRoom as b', 'a.strResRRoomID', '=', 'b.strRoomID')
@@ -63,12 +81,7 @@ class InvoiceController extends Controller
                     ->groupBy('c.strRoomType', 'd.dblRoomRate')
                     ->get();
 
-                foreach ($rooms as $room) {
-                    
-                    $room->strRoomType = "Room " . $room->strRoomType;
-                    $intTotal += $room->amount;
-
-                }
+                $intTotal = $this->GetTotal($intTotal, $rooms);
 
                 $customer = DB::table('tblReservationDetail')
                     ->select(
@@ -84,11 +97,7 @@ class InvoiceController extends Controller
                     (object) array("name" => "Entrance Fee", "price" => "100", "quantity" => $NumberOfCustomers, "amount" => $amount)
                 );
 
-                foreach ($EntranceFee as $ef) {
-                    
-                    $intTotal += $ef->amount;
-
-                }
+                $intTotal = $this->GetTotal($intTotal, $EntranceFee);
 
                 $ChosenBoats = DB::table('tblReservationBoat as a')
                     ->join('tblBoat as b', 'a.strResBBoatID', '=' , 'b.strBoatID')
@@ -102,18 +111,77 @@ class InvoiceController extends Controller
                     ->groupBy('b.strBoatName', 'c.dblBoatRate')
                     ->get();
 
-                foreach ($ChosenBoats as $boat) {
-                    
-                    $intTotal += $boat->amount;
+                $intTotal = $this->GetTotal($intTotal, $ChosenBoats);
 
-                }
-
-                $pdf = PDF::loadview('pdf.invoice', ['CustomerName' => $CustomerName, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'rooms' => $rooms, 'fees' => $EntranceFee, 'boats' => $ChosenBoats]);
+                $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType,'boolIsPackaged' => false, 'rooms' => $rooms, 'fees' => $EntranceFee, 'boats' => $ChosenBoats]);
                 return $pdf->stream();
 
             }
 
         }
+
+    }//End of GenerateInvoice
+
+    public function GetTotal($intTotal, $items) {
+
+        foreach ($items as $item) {
+            
+            $intTotal += $item->amount;
+
+        }
+
+        return $intTotal;
+
+    }
+
+    public function GetInvoiceNumber($InvoiceType, $ID) {
+
+        $dtmNow = Carbon::now('Asia/Manila');
+        $dateNow = $dtmNow->toFormattedDateString();
+
+        $InvoiceNumber = $dtmNow->year;
+        $ID = $this->GetNumber($ID);
+
+        if($InvoiceType == 'Reservation') {
+
+            $InvoiceNumber .= "18" . $ID;
+
+            return $InvoiceNumber;
+
+        }
+
+    }
+
+    public function GetNumber($ID) {
+
+        $tempArr =  str_split($ID);
+        $intNumber = "";
+
+        for($i = 0; $i < count($tempArr); $i++) {
+
+            if(is_numeric($tempArr[$i])) {
+
+                $intNumber .= $tempArr[$i];
+
+            }
+
+        }
+
+        if(strlen($intNumber) == 1) {
+
+            $intNumber = "000" . $intNumber;
+
+        }else if(strlen($intNumber) == 2) {
+
+            $intNumber = "00" . $intNumber;
+
+        }if(strlen($intNumber) == 3) {
+
+            $intNumber = "0" . $intNumber;
+
+        }
+
+        return $intNumber;
 
     }
 }

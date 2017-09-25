@@ -379,7 +379,7 @@
                                     <input type="hidden" name="InvoiceType" value="Reservation">
                                     <input type="hidden" name="ReservationID" id="ReservationID">
                                     <input type="hidden" name="IsPackaged" id="IsPackaged">
-                                    <button type="submit" class="btn btn-success">Generate Invoice</button>
+                                    <button type="submit" class="btn btn-success">Show Invoice</button>
                                 </form>
                                 <small><h4>Reservation Info:</h4></small>
                                 <p class="paragraphText text-primary">Reservation ID:</p> <p class="paragraphText" id="i-ReservationID"></p><br>

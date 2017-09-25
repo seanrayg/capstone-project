@@ -111,6 +111,13 @@
     
 </div>
 
+<form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+    {{ csrf_field() }}
+    <input type="hidden" name="InvoiceType" value="Reservation">
+    <input type="hidden" name="ReservationID" id="ReservationID">
+    <input type="hidden" name="IsPackaged" id="IsPackaged" value="1">
+</form>
+
 @endsection
 
 @section('modals')

@@ -81,6 +81,7 @@ function HideModalReplaceRoom(){
 
 
 window.onload = function(){
+
     if (localStorage.getItem("ReservationID") === null) {
       ReservationID = document.getElementById("ReservationID").value;
     }
@@ -100,6 +101,9 @@ window.onload = function(){
     for(var x = 1; x < arrRoomType.length; x++){
        saveObjectDetails(arrRoomType[x]);
     }
+
+    alert(document.getElementById("isPackaged").value);
+
 }
 
 function saveObjectDetails(RoomTypeName){
