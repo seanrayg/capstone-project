@@ -18,7 +18,17 @@
     <script>
     
         window.onload = function(){
+            var Username = localStorage.getItem("Username");
+            if(Username != null){
+                localStorage.removeItem("Username");
+            }
             openLoginModal();
+        }
+        
+        function saveUsername(){
+            var Username = document.getElementById("Username").value;
+            localStorage.setItem("Username", Username);
+            return true;
         }
     </script>
 
@@ -42,7 +52,7 @@
                                     <div class="error">{{ Session::get('duplicate_message') }}</div>
                                 @endif
                                 <div class="form loginBox">
-                                    <form method="post" action="/UserLogin">
+                                    <form method="post" action="/UserLogin" onsubmit="return saveUsername()">
                                     {{ csrf_field() }}
                                     <input id="Username" class="form-control" type="text" placeholder="Username" name="Username" required>
                                     <input id="Password" class="form-control" type="password" placeholder="Password" name="Password" required>
