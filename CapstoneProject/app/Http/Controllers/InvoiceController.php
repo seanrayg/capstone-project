@@ -12,38 +12,36 @@ class InvoiceController extends Controller
     public function GenerateInvoice(Request $request) {
 
         $strInvoiceType = $request->input('InvoiceType');
-        $strReservationID = $request->input('ReservationID');
-        $intIsPackaged = $request->input('IsPackaged');
-
-        $CustomerName = DB::table('tblReservationDetail as a')
-            ->join('tblCustomer as b', 'a.strResDCustomerID', '=', 'b.strCustomerID')
-            ->select(
-                DB::raw("CONCAT(b.strCustFirstName, ' ', b.strCustLastName) as name"),
-                'b.strCustAddress')
-            ->where('a.strReservationID', '=', $strReservationID)
-            ->first();
-
-        $CustomerAddress = $CustomerName->strCustAddress;
-        $CustomerName = $CustomerName->name;
 
         $dtmNow = Carbon::now('Asia/Manila');
         $dateNow = $dtmNow->toFormattedDateString();
 
+        $TableRows = 0;
+
         $intTotal = 0;
 
-        $boolIsPackaged;
-
-        if($intIsPackaged == 0) {
-
-            $boolIsPackaged = false;
-
-        }else if($intIsPackaged == 1) {
-
-            $boolIsPackaged = true;
-
-        }
-
         if($strInvoiceType == 'Reservation') {
+
+            $strReservationID = $request->input('ReservationID');
+
+            $CustomerInfo = $this->GetCustomerInfo($strReservationID, "ReservationID");
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $intIsPackaged = $request->input('IsPackaged');
+
+            $boolIsPackaged;
+
+            if($intIsPackaged == 0) {
+
+                $boolIsPackaged = false;
+
+            }else if($intIsPackaged == 1) {
+
+                $boolIsPackaged = true;
+
+            }
 
             $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $strReservationID);
 
@@ -61,9 +59,13 @@ class InvoiceController extends Controller
                     ->groupBy('b.strPackageName', 'c.dblPackagePrice')
                     ->get();
 
+                foreach ($Packages as $Package) {
+                    $TableRows++;
+                }
+
                 $intTotal = $this->GetTotal($intTotal, $Packages);
 
-                $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'boolIsPackaged' => true, 'packages' => $Packages]);
+                $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'TableRows' => $TableRows, 'InvoiceType' => $strInvoiceType, 'boolIsPackaged' => true, 'packages' => $Packages]);
                 return $pdf->stream();
                 
             }else {
@@ -81,6 +83,18 @@ class InvoiceController extends Controller
                     ->groupBy('c.strRoomType', 'd.dblRoomRate')
                     ->get();
 
+                $days = DB::table('tblReservationDetail')
+                    ->select(DB::raw("TIMESTAMPDIFF(DAY,dtmResDArrival,dtmResDDeparture) as days"))
+                    ->where('strReservationID', '=', $strReservationID)
+                    ->first();
+
+                foreach ($rooms as $room) {
+                    $room->strRoomType = "Room " . $room->strRoomType;
+                    $room->quantity = $days->days;
+                    $room->amount = $room->dblRoomRate * $room->quantity;
+                    $TableRows++;
+                }
+
                 $intTotal = $this->GetTotal($intTotal, $rooms);
 
                 $customer = DB::table('tblReservationDetail')
@@ -96,6 +110,7 @@ class InvoiceController extends Controller
                 $EntranceFee = array(
                     (object) array("name" => "Entrance Fee", "price" => "100", "quantity" => $NumberOfCustomers, "amount" => $amount)
                 );
+                $TableRows++;
 
                 $intTotal = $this->GetTotal($intTotal, $EntranceFee);
 
@@ -111,12 +126,42 @@ class InvoiceController extends Controller
                     ->groupBy('b.strBoatName', 'c.dblBoatRate')
                     ->get();
 
+                foreach ($ChosenBoats as $ChosenBoat) {
+                    $TableRows++;
+                }
+
                 $intTotal = $this->GetTotal($intTotal, $ChosenBoats);
 
-                $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType,'boolIsPackaged' => false, 'rooms' => $rooms, 'fees' => $EntranceFee, 'boats' => $ChosenBoats]);
+                $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'TableRows' => $TableRows, 'boolIsPackaged' => false, 'rooms' => $rooms, 'fees' => $EntranceFee, 'boats' => $ChosenBoats]);
                 return $pdf->stream();
 
             }
+
+        }else if($strInvoiceType == 'BoatRental') {
+
+            $name = "Boat Rental";
+            $price = $request->input('Rate');
+            $quantity = $request->input('Hours');
+            $amount = $request->input('Amount');
+            $CustomerID = $request->input('CustomerID');
+
+            $CustomerInfo = $this->GetCustomerInfo($CustomerID, "CustomerID");
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $BoatScheduleID = $this->SmartCounter("tblBoatSchedule", "strBoatScheduleID");
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $BoatScheduleID);
+
+            $RentalBoats = array(
+                (object) array("name" => $name, "price" => $price, "quantity" => $quantity, "amount" => $amount)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $RentalBoats);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'RentalBoats' => $RentalBoats])->setPaper('A6', 'portrait');
+            return $pdf->stream();
 
         }
 
@@ -145,6 +190,12 @@ class InvoiceController extends Controller
         if($InvoiceType == 'Reservation') {
 
             $InvoiceNumber .= "18" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'BoatRental') {
+
+            $InvoiceNumber .= "219" . $ID;
 
             return $InvoiceNumber;
 
@@ -183,5 +234,89 @@ class InvoiceController extends Controller
 
         return $intNumber;
 
+    }
+
+    public function GetCustomerInfo($ID, $TYPE) {
+
+        if($TYPE == 'ReservationID') {
+
+            $CustomerName = DB::table('tblReservationDetail as a')
+                ->join('tblCustomer as b', 'a.strResDCustomerID', '=', 'b.strCustomerID')
+                ->select(
+                    DB::raw("CONCAT(b.strCustFirstName, ' ', b.strCustLastName) as name"),
+                    'b.strCustAddress')
+                ->where('a.strReservationID', '=', $ID)
+                ->first();
+
+            $CustomerInfo = array($CustomerName->strCustAddress, $CustomerName->name);
+            
+            return $CustomerInfo;
+
+        }else if($TYPE == 'CustomerID') {
+
+            $CustomerName = DB::table('tblCustomer')
+                ->select(
+                    DB::raw("CONCAT(strCustFirstName, ' ', strCustLastName) as name"),
+                    'strCustAddress')
+                ->where('strCustomerID', '=', $ID)
+                ->first();
+
+            $CustomerInfo = array($CustomerName->strCustAddress, $CustomerName->name);
+            
+            return $CustomerInfo;
+
+        }
+
+    }
+
+    public function SmartCounter($strTableName, $strColumnName){
+        $endLoop = false;
+        $latestID = DB::table($strTableName)->pluck($strColumnName)->first();
+        
+        $SmartCounter = $this->getID($latestID);
+        
+        do{
+            $DuplicateError = DB::table($strTableName)->where($strColumnName, $SmartCounter)->pluck($strColumnName)->first();
+            if($DuplicateError == null){
+                $endLoop = true;
+            }
+            else{
+                $SmartCounter = $this->getID($SmartCounter);
+            }       
+        }while($endLoop == false);
+        
+        return $SmartCounter;
+    }
+    
+    public function getID($latestID){
+        $arrTempID = str_split($latestID);
+
+        $intArrSize = sizeof($arrTempID) - 1;
+        $arrNumbers = Array();
+        for($i = $intArrSize; $i > 0; $i--){
+            if(is_numeric($arrTempID[$i])){
+                array_push($arrNumbers, $arrTempID[$i]);
+            }else{
+                break;
+            }
+        }
+
+        $arrRevNumbers = array_reverse($arrNumbers);
+        $intCounter = implode($arrRevNumbers);
+        $intCounterOLen = strlen($intCounter);
+        $intCounter += 1;
+        $intCounterNLen = strlen($intCounter);
+        if($intCounterOLen > $intCounterNLen){
+            $intZeroes = $intCounterOLen - $intCounterNLen;
+            for($i = 0; $i < $intZeroes; $i++){
+                $intCounter = "0" . $intCounter;
+            }
+        }
+        
+        array_splice($arrTempID, (sizeof($arrTempID) - sizeof($arrNumbers)), sizeof($arrNumbers));
+
+        $strSmartCounter = implode($arrTempID) . $intCounter;
+        
+        return $strSmartCounter;
     }
 }

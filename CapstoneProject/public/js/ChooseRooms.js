@@ -102,8 +102,6 @@ window.onload = function(){
        saveObjectDetails(arrRoomType[x]);
     }
 
-    alert(document.getElementById("isPackaged").value);
-
 }
 
 function saveObjectDetails(RoomTypeName){

@@ -434,7 +434,7 @@
                                                                     <div class="col-md-12">
                                                                         <div class="form-group label-static">
                                                                             <label class="control-label">Change</label>
-                                                                            <input type="text" class="form-control" id="BoatRentChange" name="BoatRentChange">
+                                                                            <input type="text" class="form-control" id="BoatRentChange" name="BoatRentChange" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -443,14 +443,14 @@
 
                                                                 <div class="row">
                                                                     <div class="col-md-12">
-                                                                        <p class="ErrorLabel"></p>
+                                                                        <p id="PaymentErrorLabel" class="ErrorLabel"></p>
                                                                     </div>
                                                                 </div>
                                                                 
                                                                 <div class = "row">
                                                                     <div class="col-xs-12">
-                                                                        <input type="button" class="btn btn-success pull-left push-left" value="Print Invoice" />
-                                                                        <input type="submit" name="action" class="btn btn-success pull-right push-right" value="Continue" />
+                                                                        <input type="button" class="btn btn-success pull-left push-right" value="Print Invoice" onclick="PrintInvoice()" />
+                                                                        <input id="btnContinue" type="submit" name="action" class="btn btn-success pull-right push-right" value="Continue" disabled />
                                                                     </div> 
                                                                 </div>
                                                             </div>
@@ -462,6 +462,14 @@
                                     </div>
 
                                     <div class="clearfix"></div>
+                                </form>
+                                <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="InvoiceType" value="BoatRental">
+                                    <input type="hidden" name="Amount" id="Amount">
+                                    <input type="hidden" name="Hours" id="Hours">
+                                    <input type="hidden" name="Rate" id="Rate">
+                                    <input type="hidden" name="CustomerID" id="iCustomerID">
                                 </form>
                             </div>
 
