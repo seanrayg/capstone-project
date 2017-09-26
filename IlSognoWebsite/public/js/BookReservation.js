@@ -763,5 +763,6 @@ function SaveReservation(){
     document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
     document.getElementById("s-Gender").value = document.getElementById("SelectGender").value;
     document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
+    document.getElementById("s-InitialBill").value = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
     return true;
 }

@@ -343,15 +343,15 @@ function fillReservationSummary(data){
         document.getElementById("p-TotalEntranceFee").innerHTML = parseInt(EntranceFee) * parseInt(document.getElementById("NoOfAdults").value);
     }
     
-    document.getElementById("p-AccomodationFee").innerHTML = PackageInfo[2];
+    document.getElementById("p-AccomodationFee").innerHTML = PackageInfo[1];
     document.getElementById("p-MiscellaneousFee").innerHTML = document.getElementById("p-TotalEntranceFee").innerHTML;
-    document.getElementById("p-GrandTotal").innerHTML = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[2]);
+    document.getElementById("p-GrandTotal").innerHTML = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[1]);
     
-    /*document.getElementById("s-CheckInDate").value = document.getElementById("CheckInDate").value;
+    document.getElementById("s-CheckInDate").value = document.getElementById("CheckInDate").value;
     document.getElementById("s-CheckOutDate").value = document.getElementById("CheckOutDate").value;
     document.getElementById("s-PickUpTime").value = tempHour + ":" + tempMinute + " " +tempMerridean;
-    document.getElementById("s-InitialBill").value = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[2]);
-    document.getElementById("s-BoatsUsed").value = BoatsUsed;
+    document.getElementById("s-InitialBill").value = parseInt(document.getElementById("p-TotalEntranceFee").innerHTML) + parseInt(PackageInfo[1]);
+    document.getElementById("s-BoatsUsed").value = null;
     document.getElementById("s-FirstName").value = document.getElementById("FirstName").value;
     document.getElementById("s-MiddleName").value = document.getElementById("MiddleName").value;
     document.getElementById("s-LastName").value = document.getElementById("LastName").value;
@@ -360,8 +360,9 @@ function fillReservationSummary(data){
     document.getElementById("s-Contact").value = document.getElementById("ContactNumber").value;
     document.getElementById("s-Nationality").value = document.getElementById("Nationality").value;
     document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
-    document.getElementById("s-Gender").value = document.getElementById("Gender").value;
+    document.getElementById("s-Gender").value = document.getElementById("SelectGender").value;
     document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
     document.getElementById("s-NoOfKids").value = document.getElementById("NoOfKids").value;
-    document.getElementById("s-NoOfAdults").value = document.getElementById("NoOfAdults").value;*/
+    document.getElementById("s-NoOfAdults").value = document.getElementById("NoOfAdults").value;
+    document.getElementById("s-PackageName").value = PackageInfo[0];
 }

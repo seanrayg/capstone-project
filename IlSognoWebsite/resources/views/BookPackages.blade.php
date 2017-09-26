@@ -334,7 +334,7 @@
                                                                     <small><h3 class="text-center text-muted title">Accomodation</h3></small>
                                                                     <p class="description-text text-primary small-margin">Package Availed:</p><p class="description-text text-primary small-margin" id="p-PackageName"></p><br>
                                                                     <strong><p class="description-text text-primary small-margin">Package Price:</p> <p class="description-text text-primary small-margin" id="p-PackagePrice"></p></strong><br>
-                                                                    <small><h3 class="text-primary">Miscellaneous</h3></small>
+                                                                    <small><h3 class="text-center text-muted title">Miscellaneous</h3></small>
                                                                     <p class="description-text text-primary small-margin">Number of adult guests:</p><p class="description-text text-primary small-margin" id="p-NoOfAdults"></p><br>
                                                                     <p class="description-text text-primary small-margin">Entrance Fee:</p> <p class="description-text text-primary small-margin" id="p-EntranceFee"></p><br>
                                                                     <strong><p class="description-text text-primary small-margin">Total Entrance Fee:</p> <p class="description-text text-primary small-margin" id="p-TotalEntranceFee"></p></strong><br>
@@ -364,9 +364,31 @@
                                                     <div class="col-md-2 text-center">
                                                         <button class="btn btn-primary" onclick="GoBack('#ReservationBill', '#ReservationInfo', '#BillList', 'InfoList')">Make Changes</button>
                                                     </div>
-                                                    <div class="col-md-8 text-center">
-                                                        <button class="btn btn-primary btn-lg">BOOK RESERVATION</button>
-                                                    </div>
+                                                    <form method="post" action="/Reservation/Add/Package">
+                                                        {{ csrf_field() }}
+                                                        <input type="hidden" name="s-CheckInDate" id="s-CheckInDate" value = "">
+                                                        <input type="hidden" name="s-CheckOutDate" id="s-CheckOutDate" value = "">
+                                                        <input type="hidden" name="s-PickUpTime" id="s-PickUpTime" value = "">
+                                                        <input type="hidden" name="s-BoatsUsed" id="s-BoatsUsed" value = "">
+                                                        <input type="hidden" name="s-FirstName" id="s-FirstName" value = "">
+                                                        <input type="hidden" name="s-MiddleName" id="s-MiddleName" value = "">
+                                                        <input type="hidden" name="s-LastName" id="s-LastName" value = "">
+                                                        <input type="hidden" name="s-Address" id="s-Address" value = "">
+                                                        <input type="hidden" name="s-Email" id="s-Email" value = "">
+                                                        <input type="hidden" name="s-Contact" id="s-Contact" value = "">
+                                                        <input type="hidden" name="s-Nationality" id="s-Nationality" value = "">
+                                                        <input type="hidden" name="s-DateOfBirth" id="s-DateOfBirth" value = "">
+                                                        <input type="hidden" name="s-Gender" id="s-Gender" value = "">
+                                                        <input type="hidden" name="s-Remarks" id="s-Remarks" value = "">
+                                                        <input type="hidden" name="s-InitialBill" id="s-InitialBill" value = "">
+                                                        <input type="hidden" name="s-NoOfKids" id="s-NoOfKids" value = "">
+                                                        <input type="hidden" name="s-NoOfAdults" id="s-NoOfAdults" value = "">
+                                                        <input type="hidden" name="s-PackageName" id="s-PackageName" value = "">
+                                                        <div class="col-md-8 text-center pull-right">
+                                                            <button type="submit" class="btn btn-primary btn-lg">BOOK RESERVATION</button>
+                                                        </div>
+                                                    </form>
+                                                    
                                                     
                                                 </div>
                                             </div>

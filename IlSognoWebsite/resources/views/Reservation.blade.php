@@ -82,7 +82,27 @@
         <div class="section section-tabs">
             <div class="container">
                 <!-- End .section-navbars  -->
-                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <ul class="nav nav-tabs nav-tabs-neutral justify-content-center text-center" role="tablist" data-background-color="orange">
+                                <li class="nav-item">
+                                    <a class="nav-link inactive-link active">
+                                        <i class="fa fa-code"></i> Reservation Code
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="card-block">
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <h4 class="title small-margin">Not Paid</h4><br>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="title text-muted">Reservation Info</h4>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card">
@@ -325,8 +345,8 @@
         <div class="section section-tabs">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-4">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
                         <div class="card">
                             <ul class="nav nav-tabs nav-tabs-neutral justify-content-center text-center" role="tablist" data-background-color="orange">
                                 <li class="nav-item">
@@ -370,7 +390,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <hr>
                 
                 <div class="row">

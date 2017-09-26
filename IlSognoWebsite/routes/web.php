@@ -35,6 +35,8 @@ Route::get('/Reservation/Fees', 'ViewController@getEntranceFee');
 
 Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
+Route::post('/Reservation/Add/Package', 'ReservationController@addReservationPackage');
+
 Route::get('/Reservation/Packages/Availability', 'ViewController@getAvailablePackages');
 
 Route::post('/Login', 'SessionsController@create');
