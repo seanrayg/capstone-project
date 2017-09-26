@@ -353,6 +353,10 @@ Route::get('/QueryReports', function () {
     return view('QueryReports');
 });
 
+Route::get('/SalesReport', function () {
+    return view('SalesReport');
+});
+
 // Query Report AJAX
 Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
@@ -430,6 +434,8 @@ Route::post('/Customer/ExtendPay', 'ResortController@saveExtendStayPay');
 
 Route::get('/Customer/Extend/Availability', 'ViewResortController@checkExtendStay');
 
+Route::post('/Customer/Extend/Free', 'ResortController@saveExtendStayFree');
+
 Route::post('/Customer/Edit', 'ResortController@editCustomerInfo');
 
 Route::post('/Customer/Delete', 'ResortController@deleteCustomer');
@@ -478,7 +484,10 @@ Route::get('SystemUsers/Restrictions', 'ViewUtilitiesController@getUserRestricti
 /*----------- REPORTS ----------*/
 
 Route::post('/QueryReports/Print', 'ViewReportController@PrintQueryReport');
+
 Route::post('/Reservation/Invoice', 'InvoiceController@GenerateInvoice');
 
 /*----------- CHECKOUT ----------*/
 Route::get('/Checkout/{id}', 'ViewResortController@ViewCheckout');
+
+Route::post('/Checkout/Pay', 'ResortController@CheckoutCustomer');

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use DB;
 
+use Carbon\Carbon;
+
 class ViewController extends Controller
 {
     //
@@ -339,16 +341,82 @@ class ViewController extends Controller
         $tempArrivalDate = trim($req->input('CheckInDate'));
         $tempDepartureDate = trim($req->input('CheckOutDate'));
         
-        $tempArrivalDate2 = explode("/", $tempArrivalDate);
-        $tempDepartureDate2 = explode("/", $tempDepartureDate);
+        $tempArrivalDate1 = explode(" ", $tempArrivalDate);
+        $tempDepartureDate1 = explode(" ", $tempDepartureDate);
         
-        $ArrivalDate = $tempArrivalDate2[2] ."/". $tempArrivalDate2[0] ."/". $tempArrivalDate2[1];
-        $DepartureDate = $tempDepartureDate2[2] ."/". $tempDepartureDate2[0] ."/". $tempDepartureDate2[1];
+        $tempArrivalDate2 = explode("/", $tempArrivalDate1[0]);
+        $tempDepartureDate2 = explode("/", $tempDepartureDate1[0]);
         
-        $Rooms = DB::select("SELECT b.strRoomType, c.dblRoomRate, b.intRoomTCapacity, COUNT(a.strRoomTypeID) as TotalRooms FROM tblRoom a, tblRoomType b, tblRoomRate c WHERE strRoomID NOT IN(SELECT strResRRoomID FROM tblReservationRoom WHERE strResRReservationID IN(SELECT strReservationID FROM tblReservationDetail WHERE (intResDStatus = 1 OR intResDStatus = 2) AND ((dtmResDDeparture BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') OR (dtmResDArrival BETWEEN '".$ArrivalDate."' AND '".$DepartureDate."') AND NOT intResDStatus = 3))) AND a.strRoomTypeID = b.strRoomTypeID AND a.strRoomTypeID = c.strRoomTypeID AND a.strRoomStatus = 'Available' AND c.dtmRoomRateAsOf = (SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID) GROUP BY a.strRoomTypeID, b.strRoomType, c.dblRoomRate, b.intRoomTCapacity");
+        $ArrivalDate = $tempArrivalDate2[2] ."/". $tempArrivalDate2[0] ."/". $tempArrivalDate2[1] ." ". $tempArrivalDate1[1];
+        $DepartureDate = $tempDepartureDate2[2] ."/". $tempDepartureDate2[0] ."/". $tempDepartureDate2[1] ." ". $tempDepartureDate1[1];
         
+        $Rooms = $this->fnGetAvailableRooms($ArrivalDate, $DepartureDate);
         
         return response()->json($Rooms);
+    }
+    
+    public function fnGetAvailableRooms($ArrivalDate, $DepartureDate){
+           
+        $ExistingReservations = DB::table('tblReservationDetail')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','>=',$ArrivalDate)
+                                          ->where('dtmResDArrival','<=',$DepartureDate);
+                                })
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDDeparture','>=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','<=',$DepartureDate);
+                                })
+                                ->where(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$ArrivalDate)
+                                          ->where('dtmResDDeparture','>=',$ArrivalDate);
+                                })
+                                ->orWhere(function($query) use($ArrivalDate, $DepartureDate){
+                                    $query->where('dtmResDArrival','<=',$DepartureDate)
+                                          ->where('dtmResDDeparture','>=',$DepartureDate);
+                                })
+                                ->pluck('strReservationID')
+                                ->toArray();
+        
+        $ExistingRooms = DB::table('tblReservationRoom')
+                                ->whereIn('strResRReservationID', $ExistingReservations)
+                                ->pluck('strResRRoomID')
+                                ->toArray();
+        
+        $tempArrivalDate = explode(" ", $ArrivalDate);
+        $tempDepartureDate = explode(" ", $DepartureDate);
+        
+        if($tempArrivalDate[0] != $tempDepartureDate[0]){
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('b.strRoomType', 
+                         'c.dblRoomRate', 
+                         'b.intRoomTCapacity', 
+                         DB::raw("COUNT(a.strRoomTypeID) as TotalRooms"))
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")],['b.intRoomTCategory', '=', 1]])
+                         ->groupBy('b.strRoomType','c.dblRoomRate', 'b.intRoomTCapacity')
+                         ->get();
+        }
+        else{
+            $Rooms = DB::table('tblRoom as a')
+                        ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                        ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                        ->select('b.strRoomType', 
+                         'c.dblRoomRate', 
+                         'b.intRoomTCapacity', 
+                         DB::raw("COUNT(a.strRoomTypeID) as TotalRooms"))
+                         ->whereNotIn('strRoomID', $ExistingRooms)
+                         ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                         ->groupBy('b.strRoomType','c.dblRoomRate', 'b.intRoomTCapacity')
+                         ->get();
+        }
+        return $Rooms;
     }
     
     //Reservation Boat AJAX
@@ -377,6 +445,84 @@ class ViewController extends Controller
             ->get();
         
         return response()->json($BoatsAvailable);
+    }
+
+    //Reservation Package AJAX
+    public function getAvailablePackages(Request $req){
+        $CheckInDate = trim($req->input('CheckInDate'));
+        $Packages = $this->fnGetPackages();
+        foreach($Packages as $Package){
+            
+            $CheckOutDate = carbon::parse($CheckInDate)->addDays($Package->intPackageDuration)->toDateTimeString();
+            $CheckOutDate = str_replace('-','/', $CheckOutDate);
+            
+            $Rooms = $this->fnGetAvailableRooms($CheckInDate, $CheckOutDate);
+            $RoomPackage = $this->getRoomInclusion($Package->strPackageID);
+        
+            
+            
+            foreach($RoomPackage as $RPackage){
+                $found = false;
+                foreach($Rooms as $Room){
+                    if($RPackage->strRoomType == $Room->strRoomType){
+                        $found = true;
+                        if($RPackage->intPackageRQuantity > $Room->TotalRooms){
+                            $Package->strPackageName = "";
+                        }
+                    }
+                }
+                if(!($found)){
+                    $Package->strPackageName = "";
+                }
+            }
+        }
+        
+        $newPackage = $Packages->where('strPackageName', '!=', "");
+        $newPackage = $newPackage->values();
+        
+        return response()->json($newPackage);
+    }
+
+     public function fnGetPackages(){
+       $Packages = DB::table('tblPackage as a')
+                    ->join ('tblPackagePrice as b', 'a.strPackageID', '=' , 'b.strPackageID')
+                    ->select('a.strPackageID',
+                             'a.strPackageName',
+                             'a.strPackageStatus',
+                             'a.intPackageDuration',
+                             'b.dblPackagePrice',
+                             'a.intPackagePax',
+                             'a.strPackageDescription',
+                             'a.intBoatFee')
+                    ->where('b.dtmPackagePriceAsOf',"=", DB::raw("(SELECT MAX(dtmPackagePriceAsOf) FROM tblPackagePrice WHERE strPackageID = a.strPackageID)"))
+                    ->where(function($query){
+                        $query->where('a.strPackageStatus', '=', 'Available')
+                              ->orWhere('a.strPackageStatus', '=', "Unavailable");
+                    })
+                    ->get();
+        
+        foreach($Packages as $Package){
+            if($Package->intBoatFee == "1"){
+                $Package->intBoatFee = "Free";
+            }
+            else{
+                $Package->intBoatFee = "Not Free";
+            }
+        }
+        return $Packages;
+    }
+
+    public function getRoomInclusion($PackageID){
+        $PackageRoomInfo = DB::table('tblRoomType as a')
+                        ->join('tblPackageRoom as b', 'a.strRoomTypeID', '=', 'b.strPackageRRoomTypeID')
+                        ->join('tblRoomRate as c', 'a.strRoomTypeID', '=', 'c.strRoomTypeID')
+                        ->select('a.strRoomType',
+                                 'b.intPackageRQuantity',
+                                 DB::raw('(c.dblRoomRate * b.intPackageRQuantity) as RoomProduct'))
+                        ->where([['b.strPackageRPackageID', '=', $PackageID], ['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                        ->get();
+        
+        return $PackageRoomInfo;
     }
     
     //Entrance Fee AJAX

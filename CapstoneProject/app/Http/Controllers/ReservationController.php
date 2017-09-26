@@ -883,7 +883,8 @@ class ReservationController extends Controller
                                          'dtmBoatSPickUp'=>$CheckInDate." ".$PickUpTime,
                                          'dtmBoatSDropOff'=>$CheckInDate." ".$PickUpTime2,
                                          'intBoatSStatus'=>'1',
-                                         'strBoatSReservationID' => $ReservationID);
+                                         'strBoatSReservationID' => $ReservationID,
+                                         'intBoatSPayment' => 0);
 
             DB::table('tblBoatSchedule')->insert($InsertBoatSchedData);  
 

@@ -924,6 +924,25 @@ class ViewController extends Controller
     
     public function ViewEditReservation($id){
         
+        $PackageInfo = DB::table('tblAvailPackage as a')
+                    ->join('tblPackage as b', 'b.strPackageID', '=', 'a.strAvailPackageID')
+                    ->join ('tblPackagePrice as c', 'b.strPackageID', '=' , 'c.strPackageID')
+                    ->select('b.strPackageID',
+                             'b.strPackageName',
+                             'b.strPackageStatus',
+                             'b.intPackageDuration',
+                             'c.dblPackagePrice',
+                             'b.intPackagePax',
+                             'b.strPackageDescription',
+                             'b.intBoatFee')
+                    ->where('c.dtmPackagePriceAsOf',"=", DB::raw("(SELECT MAX(dtmPackagePriceAsOf) FROM tblPackagePrice WHERE strPackageID = b.strPackageID)"))
+                    ->where(function($query){
+                        $query->where('b.strPackageStatus', '=', 'Available')
+                              ->orWhere('b.strPackageStatus', '=', "Unavailable");
+                    })
+                    ->where('a.strAvailPReservationID', '=', $id)
+                    ->get();
+        
         $ReservationInfo = $this->getReservation($id);
         $ChosenRooms = $this->getReservedRooms($id);
         $PickUpTime = "";
@@ -943,10 +962,17 @@ class ViewController extends Controller
                 $PickUpTime = $arrArrivalDate[1] ." AM"; 
             }
         }
-        
+
         $Rooms = $this->fnGetAvailableRooms($ArrivalDate, $DepartureDate);
         
-        return view('EditReservations', compact('ReservationInfo', 'ChosenRooms' , 'PickUpTime', 'Rooms'));
+        if(sizeof($PackageInfo) > 0){
+            return view('EditReservationPackage', compact('ReservationInfo', 'ChosenRooms' , 'PickUpTime', 'Rooms', 'PackageInfo'));
+        }
+        else{
+            return view('EditReservations', compact('ReservationInfo', 'ChosenRooms' , 'PickUpTime', 'Rooms'));
+        }
+        
+        
     }
     
     public function getEditAvailableBoats(Request $req){

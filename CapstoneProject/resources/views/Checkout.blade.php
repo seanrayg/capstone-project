@@ -291,34 +291,39 @@
                     <h4 class="title">Payment</h4>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                    @foreach($ReservationInfo as $Info)
-                        <br>
-                        <div class="form-group label-static">
-                            <label class="control-label">Total</label>
-                            <input type="text" class="form-control" value="{{$Info->TotalBill}}" id="PayTotal" name="PayTotal" readonly>
-                        </div>
-                    @endforeach 
-                        <div class="form-group label-static" id="PaymentError">
-                            <label class="control-label">Payment</label>
-                            <input type="text" class="form-control" onkeyup="SendInput(this, 'double', '#PaymentError')" onchange="SendInput(this, 'double', '#PaymentError')" id="PayPayment" name="PayPayment">
-                        </div>
-                        <div class="form-group label-static">
-                            <label class="control-label">Change</label>
-                            <input type="text" class="form-control" id="PayChange" name="PayChange" readonly>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p class="ErrorLabel"></p>
+                    <form method="post" action="/Checkout/Pay">
+                    {{ csrf_field() }}
+                        
+                        <div class="col-md-12">
+                        @foreach($ReservationInfo as $Info)
+                            <br>
+                            <input type="hidden" name="s-ReservationID" id="s-ReservationID" value="{{$Info->strReservationID}}">
+                            <div class="form-group label-static">
+                                <label class="control-label">Total</label>
+                                <input type="text" class="form-control" value="{{$Info->TotalBill}}" id="PayTotal" name="PayTotal" readonly>
+                            </div>
+                        @endforeach 
+                            <div class="form-group label-static" id="PaymentError">
+                                <label class="control-label">Payment</label>
+                                <input type="text" class="form-control" onkeyup="SendInput(this, 'double', '#PaymentError')" onchange="SendInput(this, 'double', '#PaymentError')" id="PayPayment" name="PayPayment">
+                            </div>
+                            <div class="form-group label-static">
+                                <label class="control-label">Change</label>
+                                <input type="text" class="form-control" id="PayChange" name="PayChange" readonly>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="ErrorLabel"></p>
+                                </div>
+                            </div>
+                            <div class = "row">
+                                <div class="col-xs-12">
+                                    <button type="button" class="btn btn-success pull-left push-left"><i class="material-icons">done</i>Print Invoice</button>
+                                    <button type="submit" class="btn btn-success pull-right push-right"><i class="material-icons">done</i>Proceed</button>
+                                </div> 
                             </div>
                         </div>
-                        <div class = "row">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-success pull-left push-left" onclick="ShowModalExtendStayPayment()"><i class="material-icons">done</i>Print Invoice</button>
-                                <button type="button" class="btn btn-success pull-right push-right" onclick="ShowModalExtendStayPayment()"><i class="material-icons">done</i>Proceed</button>
-                            </div> 
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

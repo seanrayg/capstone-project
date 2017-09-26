@@ -173,12 +173,35 @@ function processBoat(data, TotalGuests){
 function getAvailableRooms(){
     var CheckInDate = document.getElementById("CheckInDate").value;
     var CheckOutDate = document.getElementById("CheckOutDate").value;
+    var NoOfKids = document.getElementById("NoOfKids").value;
+    var NoOfAdults = document.getElementById("NoOfAdults").value;
+    var TotalGuests = parseInt(NoOfAdults) + parseInt(NoOfKids);
 
+    var tempHour = document.getElementById("PickUpTime");
+    var tempMinute = document.getElementById("PickUpMinute");
+    var tempMerridean = document.getElementById("PickUpMerridean");
+    var ChosenHour;
+    var PickOutTime;
+    if(tempMerridean.value == "PM"){
+      ChosenHour = parseInt(tempHour.value) + 12;
+    }
+    else{
+      ChosenHour = tempHour.value;
+    }
+    var PickUpTime = ChosenHour + ":" + tempMinute.value + ":00";
+    
+    if(CheckInDate == CheckOutDate){
+        PickOutTime = PickUpTime;
+    }
+    else{
+        PickOutTime = "23:59:59";
+    }
+    
     $.ajax({
         type:'get',
         url:'/Reservation/Rooms',
-        data:{CheckInDate:CheckInDate,
-              CheckOutDate:CheckOutDate},
+        data:{CheckInDate:CheckInDate+" "+PickUpTime,
+              CheckOutDate:CheckOutDate+" "+PickOutTime},
         success:function(data){
             console.log('success');
             $('#tblAvailableRooms tbody').empty();
@@ -740,5 +763,6 @@ function SaveReservation(){
     document.getElementById("s-DateOfBirth").value = document.getElementById("DateOfBirth").value;
     document.getElementById("s-Gender").value = document.getElementById("SelectGender").value;
     document.getElementById("s-Remarks").value = document.getElementById("Remarks").value;
+    document.getElementById("s-InitialBill").value = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
     return true;
 }

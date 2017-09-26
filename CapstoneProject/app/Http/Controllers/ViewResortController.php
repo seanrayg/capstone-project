@@ -1652,7 +1652,7 @@ class ViewResortController extends Controller
     /*-------------- CHECKOUT ------------------*/
     public function ViewCheckout($id){
         $ReservationID = $id;
-      
+       
         $ReservationInfo = DB::table('tblReservationDetail as a')
                         ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
                         ->select('a.strReservationID',

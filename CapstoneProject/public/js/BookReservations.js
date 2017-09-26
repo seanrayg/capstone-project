@@ -363,7 +363,7 @@ function processBoat(data, TotalGuests){
                 BoatsUsed += data[x].strBoatName + ",";
                 break;
             }
-        }
+        } 
         if(!BoatFound){
             ShowModalMultipleBoats();
             $('#BtnMultipleBoats, #BtnWithoutBoats2').click(function () {
