@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use DB;
 
+use Carbon\Carbon;
+
 class ViewController extends Controller
 {
     //
@@ -443,6 +445,84 @@ class ViewController extends Controller
             ->get();
         
         return response()->json($BoatsAvailable);
+    }
+
+    //Reservation Package AJAX
+    public function getAvailablePackages(Request $req){
+        $CheckInDate = trim($req->input('CheckInDate'));
+        $Packages = $this->fnGetPackages();
+        foreach($Packages as $Package){
+            
+            $CheckOutDate = carbon::parse($CheckInDate)->addDays($Package->intPackageDuration)->toDateTimeString();
+            $CheckOutDate = str_replace('-','/', $CheckOutDate);
+            
+            $Rooms = $this->fnGetAvailableRooms($CheckInDate, $CheckOutDate);
+            $RoomPackage = $this->getRoomInclusion($Package->strPackageID);
+        
+            
+            
+            foreach($RoomPackage as $RPackage){
+                $found = false;
+                foreach($Rooms as $Room){
+                    if($RPackage->strRoomType == $Room->strRoomType){
+                        $found = true;
+                        if($RPackage->intPackageRQuantity > $Room->TotalRooms){
+                            $Package->strPackageName = "";
+                        }
+                    }
+                }
+                if(!($found)){
+                    $Package->strPackageName = "";
+                }
+            }
+        }
+        
+        $newPackage = $Packages->where('strPackageName', '!=', "");
+        $newPackage = $newPackage->values();
+        
+        return response()->json($newPackage);
+    }
+
+     public function fnGetPackages(){
+       $Packages = DB::table('tblPackage as a')
+                    ->join ('tblPackagePrice as b', 'a.strPackageID', '=' , 'b.strPackageID')
+                    ->select('a.strPackageID',
+                             'a.strPackageName',
+                             'a.strPackageStatus',
+                             'a.intPackageDuration',
+                             'b.dblPackagePrice',
+                             'a.intPackagePax',
+                             'a.strPackageDescription',
+                             'a.intBoatFee')
+                    ->where('b.dtmPackagePriceAsOf',"=", DB::raw("(SELECT MAX(dtmPackagePriceAsOf) FROM tblPackagePrice WHERE strPackageID = a.strPackageID)"))
+                    ->where(function($query){
+                        $query->where('a.strPackageStatus', '=', 'Available')
+                              ->orWhere('a.strPackageStatus', '=', "Unavailable");
+                    })
+                    ->get();
+        
+        foreach($Packages as $Package){
+            if($Package->intBoatFee == "1"){
+                $Package->intBoatFee = "Free";
+            }
+            else{
+                $Package->intBoatFee = "Not Free";
+            }
+        }
+        return $Packages;
+    }
+
+    public function getRoomInclusion($PackageID){
+        $PackageRoomInfo = DB::table('tblRoomType as a')
+                        ->join('tblPackageRoom as b', 'a.strRoomTypeID', '=', 'b.strPackageRRoomTypeID')
+                        ->join('tblRoomRate as c', 'a.strRoomTypeID', '=', 'c.strRoomTypeID')
+                        ->select('a.strRoomType',
+                                 'b.intPackageRQuantity',
+                                 DB::raw('(c.dblRoomRate * b.intPackageRQuantity) as RoomProduct'))
+                        ->where([['b.strPackageRPackageID', '=', $PackageID], ['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                        ->get();
+        
+        return $PackageRoomInfo;
     }
     
     //Entrance Fee AJAX
