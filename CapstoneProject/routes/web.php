@@ -300,6 +300,10 @@ Route::get('/Reservation/Packages/Availability', 'ViewController@getAvailablePac
 //Reservation Downpayment
 Route::post('/Reservation/Downpayment', 'ReservationController@saveDownpayment');
 
+//Reservation Deposit Slip
+
+Route::get('/Reservation/DepositSlip', 'ViewController@getDepositSlip');
+
 
 
 /*---------------- WALK IN ------------------*/

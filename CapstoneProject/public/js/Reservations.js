@@ -91,8 +91,27 @@ function HideModalPaidReservation(){
 }
 
 function ShowModalDepositSlip(){
-    HideModalPaidReservation();
-    document.getElementById("DivModalDepositSlip").style.display = "block";
+    $.ajax({
+        type:'get',
+        url:'/Reservation/DepositSlip',
+        data:{id:PendingReservationInfo[0]},
+        success:function(data){
+            if(data[0].strResDDepositSlip != null){
+                document.getElementById("DepositSlip").src=data[0].strResDDepositSlip;
+                HideModalPaidReservation();
+                document.getElementById("DivModalDepositSlip").style.display = "block";
+            }
+            else{
+                HideModalPaidReservation();
+                document.getElementById("DivModalNoDepositSlip").style.display = "block";
+            }
+        },
+        error:function(response){
+            console.log(response);
+            alert(response.status);
+        }
+    });  
+
 }
 
 function HideModalDepositSlip(){
@@ -104,8 +123,11 @@ function ShowModalNoDepositSlip(){
     document.getElementById("DivModalNoDepositSlip").style.display = "block";
 }
 
-function HideModalNoDepositSlip(){
+function HideModalNoDepositSlip(field){
     document.getElementById("DivModalNoDepositSlip").style.display = "none";
+    if(field == "continue"){
+        ShowModalPaidReservation();
+    }
 }
 
 function ShowModalCheckIn(){

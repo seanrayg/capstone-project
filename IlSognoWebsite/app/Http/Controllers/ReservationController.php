@@ -244,7 +244,7 @@ class ReservationController extends Controller
         
         /*\Session::flash('flash_message','Reservation successfully booked! The reservation code of '. $FirstName . ' ' . $LastName . ' is ' . $ReservationCode.'.');
          return redirect('/Reservations');*/
-         dd(Input::all());
+        return redirect('/ChooseRooms/'.$ReservationID);
     }
 
     public function saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus){
@@ -416,6 +416,7 @@ class ReservationController extends Controller
         }
     }
 
+
      public function saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday){
          //Saves Customer Data
         $CustomerData = array('strCustomerID'=>$CustomerID,
@@ -514,6 +515,35 @@ class ReservationController extends Controller
         }while($endLoop == false);
         
         return $ReservationCode;
+    }
+
+    public function saveDepositSlip(Request $req){
+
+        $DepositSlip = Input::file('depositSlip');
+        $ReservationID = $req->input("DepositReservationID");
+        
+        //set ilsognowebsite path
+        $SystemPath = public_path("DepositSlips");
+        $SystemPath = str_replace('IlSognoWebsite', 'CapstoneProject', $SystemPath);
+        $SystemPath = $SystemPath . "/";
+        
+        //save image to capstoneproject
+        $req->file('depositSlip')->move("DepositSlips", $DepositSlip->getClientOriginalName());
+        
+        //save image to ilsognowebsite
+        copy(public_path("DepositSlips/").$DepositSlip->getClientOriginalName(), $SystemPath.$DepositSlip->getClientOriginalName());  
+    
+  
+        $DepositSlipPath = "/DepositSlips/" . $DepositSlip->getClientOriginalName();
+    
+        $updateData = array("strResDDepositSlip" => $DepositSlipPath);   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', '=', $ReservationID)
+            ->update($updateData);
+    
+        \Session::flash('flash_message','Successfully uploaded the deposit slip!');
+        return redirect('/Reservation/'.$ReservationID);
     }
     
     public function RandomString() {

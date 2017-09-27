@@ -259,7 +259,7 @@
                     <div class="card-content">
                         <h3 class="title">Reservation Downpayment<span class="close" onclick="HideModalDepositSlip()">X</span></h3>
                         <br><br>
-                        <img style="height: 400px; width: 640px" class="">
+                        <img style="height: 400px; width: 640px" id="DepositSlip">
                     </div>
                 </div>
             </div>
@@ -276,7 +276,7 @@
                         <i class="material-icons">announcement</i>
                     </div>
                     <div class="card-content">
-                        <h3 class="title"><span class="close" onclick="HideModalNoDepositSlip()">X</span></h3>
+                        <h3 class="title"><span class="close" onclick="HideModalNoDepositSlip("close")">X</span></h3>
                         <br><br>
                         <div class = "row">
                             <div class="col-md-12">
@@ -284,8 +284,8 @@
                             </div>
                         </div>
                         <div class="row">
-                            <button type="button" class="btn btn-sm btn-danger pull-left" onclick="#">Close</button>
-                            <button type="button" class="btn btn-sm btn-warning pull-right" onclick="#">Proceed without deposit slip</button>
+                            <button type="button" class="btn btn-sm btn-danger pull-left" onclick="HideModalNoDepositSlip('close')">Close</button>
+                            <button type="button" class="btn btn-sm btn-warning pull-right" onclick="HideModalNoDepositSlip('continue')">Proceed without deposit slip</button>
                         </div>
                     </div>
                 </div>

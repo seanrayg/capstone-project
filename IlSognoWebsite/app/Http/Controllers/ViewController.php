@@ -141,8 +141,20 @@ class ViewController extends Controller
     public function getContactUs(){
         
         $ContactsContents = DB::table('tblWebContent')->where('strPageTitle', 'Contact Us')->get();
-        
-        return view('ContactUs', compact('ContactsContents'));
+
+        $Contacts = DB::table('tblContact')
+                ->where('intContactStatus', '=', '1')
+                ->get();
+       
+        foreach($Contacts as $Contact){
+            if($Contact->intContactStatus == 1){
+                $Contact->intContactStatus = "Active";
+            }
+            else{
+                $Contact->intContactStatus = "Inactive";
+            }
+        }
+        return view('ContactUs', compact('ContactsContents', 'Contacts'));
     }
     
     //Packages
@@ -540,5 +552,122 @@ class ViewController extends Controller
     
     public function bookReservation(){
         return view('BookReservation');
+    }
+
+    public function getReservation($id){
+        $PackageInfo = DB::table('tblAvailPackage as a')
+                    ->join('tblPackage as b', 'b.strPackageID', '=', 'a.strAvailPackageID')
+                    ->join ('tblPackagePrice as c', 'b.strPackageID', '=' , 'c.strPackageID')
+                    ->select('b.strPackageID',
+                             'b.strPackageName',
+                             'b.strPackageStatus',
+                             'b.intPackageDuration',
+                             'c.dblPackagePrice',
+                             'b.intPackagePax',
+                             'b.strPackageDescription',
+                             'b.intBoatFee')
+                    ->where('c.dtmPackagePriceAsOf',"=", DB::raw("(SELECT MAX(dtmPackagePriceAsOf) FROM tblPackagePrice WHERE strPackageID = b.strPackageID)"))
+                    ->where(function($query){
+                        $query->where('b.strPackageStatus', '=', 'Available')
+                              ->orWhere('b.strPackageStatus', '=', "Unavailable");
+                    })
+                    ->where('a.strAvailPReservationID', '=', $id)
+                    ->get();
+
+        $PackageID = $PackageInfo->pluck('strPackageID')->first();
+        
+        $ReservationInfo = $this->getReservationInfo($id);
+
+        $ChosenRooms = $this->getReservedRooms($id);
+
+        $PackageRoomInfo = DB::table('tblRoomType as a')
+                        ->join('tblPackageRoom as b', 'a.strRoomTypeID', '=', 'b.strPackageRRoomTypeID')
+                        ->select('a.strRoomType',
+                                 'b.intPackageRQuantity',
+                                 'b.strPackageRPackageID')
+                        ->where('b.strPackageRPackageID', '=', $PackageID)
+                        ->groupBy('b.strPackageRPackageID', 'a.strRoomType', 'b.intPackageRQuantity')
+                        ->get();
+        
+        
+        $PackageActivityInfo = DB::table('tblBeachActivity as a')
+                        ->join('tblPackageActivity as b', 'a.strBeachActivityID', '=', 'b.strPackageABeachActivityID')
+                        ->select('a.strBeachAName',
+                                 'b.intPackageAQuantity',
+                                 'b.strPackageAPackageID')
+                        ->where('b.strPackageAPackageID', '=', $PackageID)
+                        ->groupBy('b.strPackageAPackageID', 'a.strBeachAName', 'b.intPackageAQuantity')
+                        ->get();
+        
+        $PackageItemInfo = DB::table('tblPackageItem as a')
+                        ->join('tblItem as b', 'a.strPackageIItemID', '=', 'b.strItemID')
+                        ->select('b.strItemName',
+                                 'a.intPackageIQuantity',
+                                 'a.flPackageIDuration',
+                                 'a.strPackageIPackageID')
+                        ->where('a.strPackageIPackageID', '=', $PackageID)
+                        ->groupBy('a.strPackageIPackageID', 'b.strItemName', 'a.intPackageIQuantity', 'a.flPackageIDuration')
+                        ->get();
+        
+        $PackageFeeInfo = DB::table('tblFee as a')
+                        ->join('tblPackageFee as b', 'a.strFeeID', '=', 'b.strPackageFFeeID')
+                        ->join('tblFeeAmount as c', 'a.strFeeID', '=', 'c.strFeeID')
+                        ->select('a.strFeeName',
+                                 'c.dblFeeAmount',
+                                 'b.strPackageFPackageID')
+                        ->where([['c.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['b.strPackageFPackageID', '=', $PackageID]])
+                        ->get();
+
+        return view('Reservation', compact('ReservationInfo', 'ChosenRooms', 'PackageInfo', 'PackageRoomInfo', 'PackageActivityInfo', 'PackageItemInfo', 'PackageFeeInfo'));
+    }
+
+    public function getReservedRooms($ReservationID){
+        $ChosenRooms = DB::table('tblReservationRoom as a')
+                            ->join ('tblRoom as b', 'a.strResRRoomID', '=' , 'b.strRoomID')
+                            ->join ('tblRoomType as c', 'c.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                            ->join ('tblRoomRate as d', 'c.strRoomTypeID', '=' , 'd.strRoomTypeID')
+                            ->select('c.strRoomTypeID',
+                                     'c.strRoomType',
+                                     'c.intRoomTCapacity',
+                                      DB::raw('COUNT(c.strRoomTypeID) as TotalRooms'),
+                                     'd.dblRoomRate')
+                            ->where([['strResRReservationID', '=', $ReservationID], ['d.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = c.strRoomTypeID)")]])
+                            ->groupBy('c.strRoomTypeID', 'c.strRoomType', 'c.intRoomTCapacity', 'd.dblRoomRate')
+                            ->get();
+        
+        return $ChosenRooms;
+    }
+
+    public function getReservationInfo($ReservationID){
+        
+        $ReservationInfo = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select('a.strReservationID',
+                                 DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustMiddleName , " " , b.strCustLastName) AS Name'),
+                                 'a.dteResDBooking',
+                                 DB::raw('DATE_ADD(a.dteResDBooking, INTERVAL 7 DAY) AS PaymentDueDate'),
+                                 'a.intResDNoOfAdults',
+                                 'a.intResDNoOfKids',
+                                 'a.strResDRemarks',
+                                 'a.dtmResDArrival',
+                                 'a.dtmResDDeparture',
+                                 'b.strCustContact',
+                                 'b.strCustEmail',
+                                 'b.strCustAddress',
+                                 'b.dtmCustBirthday',
+                                 'b.strCustNationality',
+                                 'b.strCustGender',
+                                 'a.strReservationCode',
+                                 'a.strResDDepositSlip')
+                        ->where('strReservationID', '=', $ReservationID)
+                        ->get();
+        
+        foreach($ReservationInfo as $Info){
+            $Info->PaymentDueDate = Carbon::parse($Info->PaymentDueDate)->format('M j, Y');
+            $Info->dteResDBooking = Carbon::parse($Info->dteResDBooking)->format('M j, Y');
+
+        }
+        
+        return $ReservationInfo;
     }
 }

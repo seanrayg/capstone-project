@@ -35,6 +35,10 @@ Route::get('/Reservation/Fees', 'ViewController@getEntranceFee');
 
 Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
+Route::post('/Reservation/Cancel', 'ReservationController@cancelReservation');
+
+Route::post('/Reservation/DepositSlip', 'ReservationController@saveDepositSlip');
+
 Route::post('/Reservation/Add/Package', 'ReservationController@addReservationPackage');
 
 Route::get('/Reservation/Packages/Availability', 'ViewController@getAvailablePackages');
@@ -59,9 +63,7 @@ Route::get('/Login', function () {
     return view('Login');
 });
 
-Route::get('/Reservation', function () {
-    return view('Reservation');
-});
+Route::get('/Reservation/{id}', 'ViewController@getReservation');
 
 Route::get('/ReservationPackage', function () {
     return view('ReservationPackage');

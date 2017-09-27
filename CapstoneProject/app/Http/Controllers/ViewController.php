@@ -641,6 +641,17 @@ class ViewController extends Controller
     
     
      //Reservation
+
+    public function getDepositSlip(Request $req){
+        $ReservationID = trim($req->input('id'));
+
+        $DepositSlip = DB::table('tblReservationDetail')
+                        ->select('strResDDepositSlip')
+                        ->where('strReservationID', '=', $ReservationID)
+                        ->get();
+
+        return response()->json($DepositSlip);
+    }
     
     public function getAvailablePackages(Request $req){
         $CheckInDate = trim($req->input('CheckInDate'));

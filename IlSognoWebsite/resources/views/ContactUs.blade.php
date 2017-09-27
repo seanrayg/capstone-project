@@ -33,42 +33,25 @@
             </div>
 @endforeach
             <div class="row">
-                <div class="col-md-2"></div>
-                    <div class="col-md-10">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <a href="#button" class="btn btn-primary btn-round btn-lg btn-icon" rel="tooltip" title="Facebook">
-                                    <i class="fa fa-facebook"></i>
-                                </a><p class="description-text description-center">www.facebook.com/nardsmalabanan</p>     
-                            </div>
-                            <div class="col-md-6">
-                                <a href="#button" class="btn btn-primary btn-round btn-lg btn-icon" rel="tooltip" title="Twitter">
-                                    <i class="fa fa-twitter"></i>
-                                </a><p class="description-text description-center">@nardmalabanan</p>     
-                            </div>
-
-                        </div>
-                        <br>
-                        <div class="row">  
-                            <div class="col-md-6">
-                                <a href="#button" class="btn btn-primary btn-round btn-lg btn-icon" rel="tooltip" title="Facebook">
-                                    <i class="fa fa-instagram"></i>
-                                </a><p class="description-text description-center">@nardmalabanan</p>     
-                            </div>
-                            <div class="col-md-6">
-                                <a href="#button" class="btn btn-primary btn-round btn-lg btn-icon" rel="tooltip" title="Mobile Phone">
-                                    <i class="fa fa-mobile-phone"></i>
-                                </a><p class="description-text description-center">0969696969</p>     
-                            </div>  
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <a href="#button" class="btn btn-primary btn-round btn-lg btn-icon" rel="tooltip" title="Telephone">
-                                    <i class="fa fa-phone"></i>
-                                </a><p class="description-text description-center">87000</p>     
-                            </div>     
-                        </div>
+                <div class="col-md-12">
+                    <p class="text-center modal-title">Contact Information</p>
+                    <div class="table">
+                        <table class="text-center stretch-element">
+                            <thead class="text-primary">
+                                <th class="text-center">Contact</th>
+                                <th class="text-center">Info</th>
+                            </thead>
+                            <tbody>
+                                @foreach($Contacts as $Contact)
+                                    <tr>
+                                        <td>{{$Contact->strContactName}}</td>
+                                        <td>{{$Contact->strContactDetails}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    <br><br>
+                    </div>
                 </div>
             </div>
         </div>
