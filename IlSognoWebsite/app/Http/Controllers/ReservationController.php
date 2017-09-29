@@ -63,7 +63,7 @@ class ReservationController extends Controller
         
         $PickUpTime2 = $tempPickUpTime2[0].":".$tempPickUpTime2[1].":".$tempPickUpTime2[2];
         
-        $CustomerID = $this->getCustomerID();
+        $CustomerID = $this->getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender);
                 
         $ReservationID = $this->getReservationID();
         
@@ -154,7 +154,7 @@ class ReservationController extends Controller
         
         $DateBooked = Carbon::now();
         
-        $CustomerID = $this->getCustomerID();
+        $CustomerID = $this->getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender);
                 
         $ReservationID = $this->getReservationID();
         
@@ -464,16 +464,25 @@ class ReservationController extends Controller
         DB::table('tblPayment')->insert($TransactionData);
     }
 
-    public function getCustomerID(){
+    public function getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender){
         $CustomerID = DB::table('tblCustomer')->pluck('strCustomerID')->first();
+
+        $ExistingCustomerID = DB::table('tblCustomer')
+                            ->where([['strCustFirstName', '=', $FirstName],['strCustLastName', '=', $LastName], ['strCustMiddleName', '=', $MiddleName], ['dtmCustBirthday', '=', $Birthday], ['strCustGender', '=', $Gender]])
+                            ->pluck('strCustomerID')
+                            ->first();
+
         if(!$CustomerID){
-           $CustomerID = "CUST1";
+            return "CUST1";
+        }
+        else if($ExistingCustomerID){
+            return $ExistingCustomerID;
         }
         else{
-           $CustomerID = $this->SmartCounter('tblCustomer', 'strCustomerID');
+            $CustomerID = $this->SmartCounter('tblCustomer', 'strCustomerID');
+            return $CustomerID;
         }
         
-        return $CustomerID;
     }
     
     public function getReservationID(){

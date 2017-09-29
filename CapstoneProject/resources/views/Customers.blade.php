@@ -136,17 +136,18 @@
 
                     <div class="tab-pane" id="CustomerRecord">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group label-static">
                                     <label class="control-label">Search Customer</label>
                                     <input type="text" class="form-control" placeholder="Please enter last name" id="SearchBar" onkeyup="SearchTable('tblCustomer', '3')">
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <button type="submit" class="btn btn-danger pull-right" onclick="ShowModalDeleteCustomer()"><i class="material-icons">delete</i> Delete</button>
                                 <button type="submit" class="btn btn-info pull-right" onclick="ShowModalEditCustomer()"><i class="material-icons">create</i> Edit</button>
-                                <button type="submit" class="btn btn-warning pull-right" onclick="ShowModalCustomerHistory()"><i class="material-icons">history</i> History</button>
+                                <button type="submit" class="btn btn-warning pull-right" onclick="ShowModalBlockCustomer()"><i class="material-icons">clear</i> Block</button>
+                                <button type="submit" class="btn btn-primary pull-right" onclick="ShowModalCustomerHistory()"><i class="material-icons">history</i> History</button>
                             </div>             
                         </div>
 
@@ -569,6 +570,36 @@
                                 <input type="hidden" id="DeleteCustomerID" name="DeleteCustomerID">
                                 <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteCustomer()">Cancel</button>
                                 <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>  
+                            </form>            
+                            <div class="clearfix"></div>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="DivModalBlockCustomer" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="orange">
+                            <i class="material-icons">clear</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title"><span class="close" onclick="HideModalBlockCustomer()">X</span></h3>
+                            <h3 class="title">Block Customer?</h3>
+                            <form method="post" action="/Customer/Block">
+                                {{ csrf_field() }}
+                                <input type="hidden" id="BlockCustomerID" name="BlockCustomerID">
+                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalBlockCustomer()">Cancel</button>
+                                <button type="submit" class="btn btn-danger btn-sm pull-right">Block</button>  
                             </form>            
                             <div class="clearfix"></div>
                         </div>

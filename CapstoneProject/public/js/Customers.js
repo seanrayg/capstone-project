@@ -116,6 +116,17 @@ function HideModalCheckout(){
     document.getElementById("DivModalCheckout").style.display = "none";
 }
 
+function ShowModalBlockCustomer(){
+    var TableChecker = CheckTable("#tblCustomer tr");
+    if(TableChecker){
+        document.getElementById("DivModalBlockCustomer").style.display = "block"; 
+    }
+}
+
+function HideModalBlockCustomer(){
+    document.getElementById("DivModalBlockCustomer").style.display = "none";
+}
+
 function ShowModalEditCustomer(){
     var TableChecker = CheckTable("#tblCustomer tr");
     if(TableChecker){
@@ -150,7 +161,10 @@ function HideModalDeleteCustomer(){
 }
 
 function ShowModalCustomerHistory(){
-    document.getElementById("DivModalCustomerHistory").style.display = "block";
+    var TableChecker = CheckTable("#tblCustomer tr");
+    if(TableChecker){
+        document.getElementById("DivModalCustomerHistory").style.display = "block";
+    }
 }
 
 function HideModalCustomerHistory(){

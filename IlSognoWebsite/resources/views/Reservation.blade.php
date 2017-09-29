@@ -266,7 +266,7 @@
                             </div>
                         </div>
                     </div>
-                    @if(sizeof($PackageInfo) < 0)
+                    @if(sizeof($PackageInfo) == 0)
                     <div class="col-md-8">
                         <div class="card">
                             <ul class="nav nav-tabs nav-tabs-neutral justify-content-center text-center" role="tablist" data-background-color="orange">
