@@ -262,6 +262,17 @@
                                         <input type="text" class="form-control" id="ExtendNight" name="ExtendNight" onkeyup="ValidateInput(this, 'int', '#ExtendNightError')" onchange="ValidateInput(this, 'int', '#ExtendNightError')">
                                     </div>
                                 </div>
+                                <div class="row">
+                                <div class="col-md-12">
+                                    <div class="checkbox push-left">
+                                        <label>
+                                                <input type="checkbox" id="CheckExtendBill" checked>
+                                                Add this to customer bill?
+             
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                             </div>
 
                             <div class="row">
@@ -276,6 +287,11 @@
                                     <button type="button" class="btn btn-success pull-right" onclick="ShowModalExtendStayPayment()"><i class="material-icons">done</i>Save</button>
                                 </div> 
                             </div>
+                            <form method="POST" action="/Customer/Extend/Free" id="FreeExtendForm">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="FreeExtendReservationID" id="FreeExtendReservationID">
+                                <input type="hidden" name="FreeExtendNight" id="FreeExtendNight">
+                            </form>
                         </div>
 
                 </div>
@@ -790,7 +806,8 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
+                                    <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
                         </form>
@@ -885,7 +902,8 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
+                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
+                                    <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
                         </form>

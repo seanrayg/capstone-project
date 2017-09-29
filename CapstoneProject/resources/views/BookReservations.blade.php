@@ -203,7 +203,7 @@
 
                                 <div class = "row">
                                     <div class="col-sm-6">
-                                        <div class="form-group label-floating" id="TotalRoomsError">
+                                      <div class="form-group label-floating" id="TotalRoomsError">
                                             <label class="control-label">How many rooms?</label>
                                             <input type="text" class="form-control" onkeyup="CheckInput(this, 'AddRoomError', '#TotalRoomsError')" onchange="CheckInput(this, 'AddRoomError', '#TotalRoomsError')" id="TotalRooms">
                                         </div>

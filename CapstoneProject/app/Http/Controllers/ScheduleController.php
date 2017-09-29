@@ -68,24 +68,38 @@ class ScheduleController extends Controller
 
         $strReservationID = DB::table('tblReservationDetail')
             ->where('strResDCustomerID', '=', $strCustomerID)
-            ->select('strReservationID')
+            ->pluck('strReservationID')
             ->first();
 
-        $strReservationID = $strReservationID->strReservationID;
-
-    	$strBoatScheduleID = $this->SmartCounter('tblBoatSchedule', 'strBoatScheduleID');
-
-    	$BoatSchedule = array(
+        $strBoatScheduleID = DB::table('tblBoatSchedule')->pluck('strBoatScheduleID')->first();
+        if(!$strBoatScheduleID){
+            $strBoatScheduleID = "BSCHD1";
+        }
+        else{
+            $strBoatScheduleID = $this->SmartCounter('tblBoatSchedule', 'strBoatScheduleID');
+        }
+        
+    	$BoatScheduleCheckOut = array(
     		'strBoatScheduleID'=>$strBoatScheduleID,
     		'strBoatSBoatID'=>$strBoatID,
     		'strBoatSPurpose'=>$strBoatPurpose,
     		'dtmBoatSPickUp'=>$dtmBoatSPickUp,
             'dtmBoatSDropOff'=>$dtmBoatSDropOff,
             'intBoatSStatus'=>1,
-            'strBoatSReservationID'=>$strReservationID
+            'strBoatSReservationID'=>$strReservationID,
+            'intBoatSPayment'=>0
     	);
-
-        DB::table('tblBoatSchedule')->insert($BoatSchedule);
+        
+        $BoatSchedulePayNow = array(
+    		'strBoatScheduleID'=>$strBoatScheduleID,
+    		'strBoatSBoatID'=>$strBoatID,
+    		'strBoatSPurpose'=>$strBoatPurpose,
+    		'dtmBoatSPickUp'=>$dtmBoatSPickUp,
+            'dtmBoatSDropOff'=>$dtmBoatSDropOff,
+            'intBoatSStatus'=>1,
+            'strBoatSReservationID'=>$strReservationID,
+            'intBoatSPayment'=>1
+    	);
 
         $strPaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
 
@@ -95,7 +109,7 @@ class ScheduleController extends Controller
             'dblPayAmount'=>$dblBoatRate,
             'strPayTypeID'=>8,
             'dtePayDate'=>Carbon::now('Asia/Manila')->toDateString(),
-            'strPaymentRemarks'=>null,
+            'strPaymentRemarks'=>$strBoatScheduleID,
             'tmsCreated'=>Carbon::now('Asia/Manila')
         );
 
@@ -105,13 +119,15 @@ class ScheduleController extends Controller
             'dblPayAmount'=>$dblBoatRate,
             'strPayTypeID'=>9,
             'dtePayDate'=>Carbon::now('Asia/Manila')->toDateString(),
-            'strPaymentRemarks'=>null,
+            'strPaymentRemarks'=>$strBoatScheduleID,
             'tmsCreated'=>Carbon::now('Asia/Manila')
         );
 
         if($request->input('action') == 'Continue'){
+            DB::table('tblBoatSchedule')->insert($BoatSchedulePayNow);
             DB::table('tblPayment')->insert($BoatSchedulePayment);
         }else{
+            DB::table('tblBoatSchedule')->insert($BoatScheduleCheckOut);
             DB::table('tblPayment')->insert($BoatScheduleBill);
         }
 

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-
+    <title>Login</title>
 	<style>body{padding-top: 60px;}</style>
 	
     <link href="/Login/bootstrap3/css/bootstrap.css" rel="stylesheet" />
@@ -18,7 +18,17 @@
     <script>
     
         window.onload = function(){
+            var Username = localStorage.getItem("Username");
+            if(Username != null){
+                localStorage.removeItem("Username");
+            }
             openLoginModal();
+        }
+        
+        function saveUsername(){
+            var Username = document.getElementById("Username").value;
+            localStorage.setItem("Username", Username);
+            return true;
         }
     </script>
 
@@ -38,11 +48,15 @@
                         <div class="box">
                              <div class="content">
                                 <div class="error"></div>
+                                @if(Session::has('duplicate_message'))
+                                    <div class="error">{{ Session::get('duplicate_message') }}</div>
+                                @endif
                                 <div class="form loginBox">
-                                    <form method="post" action="/login" accept-charset="UTF-8">
-                                    <input id="email" class="form-control" type="text" placeholder="Email" name="email">
-                                    <input id="password" class="form-control" type="password" placeholder="Password" name="password">
-                                    <a href="/Dashboard"><input class="btn btn-default btn-login" type="button" value="Login"></a>
+                                    <form method="post" action="/UserLogin" onsubmit="return saveUsername()">
+                                    {{ csrf_field() }}
+                                    <input id="Username" class="form-control" type="text" placeholder="Username" name="Username" required>
+                                    <input id="Password" class="form-control" type="password" placeholder="Password" name="Password" required>
+                                    <input class="btn btn-default btn-login" type="submit" value="Login">
                                     </form>
                                 </div>
                              </div>

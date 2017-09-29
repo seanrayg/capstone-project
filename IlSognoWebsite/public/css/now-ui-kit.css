@@ -1331,8 +1331,7 @@
   border-left: 0 none; }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-  background-color: #E3E3E3;
-  color: #B8B8B8;
+  color: black;
   cursor: not-allowed; }
 
 .input-group-btn .btn {

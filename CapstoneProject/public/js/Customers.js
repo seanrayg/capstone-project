@@ -23,44 +23,55 @@ function HideModalUnavailableRooms(){
 }
 
 function ShowModalExtendStayPayment(){
-    var daysToExtend = parseInt(document.getElementById("ExtendNight").value);
-    $.ajax({
-        type:'get',
-        url:'/Customer/Extend/Availability',
-        data:{ExtendReservationID: ReservationID,
-              ExtendNight: daysToExtend},
-        success:function(data){
-            if(data.UnavailableRooms != undefined){
-                $('#UnavailableList').empty();
-                HideModalExtendStay();
-                ShowModalUnavailableRooms();
-                for(var x = 0; x < data.UnavailableRooms.length; x++){
-                    var ul = document.getElementById("UnavailableList");
-                    var li = document.createElement("li");
-                    li.appendChild(document.createTextNode(data.UnavailableRooms[x]));
-                    ul.appendChild(li);
+    
+        var daysToExtend = parseInt(document.getElementById("ExtendNight").value);
+        $.ajax({
+            type:'get',
+            url:'/Customer/Extend/Availability',
+            data:{ExtendReservationID: ReservationID,
+                  ExtendNight: daysToExtend},
+            success:function(data){
+                if(data.UnavailableRooms != undefined){
+                    $('#UnavailableList').empty();
+                    HideModalExtendStay();
+                    ShowModalUnavailableRooms();
+                    for(var x = 0; x < data.UnavailableRooms.length; x++){
+                        var ul = document.getElementById("UnavailableList");
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(data.UnavailableRooms[x]));
+                        ul.appendChild(li);
+                    }
                 }
-            }
-            else{
-                ExtendTotal = 0;
-                for(var x = 0; x < data.ReservedRooms.length; x++){
-                    ExtendTotal += parseInt(data.ReservedRooms[x].dblRoomRate);
+                else{
+                    if(document.getElementById("CheckExtendBill").checked == true){
+                        ExtendTotal = 0;
+                        for(var x = 0; x < data.ReservedRooms.length; x++){
+                            ExtendTotal += parseInt(data.ReservedRooms[x].dblRoomRate);
+                        }
+                        
+                        ExtendTotal = parseInt(ExtendTotal) * parseInt(daysToExtend);
+                        document.getElementById("ExtendTotalAmount").innerHTML = "Additional payment amounting PHP" + ExtendTotal +" is needed to extend the stay";
+                        HideModalExtendStay();
+                        document.getElementById("ExtendLaterReservationID").value = ReservationID;
+                        document.getElementById("ExtendLaterNight").value = daysToExtend;
+                        document.getElementById("ExtendLaterAmount").value = ExtendTotal;
+                        document.getElementById("DivModalExtendStayPayment").style.display = "block";
+                    }
+                    else{
+                        document.getElementById("FreeExtendReservationID").value = ReservationID;
+                        document.getElementById("FreeExtendNight").value = document.getElementById("ExtendNight").value;
+                        document.getElementById("FreeExtendForm").submit();
+                    }
+                    
                 }
-                
-                ExtendTotal = parseInt(ExtendTotal) * parseInt(daysToExtend);
-                document.getElementById("ExtendTotalAmount").innerHTML = "Additional payment amounting PHP" + ExtendTotal +" is needed to extend the stay";
-                HideModalExtendStay();
-                document.getElementById("ExtendLaterReservationID").value = ReservationID;
-                document.getElementById("ExtendLaterNight").value = daysToExtend;
-                document.getElementById("ExtendLaterAmount").value = ExtendTotal;
-                document.getElementById("DivModalExtendStayPayment").style.display = "block";
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
             }
-        },
-        error:function(response){
-            console.log(response);
-            alert(response.status);
-        }
-    });
+        });
+    
+    
     //
 }
 
@@ -250,7 +261,6 @@ function run(event, sender){
 function getAvailableRooms(){
     var tempDate  = new Date();
     var DateTimeToday = tempDate.getFullYear() + "/" + (parseInt(tempDate.getMonth())+1) + "/" + tempDate.getDate() + " " + tempDate.getHours() + ":" + tempDate.getMinutes() + ":" + tempDate.getSeconds();
-    alert();
     today = DateTimeToday;
     $.ajax({
         type:'get',

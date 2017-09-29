@@ -58,6 +58,7 @@ function run(event, sender){
         }
         document.getElementById("TotalRooms").value = "";
         AvailableRooms = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML];
+   
     }
 
     if(sender == "ChosenRooms"){
@@ -380,6 +381,7 @@ $(document).ready(function(){
 });
 
 function AddRoom(){
+
     var TotalRooms = document.getElementById("TotalRooms").value;
     var TableChecker = CheckTable('#tblAvailableRooms tr');
     if(TableChecker){

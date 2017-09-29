@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', 'ViewController@getHomePage');
 
 Route::get('/Accomodation', 'ViewController@getRooms');
 
@@ -37,6 +35,14 @@ Route::get('/Reservation/Fees', 'ViewController@getEntranceFee');
 
 Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
+Route::post('/Reservation/Cancel', 'ReservationController@cancelReservation');
+
+Route::post('/Reservation/DepositSlip', 'ReservationController@saveDepositSlip');
+
+Route::post('/Reservation/Add/Package', 'ReservationController@addReservationPackage');
+
+Route::get('/Reservation/Packages/Availability', 'ViewController@getAvailablePackages');
+
 Route::post('/Login', 'SessionsController@create');
 
 Route::post('/Login/VerifyCode', 'SessionsController@VerifyCode');
@@ -47,25 +53,17 @@ Route::get('/BookPackages', function () {
     return view('BookPackages');
 });
 
-Route::get('/Location', function () {
-    return view('Location');
-});
+Route::get('/Location', 'ViewController@getLocation');
 
-Route::get('/AboutUs', function () {
-    return view('AboutUs');
-});
+Route::get('/AboutUs', 'ViewController@getAboutUs');
 
-Route::get('/ContactUs', function () {
-    return view('ContactUs');
-});
+Route::get('/ContactUs', 'ViewController@getContactUs');
 
 Route::get('/Login', function () {
     return view('Login');
 });
 
-Route::get('/Reservation', function () {
-    return view('Reservation');
-});
+Route::get('/Reservation/{id}', 'ViewController@getReservation');
 
 Route::get('/ReservationPackage', function () {
     return view('ReservationPackage');

@@ -82,6 +82,8 @@
         </div>
     </div>
     <div class="col-md-6">
+        <button type="button" class="btn btn-danger pull-right" onclick="ShowModalDeleteUser()"><i class="material-icons">delete</i>Delete</button>
+        <button type="button" class="btn btn-info pull-right" onclick="ShowModalEditUser()"><i class="material-icons">create</i>Edit</button>
         <button type="button" class="btn btn-success pull-right" onclick="ShowModalAddUser()"><i class="material-icons">add</i> Add</button>
     </div>
 </div>
@@ -93,45 +95,38 @@
                 <p class="category"></p>
             </div>
             <div class="card-content table-responsive scrollable-table" id="style-1">
-                <table class="table" id="tblUsers">
+                <table class="table" id="tblUsers" onclick="run(event)">
                     <thead class="text-success">
                         <th style="display:none">Contact ID</th>
                         <th onclick="sortTable(1, 'tblUsers', 'string')" class="text-center">User</th>
                         <th onclick="sortTable(2, 'tblUsers', 'string')" class="text-center">Room Management</th>
                         <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Boat Schedule</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Fees</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Item Rental</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Activities</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Billing</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Maintenance</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Utilities</th>
-                        <th onclick="sortTable(3, 'tblUsers', 'string')" class="text-center">Reports</th>
+                        <th onclick="sortTable(4, 'tblUsers', 'string')" class="text-center">Fees</th>
+                        <th onclick="sortTable(5, 'tblUsers', 'string')" class="text-center">Item Rental</th>
+                        <th onclick="sortTable(6, 'tblUsers', 'string')" class="text-center">Activities</th>
+                        <th onclick="sortTable(7, 'tblUsers', 'string')" class="text-center">Billing</th>
+                        <th onclick="sortTable(8, 'tblUsers', 'string')" class="text-center">Maintenance</th>
+                        <th onclick="sortTable(9, 'tblUsers', 'string')" class="text-center">Utilities</th>
+                        <th onclick="sortTable(10, 'tblUsers', 'string')" class="text-center">Reports</th>
+                        <th style="display:none">Reports</th>
                     </thead>
                     <tbody class="text-center">
-                        <tr>
-                            <td>Resort Staff</td>
-                            <td>Yes</td>
-                            <td>Yes</td>
-                            <td>Yes</td>
-                            <td>Yes</td>
-                            <td>Yes</td>
-                            <td>Yes</td>
-                            <td>No</td>
-                            <td>No</td>
-                            <td>No</td>
-                        </tr>
-                        <tr>
-                            <td>Boat Driver</td>
-                            <td>No</td>
-                            <td>Yes</td>
-                            <td>No</td>
-                            <td>No</td>
-                            <td>No</td>
-                            <td>No</td>
-                            <td>No</td>
-                            <td>No</td>
-                            <td>No</td>
-                        </tr>
+                        @foreach($SystemUsers as $User)
+                            <tr onclick="HighlightRow(this)">
+                                <td style="display:none">{{$User->strUserID}}</td>
+                                <td>{{$User->strUsername}}</td>
+                                <td>{{$User->intRoom}}</td>
+                                <td>{{$User->intBoat}}</td>
+                                <td>{{$User->intFee}}</td>
+                                <td>{{$User->intItem}}</td>
+                                <td>{{$User->intActivity}}</td>
+                                <td>{{$User->intBilling}}</td>
+                                <td>{{$User->intMaintenance}}</td>
+                                <td>{{$User->intUtilities}}</td>
+                                <td>{{$User->intReports}}</td>
+                                <td style="display:none">{{$User->strUserPassword}}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>    
             </div>
@@ -159,12 +154,12 @@
                                     <h3 class="title">Add User<span class="close" onclick="HideModalAddUser()">X</span></h3>
                                 </div>
                                 
-                                <form onsubmit="return CheckForm()" method="post" action="/Contact/Save" id="AddUserForm">
+                                <form onsubmit="return CheckForm()" method="post" action="/Users/Add" id="AddUserForm">
                                     {{ csrf_field() }}
-                               
+                                    <input type="hidden" name="UserID" id="UserID" value="{{$UserID}}">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group label-floating" id="ContactNameError">
+                                            <div class="form-group label-floating" id="UsernameError">
                                                 <label class="control-label">Username</label>
                                                 <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#Username')" onchange="ValidateInput(this, 'string', '#UsernameError')" id="Username" name="Username" required>
                                             </div>
@@ -172,7 +167,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Password</label>
-                                                <input type="text" class="form-control" id="password" name="password" required>
+                                                <input type="password" class="form-control" id="UserPassword" name="UserPassword" required>
                                             </div>
                                         </div>
                                     </div>
@@ -181,7 +176,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Can view, add, edit or cancel reservation/walkin and upgrade/transfer room of guests">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleRoom">
                                                     Room Management
                                                 </label>
                                             </div>
@@ -189,7 +184,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Can view, add, edit or cancel boat schedules">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleBoat">
                                                     Boat Schedule
                                                 </label>
                                             </div>
@@ -197,7 +192,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Can view, add, edit or delete fees to the guests">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleFee">
                                                     Fees
                                                 </label>
                                             </div>
@@ -207,7 +202,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Can view, add or edit item rental of guests">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleItem">
                                                     Item Rental
                                                 </label>
                                             </div>
@@ -215,7 +210,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Can view, add or edit beach activities of guests">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleActivity">
                                                     Activities
                                                 </label>
                                             </div>
@@ -223,7 +218,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Can view all of the bills of the guests">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleBilling">
                                                     Billing
                                                 </label>
                                             </div>
@@ -233,7 +228,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Has an access to the maintenance of the system">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleMaintenance">
                                                     Maintenance
                                                 </label>
                                             </div>
@@ -241,7 +236,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Has an access to the utilities of the system">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleUtilities">
                                                     Utilities
                                                 </label>
                                             </div>
@@ -249,7 +244,7 @@
                                         <div class="col-md-4">
                                             <div class="togglebutton" rel="tooltip" title="Can generate reports">
                                                 <label class="toggleLabel">
-                                                    <input type="checkbox">
+                                                    <input type="checkbox" name="ToggleReports">
                                                     Reports
                                                 </label>
                                             </div>
@@ -275,8 +270,8 @@
     </div>
 </div>
 
-<div id="DivModalEditContact" class="modal">
-    <div class="Modal-content" style="max-width: 500px;">
+<div id="DivModalEditUser" class="modal">
+    <div class="Modal-content">
         <div class="row">
             <div class="col-md-12">
                     <div class="card card-stats">
@@ -285,43 +280,110 @@
                                 <i class="material-icons">create</i>
                             </div>
                             <div class="card-content">
-                                <p class="category"></p>
-                                <h3 class="title">Edit Contact<span class="close" onclick="HideModalEditContact()">X</span></h3>
-                                <form onsubmit="return CheckForm()" method="post" action="/Contact/Edit">
+                                
+                                <div class="row">
+                                    <p class="category"></p>
+                                    <h3 class="title">Edit User<span class="close" onclick="HideModalEditUser()">X</span></h3>
+                                </div>
+                                
+                                <form onsubmit="return CheckForm()" method="post" action="/Users/Edit" id="AddUserForm">
                                     {{ csrf_field() }}
-                                    <input type="hidden" id="EditContactID" name="EditContactID">
-                                    <input type="hidden" id="OldContactName" name="OldContactName">
+                                    <input type="hidden" name="EditUserID" id="EditUserID">
+                                    <input type="hidden" name="EditOldUsername" id="EditOldUsername">
+                                    <input type="hidden" name="EditOldPassword" id="EditOldPassword">
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static" id="EditContactNameError">
-                                                <label class="control-label">Contact</label>
-                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditContactNameError')" onchange="ValidateInput(this, 'string', '#EditContactNameError')" id="EditContactName" name="EditContactName" required>
+                                        <div class="col-md-6">
+                                            <div class="form-group label-static" id="EditUsernameError">
+                                                <label class="control-label">Username</label>
+                                                <input type="text" class="form-control" onkeyup="ValidateInput(this, 'string', '#EditUsername')" onchange="ValidateInput(this, 'string', '#EditUsernameError')" id="EditUsername" name="EditUsername" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group label-floating">
+                                                <label class="control-label">Password</label>
+                                                <input type="password" class="form-control" id="EditUserPassword" name="EditUserPassword" rel="tooltip" title="Leave blank if you will not change the password">
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static">
-                                                <label class="control-label">Details</label>
-                                                <input type="text" class="form-control" id="EditContactDetails" name="EditContactDetails" required>
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Can view, add, edit or cancel reservation/walkin and upgrade/transfer room of guests">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleRoom" id="EditToggleRoom">
+                                                    Room Management
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Can view, add, edit or cancel boat schedules">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleBoat" id="EditToggleBoat">
+                                                    Boat Schedule
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Can view, add, edit or delete fees to the guests">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleFee" id="EditToggleFee">
+                                                    Fees
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class = "row">
-                                        <div class="col-md-12">
-                                            <div class="form-group label-static">
-                                                <label class="control-label">Status</label>
-                                                <div class="selectBox">
-                                                    <select id="EditContactStatus" name="EditContactStatus">
-                                                      <option>Active</option>
-                                                      <option>Inactive</option>
-                                                    </select>
-                                                </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Can view, add or edit item rental of guests">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleItem" id="EditToggleItem">
+                                                    Item Rental
+                                                </label>
                                             </div>
                                         </div>
-                                    </div>        
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Can view, add or edit beach activities of guests">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleActivity" id="EditToggleActivity">
+                                                    Activities
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Can view all of the bills of the guests">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleBilling" id="EditToggleBilling">
+                                                    Billing
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Has an access to the maintenance of the system">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleMaintenance" id="EditToggleMaintenance">
+                                                    Maintenance
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Has an access to the utilities of the system">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleUtilities" id="EditToggleUtilities">
+                                                    Utilities
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="togglebutton" rel="tooltip" title="Can generate reports">
+                                                <label class="toggleLabel">
+                                                    <input type="checkbox" name="EditToggleReports" id="EditToggleReports">
+                                                    Reports
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
@@ -329,8 +391,9 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-success pull-right">Save</button>
+                                    <button type="submit" class="btn btn-info pull-right">Update</button>
                                     <div class="clearfix"></div>
+
 
                                 </form>
                             </div>
@@ -341,7 +404,9 @@
     </div>
 </div>
 
-<div id="DivModalDeleteContact" class="modal">
+
+
+<div id="DivModalDeleteUser" class="modal">
     <div class="Modal-content">
         <div class="row">
             <div class="col-md-3">
@@ -354,11 +419,11 @@
                         </div>
                         <div class="card-content">
                             <p class="category"></p>
-                            <h3 class="title">Delete Contact?<span class="close" onclick="HideModalDeleteContact()">X</span></h3>
-                            <form method="post" action="/Contact/Delete">
+                            <h3 class="title">Delete User?<span class="close" onclick="HideModalDeleteUser()">X</span></h3>
+                            <form method="post" action="/Users/Delete">
                                 {{ csrf_field() }}
-                                <input type="hidden" name="DeleteContactID" id="DeleteContactID" value="">
-                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteContact()">Cancel</button>
+                                <input type="hidden" name="DeleteUserID" id="DeleteUserID" value="">
+                                <button type="button" class="btn btn-info btn-sm pull-right" onclick="HideModalDeleteUser()">Cancel</button>
                                 <button type="submit" class="btn btn-danger btn-sm pull-right">Delete</button>
                                 <div class="clearfix"></div>
                             </form>

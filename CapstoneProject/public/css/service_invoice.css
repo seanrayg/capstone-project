@@ -1,0 +1,91 @@
+html {
+    margin: 0;
+}
+
+.header {
+    background-color: #9494b8;
+    width: 100%;
+}
+
+p.resort {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: white;
+    font-size: 15px;
+    text-align: center;
+}
+
+.column-left {
+    float: left; width: 50%;
+}
+.column-right {
+    float: right; width: 30%;
+}
+
+label.parent {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: gray;
+    font-size: 12px;
+}
+
+label {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 13px;
+}
+
+table {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    border: 1px solid #CCC;
+    border-collapse: collapse;
+    width: 100%;
+    padding: 15px;
+}
+
+td, th {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    text-align: center;
+    background-color: #9494b8;
+    color: #ffffff;
+    font-size: 10px;
+    border: none;
+}
+
+td {
+    font-size: 12px;
+    height: 10px;
+    border: none;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.total {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    padding-left: 240px;
+}
+
+.total-amount {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    float: right;
+    font-size: 15px;
+    padding-right: 25px;
+}
+
+.footer {
+    padding-top: 80px;
+    width: 100%;
+}
+
+.greetings {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 12px;
+    text-align: center;
+    font-style: italic;
+}

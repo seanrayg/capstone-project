@@ -1,3 +1,4 @@
+
 //notification
 
 window.setTimeout(function() {
@@ -118,6 +119,11 @@ function sortTable(n, TableID, field) {
 //sidebar function
 
 window.onload = function() {
+    var Username = localStorage.getItem("Username");
+    if(Username == null){
+        document.location.href = "/";
+    }
+    
     var TitlePage = document.getElementById("TitlePage").innerHTML;
     $(".sidebar li").removeClass("active");
     if(TitlePage == "Dashboard"){
@@ -174,6 +180,82 @@ window.onload = function() {
     else if(TitlePage == "Utilities"){
         $("#SB-Utilities").addClass("active");
     }
+    
+     $.ajax({
+        type:'get',
+        url:'/SystemUsers/Restrictions',
+        data:{Username: Username},
+        success:function(data){
+            var linkError = true;
+            if(data[0].intRoom == 1){
+                document.getElementById("SB-Reservations").style.display = "block";
+                document.getElementById("SB-Customers").style.display = "block";
+                document.getElementById("SB-Walkin").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intBoat == 1){
+                document.getElementById("SB-BoatSchedule").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intFee == 1){
+                document.getElementById("SB-Fees").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intItem == 1){
+                document.getElementById("SB-ItemRental").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intActivity == 1){
+                document.getElementById("SB-Activities").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intMaintenance == 1){
+                document.getElementById("SB-Maintenance").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intBilling == 1){
+                document.getElementById("SB-Billing").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intUtilities == 1){
+                document.getElementById("SB-Utilities").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            if(data[0].intReports == 1){
+                document.getElementById("SB-Reports").style.display = "block";
+            }
+            else{
+                linkError = true;
+            }
+            
+            if(!linkError){
+                history.go(-1);
+            }
+          
+        },
+        error:function(response){
+            console.log(response);
+            alert("error");
+        }
+    });   
+    
+    
 };
 
 //modal for walkin

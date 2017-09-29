@@ -444,6 +444,7 @@
                                                             <input type="hidden" name="s-DateOfBirth" id="s-DateOfBirth" value = "">
                                                             <input type="hidden" name="s-Gender" id="s-Gender" value = "">
                                                             <input type="hidden" name="s-Remarks" id="s-Remarks" value = "">
+                                                            <input type="hidden" name="s-InitialBill" id="s-InitialBill" value = "">
                                                             <div class="col-md-8 text-center">
                                                                 <button type="submit" class="btn btn-primary btn-lg">BOOK RESERVATION</button>
                                                             </div>

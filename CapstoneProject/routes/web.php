@@ -32,6 +32,8 @@ Route::get('/ItemRental', 'ViewResortController@getAvailableItems');
 
 Route::get('/Activities', 'ViewResortController@getAvailableActivities');
 
+Route::get('/Deductions', 'ViewResortController@ViewDeductions');
+
 Route::get('/Reports', function () {
     return view('Reports');
 });
@@ -50,7 +52,7 @@ Route::get('/Fees', 'ViewResortController@ViewFees');
 
 Route::get('/ContactInformation', 'ViewUtilitiesController@ViewContact');
 
-
+Route::post('/UserLogin', 'UtilitiesController@AuthenticateUser');
 
 /*-------------- MAINTENANCE --------------*/
 
@@ -298,6 +300,10 @@ Route::get('/Reservation/Packages/Availability', 'ViewController@getAvailablePac
 //Reservation Downpayment
 Route::post('/Reservation/Downpayment', 'ReservationController@saveDownpayment');
 
+//Reservation Deposit Slip
+
+Route::get('/Reservation/DepositSlip', 'ViewController@getDepositSlip');
+
 
 
 /*---------------- WALK IN ------------------*/
@@ -349,6 +355,10 @@ Route::post('/Upgrade/Pay', 'ResortController@saveUpgradeRoomPayment');
 
 Route::get('/QueryReports', function () {
     return view('QueryReports');
+});
+
+Route::get('/SalesReport', function () {
+    return view('SalesReport');
 });
 
 // Query Report AJAX
@@ -428,6 +438,8 @@ Route::post('/Customer/ExtendPay', 'ResortController@saveExtendStayPay');
 
 Route::get('/Customer/Extend/Availability', 'ViewResortController@checkExtendStay');
 
+Route::post('/Customer/Extend/Free', 'ResortController@saveExtendStayFree');
+
 Route::post('/Customer/Edit', 'ResortController@editCustomerInfo');
 
 Route::post('/Customer/Delete', 'ResortController@deleteCustomer');
@@ -445,15 +457,41 @@ Route::post('Contact/Delete', 'UtilitiesController@deleteContactInfo');
 /*---------- CONTENT MANAGEMENT ---------*/
 Route::get('/ContentManagement', 'ViewUtilitiesController@ViewContentManagement');
 
+Route::post('/Utilities/Web/HomePage', 'UtilitiesController@saveHomePage');
+
+Route::post('/Utilities/Web/Accommodation', 'UtilitiesController@saveAccommodation');
+
+Route::post('/Utilities/Web/Packages', 'UtilitiesController@savePackages');
+
+Route::post('/Utilities/Web/Activities', 'UtilitiesController@saveActivities');
+
+Route::post('/Utilities/Web/Contacts', 'UtilitiesController@saveContacts');
+
+Route::post('/Utilities/Web/Location', 'UtilitiesController@saveLocation');
+
+Route::post('/Utilities/Web/AboutUs', 'UtilitiesController@saveAboutUs');
+
 
 
 /*---------- SYSTEM USERS ------------*/
 
 Route::get('SystemUsers', 'ViewUtilitiesController@ViewSystemUsers');
 
+Route::post('/Users/Add', 'UtilitiesController@AddUser');
+
+Route::post('/Users/Edit', 'UtilitiesController@EditUser');
+
+Route::post('/Users/Delete', 'UtilitiesController@DeleteUser');
+
+Route::get('SystemUsers/Restrictions', 'ViewUtilitiesController@getUserRestrictions');
+
 /*----------- REPORTS ----------*/
 
 Route::post('/QueryReports/Print', 'ViewReportController@PrintQueryReport');
 
+Route::post('/Reservation/Invoice', 'InvoiceController@GenerateInvoice');
+
 /*----------- CHECKOUT ----------*/
 Route::get('/Checkout/{id}', 'ViewResortController@ViewCheckout');
+
+Route::post('/Checkout/Pay', 'ResortController@CheckoutCustomer');

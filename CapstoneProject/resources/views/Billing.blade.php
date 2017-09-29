@@ -90,152 +90,173 @@
                         <div class="row">
                             <h3 class="title">Bill Breakdown<span class="close" onclick="HideModalBillBreakdown()">X</span></h3>
                         </div>
-                        <h5>Package Availed</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillPackage">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Package</th>
-                                    <th class="text-center">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-     
-                            </tbody>
-                        </table>
-                        <br><br>
                         
-                        <h5>Reserved Rooms/Cottages</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillAccommodation">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Type</th>
-                                    <th class="text-center">Name</th>
-                                    <th class="text-center">Rate per day</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-     
-                            </tbody>
-                        </table>
-                        <br><br>
-                        
-                        <h5>Additional Room/Cottages</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillAdditional">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Type</th>
-                                    <th class="text-center">Name</th>
-                                    <th class="text-center">Rate per day</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-     
-                            </tbody>
-                        </table>
-                        <br><br>
-                        
-                        <h5>Upgraded Room/Cottages</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillUpgrade">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Name</th>
-                                    <th class="text-center">Payment Needed</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-     
-                            </tbody>
-                        </table>
-                        <br><br>
-                        
-                        <h5>Days Extended</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillExtend">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Number of days</th>
-                                    <th class="text-center">Payment</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-     
-                            </tbody>
-                        </table>
-                        <br><br>
-                        
-                        <h5>Item Rental</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillItem">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Item Rental</th>
-                                    <th class="text-center">Quantity</th>
-                                    <th class="text-center">Hours used</th>
-                                    <th class="text-center">Rate per hour</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
+                        <div id="PackageDiv">
+                            <h5>Package Availed</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillPackage">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Package</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
 
-                            </tbody>
-                        </table>
-                        <br><br>
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
                         
-                        <h5>Beach Activities</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillActivity">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Activity</th>
-                                    <th class="text-center">Quantity</th>
-                                    <th class="text-center">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-        
-                            </tbody>
-                        </table>
-                        <br><br>
-                        
-                        <h5>Fees</h5>
-                         <table class="table" style="font-family:'Roboto'" id="tblBillFee">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Fee</th>
-                                    <th class="text-center">Quantity</th>
-                                    <th class="text-center">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-  
-                            </tbody>
-                        </table>
-                        <br><br>
-                        
-                        <h5>Boats</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillBoat">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Boat</th>
-                                    <th class="text-center">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
+                        <div id="AccommodationDiv">
+                            <h5>Reserved Rooms/Cottages</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillAccommodation">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Type</th>
+                                        <th class="text-center">Name</th>
+                                        <th class="text-center">Rate per day</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
 
-                            </tbody>
-                        </table>
-                        <br><br>
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
                         
-                        <h5>Miscellaneous</h5>
-                        <table class="table" style="font-family:'Roboto'" id="tblBillMiscellaneous">
-                            <thead class="text-success">
-                                <tr>
-                                    <th class="text-center">Title</th>
-                                    <th class="text-center">Remarks</th>
-                                    <th class="text-center">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
+                        <div id="AdditionalDiv">
+                            <h5>Additional Room/Cottages</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillAdditional">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Type</th>
+                                        <th class="text-center">Name</th>
+                                        <th class="text-center">Rate per day</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
 
-                            </tbody>
-                        </table>
-                        <br><br>
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
+                        
+                        <div id="UpgradeDiv">
+                            <h5>Upgraded Room/Cottages</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillUpgrade">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Name</th>
+                                        <th class="text-center">Payment Needed</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
+                        
+                        <div id="ExtendDiv">
+                            <h5>Days Extended</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillExtend">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Number of days</th>
+                                        <th class="text-center">Payment</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
+                        
+                        <div id="ItemsDiv">
+                            <h5>Item Rental</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillItem">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Item Rental</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Hours used</th>
+                                        <th class="text-center">Rate per hour</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
+                        
+                        <div id="ActivitiesDiv">
+                            <h5>Beach Activities</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillActivity">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Activity</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
+                        
+                        <div id="FeesDiv">
+                            <h5>Fees</h5>
+                             <table class="table" style="font-family:'Roboto'" id="tblBillFee">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Fee</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
+                        
+                        <div id="BoatsDiv">
+                            <h5>Boats</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillBoat">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Boat</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
+                        
+                        <div id="MiscellaneousDiv">
+                            <h5>Miscellaneous</h5>
+                            <table class="table" style="font-family:'Roboto'" id="tblBillMiscellaneous">
+                                <thead class="text-success">
+                                    <tr>
+                                        <th class="text-center">Title</th>
+                                        <th class="text-center">Remarks</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                            <br><br>
+                        </div>
                         
                         <button type="button" class="btn btn-info pull-right" onclick="HideModalBillBreakdown()">Close</button>
                         <div class="clearfix"></div>

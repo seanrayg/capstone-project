@@ -70,8 +70,9 @@
 @endsection
 
 @section('content')
+@foreach($PackagesContents as $Content)
 <div class="page-header clear-filter" filter-color="orange">
-    <div class="page-header-image" data-parallax="true" style="background-image: url('/img/header-6.jpg');">
+    <div class="page-header-image" data-parallax="true" style="background-image: url('{{$Content->strHeaderImage}}');">
     </div>
     <div class="container">
         <div class="content-center brand">
@@ -88,7 +89,7 @@
             <div class="row">
                 <div class="col-md-8 offset-md-2 text-center">
                     <h2 class="title">Packages</h2>
-                    <h5 class="description">Sed at tortor ut eros suscipit tincidunt. Sed blandit massa arcu, nec mattis mi commodo sit amet.</h5>
+                    <h5 class="description">{{$Content->strHeaderDescription}}</h5>
                 </div>
             </div>
             
@@ -97,7 +98,7 @@
                     <h5 class="h1-seo text-center">Packages Offered</h5>
                 </div>
             </div>
-            
+@endforeach            
             
             <div class="row">
                 @foreach($Packages as $Package)

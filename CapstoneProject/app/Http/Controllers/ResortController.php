@@ -1314,6 +1314,19 @@ class ResortController extends Controller
            }
         }
     }
+
+    public function saveExtendStayFree(Request $req){
+        $ReservationID = trim($req->input('FreeExtendReservationID'));
+        $ExtendTotal = trim($req->input('FreeExtendNight'));
+        $TotalAmount = 0;
+        $PaymentStatus = 1;
+        
+        $this->updateExtendStay($ReservationID, $ExtendTotal, $TotalAmount, $PaymentStatus);
+
+        \Session::flash('flash_message','Successfully extended the stay of the customer!');
+        
+        return redirect('/Customers');
+    }
     
     public function saveExtendStay(Request $req){
         $ReservationID = trim($req->input('ExtendLaterReservationID'));
@@ -1720,6 +1733,43 @@ class ResortController extends Controller
             ->update($updateData);
         
         return $RoomPaymentStatus;
+    }
+
+
+    /*-----------------CHECKOUT------------------*/
+
+    public function CheckoutCustomer(Request $req){
+        $ReservationID = trim($req->input('s-ReservationID'));
+        $TotalAmount = trim($req->input("PayTotal"));
+        $PaymentStatus = 1;
+        $DateToday = Carbon::now()->toDateString();
+
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                                      'strPayReservationID'=>$ReservationID,
+                                      'dblPayAmount'=>$TotalAmount,
+                                      'strPayTypeID'=> 28,
+                                      'dtePayDate'=>$DateToday,
+                                      'strPaymentRemarks'=>null);
+
+        DB::table('tblPayment')->insert($TransactionData);
+
+        $updateData = array("intResDStatus" => "5");   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', '=', $ReservationID)
+            ->update($updateData);
+
+        \Session::flash('flash_message','Checkout Successful!');
+        
+        return redirect('/Customers');
     }
     
     

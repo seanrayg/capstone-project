@@ -39,7 +39,18 @@ class DatabaseSeeder extends Seeder
              array('strPaymentTypeID'=>'24', 'strPaymentType'=>'Extend Stay Bill'),
              array('strPaymentTypeID'=>'25', 'strPaymentType'=>'Extend Stay Payment'),
              array('strPaymentTypeID'=>'26', 'strPaymentType'=>'Item Rental Package Reference'),
-             array('strPaymentTypeID'=>'27', 'strPaymentType'=>'Activity Package Reference')
+             array('strPaymentTypeID'=>'27', 'strPaymentType'=>'Activity Package Reference'),
+             array('strPaymentTypeID'=>'28', 'strPaymentType'=>'Check out Payment')
+        ));
+        
+        DB::table('tblWebContent')->insert(array(
+            array('strPageTitle' => 'Home Page', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-1.jpeg'),
+            array('strPageTitle' => 'Accommodation', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-2.jpg'),
+            array('strPageTitle' => 'Packages', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-6.jpg'),
+            array('strPageTitle' => 'Activities', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-7.jpg'),
+            array('strPageTitle' => 'Location', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-3.jpg'),
+            array('strPageTitle' => 'About Us', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-4.jpg'),
+            array('strPageTitle' => 'Contact Us', 'strHeaderDescription' => 'Header Description', 'strHeaderImage' => '/img/header-5.jpg'),
         ));
         
         //for verification

@@ -9,7 +9,7 @@
     <script src="/js/MainJavascript.js" type="text/javascript"></script>
     <script src="/js/Walkin.js" type="text/javascript"></script>
     <script src="/js/input-validator.js" type="text/javascript"></script>
-    
+    <!--<script src="/js/Reservations.js" type="text/javascript"></script>-->
 @endsection
 
 @section('content')

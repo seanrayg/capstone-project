@@ -38,6 +38,8 @@ function ShowModalPayBoatRent() {
         var intPrice = intBoatRate * intHours;
 
         document.getElementById('BoatRentPrice').value = intPrice;
+
+        document.getElementById("BoatRentChange").value = "Insufficient Payment";
         
         document.getElementById("DivModalPayBoatRent").style.display = "block";
     }
@@ -56,15 +58,18 @@ function SendPayment(field, dataType, holder){
         var Change = BoatRentPayment - BoatRentTotal;
         if(Change < 0){
             document.getElementById("BoatRentChange").value = "Insufficient Payment";
+            document.getElementById("btnContinue").disabled = true;
         }
-        else{
+        else if(Change >= 0){
             document.getElementById("BoatRentChange").value = Change;
+            document.getElementById("btnContinue").disabled = false;
         }
         
     }
 }
 
 function CheckSelectedCustomer(){
+
     var strCustomer = document.getElementById('CustomerName').value;
     var arrCustomer = document.getElementById('GuestsList').options;
     
@@ -79,4 +84,15 @@ function CheckSelectedCustomer(){
     document.getElementById('CustomerErrorLabel').innerHTML = 'Please check the customer name';
 
     return false;
+
+}
+
+function PrintInvoice() {
+
+    document.getElementById("Amount").value = document.getElementById("BoatRentPrice").value;
+    document.getElementById("Hours").value = document.getElementById("PickUpTime").value;
+    document.getElementById("Rate").value = document.getElementById("BoatRate").value;
+    document.getElementById("iCustomerID").value = document.getElementById("CustomerID").value;
+    document.getElementById("InvoiceForm").submit();
+
 }
