@@ -69,6 +69,12 @@
                                     All Customer records
                                 <div class="ripple-container"></div></a>
                             </li>
+                            <li class="">
+                                <a href="#BlockedCustomers" data-toggle="tab">
+                                    <i class="material-icons">do_not_disturb</i>
+                                    Blocked Customers
+                                <div class="ripple-container"></div></a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -152,43 +158,98 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
+                                <div class="col-md-12">
+                                    <div class="card">
 
-                                <table class="table" id="tblCustomer" onclick="run(event, 'Record')">
-                                    <thead class="text-primary">
-                                        <th style="display:none">Customer ID</th>
-                                        <th onclick="sortTable(1, 'tblCustomer', 'string')">Firstname</th>
-                                        <th onclick="sortTable(2, 'tblCustomer', 'string')">Middlename</th>
-                                        <th onclick="sortTable(3, 'tblCustomer', 'string')">Lastname</th>
-                                        <th onclick="sortTable(4, 'tblCustomer', 'string')">Address</th>
-                                        <th onclick="sortTable(5, 'tblCustomer', 'string')">Contact #</th>
-                                        <th onclick="sortTable(6, 'tblCustomer', 'string')">Email</th>
-                                        <th onclick="sortTable(7, 'tblCustomer', 'string')">Nationality</th>
-                                        <th onclick="sortTable(8, 'tblCustomer', 'string')">Gender</th>
-                                        <th onclick="sortTable(9, 'tblCustomer', 'string')">Date of birth</th>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($CustomerDetails as $Customer)
-                                        <tr onclick="HighlightRow(this)">
-                                            <td style="display:none">{{$Customer->strCustomerID}}</td>
-                                            <td>{{$Customer->strCustFirstName}}</td>
-                                            <td>{{$Customer->strCustMiddleName}}</td>
-                                            <td>{{$Customer->strCustLastName}}</td>
-                                            <td>{{$Customer->strCustAddress}}</td>
-                                            <td>{{$Customer->strCustContact}}</td>
-                                            <td>{{$Customer->strCustEmail}}</td>
-                                            <td>{{$Customer->strCustNationality}}</td>
-                                            <td>{{$Customer->strCustGender}}</td>
-                                            <td>{{Carbon\Carbon::parse($Customer->dtmCustBirthday)->format('M j, Y')}}</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-      
-                            </div>
-                        </div> 
+                                    <table class="table" id="tblCustomer" onclick="run(event, 'Record')">
+                                        <thead class="text-primary">
+                                            <th style="display:none">Customer ID</th>
+                                            <th onclick="sortTable(1, 'tblCustomer', 'string')">Firstname</th>
+                                            <th onclick="sortTable(2, 'tblCustomer', 'string')">Middlename</th>
+                                            <th onclick="sortTable(3, 'tblCustomer', 'string')">Lastname</th>
+                                            <th onclick="sortTable(4, 'tblCustomer', 'string')">Address</th>
+                                            <th onclick="sortTable(5, 'tblCustomer', 'string')">Contact #</th>
+                                            <th onclick="sortTable(6, 'tblCustomer', 'string')">Email</th>
+                                            <th onclick="sortTable(7, 'tblCustomer', 'string')">Nationality</th>
+                                            <th onclick="sortTable(8, 'tblCustomer', 'string')">Gender</th>
+                                            <th onclick="sortTable(9, 'tblCustomer', 'string')">Date of birth</th>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($CustomerDetails as $Customer)
+                                            <tr onclick="HighlightRow(this)">
+                                                <td style="display:none">{{$Customer->strCustomerID}}</td>
+                                                <td>{{$Customer->strCustFirstName}}</td>
+                                                <td>{{$Customer->strCustMiddleName}}</td>
+                                                <td>{{$Customer->strCustLastName}}</td>
+                                                <td>{{$Customer->strCustAddress}}</td>
+                                                <td>{{$Customer->strCustContact}}</td>
+                                                <td>{{$Customer->strCustEmail}}</td>
+                                                <td>{{$Customer->strCustNationality}}</td>
+                                                <td>{{$Customer->strCustGender}}</td>
+                                                <td>{{Carbon\Carbon::parse($Customer->dtmCustBirthday)->format('M j, Y')}}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div> 
+                        </div>
+
                     </div>
+
+                    <div class="tab-pane" id="BlockedCustomers">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Search Customer</label>
+                                    <input type="text" class="form-control" placeholder="Please enter last name" id="SearchBar" onkeyup="SearchTable('tblBlockedCustomer', '3')">
+                                </div>
+                            </div>            
+                        </div>
+
+                        <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+
+                                    <table class="table" id="tblBlockedCustomer" onclick="run(event, 'Record')">
+                                        <thead class="text-primary">
+                                            <th style="display:none">Customer ID</th>
+                                            <th onclick="sortTable(1, 'tblCustomer', 'string')">Firstname</th>
+                                            <th onclick="sortTable(2, 'tblCustomer', 'string')">Middlename</th>
+                                            <th onclick="sortTable(3, 'tblCustomer', 'string')">Lastname</th>
+                                            <th onclick="sortTable(4, 'tblCustomer', 'string')">Address</th>
+                                            <th onclick="sortTable(5, 'tblCustomer', 'string')">Contact #</th>
+                                            <th onclick="sortTable(6, 'tblCustomer', 'string')">Email</th>
+                                            <th onclick="sortTable(7, 'tblCustomer', 'string')">Nationality</th>
+                                            <th onclick="sortTable(8, 'tblCustomer', 'string')">Gender</th>
+                                            <th onclick="sortTable(9, 'tblCustomer', 'string')">Date of birth</th>
+                                            <th>Action</th>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($BlockedCustomers as $Customer)
+                                            <tr onclick="HighlightRow(this)">
+                                                <td style="display:none">{{$Customer->strCustomerID}}</td>
+                                                <td>{{$Customer->strCustFirstName}}</td>
+                                                <td>{{$Customer->strCustMiddleName}}</td>
+                                                <td>{{$Customer->strCustLastName}}</td>
+                                                <td>{{$Customer->strCustAddress}}</td>
+                                                <td>{{$Customer->strCustContact}}</td>
+                                                <td>{{$Customer->strCustEmail}}</td>
+                                                <td>{{$Customer->strCustNationality}}</td>
+                                                <td>{{$Customer->strCustGender}}</td>
+                                                <td>{{Carbon\Carbon::parse($Customer->dtmCustBirthday)->format('M j, Y')}}</td>
+                                                <td>
+                                                <button type="button" rel="tooltip" title="Unblock Customer" class="btn btn-success btn-simple btn-xs" onclick="ShowModalRestore('{{$Customer->strCustomerID}}')">
+                                                    <i class="material-icons">autorenew</i>
+                                                </button>
+                                            </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div> 
+                        </div>
 
                     </div>
                 </div>
@@ -609,6 +670,36 @@
         </div>
     </div>
 </div>
+
+<div id="DivModalRestoreCustomer" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-8">
+                <div class="card card-stats">
+
+                        <div class="card-header" data-background-color="green">
+                            <i class="material-icons">autorenew</i>
+                        </div>
+                        <div class="card-content">
+                            <p class="category"></p>
+                            <h3 class="title"><span class="close" onclick="HideModalRestoreCustomer()">X</span></h3>
+                            <h3 class="title">Unblock Customer?</h3>
+                            <form method="post" action="/Customer/Restore">
+                                {{ csrf_field() }}
+                                <input type="hidden" id="RestoreCustomerID" name="RestoreCustomerID">
+                                <button type="button" class="btn btn-danger btn-sm pull-right" onclick="HideModalRestoreCustomer()">Cancel</button>
+                                <button type="submit" class="btn btn-success btn-sm pull-right">Restore</button>  
+                            </form>            
+                            <div class="clearfix"></div>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
     
 <div id="DivModalCustomerHistory" class="modal">
     <div class="Modal-content" style="max-width:1000px">
@@ -623,7 +714,7 @@
                                 <h3 class="title">Customer History<span class="close" onclick="HideModalCustomerHistory()">X</span></h3>
                             </div>
                             <br>
-                            <table class="table table-hover" onclick="run(event)" style="font-family: Roboto">
+                            <table class="table table-hover" style="font-family: Roboto" id="tblCustomerHistory">
                             <thead class="text-warning">
                                 <th class="text-center">ID</th>
                                 <th class="text-center">Check In Date</th>   
@@ -631,51 +722,8 @@
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </thead>
-                            <tbody>
-                                <tr onclick="HighlightRow(this)" class="text-center">
-                                    <td>ID</td>
-                                    <td>Check In Date</td>   
-                                    <td>Check Out Date</td>
-                                    <td>Status</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr onclick="HighlightRow(this)" class="text-center">
-                                    <td>ID</td>
-                                    <td>Check In Date</td>   
-                                    <td>Check Out Date</td>
-                                    <td>Status</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr onclick="HighlightRow(this)" class="text-center">
-                                    <td>ID</td>
-                                    <td>Check In Date</td>   
-                                    <td>Check Out Date</td>
-                                    <td>Status</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr onclick="HighlightRow(this)" class="text-center">
-                                    <td>ID</td>
-                                    <td>Check In Date</td>   
-                                    <td>Check Out Date</td>
-                                    <td>Status</td>
-                                    <td>
-                                        <button type="button" rel="tooltip" title="Show more info" class="btn btn-info btn-simple btn-xs" onclick="ShowModalReservationInfo()">
-                                            <i class="material-icons">insert_invitation</i>
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody class="text-center">
+
                             </tbody>
                         </table>
                     </div>
@@ -700,9 +748,18 @@
                         <div class="row">
                             <div class="col-xs-1"></div>
                             <div class="col-xs-10">
+                                <br>
+                                <form method="POST" action="/Reservation/Invoice" onsubmit="setReservationID()" target="_blank">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="InvoiceType" value="Reservation">
+                                    <input type="hidden" name="ReservationID" id="ReservationID">
+                                    <input type="hidden" name="IsPackaged" id="IsPackaged">
+                                    <button type="submit" class="btn btn-success">Show Invoice</button>
+                                </form>
                                 <small><h4>Reservation Info:</h4></small>
                                 <p class="paragraphText text-primary">Reservation ID:</p> <p class="paragraphText" id="i-ReservationID"></p><br>
                                 <p class="paragraphText text-primary">Reservation Code:</p> <p class="paragraphText" id="i-ReservationCode"></p><br>
+                                <p class="paragraphText text-primary">Package Availed:</p> <p class="paragraphText" id="i-PackageAvailed"></p><br> 
                                 <p class="paragraphText text-primary">Check In Date:</p> <p class="paragraphText" id="i-CheckInDate"></p><br>
                                 <p class="paragraphText text-primary">Check Out Date:</p> <p class="paragraphText" id="i-CheckOutDate"></p><br>
                                 <p class="paragraphText text-primary">Pick Up Time:</p> <p class="paragraphText" id="i-PickUpTime"></p><br>
@@ -711,7 +768,7 @@
                                 <p class="paragraphText text-primary">Remarks:</p> <p class="paragraphText" id="i-Remarks"></p><br>
                                 <small><h4>Reserved Room(s):</h4></small>
                                 <div class="row"></div>
-                                <table class="table" id="tblChosenRooms" style="font-family: 'Roboto'">
+                                <table class="table" id="tblHistoryRooms" style="font-family: 'Roboto'">
                                     <thead class="text-primary">
                                         <th>Room</th>
                                         <th>Quantity</th>
@@ -722,7 +779,7 @@
                                 </table><br><br>
                                 <small><h4>Reserved Boat(s):</h4></small>
                                 <div class="row"></div>
-                                <table class="table" id="tblChosenBoats" style="font-family: 'Roboto'">
+                                <table class="table" id="tblHistoryBoats" style="font-family: 'Roboto'">
                                     <thead class="text-primary">
                                         <th>Boat</th>
                                     </thead>

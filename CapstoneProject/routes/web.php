@@ -428,6 +428,8 @@ Route::get('/Billing/Info', 'ViewResortController@getBillBreakdown');
 
 Route::get('/Customers/GetRooms', 'ViewResortController@getAddAvailableRooms');
 
+Route::get('/Customers/History', 'ViewResortController@getCustomerHistory');
+
 Route::post('/Customer/Rooms', 'ResortController@saveAddRooms');
 
 Route::post('/Customer/RoomsPay', 'ResortController@saveAddRoomsPayment');
@@ -444,6 +446,9 @@ Route::post('/Customer/Edit', 'ResortController@editCustomerInfo');
 
 Route::post('/Customer/Delete', 'ResortController@deleteCustomer');
 
+Route::post('/Customer/Block', 'ResortController@blockCustomer');
+
+Route::post('/Customer/Restore', 'ResortController@restoreCustomer');
 
 /*---------- CONTACT INFORMATION----------*/
 

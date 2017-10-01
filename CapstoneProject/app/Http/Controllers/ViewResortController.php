@@ -470,8 +470,51 @@ class ViewResortController extends Controller
                             ->join ('tblReservationDetail as b', 'b.strResDCustomerID', '=' , 'a.strCustomerID')
                             ->where([['a.intCustStatus', 1],['b.intResDStatus', '=', '4']])
                             ->get();
+
+        $BlockedCustomers = DB::table('tblCustomer')
+                            ->where('intCustStatus', 2)
+                            ->get();
+
+        foreach($BlockedCustomers as $Customer){
+            if($Customer->strCustGender == "M"){
+                $Customer->strCustGender = "Male";
+            }
+            else{
+                $Customer->strCustGender = "Female";
+            }
+        }
         
-        return view('Customers', compact('CustomerDetails', 'CustomerResort'));
+        return view('Customers', compact('CustomerDetails', 'CustomerResort', 'BlockedCustomers'));
+    }
+
+    public function getCustomerHistory(Request $req){
+        $CustomerID = trim($req->input('CustomerID'));
+
+        $CustomerReservation = DB::table('tblReservationDetail')
+                               ->where('strResDCustomerID', '=', $CustomerID)
+                               ->get();
+
+        foreach($CustomerReservation as $Info){
+            if($Info->intResDStatus == 1){
+                $Info->intResDStatus = "Pending Reservation";
+            }
+            else if($Info->intResDStatus == 2){
+                $Info->intResDStatus = "Confirmed Reservation";
+            }
+            else if($Info->intResDStatus == 3){
+                $Info->intResDStatus = "Cancelled Reservation";
+            }
+            else if($Info->intResDStatus == 4){
+                $Info->intResDStatus = "Currently in resort";
+            }
+            else if($Info->intResDStatus == 5){
+                $Info->intResDStatus = "Reservation Finished";
+            }
+
+            $Info->dtmResDArrival = Carbon::parse($Info->dtmResDArrival)->format('M d, Y');
+            $Info->dtmResDDeparture = Carbon::parse($Info->dtmResDDeparture)->format('M d, Y');
+        }
+        return response()->json($CustomerReservation);
     }
     
     //get available rooms for add rooms

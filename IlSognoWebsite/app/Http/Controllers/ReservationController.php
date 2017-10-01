@@ -45,7 +45,6 @@ class ReservationController extends Controller
         $Remarks;
         $PickOutTime;
         //gets customer id
-    
 
         if(($req->input('s-Gender')) == "Male"){
             $Gender = "M";
@@ -149,6 +148,14 @@ class ReservationController extends Controller
         $CheckOutDate = Carbon::parse($tempCheckOutDate)->format('Y/m/d');
         $PickUpTime = Carbon::parse($tempPickUpTime)->format('H:i:s');
         $PickUpTime2 = Carbon::parse($tempPickUpTime)->addHours(1)->format('H:i:s');
+
+        if($Gender == "Male"){
+            $Gender = "M";
+        }
+        else{
+            $Gender = "F";
+        }
+        
   
         $PickOutTime = $PickUpTime;
         
@@ -180,14 +187,6 @@ class ReservationController extends Controller
         }
         
         $ChosenRooms = rtrim($ChosenRooms,",");
-  
-        if($Gender == "Male"){
-            $Gender = "M";
-        }
-        else{
-            $Gender = "F";
-        }
-        
         
         if($Remarks == null){
             $Remarks = "N/A";
@@ -432,8 +431,17 @@ class ReservationController extends Controller
                           'intCustomerConfirmed' => '0',
                           'intCustStatus' => '1');
 
+        $newCustomer = DB::table('tblCustomer')->where('strCustomerID', '=', $CustomerID)->get();
 
-        DB::table('tblCustomer')->insert($CustomerData);
+
+        if(sizeof($newCustomer) == 0){
+            DB::table('tblCustomer')->insert($CustomerData);
+        }
+        else{
+            DB::table('tblCustomer')
+            ->where('strCustomerID', $CustomerID)
+            ->update($updateData);
+        }
     }
     
     public function saveReservationData($ReservationID, $CustomerID, $CheckInDate, $PickUpTime, $CheckOutDate, $PickOutTime, $NoOfAdults, $NoOfKids, $Remarks, $DateBooked, $ReservationCode){

@@ -1471,6 +1471,52 @@ class ResortController extends Controller
         }
         
     }
+
+    public function blockCustomer(Request $req){
+        $CustomerID = trim($req->input('BlockCustomerID'));
+
+        $ExistingReservations = DB::table('tblReservationDetail as a')
+                                ->join ('tblCustomer as b', 'a.strResDCustomerID','=','b.strCustomerID')
+                                ->where(function($query){
+                                    $query->where('intResDStatus', '=', '1')
+                                          ->orWhere('intResDStatus', '=', '2')
+                                          ->orWhere('intResDStatus', '=', '4');
+                                })
+                                ->where('b.strCustomerID','=',$CustomerID)
+                                ->get();
+        
+        if(sizeof($ExistingReservations) == 0){
+            $updateData = array('intCustStatus' => 2);
+        
+            DB::table('tblCustomer')
+                ->where('strCustomerID', '=', $CustomerID)
+                ->update($updateData);
+            
+            \Session::flash('flash_message','Successfully blocked the customer!');
+        
+        return redirect('/Customers');
+        }
+        else{
+            \Session::flash('duplicate_message','Cannot block the customer because they still have an active/on going reservation');
+            return redirect('/Customers');
+        }
+    }
+
+    public function restoreCustomer(Request $req){
+        $CustomerID = trim($req->input('RestoreCustomerID'));
+
+        $updateData = array('intCustStatus' => 1);
+    
+        DB::table('tblCustomer')
+            ->where('strCustomerID', '=', $CustomerID)
+            ->update($updateData);
+        
+        \Session::flash('flash_message','Successfully unblocked the customer!');
+        
+        return redirect('/Customers');
+        
+
+    }
     
     /*---------- ROOMS -------------*/
     

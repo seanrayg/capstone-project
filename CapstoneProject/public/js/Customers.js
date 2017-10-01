@@ -119,12 +119,22 @@ function HideModalCheckout(){
 function ShowModalBlockCustomer(){
     var TableChecker = CheckTable("#tblCustomer tr");
     if(TableChecker){
+        document.getElementById("BlockCustomerID").value = CustomerInfo[0];
         document.getElementById("DivModalBlockCustomer").style.display = "block"; 
     }
 }
 
 function HideModalBlockCustomer(){
     document.getElementById("DivModalBlockCustomer").style.display = "none";
+}
+
+function ShowModalRestore(RestoreCustomerID){
+    document.getElementById("RestoreCustomerID").value = RestoreCustomerID;
+    document.getElementById("DivModalRestoreCustomer").style.display = "block";    
+}
+
+function HideModalRestore(){
+    document.getElementById("DivModalRestoreCustomer").style.display = "none";
 }
 
 function ShowModalEditCustomer(){
@@ -163,7 +173,38 @@ function HideModalDeleteCustomer(){
 function ShowModalCustomerHistory(){
     var TableChecker = CheckTable("#tblCustomer tr");
     if(TableChecker){
-        document.getElementById("DivModalCustomerHistory").style.display = "block";
+        $.ajax({
+            type:'get',
+            url:'/Customers/History',
+            data:{CustomerID: CustomerInfo[0]},
+            success:function(data){
+                
+                $('#tblCustomerHistory tbody').empty();
+                var tableRef = document.getElementById('tblCustomerHistory').getElementsByTagName('tbody')[0];
+
+                for(var x = 0; x < data.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+                    var newCell2  = newRow.insertCell(1);
+                    var newCell3  = newRow.insertCell(2);
+                    var newCell4  = newRow.insertCell(3);
+                    var newCell5 = newRow.insertCell(4);
+
+                    newCell1.innerHTML = data[x].strReservationID;
+                    newCell2.innerHTML = data[x].dtmResDArrival;
+                    newCell3.innerHTML = data[x].dtmResDDeparture;
+                    newCell4.innerHTML = data[x].intResDStatus;
+                    newCell5.innerHTML = "<td><button type='button' rel='tooltip' title='Show more info' class='btn btn-info btn-simple btn-xs' value = '"+data[x].strReservationID+"' onclick='ShowModalReservationInfo(this)'><i class='material-icons'>insert_invitation</i></button></td>";
+                }
+
+                    document.getElementById("DivModalCustomerHistory").style.display = "block";
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });
     }
 }
 
@@ -171,13 +212,106 @@ function HideModalCustomerHistory(){
     document.getElementById("DivModalCustomerHistory").style.display = "none";
 }
 
-function ShowModalReservationInfo(){
-    document.getElementById("DivModalReservationInfo").style.display = "block";
+function ShowModalReservationInfo(field){
+    $.ajax({
+        type:'get',
+        url:'/Reservation/Info',
+        data:{id:field.value},
+        success:function(data){
+            var PickUpTime = "";
+            var tempPickUpTime = data.ReservationInfo[0].dtmResDArrival.split(" ");
+            var arrPickUpTime = tempPickUpTime[1].split(":");
+            if(parseInt(arrPickUpTime[0]) > 12){
+                arrPickUpTime[0] = parseInt(arrPickUpTime[0]) - 12;
+                PickUpTime = arrPickUpTime[0] + ":" + arrPickUpTime[1] + ":" + arrPickUpTime[2] + " PM";
+            }
+            else{
+                arrPickUpTime[0] = parseInt(arrPickUpTime[0]) - 12;
+                PickUpTime = tempPickUpTime[1] + " AM";
+            }
+            
+            if(data.ReservationPackage.length != 0){
+                document.getElementById("i-PackageAvailed").innerHTML = data.ReservationPackage[0].strPackageName;
+            }
+            else{
+                document.getElementById("i-PackageAvailed").innerHTML = "None";
+            }
+            
+            document.getElementById("i-ReservationID").innerHTML = data.ReservationInfo[0].strReservationID;
+            document.getElementById("i-ReservationCode").innerHTML = data.ReservationInfo[0].strReservationCode;
+            document.getElementById("i-CheckInDate").innerHTML = data.ReservationInfo[0].dtmResDArrival;
+            document.getElementById("i-CheckOutDate").innerHTML =  data.ReservationInfo[0].dtmResDDeparture;
+            document.getElementById("i-PickUpTime").innerHTML = PickUpTime;
+            document.getElementById("i-NoOfAdults").innerHTML = data.ReservationInfo[0].intResDNoOfAdults;
+            document.getElementById("i-NoOfKids").innerHTML = data.ReservationInfo[0].intResDNoOfKids;
+            document.getElementById("i-Remarks").innerHTML = data.ReservationInfo[0].strResDRemarks;
+            document.getElementById("i-Name").innerHTML = CustomerInfo[1] + " " + CustomerInfo[3];
+            document.getElementById("i-Address").innerHTML = data.ReservationInfo[0].strCustAddress;
+            document.getElementById("i-ContactNumber").innerHTML = data.ReservationInfo[0].strCustContact;
+            document.getElementById("i-Email").innerHTML = data.ReservationInfo[0].strCustEmail;
+            document.getElementById("i-Age").innerHTML = getAge(data.ReservationInfo[0].dtmCustBirthday);
+            document.getElementById("i-Nationality").innerHTML = data.ReservationInfo[0].strCustNationality;
+            document.getElementById("i-PaymentDueDate").innerHTML = data.ReservationInfo[0].PaymentDueDate;
+            document.getElementById("i-DateBooked").innerHTML = data.ReservationInfo[0].dteResDBooking;
+            document.getElementById("i-InitialBill").innerHTML = data.InitialBill[0].dblPayAmount;
+            document.getElementById("i-RequiredDownpayment").innerHTML = Math.ceil(parseFloat(data.InitialBill[0].dblPayAmount) * .20);
+            
+            if(data.ReservationInfo[0].strCustGender == "M"){
+                document.getElementById("i-Gender").innerHTML = "Male";
+            }
+            else{
+                document.getElementById("i-Gender").innerHTML = "Female";
+            }
+
+            $('#tblHistoryRooms tbody').empty();
+            $('#tblHistoryBoats tbody').empty();
+            
+            var tableRef = document.getElementById('tblHistoryRooms').getElementsByTagName('tbody')[0];
+
+            for(var x = 0; x < data.ChosenRooms.length; x++){
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+                var newCell2  = newRow.insertCell(1);
+
+                newCell1.innerHTML = data.ChosenRooms[x].strRoomType;
+                newCell2.innerHTML = data.ChosenRooms[x].TotalRooms;
+
+            }
+
+            tableRef = document.getElementById('tblHistoryBoats').getElementsByTagName('tbody')[0];
+            if(data.ChosenBoats.length != 0){
+                for(var x = 0; x < data.ChosenBoats.length; x++){
+                    var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                    var newCell1  = newRow.insertCell(0);
+
+                    newCell1.innerHTML = data.ChosenBoats[x].strBoatName;
+
+                }
+            }
+
+            else{
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                var newCell1  = newRow.insertCell(0);
+
+                newCell1.innerHTML = "None";
+            }
+
+            document.getElementById("DivModalReservationInfo").style.display = "block";
+        },
+        error:function(response){
+            console.log(response);
+            alert(response.status);
+        }
+    });  
 }
 
 function HideModalReservationInfo(){
     document.getElementById("DivModalReservationInfo").style.display = "none";
 }
+
 
 function ShowModalAddRoomPayment(){
     var RoomChecker = CheckRooms();
@@ -235,6 +369,17 @@ function HideModalAddRoomPayNow(){
 
 
 //misc
+function getAge(dateString) {
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())){
+        age--;
+    }
+    return age;
+}
+
 function run(event, sender){
     event = event || window.event; 
     var target = event.target || event.srcElement;
