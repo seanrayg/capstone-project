@@ -1,5 +1,12 @@
 function SelectPrintAction() {
-
+	if(document.getElementById("SelectQuery").value == "Reservations"){
+		document.getElementById("ReservationReport").style.display = "block";
+		document.getElementById("DailyReport").style.display = "block";
+	}
+	else{
+		document.getElementById("ReservationReport").style.display = "none";
+		document.getElementById("DailyReport").style.display = "none";
+	}
 	document.getElementById('PrintSelectedReport').value = document.getElementById("SelectQuery").value;
 
 }

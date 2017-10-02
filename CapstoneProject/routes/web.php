@@ -245,6 +245,9 @@ Route::get('/Accommodation/Images/Get', 'ViewController@getRoomImage');
 
 /*----------- RESERVATION -------------*/
 
+//Check reservation records
+Route::get('/Reservation/Customers', 'ViewController@getCustomerReservation');
+
 //Book Reservation
 Route::post('/Reservation/Add', 'ReservationController@addReservation');
 

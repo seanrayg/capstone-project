@@ -642,6 +642,53 @@ class ViewController extends Controller
     
      //Reservation
 
+    public function getCustomerReservation(Request $req){
+        $FirstName = trim($req->input('FirstName'));
+        $MiddleName = trim($req->input('MiddleName'));
+        $LastName = trim($req->input('LastName'));
+        $Birthday = trim($req->input('Birthday'));
+        $Gender = trim($req->input('Gender'));
+        $Birthday = Carbon::parse($Birthday)->format('Y-m-d');
+
+        if($Gender == "Male"){
+            $Gender = "M";
+        }
+        else{
+            $Gender = "F";
+        }
+
+        $blockError = false;
+        $existingError = false;
+
+        $CustomerID = DB::table('tblCustomer')
+                    ->where([['strCustFirstName', '=', $FirstName],['strCustLastName', '=', $LastName], ['strCustMiddleName', '=', $MiddleName], ['dtmCustBirthday', '=', $Birthday], ['strCustGender', '=', $Gender]])
+                    ->pluck('strCustomerID')
+                    ->first();
+
+        $BlockedCustomer = DB::table('tblCustomer')
+                        ->where([['strCustomerID','=',$CustomerID],['intCustStatus','=',2]])
+                        ->get();
+
+        $ExistingReservation = DB::table('tblReservationDetail')
+                            ->where('strResDCustomerID','=',$CustomerID)
+                            ->where(function($query){
+                                $query->where('intResDStatus', '=', '1')
+                                      ->orWhere('intResDStatus', '=', '2')
+                                      ->orWhere('intResDStatus', '=', '4');
+                                })
+                            ->get();
+
+        if(sizeof($BlockedCustomer) != 0){
+            $blockError = true;
+        }
+
+        if(sizeof($ExistingReservation) != 0){
+            $existingError = true;
+        }
+        $ExistingReservation = $ExistingReservation;
+        return response()->json(['blockError' => $blockError, 'existingError' => $existingError, 'ExistingReservation' => $ExistingReservation]);     
+    }
+
     public function getDepositSlip(Request $req){
         $ReservationID = trim($req->input('id'));
 
@@ -1200,13 +1247,5 @@ class ViewController extends Controller
     }
     
     /* ------------- END OF RESERVATION ------------- */
-    
-    
-
-    
-   
-    
-    
-    
     
 }
