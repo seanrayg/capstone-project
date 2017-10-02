@@ -554,13 +554,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        @foreach($ReservationInfo as $Info)
-                        <form method="post" action="/Reservation/Cancel">
-                            {{ csrf_field() }}
-                            <input type="hidden" name="CancelReservationID" id="CancelReservationID" value="{{$Info->strReservationID}}">
-                            <button type="submit" class="btn btn-lg btn-primary">Cancel Reservation</button>
-                        </form>
-                        @endforeach
+                        <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#ModalCancelReservation">Cancel Reservation</button>
                     </div>  
                 </div>    
             
@@ -569,6 +563,29 @@
         @include('layouts.footer')
     </div>
     
+    <!--Cancel Reservation Modal-->
+<div class="modal fade" id="ModalCancelReservation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" style="position: absolute; width: 500px">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title text-center">Are you sure you want to cancel your reservation?</h4>
+      </div>
+      <div class="modal-body text-center">
+        <p class="description-text">There will be no refund if you already paid your downpayment. We encourage you to reschedule your reservation instead of cancelling.</p><br>
+        <form method="POST" action="/Reservation/Cancel">
+            {{ csrf_field() }}
+            @foreach($ReservationInfo as $Info)
+                <input type="hidden" name="CancelReservationID" id="CancelReservationID" value = "{{$Info->strReservationID}}">
+            @endforeach
+            <br>
+            <button type="button" data-dismiss="modal" class="pull-left btn btn-primary">Close This</button>
+            <button type="submit" class="pull-right btn btn-primary">Cancel Reservation</button>
+         </form>
+      </div>
+    </div>
+  </div>
+</div>
     
     
     <!--- Guest Information Modal -->

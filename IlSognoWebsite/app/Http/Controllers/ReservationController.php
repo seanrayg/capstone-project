@@ -246,6 +246,26 @@ class ReservationController extends Controller
         return redirect('/ChooseRooms/'.$ReservationID);
     }
 
+    public function cancelReservation(Request $req){
+        $ReservationID = trim($req->input('CancelReservationID'));
+        
+        $updateData = array("intResDStatus" => "3");   
+        
+        DB::table('tblReservationDetail')
+            ->where('strReservationID', $ReservationID)
+            ->update($updateData);
+        
+        $ChosenBoats = DB::table('tblReservationBoat')->where('strResBReservationID', "=", $ReservationID)->pluck('strResBBoatID');
+        if(count($ChosenBoats) != 0){
+            $updateBoatData = array("intBoatSStatus" => "0");
+            DB::table('tblBoatSchedule')
+                ->where('strBoatSReservationID', $ReservationID)
+                ->update($updateBoatData);
+        }
+        
+         return redirect('/');
+    }
+
     public function saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus){
         //Prepares Room Data
         $IndividualRooms = explode(',',$ChosenRooms);
@@ -474,7 +494,7 @@ class ReservationController extends Controller
 
     public function getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender){
         $CustomerID = DB::table('tblCustomer')->pluck('strCustomerID')->first();
-
+        $Birthday = Carbon::parse($Birthday)->format('Y-m-d');
         $ExistingCustomerID = DB::table('tblCustomer')
                             ->where([['strCustFirstName', '=', $FirstName],['strCustLastName', '=', $LastName], ['strCustMiddleName', '=', $MiddleName], ['dtmCustBirthday', '=', $Birthday], ['strCustGender', '=', $Gender]])
                             ->pluck('strCustomerID')

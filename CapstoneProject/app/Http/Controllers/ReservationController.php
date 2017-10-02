@@ -332,7 +332,7 @@ class ReservationController extends Controller
 
     public function getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender){
         $CustomerID = DB::table('tblCustomer')->pluck('strCustomerID')->first();
-
+        $Birthday = Carbon::parse($Birthday)->format('Y-m-d');
         $ExistingCustomerID = DB::table('tblCustomer')
                             ->where([['strCustFirstName', '=', $FirstName],['strCustLastName', '=', $LastName], ['strCustMiddleName', '=', $MiddleName], ['dtmCustBirthday', '=', $Birthday], ['strCustGender', '=', $Gender]])
                             ->pluck('strCustomerID')
