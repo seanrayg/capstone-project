@@ -38,6 +38,8 @@ function ShowModalUpgradeRoom(){
                 if(diffDays == 0){
                     diffDays = 1;
                 }
+
+                alert(date1 + " " + date2);
                 var OriginalRoomTotal = parseFloat(OriginalRoomPrice) * diffDays;
 
                 var UpgradeRoomTotal = parseFloat(UpgradeRoomPrice) * diffDays;
@@ -141,6 +143,17 @@ function SendPayment(field, dataType, holder){
         }
         
     }
+}
+
+function PrintInvoice() {
+
+    document.getElementById("iReservationID").value = ReservationID;
+    document.getElementById("Description").value = "Upgrade " + RoomType + " to " + UpgradeRoomType;
+    document.getElementById("iOrigRoomType").value = RoomType;
+    document.getElementById("iRoomType").value = UpgradeRoomType;
+    document.getElementById("Amount").value = document.getElementById("PayTotal").value;
+    document.getElementById("InvoiceForm").submit();
+
 }
 
 

@@ -163,6 +163,96 @@ class InvoiceController extends Controller
             $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'RentalBoats' => $RentalBoats])->setPaper('A6', 'portrait');
             return $pdf->stream();
 
+        }else if($strInvoiceType == 'UpgradeRoom') {
+
+            $ReservationID = $request->input('iReservationID');
+            $Description = $request->input('Description');
+            $ORoomType = $request->input('iOrigRoomType');
+            $RoomType = $request->input('iRoomType');
+            $Amount = $request->input('Amount');
+
+            $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $UpgradeRoomType = DB::table('tblRoomType as a')
+                ->join('tblRoomRate as b', 'a.strRoomTypeID', '=', 'b.strRoomTypeID')
+                ->select('b.dblRoomRate')
+                ->where([['a.strRoomType', '=', $RoomType], ['b.dtmRoomRateAsOf', '=', DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                ->first();
+
+            $OrigRoomType = DB::table('tblRoomType as a')
+                ->join('tblRoomRate as b', 'a.strRoomTypeID', '=', 'b.strRoomTypeID')
+                ->select('b.dblRoomRate')
+                ->where([['a.strRoomType', '=', $ORoomType], ['b.dtmRoomRateAsOf', '=', DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                ->first();
+
+            $days = DB::table('tblReservationDetail')
+                ->select(DB::raw("TIMESTAMPDIFF(DAY,NOW(),dtmResDDeparture) as days"))
+                ->where('strReservationID', '=', $ReservationID)
+                ->first();
+
+            $RoomPaid = DB::table('tblReservationRoom')
+                ->select('intResRPayment')
+                ->where ('strResRReservationID', '=', $ReservationID)
+                ->first();
+
+            if($RoomPaid->intResRPayment == 1) {
+
+                $UpgradeRoomType->dblRoomRate = $UpgradeRoomType->dblRoomRate - $OrigRoomType->dblRoomRate;
+
+            }
+
+            $UpgradeRooms = array(
+                (object) array("name" => $Description, "price" => $UpgradeRoomType->dblRoomRate, "quantity" => $days->days, "amount" => $Amount)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $UpgradeRooms);
+
+            $BoatScheduleID = $this->SmartCounter("tblPayment", "strPaymentID");
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $BoatScheduleID);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'UpgradeRooms' => $UpgradeRooms])->setPaper('A6', 'portrait');
+            return $pdf->stream();
+
+        }else if($strInvoiceType == 'Fees') {
+
+            $ReservationID = $request->input('iReservationID');
+            $FeeID = $request->input('FeeID');
+            $Quantity = $request->input('Quantity');
+            $Amount = $request->input('Amount');
+
+            $FeeInfo = DB::table('tblFee as a')
+                ->join('tblFeeAmount as b', 'a.strFeeID', '=', 'b.strFeeID')
+                ->select(
+                    'a.strFeeName',
+                    'b.dblFeeAmount')
+                ->where([['a.strFeeID', '=', $FeeID],['b.dtmFeeAmountAsOf', '=', DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")]])
+                ->first();
+
+            $Description = $FeeInfo->strFeeName;
+            $Price = $FeeInfo->dblFeeAmount;
+
+            $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $Fees = array(
+                (object) array("name" => $Description, "price" => $Price, "quantity" => $Quantity, "amount" => $Amount)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $Fees);
+
+            $BoatScheduleID = $this->SmartCounter("tblReservationFee", "strResFReservationID");
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $BoatScheduleID);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'Fees' => $Fees])->setPaper('A6', 'portrait');
+            return $pdf->stream();
+
         }
 
     }//End of GenerateInvoice
@@ -196,6 +286,18 @@ class InvoiceController extends Controller
         }else if($InvoiceType == 'BoatRental') {
 
             $InvoiceNumber .= "219" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'UpgradeRoom') {
+
+            $InvoiceNumber .= "16" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'Fees') {
+
+            $InvoiceNumber .= "6" . $ID;
 
             return $InvoiceNumber;
 

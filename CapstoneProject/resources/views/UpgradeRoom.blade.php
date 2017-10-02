@@ -186,10 +186,19 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
+                                    <input type="button" class="btn btn-success pull-left push-right" value="Print Invoice" onclick="PrintInvoice()" />
                                     <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
+                        </form>
+                        <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="InvoiceType" value="UpgradeRoom">
+                            <input type="hidden" name="iReservationID" id="iReservationID">
+                            <input type="hidden" name="Description" id="Description">
+                            <input type="hidden" name="iOrigRoomType" id="iOrigRoomType">
+                            <input type="hidden" name="iRoomType" id="iRoomType">
+                            <input type="hidden" name="Amount" id="Amount">
                         </form>
                     </div>
                 </div>

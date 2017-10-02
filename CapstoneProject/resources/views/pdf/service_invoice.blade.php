@@ -49,6 +49,20 @@
                 <th style="width: 15%">Hours</th>
                 <th style="width: 15%">Amount</th>
             </tr>
+        @elseif($InvoiceType == 'UpgradeRoom')
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 25%">Rate</th>
+                <th style="width: 15%">Remaining Days</th>
+                <th style="width: 15%">Amount</th>
+            </tr>
+        @elseif($InvoiceType == 'Fees')
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 25%">Price</th>
+                <th style="width: 15%">Quantity</th>
+                <th style="width: 15%">Amount</th>
+            </tr>
         @endif
 
         @if($InvoiceType == 'BoatRental')
@@ -58,6 +72,24 @@
                     <td style="text-align: center;">{{ $RentalBoat->price }}</td>
                     <td style="text-align: center;">{{ $RentalBoat->quantity }}</td>
                     <td style="text-align: right;">{{ $RentalBoat->amount }}</td>
+                </tr>
+            @endforeach
+        @elseif($InvoiceType == 'UpgradeRoom')
+            @foreach($UpgradeRooms as $UpgradeRoom)
+                <tr>
+                    <td>{{ $UpgradeRoom->name }}</td>
+                    <td style="text-align: center;">{{ $UpgradeRoom->price }}</td>
+                    <td style="text-align: center;">{{ $UpgradeRoom->quantity }}</td>
+                    <td style="text-align: right;">{{ $UpgradeRoom->amount }}</td>
+                </tr>
+            @endforeach
+        @elseif($InvoiceType == 'Fees')
+            @foreach($Fees as $Fee)
+                <tr>
+                    <td>{{ $Fee->name }}</td>
+                    <td style="text-align: center;">{{ $Fee->price }}</td>
+                    <td style="text-align: center;">{{ $Fee->quantity }}</td>
+                    <td style="text-align: right;">{{ $Fee->amount }}</td>
                 </tr>
             @endforeach
         @endif

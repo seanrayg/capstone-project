@@ -71,17 +71,22 @@ class SessionsController extends Controller
 			try {
 
 				$data = DB::table('tblCustomer')
-							->select('strConfirmationCode')
+							->select('strConfirmationCode',
+									 'strCustomerID')
 							->where('strCustEmail', $CustomerEmail)
 							->first();
 
 			} catch(\Illuminate\Database\QueryException $ex){ 
 				return $ex->getMessage();
 			}
+			$ReservationID = DB::table('tblReservationDetail')
+							 ->where('strResDCustomerID', '=', $data->strCustomerID)
+							 ->pluck('strReservationID')
+							 ->first();
 
-			if($data->strConfirmationCode == $VerificationCode){
+			if($data->strConfirmationCode == $VerificationCode) {
 
-				echo 1;
+				echo $ReservationID;
 
 			}else{
 

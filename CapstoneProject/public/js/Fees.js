@@ -180,3 +180,16 @@ function SendPayment(field, dataType, holder){
         
     }
 }
+
+function PrintInvoice() {
+
+    var e = document.getElementById("AddFeeID");
+    var FeeID = e.options[e.selectedIndex].value;
+
+    document.getElementById("Quantity").value = document.getElementById("AddFeeQuantity").value;
+    document.getElementById("Amount").value = document.getElementById("TotalFeePrice").value;
+    document.getElementById("iReservationID").value = FeeInfo[1];
+    document.getElementById("FeeID").value = FeeID;
+    document.getElementById("InvoiceForm").submit();
+
+}

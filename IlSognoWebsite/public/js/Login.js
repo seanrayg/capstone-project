@@ -94,11 +94,10 @@ function LoginCheckCode(){
                 VerificationCode: $VerificationCode
             },
             success: function(data) {
-                if(data == 1){
+                if(data != 2){
 
                     alert('Code matched');
-
-                    window.location = 'Login';
+                    window.location.href = '/Reservation/' + data;
 
                 }else if(data == 2){
 
