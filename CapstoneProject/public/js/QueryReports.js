@@ -117,7 +117,98 @@ function fillTable(data, SelectedReport){
             newCell9.innerHTML = data[x].intResDStatus;
         }
     }
-    if(SelectedReport == "Accomodations" || SelectedReport == "Room Types Only"){
+
+    else if(SelectedReport == "Packages"){
+        var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+
+        var newCell1  = newRow.insertCell(0);
+        var newCell2  = newRow.insertCell(1);
+        var newCell3  = newRow.insertCell(2);
+        var newCell4 = newRow.insertCell(3);
+        var newCell5  = newRow.insertCell(4);
+        var newCell6  = newRow.insertCell(5);
+        var newCell7  = newRow.insertCell(6);
+        var newCell8 = newRow.insertCell(7);
+
+        newCell1.innerHTML = "ID";
+        newCell2.innerHTML = "Name";
+        newCell3.innerHTML = "Status";
+        newCell4.innerHTML = "Duration";
+        newCell5.innerHTML = "Pax";
+        newCell6.innerHTML = "Transportation Fee";
+        newCell7.innerHTML = "Description";
+        newCell8.innerHTML = "Price";
+
+        
+        tableRef = document.getElementById('QueryTable').getElementsByTagName('tbody')[0];
+        for(var x = 0; x < data.length; x++){
+           
+            newRow = tableRef.insertRow(tableRef.rows.length);
+
+            newCell1  = newRow.insertCell(0);
+            newCell2  = newRow.insertCell(1);
+            newCell3  = newRow.insertCell(2);
+            newCell4 = newRow.insertCell(3);
+            newCell5  = newRow.insertCell(4);
+            newCell6  = newRow.insertCell(5);
+            newCell7  = newRow.insertCell(6);
+            newCell8 = newRow.insertCell(7);
+
+            newCell1.innerHTML = data[x].strPackageID;
+            newCell2.innerHTML = data[x].strPackageName;
+            newCell3.innerHTML = data[x].strPackageStatus;
+            newCell4.innerHTML = data[x].intPackageDuration;
+            newCell5.innerHTML = data[x].intPackagePax;
+            newCell6.innerHTML = data[x].intBoatFee;
+            newCell7.innerHTML = data[x].strPackageDescription;
+            newCell8.innerHTML = data[x].dblPackagePrice;
+
+        }
+    }
+
+    else if(SelectedReport == "Inoperational Dates"){
+        var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+
+        var newCell1  = newRow.insertCell(0);
+        var newCell2  = newRow.insertCell(1);
+        var newCell3  = newRow.insertCell(2);
+        var newCell4 = newRow.insertCell(3);
+        var newCell5  = newRow.insertCell(4);
+        var newCell6  = newRow.insertCell(5);
+
+        newCell1.innerHTML = "ID";
+        newCell2.innerHTML = "Title";
+        newCell3.innerHTML = "Start Date";
+        newCell4.innerHTML = "End Date";
+        newCell5.innerHTML = "Status";
+        newCell6.innerHTML = "Description";
+
+        
+        tableRef = document.getElementById('QueryTable').getElementsByTagName('tbody')[0];
+        for(var x = 0; x < data.length; x++){
+           
+            newRow = tableRef.insertRow(tableRef.rows.length);
+
+            newCell1  = newRow.insertCell(0);
+            newCell2  = newRow.insertCell(1);
+            newCell3  = newRow.insertCell(2);
+            newCell4 = newRow.insertCell(3);
+            newCell5  = newRow.insertCell(4);
+            newCell6  = newRow.insertCell(5);
+
+            newCell1.innerHTML = data[x].strDateID;
+            newCell2.innerHTML = data[x].strDateTitle;
+            newCell3.innerHTML = data[x].dteStartDate;
+            newCell4.innerHTML = data[x].dteEndDate;
+            newCell5.innerHTML = data[x].intDateStatus;
+            newCell6.innerHTML = data[x].strDateDescription;
+
+        }
+    }
+
+    else if(SelectedReport == "Accomodations" || SelectedReport == "Room Types Only"){
         var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
         var newRow = tableRef.insertRow(tableRef.rows.length);
 

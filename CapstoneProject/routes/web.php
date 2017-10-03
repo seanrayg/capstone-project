@@ -505,3 +505,7 @@ Route::post('/Reservation/Invoice', 'InvoiceController@GenerateInvoice');
 Route::get('/Checkout/{id}', 'ViewResortController@ViewCheckout');
 
 Route::post('/Checkout/Pay', 'ResortController@CheckoutCustomer');
+
+
+/*----------- DASHBOARD -------------*/
+Route::get('/Dashboard/Booking', 'ViewDashboardController@getBookingFrequency');

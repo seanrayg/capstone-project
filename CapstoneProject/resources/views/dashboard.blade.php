@@ -91,7 +91,7 @@
                 <div class="ct-chart" id="dailySalesChart"></div>
             </div>
             <div class="card-content">
-                <h4 class="title">Daily Sales</h4>
+                <h4 class="title">Booking Frequency</h4>
                 <p class="category"><span class="text-success"><i class="fa fa-long-arrow-up"></i> 55%  </span> increase in today sales.</p>
             </div>
             <div class="card-footer">

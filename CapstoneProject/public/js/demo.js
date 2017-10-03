@@ -34,11 +34,10 @@ demo = {
 
     initDocumentationCharts: function(){
         /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
-
         dataDailySalesChart = {
             labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
             series: [
-                [12, 17, 7, 17, 23, 18, 38]
+                [12, 17, 7, 17, 23, 18, 45]
             ]
         };
 
@@ -60,34 +59,50 @@ demo = {
 
         /* ----------==========     Daily Sales Chart initialization    ==========---------- */
 
-        dataDailySalesChart = {
-            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-            series: [
-                [12, 17, 7, 17, 23, 18, 38]
-            ]
-        };
+        $.ajax({
+            type:'get',
+            url:'/Dashboard/Booking',
+            success:function(data){
+                dataDailySalesChart = {
+                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                series: [
+                    data
+                ]
+            };
+            var highestValue = 0;
+            for(var x = 1; x <= 7; x++){
+                if(data[x] >= data[x-1]){
+                    highestValue = data[x];
+                }
+            }
 
-        optionsDailySalesChart = {
-            lineSmooth: Chartist.Interpolation.cardinal({
-                tension: 0
-            }),
-            low: 0,
-            high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-            chartPadding: { top: 0, right: 0, bottom: 0, left: 0},
-        }
+            highestValue = highestValue + 10;
+            optionsDailySalesChart = {
+                lineSmooth: Chartist.Interpolation.cardinal({
+                    tension: 0
+                }),
+                low: 0,
+                high: highestValue, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                chartPadding: { top: 0, right: 0, bottom: 0, left: 0},
+            }
 
-        var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+            var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
 
-        md.startAnimationForLineChart(dailySalesChart);
+            md.startAnimationForLineChart(dailySalesChart);
 
-
+            },
+            error:function(response){
+                alert(response);
+                console.log(response);
+            }
+        });   
 
         /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
 
         dataCompletedTasksChart = {
-            labels: ['12am', '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
+            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
             series: [
-                [230, 750, 450, 300, 280, 240, 200, 190]
+                [2300, 2500, 14500, 3000, 2800, 12400, 20000, 1900]
             ]
         };
 
@@ -96,7 +111,7 @@ demo = {
                 tension: 0
             }),
             low: 0,
-            high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+            high: 20000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
             chartPadding: { top: 0, right: 0, bottom: 0, left: 0}
         }
 
@@ -112,7 +127,7 @@ demo = {
         var dataEmailsSubscriptionChart = {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           series: [
-            [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0]
 
           ]
         };
@@ -121,7 +136,7 @@ demo = {
                 showGrid: false
             },
             low: 0,
-            high: 1000,
+            high: 100,
             chartPadding: { top: 0, right: 5, bottom: 0, left: 0}
         };
         var responsiveOptions = [
