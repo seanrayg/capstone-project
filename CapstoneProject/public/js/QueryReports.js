@@ -20,28 +20,103 @@ window.onload = function(){
 
 function GenerateReport(){
     SelectedReport = document.getElementById("SelectQuery").value;
-    var IncludeDeleted = 0;
-    if(document.getElementById("CheckIncludeDeleted").checked){
-        IncludeDeleted = 1;
-    }
-    $.ajax({
-        type:'get',
-        url:'/Reports/Query',
-        data:{SelectedReport: SelectedReport,
-              IncludeDeleted: IncludeDeleted},
-        success:function(data){
+    if(SelectedReport == "Reservations"){
+        var ReservationReport = document.getElementById("SelectReservationReport").value;
+        var ReservationMonth = document.getElementById("ReservationMonth").value;
+        var ReservationYear = document.getElementById("SelectMonthlyYear").value;
+        var DailyReservation = document.getElementById("DailyReservation").value;
 
-            fillTable(data, SelectedReport);
-        },
-        error:function(response){
-            console.log(response);
-            alert(response.status);
+        $.ajax({
+            type:'get',
+            url:'/Reports/Query/Reservation',
+            data:{ReservationReport: ReservationReport,
+                  ReservationMonth: ReservationMonth,
+                  ReservationYear: ReservationYear,
+                  DailyReservation: DailyReservation},
+            success:function(data){
+                fillTable(data, SelectedReport);
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });  
+    }
+    else{
+        var IncludeDeleted = 0;
+        if(document.getElementById("CheckIncludeDeleted").checked){
+            IncludeDeleted = 1;
         }
-    });  
+        $.ajax({
+            type:'get',
+            url:'/Reports/Query',
+            data:{SelectedReport: SelectedReport,
+                  IncludeDeleted: IncludeDeleted},
+            success:function(data){
+
+                fillTable(data, SelectedReport);
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });  
+    }
+    
 }
 
 function fillTable(data, SelectedReport){
     $('#QueryTable tr').remove();
+    if(SelectedReport == "Reservations"){
+        var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+
+        var newCell1  = newRow.insertCell(0);
+        var newCell2  = newRow.insertCell(1);
+        var newCell3  = newRow.insertCell(2);
+        var newCell4 = newRow.insertCell(3);
+        var newCell5  = newRow.insertCell(4);
+        var newCell6  = newRow.insertCell(5);
+        var newCell7  = newRow.insertCell(6);
+        var newCell8 = newRow.insertCell(7);
+        var newCell9  = newRow.insertCell(8);
+
+        newCell1.innerHTML = "Name";
+        newCell2.innerHTML = "Address";
+        newCell3.innerHTML = "Contact Number";
+        newCell4.innerHTML = "Email";
+        newCell5.innerHTML = "Check In Date";
+        newCell6.innerHTML = "Check Out Date";
+        newCell7.innerHTML = "Number of Adults";
+        newCell8.innerHTML = "Number of Children";
+        newCell9.innerHTML = "Status";
+        
+        tableRef = document.getElementById('QueryTable').getElementsByTagName('tbody')[0];
+        for(var x = 0; x < data.length; x++){
+           
+            newRow = tableRef.insertRow(tableRef.rows.length);
+
+            newCell1  = newRow.insertCell(0);
+            newCell2  = newRow.insertCell(1);
+            newCell3  = newRow.insertCell(2);
+            newCell4 = newRow.insertCell(3);
+            newCell5  = newRow.insertCell(4);
+            newCell6  = newRow.insertCell(5);
+            newCell7  = newRow.insertCell(6);
+            newCell8 = newRow.insertCell(7);
+            newCell9  = newRow.insertCell(8);
+
+            newCell1.innerHTML = data[x].Name;
+            newCell2.innerHTML = data[x].strCustAddress;
+            newCell3.innerHTML = data[x].strCustContact;
+            newCell4.innerHTML = data[x].strCustEmail;
+            newCell5.innerHTML = data[x].dtmResDArrival;
+            newCell6.innerHTML = data[x].dtmResDDeparture;
+            newCell7.innerHTML = data[x].intResDNoOfAdults;
+            newCell8.innerHTML = data[x].intResDNoOfKids;
+            newCell9.innerHTML = data[x].intResDStatus;
+        }
+    }
     if(SelectedReport == "Accomodations" || SelectedReport == "Room Types Only"){
         var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
         var newRow = tableRef.insertRow(tableRef.rows.length);
@@ -55,7 +130,7 @@ function fillTable(data, SelectedReport){
         var newCell7  = newRow.insertCell(6);
         var newCell8 = newRow.insertCell(7);
         var newCell9  = newRow.insertCell(8);
-        var newCell10  = newRow.insertCell(8);
+        var newCell10  = newRow.insertCell(9);
 
         newCell1.innerHTML = "ID";
         newCell2.innerHTML = "Name";

@@ -39,6 +39,8 @@ Route::post('/Reservation/Cancel', 'ReservationController@cancelReservation');
 
 Route::post('/Reservation/DepositSlip', 'ReservationController@saveDepositSlip');
 
+Route::get('/Reservation/Customers', 'ViewController@getCustomerReservation');
+
 Route::post('/Reservation/Add/Package', 'ReservationController@addReservationPackage');
 
 Route::get('/Reservation/Packages/Availability', 'ViewController@getAvailablePackages');

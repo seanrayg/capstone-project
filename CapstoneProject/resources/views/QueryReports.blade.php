@@ -50,7 +50,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="checkbox">
+                        <div class="checkbox" id="IncludedDeletedHolder">
                             <label>
                                 <input type="checkbox" id="CheckIncludeDeleted">
                                 Included deleted records?
@@ -64,7 +64,7 @@
                             <div class="form-group label-static">
                                 <label class="control-label">Report</label>
                                 <div class="selectBox">
-                                    <select name="SelectQuery" id="SelectQuery" onchange="DisplayFields(this)">
+                                    <select name="SelectReservationReport" id="SelectReservationReport" onchange="DisplayFields(this)">
                                         <option>Daily</option>
                                         <option>Monthly</option>
                                     </select>
@@ -78,7 +78,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group label-static">
                                     <label class="control-label">Date</label>
-                                    <input type="text" class="datepicker form-control" readonly/>
+                                    <input type="text" class="datepicker form-control" id="DailyReservation" readonly/>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                                 <div class="form-group label-static">
                                     <label class="control-label">Month</label>
                                     <div class="selectBox">
-                                        <select>
+                                        <select id="ReservationMonth">
                                             <option>January</option>
                                             <option>February</option>
                                             <option>March</option>

@@ -536,7 +536,7 @@ function CheckReservationInfo(){
         var MiddleName = document.getElementById("MiddleName").value;
         var LastName = document.getElementById("LastName").value;
         var Birthday = document.getElementById("DateOfBirth").value;
-        var Gender = document.getElementById("Gender").value;
+        var Gender = document.getElementById("SelectGender").value;
 
         $.ajax({
             type:'get',
@@ -548,6 +548,7 @@ function CheckReservationInfo(){
                   Birthday: Birthday},
             success:function(data){
                 var dataError = false;
+        
                 if(data.blockError == true){
                     dataError = true;
                     $('.alert').show();
