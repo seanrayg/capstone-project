@@ -376,6 +376,16 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
                             document.getElementById("ErrorMessage").innerHTML = "";
                             getEntranceFee();
                             switchTab = true;
+                            if(!switchTab){
+                                $('.alert').show();
+                            }
+                            else{
+                                $(sender).removeClass("active");
+                                $(newSender).addClass("active");
+                                $(pageSender).removeClass("active");
+                                $(newPageSender).addClass("active");
+                                $('.alert').hide();
+                            }
                         }
                     },
                     error:function(response){

@@ -171,7 +171,47 @@ class ViewDashboardController extends Controller
         
         $ContactNumber = DB::table('tblContact')->where('strContactName', '=', 'Telephone')->orWhere('strContactName', '=', 'Hotline')->orWhere('strContactName', '=', 'Phone')->orWhere('strContactName', '=', 'Cellphone')->pluck('strContactDetails')->first();
 
+        $this->getWeeklyIncome();
         return view("Dashboard", compact('ArrivingLength', 'DepartingLength', 'ResortLength', 'BookedLength', 'ArrivingGuests', 'DepartingGuests', 'CustomersOnResort', 'CustomersBooked', 'Customers3rdDay', 'ContactNumber', 'Customers5thDay'));
+    }
+
+    public function getIncome($SelectedDate){
+        $idArray = [5, 2, 3, 6, 9, 12, 13, 14, 15, 17, 19, 21, 23, 25, 28];
+        $IncomeBreakdown = DB::table('tblPayment')
+                        ->where(DB::raw('Date(dtePayDate)'), '=', $SelectedDate)
+                        ->whereIn('strPayTypeID', $idArray)
+                        ->pluck('dblPayAmount');
+
+        $TotalIncome = 0;
+        for($x = 0; $x < sizeof($IncomeBreakdown); $x++){
+            $TotalIncome += $IncomeBreakdown[$x];
+        }
+
+        return $TotalIncome;
+    }
+
+    public function getWeeklyIncome(){
+        $DateToday = Carbon::now()->startOfWeek()->format('Y-m-d');
+        $weekMap = [
+            0 => 'SU',
+            1 => 'MO',
+            2 => 'TU',
+            3 => 'WE',
+            4 => 'TH',
+            5 => 'FR',
+            6 => 'SA',
+        ];
+
+        for($x = 0; $x < sizeof($weekMap); $x++){
+            if($x == 0){
+                $weekMap[$x] = $this->getIncome(carbon::parse($DateToday)->format('Y-m-d'));
+            }
+            else{
+                $weekMap[$x] = $this->getIncome(carbon::parse($DateToday)->addDays($x)->format('Y-m-d'));
+            }
+        }
+
+        return response()->json($weekMap);
     }
 
     public function getBooking($SelectedDate){
@@ -180,8 +220,18 @@ class ViewDashboardController extends Controller
         return $CountBooking;
     }
 
+    public function getReservationCount($SelectedMonth){
+      
+        $SelectedMonth = Carbon::parse($SelectedMonth)->format('m');
+        $SelectedYear = Carbon::now()->format('Y');
+   
+        $CountReservation = DB::table('tblReservationDetail')->whereMonth('dtmResDArrival', '=', $SelectedMonth)->whereYear('dtmResDArrival', '=', $SelectedYear)->count();
+
+        return $CountReservation;
+    }
+
     public function getBookingFrequency(){
-        $DateToday = Carbon::now()->format('Y-m-d');
+        $DateToday = Carbon::now()->startOfWeek()->format('Y-m-d');
         $TodayBooking = $this->getBooking($DateToday);
         $TomorrowBooking = $this->getBooking(carbon::parse($DateToday)->addDays(1)->format('Y-m-d'));
         $ThirdDayBooking = $this->getBooking(carbon::parse($DateToday)->addDays(2)->format('Y-m-d'));
@@ -210,5 +260,28 @@ class ViewDashboardController extends Controller
 
         return response()->json($weekMap);
 
+    }
+
+    public function getMonthlyReservation(){
+        $monthMap = [
+            0 => 'January',
+            1 => 'February',
+            2 => 'March',
+            3 => 'April',
+            4 => 'May',
+            5 => 'June',
+            6 => 'July',
+            7 => 'August',
+            8 => 'September',
+            9 => 'October',
+            10 => 'November',
+            11 => 'December',
+        ];
+
+        for($x = 0; $x < sizeof($monthMap); $x++){
+            $monthMap[$x] = $this->getReservationCount($monthMap[$x]);
+        }
+
+        return response()->json($monthMap);
     }
 }
