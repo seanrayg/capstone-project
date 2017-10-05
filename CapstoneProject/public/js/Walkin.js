@@ -157,6 +157,7 @@ function TransferToForm(ChosenRooms, ChosenFees, GrandTotal, AmountTendered){
     document.getElementById("s-GrandTotal").value = GrandTotal;
     document.getElementById("s-AmountTendered").value = AmountTendered;
     document.getElementById("WalkInForm").submit();
+    alert('haha');
 }
 
 function SaveTransaction(){

@@ -529,6 +529,15 @@
                     <input type="hidden" name="s-OtherFees" id="s-OtherFees" value = "">
                     <input type="hidden" name="s-AddFees" id="s-AddFees" value = "">
                 </form>
+
+                <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="InvoiceType" value="Reservation">
+                    <input type="hidden" name="FeeID" id="FeeID">
+                    <input type="hidden" name="Quantity" id="Quantity">
+                    <input type="hidden" name="Amount" id="Amount">
+                    <input type="hidden" name="iReservationID" id="iReservationID">
+                </form>
                 
             </div>
         
@@ -697,7 +706,7 @@
                             <h5 class="paragraphText">Change:</h5> <h5 class="paragraphText" id="Change">0</h5><br>
                         </div>
                     </div>
-                    
+
                     <button type="button" class="btn btn-success pull-right" onclick="SaveReservation()">Continue</button>
                 </div>
             </div>
