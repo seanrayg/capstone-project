@@ -235,12 +235,50 @@ function CheckInfo(){
         $("#InfoError").show();
     }
     else{
-        $("#ReservationInfo").removeClass("active");
-        $("#ReservationBill").addClass("active");
-        $("#InfoList").removeClass("active");
-        $("#BillList").addClass("active");
-        $('.alert').hide();
-        getEntranceFee();
+        var FirstName = document.getElementById("FirstName").value;
+        var MiddleName = document.getElementById("MiddleName").value;
+        var LastName = document.getElementById("LastName").value;
+        var Birthday = document.getElementById("DateOfBirth").value;
+        var Gender = document.getElementById("SelectGender").value;
+
+        $.ajax({
+            type:'get',
+            url:'/Reservation/Customers',
+            data:{FirstName:FirstName,
+                  MiddleName:MiddleName,
+                  LastName:LastName,
+                  Gender:Gender,
+                  Birthday: Birthday},
+            success:function(data){
+                var dataError = false;
+        
+                if(data.blockError == true){
+                    dataError = true;
+                    document.getElementById("InfoErrorMessage").innerHTML = "Customer is currently blocked and cannot book a reservation";
+                    $("#InfoError").show();
+                }
+
+                else if(data.existingError == true){
+                    dataError = true;
+                    document.getElementById("InfoErrorMessage").innerHTML = "The customer still has an active reservation. Cannot book a reservation";
+                    $("#InfoError").show();
+                }
+                if(!dataError){
+                    $("#InfoError").hide();
+                    document.getElementById("InfoMessage").innerHTML = "";
+                    $("#ReservationInfo").removeClass("active");
+                    $("#ReservationBill").addClass("active");
+                    $("#InfoList").removeClass("active");
+                    $("#BillList").addClass("active");
+                    $('.alert').hide();
+                    getEntranceFee();
+                }
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        }); 
     }
 }
 

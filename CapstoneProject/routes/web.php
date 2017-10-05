@@ -245,6 +245,9 @@ Route::get('/Accommodation/Images/Get', 'ViewController@getRoomImage');
 
 /*----------- RESERVATION -------------*/
 
+//Check reservation records
+Route::get('/Reservation/Customers', 'ViewController@getCustomerReservation');
+
 //Book Reservation
 Route::post('/Reservation/Add', 'ReservationController@addReservation');
 
@@ -363,6 +366,8 @@ Route::get('/SalesReport', function () {
 
 // Query Report AJAX
 Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
+
+Route::get('/Reports/Query/Reservation', 'ViewReportController@getReservationReport');
 
 
 /*----------- ITEM RENTAL -------------*/
@@ -500,3 +505,7 @@ Route::post('/Reservation/Invoice', 'InvoiceController@GenerateInvoice');
 Route::get('/Checkout/{id}', 'ViewResortController@ViewCheckout');
 
 Route::post('/Checkout/Pay', 'ResortController@CheckoutCustomer');
+
+
+/*----------- DASHBOARD -------------*/
+Route::get('/Dashboard/Booking', 'ViewDashboardController@getBookingFrequency');

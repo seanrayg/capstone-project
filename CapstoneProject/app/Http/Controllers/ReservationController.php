@@ -291,14 +291,13 @@ class ReservationController extends Controller
 
         $newCustomer = DB::table('tblCustomer')->where('strCustomerID', '=', $CustomerID)->get();
 
-
         if(sizeof($newCustomer) == 0){
             DB::table('tblCustomer')->insert($CustomerData);
         }
         else{
             DB::table('tblCustomer')
             ->where('strCustomerID', $CustomerID)
-            ->update($updateData);
+            ->update($CustomerData);
         }
     }
     
@@ -332,6 +331,9 @@ class ReservationController extends Controller
 
     public function getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender){
         $CustomerID = DB::table('tblCustomer')->pluck('strCustomerID')->first();
+
+
+        $Birthday = Carbon::parse($Birthday)->format('Y-m-d');
 
         $ExistingCustomerID = DB::table('tblCustomer')
                             ->where([['strCustFirstName', '=', $FirstName],['strCustLastName', '=', $LastName], ['strCustMiddleName', '=', $MiddleName], ['dtmCustBirthday', '=', $Birthday], ['strCustGender', '=', $Gender]])
@@ -955,14 +957,13 @@ class ReservationController extends Controller
         else{
             $Gender = "F";
         }
+        $CustomerID = $this->getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender);
+  
+        $ReservationID = $this->getReservationID();
         
-        $CustomerID = DB::table('tblCustomer')->pluck('strCustomerID')->first();
-        if(!$CustomerID){
-           $CustomerID = "CUST1";
-        }
-        else{
-           $CustomerID = $this->SmartCounter('tblCustomer', 'strCustomerID');
-        }
+        $PaymentID = $this->getPaymentID();
+        
+        $ReservationCode = null;
         
         $dt = Carbon::now('HongKong');
         $TimeToday = $dt->toTimeString();          
@@ -983,16 +984,6 @@ class ReservationController extends Controller
             $PickUpTime = $arrTimeToday[0] .":45:00";
         }*/
         $PickUpTime = $TimeToday;
-        
-        
-        $ReservationID = DB::table('tblReservationDetail')->pluck('strReservationID')->first();
-        if(!$ReservationID){
-            $ReservationID = "RESV1";
-        }
-        else{
-            $ReservationID = $this->SmartCounter('tblReservationDetail', 'strReservationID');
-        }
-
 
         if(($req->input('s-Remarks')) == null){
             $Remarks = "N/A";
@@ -1003,22 +994,7 @@ class ReservationController extends Controller
         
         $endLoop = false;
         
-         //Saves Customer Data
-        $CustomerData = array('strCustomerID'=>$CustomerID,
-                          'strCustFirstName'=>$FirstName,
-                          'strCustMiddleName'=>$MiddleName,
-                          'strCustLastName'=>$LastName,
-                          'strCustAddress'=>$Address,
-                          'strCustContact'=>$Contact,
-                          'strCustEmail'=>$Email,
-                          'strCustNationality'=>$Nationality,
-                          'strCustGender'=>$Gender,
-                          'dtmCustBirthday'=>$Birthday,
-                          'intCustomerConfirmed' => '1',
-                          'intCustStatus' => '1');
-
-
-        DB::table('tblCustomer')->insert($CustomerData);
+        $this->saveCustomerData($CustomerID, $FirstName, $MiddleName, $LastName, $Address, $Contact, $Email, $Nationality, $Gender, $Birthday);
         
         if($CheckInDate == $CheckOutDate){
             $PickOutTime = "23:59:59";
@@ -1027,9 +1003,9 @@ class ReservationController extends Controller
             $PickOutTime = $PickUpTime;
         }
         
-        //Saves Reservation Data
+        //save reservation data
         $ReservationData = array('strReservationID'=>$ReservationID,
-                              'intWalkIn'=>'1',
+                              'intWalkIn'=>'0',
                               'strResDCustomerID'=>$CustomerID,
                               'dtmResDArrival'=>$CheckInDate." ".$PickUpTime,
                               'dtmResDDeparture'=>$CheckOutDate." ".$PickOutTime,
@@ -1040,26 +1016,14 @@ class ReservationController extends Controller
                               'dteResDBooking'=>$DateBooked->toDateString(),
                               'strReservationCode'=>null);
         
-        DB::table('tblReservationDetail')->insert($ReservationData);   
-        
+        DB::table('tblReservationDetail')->insert($ReservationData);
         
         $CheckInDate2 = $CheckInDate ." ". $PickUpTime;
         $CheckOutDate2 = $CheckOutDate ." ". $PickOutTime;
         
-      
         //saves reserved rooms
         $this->saveReservedRooms($ChosenRooms, $CheckInDate2, $CheckOutDate2, $ReservationID, $PaymentStatus);
 
-        
-        //saves payment
-        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
-        if(!$PaymentID){
-            $PaymentID = "PYMT1";
-        }
-        else{
-            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
-        }
-        
         $TransactionData = array('strPaymentID'=>$PaymentID,
                               'strPayReservationID'=>$ReservationID,
                               'dblPayAmount'=>$GrandTotal,
@@ -1154,7 +1118,7 @@ class ReservationController extends Controller
         $DateBooked = Carbon::now();
         
         $CustomerID = $this->getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender);
-                
+        dd($CustomerID);
         $ReservationID = $this->getReservationID();
         
         $PaymentID = $this->getPaymentID();

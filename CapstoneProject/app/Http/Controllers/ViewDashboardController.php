@@ -170,7 +170,45 @@ class ViewDashboardController extends Controller
         }
         
         $ContactNumber = DB::table('tblContact')->where('strContactName', '=', 'Telephone')->orWhere('strContactName', '=', 'Hotline')->orWhere('strContactName', '=', 'Phone')->orWhere('strContactName', '=', 'Cellphone')->pluck('strContactDetails')->first();
-        
+
         return view("Dashboard", compact('ArrivingLength', 'DepartingLength', 'ResortLength', 'BookedLength', 'ArrivingGuests', 'DepartingGuests', 'CustomersOnResort', 'CustomersBooked', 'Customers3rdDay', 'ContactNumber', 'Customers5thDay'));
+    }
+
+    public function getBooking($SelectedDate){
+        $CountBooking = DB::table('tblReservationDetail')->where(DB::raw('Date(dteResDBooking)'), '=', $SelectedDate)->count();
+
+        return $CountBooking;
+    }
+
+    public function getBookingFrequency(){
+        $DateToday = Carbon::now()->format('Y-m-d');
+        $TodayBooking = $this->getBooking($DateToday);
+        $TomorrowBooking = $this->getBooking(carbon::parse($DateToday)->addDays(1)->format('Y-m-d'));
+        $ThirdDayBooking = $this->getBooking(carbon::parse($DateToday)->addDays(2)->format('Y-m-d'));
+        $FouthDayBooking = $this->getBooking(carbon::parse($DateToday)->addDays(3)->format('Y-m-d'));
+        $FifthDayBooking = $this->getBooking(carbon::parse($DateToday)->addDays(4)->format('Y-m-d'));
+        $SixthDayBooking = $this->getBooking(carbon::parse($DateToday)->addDays(5)->format('Y-m-d'));
+        $SeventhDayBooking = $this->getBooking(carbon::parse($DateToday)->addDays(6)->format('Y-m-d'));
+
+        $weekMap = [
+            0 => 'SU',
+            1 => 'MO',
+            2 => 'TU',
+            3 => 'WE',
+            4 => 'TH',
+            5 => 'FR',
+            6 => 'SA',
+        ];
+
+        $weekMap[Carbon::parse($DateToday)->dayOfWeek] = $TodayBooking;
+        $weekMap[carbon::parse($DateToday)->addDays(1)->dayOfWeek] = $TomorrowBooking;
+        $weekMap[carbon::parse($DateToday)->addDays(2)->dayOfWeek] = $ThirdDayBooking;
+        $weekMap[carbon::parse($DateToday)->addDays(3)->dayOfWeek] = $FouthDayBooking;
+        $weekMap[carbon::parse($DateToday)->addDays(4)->dayOfWeek] = $FifthDayBooking;
+        $weekMap[carbon::parse($DateToday)->addDays(5)->dayOfWeek] = $SixthDayBooking;
+        $weekMap[carbon::parse($DateToday)->addDays(6)->dayOfWeek] = $SeventhDayBooking;
+
+        return response()->json($weekMap);
+
     }
 }

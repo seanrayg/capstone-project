@@ -287,7 +287,6 @@ function getAvailableRooms(){
     else if(parseInt(d.getMinutes()) < 10){
         var TimeToday = d.getHours()+":0"+d.getMinutes()+":"+d.getSeconds();
     }
-   alert(CheckInDate);
     var TimeExit;
     if(CheckInDate == CheckOutDate){
         TimeExit = "23:59:59";
@@ -581,12 +580,49 @@ function CheckReservationInfo(){
         document.getElementById("InfoErrorMessage").innerHTML = "Customers only 18 years old and above are allowed to book a reservation";
     }
     else{
-        FillDataSummary();
-        getEntranceFee();
-        $('#ReservationInfo').removeClass('active');
-        $('#InfoList').removeClass('active');
-        $('#BillList').addClass('active');
-        $('#ReservationBill').addClass('active');
+        var FirstName = document.getElementById("FirstName").value;
+        var MiddleName = document.getElementById("MiddleName").value;
+        var LastName = document.getElementById("LastName").value;
+        var Birthday = document.getElementById("DateOfBirth").value;
+        var Gender = document.getElementById("Gender").value;
+
+        $.ajax({
+            type:'get',
+            url:'/Reservation/Customers',
+            data:{FirstName:FirstName,
+                  MiddleName:MiddleName,
+                  LastName:LastName,
+                  Gender:Gender,
+                  Birthday: Birthday},
+            success:function(data){
+                var dataError = false;
+                if(data.blockError == true){
+                    dataError = true;
+                    $('.alert').show();
+                    document.getElementById("InfoErrorMessage").innerHTML = "Customer is currently blocked and cannot book a reservation";
+                }
+
+                else if(data.existingError == true){
+                    dataError = true;
+                    $('.alert').show();
+                    document.getElementById("InfoErrorMessage").innerHTML = "The customer still has an active reservation. Cannot book a reservation";
+                }
+                if(!dataError){
+                    $('.alert').hide();
+                    document.getElementById("InfoErrorMessage").innerHTML = "";
+                    FillDataSummary();
+                    getEntranceFee();
+                    $('#ReservationInfo').removeClass('active');
+                    $('#InfoList').removeClass('active');
+                    $('#BillList').addClass('active');
+                    $('#ReservationBill').addClass('active');
+                }
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });   
     }
 }
 

@@ -37,16 +37,13 @@ class ViewReportController extends Controller
             $GeneratedReport = $this->getFees($IncludeDeleted);
         }
         else if($SelectedReport == "Inoperational Dates"){
-            //$GeneratedReport = $this->getInoperationalDates($IncludeDeleted);
+            $GeneratedReport = $this->getInoperationalDates($IncludeDeleted);
         }
         else if($SelectedReport == "Packages"){
-            //$GeneratedReport = $this->getPackages($IncludeDeleted);
+            $GeneratedReport = $this->getPackages($IncludeDeleted);
         }
         else if($SelectedReport == "Rental Items"){
             $GeneratedReport = $this->getItems($IncludeDeleted);
-        }
-        else if($SelectedReport == "Reservations"){
-            //$GeneratedReport = $this->getReservations($IncludeDeleted);
         }
         else if($SelectedReport == "Rooms & Cottages"){
             $GeneratedReport = $this->getRoomsCottages($IncludeDeleted);
@@ -57,6 +54,7 @@ class ViewReportController extends Controller
         else if($SelectedReport == "Room Types Only"){
             $GeneratedReport = $this->getRoomTypes($IncludeDeleted);
         }
+
         return response()->json($GeneratedReport);
     }
 
@@ -93,7 +91,10 @@ class ViewReportController extends Controller
             $GeneratedReport = $this->getRooms($IncludeDeleted);
         }else if($SelectedReport == "Room Types Only") {
             $GeneratedReport = $this->getRoomTypes($IncludeDeleted);
+        }else if($SelectedReport == "Packages") {
+            $GeneratedReport = $this->getPackages($IncludeDeleted);
         }
+
 
         $dtmNow = Carbon::now('Asia/Manila');
         $dateNow = $dtmNow->toFormattedDateString();
@@ -102,7 +103,121 @@ class ViewReportController extends Controller
         return $pdf->stream();
 
     }
+
+    public function getReservationReport(Request $req){
+        $ReservationReport = trim($req->input('ReservationReport'));
+        $ReservationMonth = trim($req->input('ReservationMonth'));
+        $ReservationYear = trim($req->input('ReservationYear'));
+        $DailyReservation = trim($req->input('DailyReservation'));
+
+        if($ReservationReport == "Daily"){
+            $DailyReservation = Carbon::parse($DailyReservation)->format('Y-m-d');
+            $ReservationInfo = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select('a.strReservationID',
+                                 DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustMiddleName , " " , b.strCustLastName) AS Name'),
+                                 'a.intResDNoOfAdults',
+                                 'a.intResDNoOfKids',
+                                 'a.dtmResDArrival',
+                                 'a.dtmResDDeparture',
+                                 'b.strCustContact',
+                                 'b.strCustEmail',
+                                 'b.strCustAddress',
+                                 'a.intResDStatus')
+                        ->where(DB::raw('Date(a.dtmResDArrival)'), '=', $DailyReservation)
+                        ->get();
+        }
+
+        else{
+            $ReservationMonth = Carbon::parse($ReservationMonth)->format('m');
+            $ReservationInfo = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select('a.strReservationID',
+                                 DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustMiddleName , " " , b.strCustLastName) AS Name'),
+                                 'a.intResDNoOfAdults',
+                                 'a.intResDNoOfKids',
+                                 'a.dtmResDArrival',
+                                 'a.dtmResDDeparture',
+                                 'b.strCustContact',
+                                 'b.strCustEmail',
+                                 'b.strCustAddress',
+                                 'a.intResDStatus')
+                        ->whereMonth('dtmResDArrival', '=', $ReservationMonth)
+                        ->whereYear('dtmResDArrival', '=', $ReservationYear)
+                        ->get();
+        }
+
+        foreach($ReservationInfo as $Info){
+            $Info->dtmResDArrival = Carbon::parse($Info->dtmResDArrival)->format('M j, Y');
+            $Info->dtmResDDeparture = Carbon::parse($Info->dtmResDDeparture)->format('M j, Y');
+            if($Info->intResDStatus == 1){
+                $Info->intResDStatus = "Pending Reservation";
+            }
+            else if($Info->intResDStatus == 2){
+                $Info->intResDStatus = "Confirmed Reservation";
+            }
+            else if($Info->intResDStatus == 3){
+                $Info->intResDStatus = "Cancelled Reservation";
+            }
+            else if($Info->intResDStatus == 4){
+                $Info->intResDStatus = "Currently in resort";
+            }
+            else if($Info->intResDStatus == 5){
+                $Info->intResDStatus = "Reservation Finished";
+            }
+        }
+
+        return response()->json($ReservationInfo);
+    }
     
+    //get Packages
+    public function getPackages($IncludeDeleted){
+        if($IncludeDeleted == 1){
+            $Packages = DB::table('tblPackage as a')
+                        ->join ('tblPackagePrice as b', 'a.strPackageID', '=' , 'b.strPackageID')
+                        ->select('a.strPackageID',
+                                 'a.strPackageName',
+                                 'a.strPackageStatus',
+                                 'a.intPackageDuration',
+                                 'b.dblPackagePrice',
+                                 'a.intPackagePax',
+                                 'a.strPackageDescription',
+                                 'a.intBoatFee')
+                        ->where('b.dtmPackagePriceAsOf',"=", DB::raw("(SELECT MAX(dtmPackagePriceAsOf) FROM tblPackagePrice WHERE strPackageID = a.strPackageID)"))
+                        ->where(function($query){
+                            $query->where('a.strPackageStatus', '=', 'Available')
+                                  ->orWhere('a.strPackageStatus', '=', "Unavailable");
+                        })
+                        ->get();
+        }
+        else{
+            $Packages = DB::table('tblPackage as a')
+                        ->join ('tblPackagePrice as b', 'a.strPackageID', '=' , 'b.strPackageID')
+                        ->select('a.strPackageID',
+                                 'a.strPackageName',
+                                 'a.strPackageStatus',
+                                 'a.intPackageDuration',
+                                 'b.dblPackagePrice',
+                                 'a.intPackagePax',
+                                 'a.strPackageDescription',
+                                 'a.intBoatFee')
+                        ->where('b.dtmPackagePriceAsOf',"=", DB::raw("(SELECT MAX(dtmPackagePriceAsOf) FROM tblPackagePrice WHERE strPackageID = a.strPackageID)"))
+                        ->get();
+        }
+
+        foreach($Packages as $Package){
+            if($Package->intBoatFee == "1"){
+                $Package->intBoatFee = "Free";
+            }
+            else{
+                $Package->intBoatFee = "Not Free";
+            }
+        }
+
+        return $Packages;        
+    }
+
+
     //get accomodations
    public function getAccomodations($IncludeDeleted){
         $GeneratedReport;
@@ -387,11 +502,30 @@ class ViewReportController extends Controller
     }
     
     public function getInoperationalDates($IncludeDeleted){
-        
-    }
-    
-    public function getPackages($IncludeDeleted){
-        
+        if($IncludeDeleted == 1){
+            $Dates = DB::table('tblInoperationalDate')->get();
+        }
+        else{
+            $Dates = DB::table('tblInoperationalDate')->where('intDateStatus','!=','0')->get();              
+        }
+
+        foreach ($Dates as $Date) {
+            if($Date->intDateStatus == '1'){
+                $Date->intDateStatus = 'Active';
+            }
+            else if($Date->intDateStatus == '2'){
+                $Date->intDateStatus= 'Inactive';
+            }
+            else{
+                $Date->intDateStatus = 'Deleted';
+            }
+
+            $Date->dteStartDate = Carbon::parse($Date->dteStartDate)->format('M j, Y');
+
+            $Date->dteEndDate = Carbon::parse($Date->dteEndDate)->format('M j, Y');
+        }
+
+        return $Dates;
     }
     
     // get Items
