@@ -442,7 +442,7 @@
                                 </div>
                                 <div class="card-content">
                                     <div class="row">
-                                        <h3 class="title">Inital Invoice</h3>
+                                        <h3 class="title">Initial Invoice</h3>
                                     </div>
                                     
                                     <div class="row">
@@ -453,8 +453,8 @@
                                             <table class="table" id="tblBill">
                                                 <thead class="text-primary">
                                                     <th>Room</th>
-                                                    <th>Quantity</th>
                                                     <th>Rate per day</th>
+                                                    <th>Quantity</th>
                                                     <th>Price</th>
                                                 </thead>
                                                 <tbody>
@@ -528,15 +528,6 @@
                     <input type="hidden" name="s-AmountTendered" id="s-AmountTendered" value = "">
                     <input type="hidden" name="s-OtherFees" id="s-OtherFees" value = "">
                     <input type="hidden" name="s-AddFees" id="s-AddFees" value = "">
-                </form>
-
-                <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
-                    {{ csrf_field() }}
-                    <input type="hidden" name="InvoiceType" value="Reservation">
-                    <input type="hidden" name="FeeID" id="FeeID">
-                    <input type="hidden" name="Quantity" id="Quantity">
-                    <input type="hidden" name="Amount" id="Amount">
-                    <input type="hidden" name="iReservationID" id="iReservationID">
                 </form>
                 
             </div>
@@ -707,6 +698,17 @@
                         </div>
                     </div>
 
+                    <form method="POST" action="/Reservation/Invoice" onsubmit="SetInvoiceInfo()" target="_blank">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="DaysOfStay" id="DaysOfStay">
+                        <input type="hidden" name="InvoiceType" value="WalkIn">
+                        <input type="hidden" name="tblRoomInfo" id="tblRoomInfo">
+                        <input type="hidden" name="tblFeeInfo" id="tblFeeInfo">
+                        <input type="hidden" name="iCustomerName" id="iCustomerName">
+                        <input type="hidden" name="iCustomerAddress" id="iCustomerAddress">
+                        <input type="hidden" name="iTotalAdults" id="iTotalAdults">
+                        <input type="submit" class="btn btn-success pull-left" value="Show Invoice">
+                    </form>
                     <button type="button" class="btn btn-success pull-right" onclick="SaveReservation()">Continue</button>
                 </div>
             </div>

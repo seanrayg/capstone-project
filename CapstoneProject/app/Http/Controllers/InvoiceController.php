@@ -137,6 +137,62 @@ class InvoiceController extends Controller
 
             }
 
+        }else if($strInvoiceType == 'WalkIn') {
+
+            $intDaysOfStay = $request->input("DaysOfStay");
+            $tblRoomInfo = $request->input("tblRoomInfo");
+            $tblFeeInfo = $request->input("tblFeeInfo");
+            $strCustomerName = $request->input("iCustomerName");
+            $strCustomerAddress = $request->input("iCustomerAddress");
+            $intTotalAdults = $request->input("iTotalAdults");
+
+            $ReservationID = $this->SmartCounter("tblReservationDetail", "strReservationID");
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $ReservationID);
+
+            $tblRoomInfo = json_decode($tblRoomInfo);
+            $tblFeeInfo = json_decode($tblFeeInfo);
+
+            $rooms = array();
+            $fees = array();
+
+            for ($i = 1; $i < count($tblRoomInfo); $i++) {
+
+                $tblRoomInfo[$i][3] = $tblRoomInfo[$i][3] * $intDaysOfStay;
+
+                array_push($rooms, (object) ['name' => $tblRoomInfo[$i][0], 'price' => $tblRoomInfo[$i][1], 'quantity' => $tblRoomInfo[$i][2], 'amount' => $tblRoomInfo[$i][3]]);
+                $TableRows++;
+
+            }
+
+            $intTotal = $this->GetTotal($intTotal, $rooms);
+
+            for ($i = 1; $i < count($tblFeeInfo); $i++) {
+
+                if($tblFeeInfo[$i][0] == 'Entrance Fee') {
+
+                    $tblFeeInfo[$i][0] = 'Added Entrance Fee';
+
+                }
+
+                array_push($fees, (object) ['name' => $tblFeeInfo[$i][0], 'price' => $tblFeeInfo[$i][1], 'quantity' => $tblFeeInfo[$i][2], 'amount' => $tblFeeInfo[$i][3]]);
+                $TableRows++;
+
+            }
+
+            $intTotal = $this->GetTotal($intTotal, $fees);
+
+            $amount = 100 * $intTotalAdults;
+
+            $EntranceFee = array(
+                (object) array("name" => "Entrance Fee", "price" => "100", "quantity" => $intTotalAdults, "amount" => $amount)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $EntranceFee);
+
+            $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $strCustomerName, 'CustomerAddress' => $strCustomerAddress, 'days' => $intDaysOfStay, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'TableRows' => $TableRows, 'rooms' => $rooms, 'fees' => $fees, 'EntranceFee' => $EntranceFee]);
+            return $pdf->stream();
+
         }else if($strInvoiceType == 'BoatRental') {
 
             $name = "Boat Rental";
@@ -277,7 +333,7 @@ class InvoiceController extends Controller
         $InvoiceNumber = $dtmNow->year;
         $ID = $this->GetNumber($ID);
 
-        if($InvoiceType == 'Reservation') {
+        if($InvoiceType == 'Reservation' || 'WalkIn') {
 
             $InvoiceNumber .= "18" . $ID;
 

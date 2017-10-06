@@ -562,6 +562,17 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
+                                    <form method="POST" action="/Reservation/Invoice" onsubmit="SetInvoiceInfo()" target="_blank">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="DaysOfStay" id="DaysOfStay">
+                                        <input type="hidden" name="InvoiceType" value="WalkIn">
+                                        <input type="hidden" name="tblRoomInfo" id="tblRoomInfo">
+                                        <input type="hidden" name="tblFeeInfo" id="tblFeeInfo">
+                                        <input type="hidden" name="iCustomerName" id="iCustomerName">
+                                        <input type="hidden" name="iCustomerAddress" id="iCustomerAddress">
+                                        <input type="hidden" name="iTotalAdults" id="iTotalAdults">
+                                        <input type="submit" class="btn btn-success pull-left" value="Show Invoice">
+                                    </form>
                                     <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>

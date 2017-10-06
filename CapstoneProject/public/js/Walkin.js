@@ -157,7 +157,6 @@ function TransferToForm(ChosenRooms, ChosenFees, GrandTotal, AmountTendered){
     document.getElementById("s-GrandTotal").value = GrandTotal;
     document.getElementById("s-AmountTendered").value = AmountTendered;
     document.getElementById("WalkInForm").submit();
-    alert('haha');
 }
 
 function SaveTransaction(){
@@ -957,4 +956,113 @@ function SendInput(field, dataType, holder){
         }
     }
     
+}
+
+function ShowInvoice() {
+
+    var intDaysOfStay = document.getElementById("b-DaysOfStay").innerHTML;
+
+    var tblRoomInfo = GetTableInfo("tblBill");
+    var tblFeeInfo = GetTableInfo("tblOtherFee");
+
+    var intTotalAdults = document.getElementById("b-TotalAdults").innerHTML;
+
+    var strCustomerName = document.getElementById("i-FullName").innerHTML;
+    var strCustomerAddress = document.getElementById("i-Address").innerHTML;
+
+    // $.ajaxSetup({
+    //     headers: {
+    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //     }
+    // });
+
+    // $.ajax({
+
+    //     type: 'POST',
+    //     url: '/Reservation/Invoice',
+    //     data: {
+
+    //         InvoiceType: "WalkIn",
+    //         tblRoomInfo: tblRoomInfo,
+    //         strCustomerName: strCustomerName,
+    //         strCustomerAddress: strCustomerAddress,
+    //         intTotalAdults: intTotalAdults
+
+    //     },
+    //     success: function(data) {
+
+
+
+    //     },
+    //     error: function(jqXHR, exception){
+    //         var msg = '';
+    //         if (jqXHR.status === 0) {
+    //             msg = 'Not connect.\n Verify Network.';
+    //         } else if (jqXHR.status == 404) {
+    //             msg = 'Requested page not found. [404]';
+    //         } else if (jqXHR.status == 500) {
+    //             msg = 'Internal Server Error [500].';
+    //         } else if (exception === 'parsererror') {
+    //             msg = 'Requested JSON parse failed.';
+    //         } else if (exception === 'timeout') {
+    //             msg = 'Time out error.';
+    //         } else if (exception === 'abort') {
+    //             msg = 'Ajax request aborted.';
+    //         } else {
+    //             msg = 'Uncaught Error.\n' + jqXHR.responseText;
+    //         }
+    //         alert(msg);
+    //     }
+
+    // });
+
+}
+
+function SetInvoiceInfo() {
+
+    var tblRoomInfo = GetTableInfo("tblBill");
+    var tblFeeInfo = GetTableInfo("tblOtherFee");
+
+    document.getElementById("DaysOfStay").value = document.getElementById("b-DaysOfStay").innerHTML;
+    $('#tblRoomInfo').val(JSON.stringify(tblRoomInfo));
+    $('#tblFeeInfo').val(JSON.stringify(tblFeeInfo));
+    document.getElementById("iCustomerName").value = document.getElementById("i-FullName").innerHTML;
+    document.getElementById("iCustomerAddress").value = document.getElementById("i-Address").innerHTML;
+    document.getElementById("iTotalAdults").value = document.getElementById("b-TotalAdults").innerHTML;
+
+}
+
+function GetTableInfo(TableName) {
+
+    var tblInfo = [];
+
+    //gets table
+    var oTable = document.getElementById(TableName);
+
+    //gets rows of table
+    var rowLength = oTable.rows.length;
+
+    //loops through rows    
+    for (i = 0; i < rowLength; i++){
+
+        tblInfo[i] = [];
+
+       //gets cells of current row
+       var oCells = oTable.rows.item(i).cells;
+
+       //gets amount of cells of current row
+       var cellLength = oCells.length;
+
+       //loops through each cell in current row
+       for(var j = 0; j < cellLength; j++){
+          /* get your cell info here */
+          /* var cellVal = oCells.item(j).innerHTML; */
+
+          tblInfo[i][j] = oCells.item(j).innerHTML;
+
+       }
+    }
+
+    return tblInfo;
+
 }

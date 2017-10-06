@@ -29,6 +29,12 @@
 					{{ $CustomerName }} <br>
 					{{ $CustomerAddress }}
 				</label>
+				<br>
+				<br>
+				<label class="parent">Days of Stay:</label>
+				<label id="CustomerName">
+					{{ $days }}
+				</label>
 			</div>
 		</div>
 		<div class="column-right">
@@ -46,18 +52,11 @@
 	<hr style="clear: left;">
 
 	<table>
-		@if($InvoiceType == 'Reservation')
+		@if($InvoiceType == 'Reservation' || $InvoiceType == 'WalkIn')
 			<tr>
 				<th style="width: 60%;">Description</th>
 				<th style="width: 20%;">Price/Rate</th>
-				<th style="width: 20%;">Qty/Days</th>
-				<th style="width: 20%;">Amount</th>
-			</tr>
-		@elseif($InvoiceType == 'BoatRental')
-			<tr>
-				<th style="width: 60%;">Description</th>
-				<th style="width: 20%;">Rate / 2 Hours</th>
-				<th style="width: 20%;">Hours</th>
+				<th style="width: 20%;">Quantity</th>
 				<th style="width: 20%;">Amount</th>
 			</tr>
 		@endif
@@ -98,6 +97,31 @@
 	  				</tr>
 	  		  	@endforeach
 		  	@endif
+		@elseif($strInvoiceType = 'WalkIn')
+		  	@foreach($rooms as $room)
+				<tr>
+					<td>{{ $room->name }}</td>
+					<td style="text-align: center;">{{ $room->price }}</td>
+					<td style="text-align: center;">{{ $room->quantity }}</td>
+					<td style="text-align: right;">{{ $room->amount }}</td>
+				</tr>
+		  	@endforeach
+		  	@foreach($EntranceFee as $ef)
+  				<tr>
+  					<td>{{ $ef->name }}</td>
+  					<td style="text-align: center;">{{ $ef->price }}</td>
+  					<td style="text-align: center;">{{ $ef->quantity }}</td>
+  					<td style="text-align: right;">{{ $ef->amount }}</td>
+  				</tr>
+  		  	@endforeach
+		  	@foreach($fees as $fee)
+				<tr>
+					<td>{{ $fee->name }}</td>
+					<td style="text-align: center;">{{ $fee->price }}</td>
+					<td style="text-align: center;">{{ $fee->quantity }}</td>
+					<td style="text-align: right;">{{ $fee->amount }}</td>
+				</tr>
+		  	@endforeach
 		@endif
 
 		@for($i = $TableRows; $i <= 10; $i++)
