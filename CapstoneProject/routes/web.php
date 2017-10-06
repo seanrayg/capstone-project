@@ -509,3 +509,7 @@ Route::post('/Checkout/Pay', 'ResortController@CheckoutCustomer');
 
 /*----------- DASHBOARD -------------*/
 Route::get('/Dashboard/Booking', 'ViewDashboardController@getBookingFrequency');
+
+Route::get('/Dashboard/Reservation', 'ViewDashboardController@getMonthlyReservation');
+
+Route::get('/Dashboard/Income', 'ViewDashboardController@getWeeklyIncome');

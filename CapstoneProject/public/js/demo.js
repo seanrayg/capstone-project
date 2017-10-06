@@ -64,19 +64,15 @@ demo = {
             url:'/Dashboard/Booking',
             success:function(data){
                 dataDailySalesChart = {
-                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                labels: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
                 series: [
                     data
                 ]
             };
-            var highestValue = 0;
-            for(var x = 1; x <= 7; x++){
-                if(data[x] >= data[x-1]){
-                    highestValue = data[x];
-                }
-            }
 
-            highestValue = highestValue + 10;
+            var highestValue = Math.max.apply(Math, data);
+            highestValue = (Math.round(highestValue / 10) * 10) + 10;
+
             optionsDailySalesChart = {
                 lineSmooth: Chartist.Interpolation.cardinal({
                     tension: 0
@@ -98,62 +94,87 @@ demo = {
         });   
 
         /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
+         $.ajax({
+            type:'get',
+            url:'/Dashboard/Income',
+            success:function(data){
+                dataCompletedTasksChart = {
+                    labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                    series: [
+                        data
+                    ]
+                };
 
-        dataCompletedTasksChart = {
-            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-            series: [
-                [2300, 2500, 14500, 3000, 2800, 12400, 20000, 1900]
-            ]
-        };
+                var highestValue = Math.max.apply(Math, data);
+                highestValue = (Math.round(highestValue / 10) * 10) + 5000;
+                optionsCompletedTasksChart = {
+                    lineSmooth: Chartist.Interpolation.cardinal({
+                        tension: 0
+                    }),
+                    low: 0,
+                    high: highestValue, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                    chartPadding: { top: 0, right: 0, bottom: 0, left: 0}
+                }
 
-        optionsCompletedTasksChart = {
-            lineSmooth: Chartist.Interpolation.cardinal({
-                tension: 0
-            }),
-            low: 0,
-            high: 20000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-            chartPadding: { top: 0, right: 0, bottom: 0, left: 0}
-        }
+                var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
 
-        var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
+                // start animation for the Completed Tasks Chart - Line Chart
+                md.startAnimationForLineChart(completedTasksChart);
 
-        // start animation for the Completed Tasks Chart - Line Chart
-        md.startAnimationForLineChart(completedTasksChart);
-
-
-
+            },
+            error:function(response){
+                alert(response);
+                console.log(response);
+            }
+        });   
+        
         /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
 
-        var dataEmailsSubscriptionChart = {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          series: [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0]
+        $.ajax({
+            type:'get',
+            url:'/Dashboard/Reservation',
+            success:function(data){
+                    
+                var dataEmailsSubscriptionChart = {
+                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                  series: [
+                    data
 
-          ]
-        };
-        var optionsEmailsSubscriptionChart = {
-            axisX: {
-                showGrid: false
+                  ]
+                };
+
+                var highestValue = Math.max.apply(Math, data);
+                highestValue = (Math.round(highestValue / 10) * 10) + 10;
+
+                var optionsEmailsSubscriptionChart = {
+                    axisX: {
+                        showGrid: false
+                    },
+                    low: 0,
+                    high: highestValue,
+                    chartPadding: { top: 0, right: 5, bottom: 0, left: 0}
+                };
+                var responsiveOptions = [
+                  ['screen and (max-width: 640px)', {
+                    seriesBarDistance: 5,
+                    axisX: {
+                      labelInterpolationFnc: function (value) {
+                        return value[0];
+                      }
+                    }
+                  }]
+                ];
+                var emailsSubscriptionChart = Chartist.Bar('#emailsSubscriptionChart', dataEmailsSubscriptionChart, optionsEmailsSubscriptionChart, responsiveOptions);
+
+                //start animation for the Emails Subscription Chart
+                md.startAnimationForBarChart(emailsSubscriptionChart);
+
             },
-            low: 0,
-            high: 100,
-            chartPadding: { top: 0, right: 5, bottom: 0, left: 0}
-        };
-        var responsiveOptions = [
-          ['screen and (max-width: 640px)', {
-            seriesBarDistance: 5,
-            axisX: {
-              labelInterpolationFnc: function (value) {
-                return value[0];
-              }
+            error:function(response){
+                alert(response);
+                console.log(response);
             }
-          }]
-        ];
-        var emailsSubscriptionChart = Chartist.Bar('#emailsSubscriptionChart', dataEmailsSubscriptionChart, optionsEmailsSubscriptionChart, responsiveOptions);
-
-        //start animation for the Emails Subscription Chart
-        md.startAnimationForBarChart(emailsSubscriptionChart);
-
+        });   
     },
 
     initGoogleMaps: function(){

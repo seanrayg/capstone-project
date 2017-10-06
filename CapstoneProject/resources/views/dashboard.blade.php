@@ -92,11 +92,11 @@
             </div>
             <div class="card-content">
                 <h4 class="title">Booking Frequency</h4>
-                <p class="category"><span class="text-success"><i class="fa fa-long-arrow-up"></i> 55%  </span> increase in today sales.</p>
+                <p class="category">Number of booking for this week</p>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">access_time</i> updated 4 minutes ago
+                    <i class="material-icons">access_time</i> updated 1 minute ago
                 </div>
             </div>
         </div>
@@ -109,11 +109,11 @@
             </div>
             <div class="card-content">
                 <h4 class="title">Monthly Reservations</h4>
-                <p class="category">Last Campaign Performance</p>
+                <p class="category">Representation of reservations for this year</p>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">access_time</i> updated 1 hour ago
+                    <i class="material-icons">access_time</i> updated 1 minute ago
                 </div>
             </div>
 
@@ -127,11 +127,11 @@
             </div>
             <div class="card-content">
                 <h4 class="title">Income</h4>
-                <p class="category">Last Campaign Performance</p>
+                <p class="category">Representation of income for this week</p>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">access_time</i> updated 30 mins ago
+                    <i class="material-icons">access_time</i> updated 1 minute ago
                 </div>
             </div>
         </div>
