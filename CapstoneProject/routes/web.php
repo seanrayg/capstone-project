@@ -273,6 +273,9 @@ Route::post('/Reservation/Room/Edit', 'ReservationController@updateReservationRo
 //Edit Reservation Dates
 Route::post('/Reservation/Date/Edit', 'ReservationController@updateReservationDate');
 
+//Edit Reservation Package
+Route::post('/Reservation/Package/Edit', 'ReservationController@updateReservationPackage');
+
 //RESERVATION EDIT AJAX
 
 Route::get('/Reservation/Info/View', 'ViewController@getReservationInclusion');

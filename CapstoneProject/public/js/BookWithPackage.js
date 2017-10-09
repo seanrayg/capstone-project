@@ -60,10 +60,6 @@ function CheckReservationInput(){
                 data:{CheckInDate: CheckInDate},
                 success:function(data){
                     $('#PackageTable tbody').empty();
-                    $('#tblIncludedItems tbody').empty();
-                    $('#tblIncludedRooms tbody').empty();
-                    $('#tblIncludedActivities tbody').empty();
-                    $('#tblIncludedFees tbody').empty();
 
                     var tableRef = document.getElementById('PackageTable').getElementsByTagName('tbody')[0];
 

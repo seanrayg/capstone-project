@@ -593,11 +593,113 @@ class ReservationController extends Controller
         \Session::flash('flash_message','Reservation successfully updated!');
         return redirect('/Reservations');
     }
+
+    //Edit Reservation Package
+    public function updateReservationPackage(Request $req){
+
+        $ReservationID = trim($req->input('r-ReservationID'));
+        $PackageName = trim($req->input('r-Package'));
+        $CheckInDate = trim($req->input('r-CheckInDate'));
+        $CheckOutDate = trim($req->input('r-CheckOutDate'));
+        $PickUpTime = trim($req->input('r-PickUpTime'));
+        $tempCheckInDate = $CheckInDate;
+        $tempCheckOutDate = $CheckOutDate;
+        $CheckInDate = $CheckInDate . " " . $PickUpTime;
+        $CheckOutDate = $CheckOutDate . " " . $PickUpTime;
+
+        $tempPickUpTime2 = explode(':', $PickUpTime);
+        $tempPickUpTime2[0] = ((int)$tempPickUpTime2[0]) + 1;
+        $PickUpTime2 = $tempPickUpTime2[0].":".$tempPickUpTime2[1].":".$tempPickUpTime2[2];
+
+        $PackageID = DB::table('tblPackage')->where([['strPackageName', '=', $PackageName],['strPackageStatus', '=', 'Available']])->pluck('strPackageID')->first();
+
+
+        //delete old package record transactions
+        DB::table('tblAvailPackage')->where('strAvailPReservationID', '=', $ReservationID)->delete();
+        DB::table('tblreservationroom')->where('strResRReservationID', '=', $ReservationID)->delete();
+
+        $PackageRoomInfo = DB::table('tblRoomType as a')
+                        ->join('tblPackageRoom as b', 'a.strRoomTypeID', '=', 'b.strPackageRRoomTypeID')
+                        ->join('tblRoomRate as c', 'a.strRoomTypeID', '=', 'c.strRoomTypeID')
+                        ->select('a.strRoomType',
+                                 'a.intRoomTCapacity',
+                                 'b.intPackageRQuantity',
+                                 'c.dblRoomRate')
+                        ->where([['b.strPackageRPackageID', '=', $PackageID], ['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")]])
+                        ->get();
+        
+
+        $ChosenRooms = "";
+        foreach($PackageRoomInfo as $Info){
+            $ChosenRooms .= $Info -> strRoomType . "-" . $Info -> intRoomTCapacity ."-". $Info -> dblRoomRate ."-".$Info->intPackageRQuantity.",";
+        }
+        
+        $ChosenRooms = rtrim($ChosenRooms,",");
+
+        $PaymentStatus = 1;
+        $this->saveReservedRooms($ChosenRooms, $CheckInDate, $CheckOutDate, $ReservationID, $PaymentStatus);
+
+        $PackageData = array('strAvailPReservationID'=>$ReservationID,
+                                      'strAvailPackageID'=>$PackageID);
+                
+        DB::table('tblAvailPackage')->insert($PackageData);
+
+        $CheckInDate = str_replace("/","-",$tempCheckInDate);
+        $CheckOutDate = str_replace("/","-",$tempCheckOutDate);
+        
+        $tempArrivalDate = $CheckInDate ." ". $PickUpTime;
+        $tempDepartureDate = $CheckOutDate ." ". $PickUpTime;
+   
+        $DateChecker = false;
+        
+        $OldReservationDates = DB::table('tblReservationDetail')
+                                ->select('dtmResDArrival',
+                                         'dtmResDDeparture')
+                                ->where('strReservationID', $ReservationID)
+                                ->get();
+
+        foreach($OldReservationDates as $OldDate){
+            if($OldDate->dtmResDArrival == $tempArrivalDate && $OldDate->dtmResDDeparture == $tempDepartureDate){
+                $DateChecker = true;
+            }
+            else{
+                $DateChecker = false;
+            }
+        }
+        
+        $arrCheckInDate = explode(' ', $tempArrivalDate);
+        $arrCheckOutDate = explode(' ', $tempDepartureDate);
+ 
+        $tempCheckInDate2 = explode('-', $arrCheckInDate[0]);
+        $tempCheckOutDate2 = explode('-', $arrCheckOutDate[0]);
+
+        $CheckInDate = $tempCheckInDate2[2] ."/". $tempCheckInDate2[0] ."/". $tempCheckInDate2[1] ." ". $arrCheckInDate[1];
+        $CheckOutDate = $tempCheckOutDate2[2] ."/". $tempCheckOutDate2[0] ."/". $tempCheckOutDate2[1] ." ". $arrCheckOutDate[1];
+        
+        if(!$DateChecker){
+            $updateDateData = array("dtmResDArrival" => $CheckInDate, 
+                     'dtmResDDeparture' => $CheckOutDate);   
+        
+            DB::table('tblReservationDetail')
+                ->where('strReservationID', $ReservationID)
+                ->update($updateDateData);
+            
+            /*$ChosenBoats = DB::table('tblReservationBoat')->where('strResBReservationID', "=", $ReservationID)->pluck('strResBBoatID');
+            if(count($ChosenBoats) != 0){
+                DB::table('tblreservationboat')->where('strResBReservationID', '=', $ReservationID)->delete();
+                DB::table('tblboatschedule')->where('strBoatSReservationID', '=', $ReservationID)->delete();
+                $this->saveReservedBoats($ReservationID, $tempCheckInDate, $tempCheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);
+            }*/
+            
+        }
+
+        \Session::flash('flash_message','Reservation successfully updated!');
+         return redirect('/Reservations');
+    }
     
     //Edit Reservation Date
     
     public function updateReservationDate(Request $req){
-   
         $tempCheckInDate = trim($req->input('CheckInDate'));
         $tempCheckOutDate = trim($req->input('CheckOutDate'));
         $PickUpHour = trim($req->input('SelectHour'));
@@ -638,24 +740,26 @@ class ReservationController extends Controller
             ->where([['strBoatSReservationID', $ReservationID],['strBoatSPurpose', 'Reservation']])
             ->update($boatSchedData);
         }
-        
-        if($TotalRoomAmount != $OrigRoomAmount){
-            $InitialPayment = DB::table('tblPayment')
-                              ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
-                              ->get();
-            
-            $NewTotal = 0;
-            
-            foreach($InitialPayment as $Payment){
-                $Payment->dblPayAmount = $Payment->dblPayAmount - $OrigRoomAmount;
-                $Payment->dblPayAmount = $Payment->dblPayAmount + $TotalRoomAmount;
-                $NewTotal = $Payment->dblPayAmount;
+        if($TotalRoomAmount != null && $OrigRoomAmount != null){
+            if($TotalRoomAmount != $OrigRoomAmount){
+                $InitialPayment = DB::table('tblPayment')
+                                  ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
+                                  ->get();
+                
+                $NewTotal = 0;
+                
+                foreach($InitialPayment as $Payment){
+                    $Payment->dblPayAmount = $Payment->dblPayAmount - $OrigRoomAmount;
+                    $Payment->dblPayAmount = $Payment->dblPayAmount + $TotalRoomAmount;
+                    $NewTotal = $Payment->dblPayAmount;
+                }
+                
+                DB::table('tblPayment')
+                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
+                ->update(['dblPayAmount' => $NewTotal]);
             }
-            
-            DB::table('tblPayment')
-            ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 1]])
-            ->update(['dblPayAmount' => $NewTotal]);
         }
+        
         
         \Session::flash('flash_message','Reservation successfully updated!');
          return redirect('/Reservations');
