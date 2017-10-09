@@ -40,15 +40,12 @@
                             <p class="p-label">Arrival Time:</p><p class="p-info" id="i-PickUpTime">{{$PickUpTime}}</p><br>
                         @endforeach
                     </div>
-
-
-
                     <button type="button" class="btn btn-success pull-right" onclick="ShowModalEditResDate()">Reschedule</button>
                 </div>
 
         </div>
     </div>
-    <!----Reservation Info----->
+
     <div class="col-sm-7">
         <div class="card card-stats">
 
@@ -93,9 +90,9 @@
     </div>
 
 
-</div><!-- Row -->
+</div>
 
-<!----Reserved Rooms ----->
+
 <div class="row">
 <div class="col-md-11">
     <div class="card">
@@ -122,7 +119,7 @@
         </div>
     </div>
 </div>
-</div><!--Row-->
+</div>
 @endsection
 
 

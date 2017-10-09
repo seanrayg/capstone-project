@@ -48,7 +48,7 @@
 
         </div>
     </div>
-    <!----Reservation Info----->
+
     <div class="col-sm-7">
         <div class="card card-stats">
 
@@ -93,9 +93,9 @@
     </div>
 
 
-</div><!-- Row -->
+</div>
 
-<!----Reserved Rooms ----->
+
 <div class="row">
 <div class="col-md-11">
     <div class="card">
@@ -135,7 +135,7 @@
         </div>
     </div>
 </div>
-</div><!--Row-->
+</div>
 @endsection
 
 
@@ -160,6 +160,7 @@
                                     <input type="hidden" name="d-BoatsUsed" id="d-BoatsUsed">
                                     <input type="hidden" name="TotalRoomAmount" id="TotalRoomAmount">
                                     <input type="hidden" name="OrigRoomAmount" id="OrigRoomAmount">
+                                    <input type="hidden" name="CheckOutDate" id="tempCheckOutDate">
                                     <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group label-static" id="CheckInDateError">
@@ -170,7 +171,7 @@
                                             <div class="col-sm-6">
                                                 <div class="form-group label-static" id="CheckOutDateError">
                                                     <label class="control-label">Check out Date</label>
-                                                    <input type="text" class="datepicker form-control" name="CheckOutDate" id="CheckOutDate" disabled/>
+                                                    <input type="text" class="datepicker form-control" id="CheckOutDate" disabled/>
                                                 </div>
                                             </div>
 
@@ -237,8 +238,8 @@
 
 <div id="DivModalEditResRoom" class="modal">
     <div class="Modal-content bigger-modalContent">
-        <div class="row">
-            <div class="col-sm-6">
+            <div class="row">
+            <div class="col-sm-12">
                 <div class="card card-stats">
 
                             <div class="card-header" data-background-color="blue">
@@ -246,145 +247,54 @@
                             </div>
                             <div class="card-content">
                                 <p class="category">Available</p>
-                                <h5 class="title">Rooms</h5>
+                                <h5 class="title">Packages</h5>
                             </div>
                             <div class="card-content">
-                                <table class="table" style="font-family: 'Roboto'" id="tblAvailableRooms" onclick="run(event, 'AvailableRooms')">
-                                    <thead class="text-info">
-                                        <th>Room</th>
-                                        <th>Capacity</th>
-                                        <th>Rate per day</th>
-                                        <th>Number of rooms left</th>
+                                <table class="table" id="tblAvailablePackages" style="font-family: Roboto" onclick="run(event, 'Package')">
+                                    <thead class="text-success">
+                                        <th>Package</th>
+                                        <th>Pax</th>
+                                        <th>Duration</th>
+                                        <th>Price</th>
+                                        <th>Description</th>
                                     </thead>
                                     <tbody>
-                                         @foreach($Rooms as $Room)
-                                            <tr>
-                                                <td>{{$Room -> strRoomType}}</td>
-                                                <td>{{$Room -> intRoomTCapacity}}</td>
-                                                <td>{{$Room -> dblRoomRate}}</td>
-                                                <td>{{$Room -> TotalRooms}}</td>
+                                        @foreach($newPackage as $Info)
+                                            <tr onclick="HighlightRow(this)">
+                                                <td>{{$Info -> strPackageName}}</td>
+                                                <td>{{$Info -> intPackagePax}}</td>
+                                                <td>{{$Info -> intPackageDuration}}</td>
+                                                <td>{{$Info -> dblPackagePrice}}</td>
+                                                <td>{{$Info -> strPackageDescription}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
-                                
-                                <div class = "row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group label-floating" id="TotalRoomsError">
-                                            <label class="control-label">How many rooms?</label>
-                                            <input type="text" class="form-control" onkeyup="CheckInput(this, 'AddRoomError', '#TotalRoomsError')" onchange="CheckInput(this, 'AddRoomError', '#TotalRoomsError')" id="TotalRooms">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button" class="btn btn-success pull-right" onclick="AddRoom()" id="btnAddRoom">Add</button>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </div>
-
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="ErrorLabel" id="AddRoomError"></p>
-                                    </div>
+                                    <p class="ErrorLabel" id="RoomError"></p>
+                                    <form method="post" action="/Reservation/Package/Edit" id="frmEditRooms" onsubmit="return CheckRooms()">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="r-Package" id="r-Package">
+                                        <input type="hidden" name="ChosenRooms" id="ChosenRooms">
+                                        <input type="hidden" name="r-NoOfKids" id="r-NoOfKids">
+                                        <input type="hidden" name="r-NoOfAdults" id="r-NoOfAdults">
+                                        <input type="hidden" name="r-CheckInDate" id="r-CheckInDate">
+                                        <input type="hidden" name="r-CheckOutDate" id="r-CheckOutDate">
+                                        <input type="hidden" id="r-ReservationID" name="r-ReservationID">
+                                        <input type="hidden" name="r-BoatsUsed" id="r-BoatsUsed">
+                                        <input type="hidden" name="r-PickUpTime" id="r-PickUpTime">
+                                        <button type="button" class="btn btn-danger pull-right" style="margin-right: 50px;" onclick="HideModalEditResRoom()">Cancel</button>
+                                        <button type="submit" class="btn btn-success pull-right" style="margin-right: 50px;">Choose Package</button>    
+                                        <div class="clearfix"></div>
+                                    </form>
                                 </div>
-
                                 
                             </div>
 
                 </div>
             </div>
-
-            <div class="col-sm-6">
-                <div class="card card-stats">
-
-                            <div class="card-header" data-background-color="blue">
-                                <i class="material-icons">beenhere</i>
-                            </div>
-                            <div class="card-content">
-                                <p class="category">Chosen</p>
-                                <h5 class="title">Rooms</h5>
-                            </div>
-                            <div class="card-content table-responsive">
-                                <table class="table" style="font-family: 'Roboto'" id="tblChosenRooms" onclick="run(event, 'ChosenRooms')">
-                                    <thead class="text-info">
-                                        <th>Name</th>
-                                        <th>Capacity</th>
-                                        <th>Rate per day</th>
-                                        <th>Quantity Availed</th>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($ChosenRooms as $Room)
-                                            <tr>
-                                                <td>{{$Room -> strRoomType}}</td>
-                                                <td>{{$Room -> intRoomTCapacity}}</td>
-                                                <td>{{$Room -> dblRoomRate}}</td>
-                                                <td>{{$Room -> TotalRooms}}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                <div class = "row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group label-floating" id="RemoveRoomsError">
-                                            <label class="control-label">How many rooms?</label>
-                                            <input type="text" class="form-control" onkeyup="CheckInput(this, 'RemoveRoomError', '#RemoveRoomsError')" onchange="CheckInput(this, 'RemoveRoomError', '#RemoveRoomsError')" id="TotalRemoveRooms">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button" class="btn btn-danger pull-right" onclick="RemoveRoom()">Remove</button>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="ErrorLabel" id="RemoveRoomError"></p>
-                                    </div>
-                                </div>
-                            </div>
-
-                </div>
-            </div>
-
         </div>
 
-        <div class="row">
-            
-            <div class="col-sm-5 pull-left">
-                <div class="card card-stats">
-                    <div class="card-content">
-                        <div class="row">
-                            <p class="paragraphText">Total Room Capacity:</p> <p class="paragraphText" id="TotalCapacity">0</p><br>
-                            <p class="paragraphText">Total Number of Guests:</p> <p class="paragraphText" id="TotalGuests">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>    
-
-            <div class="col-sm-5 pull-right">
-                <div class="card card-stats">
-                    <div class="card-content">
-                        <div class="row">
-                            <p class="ErrorLabel" id="RoomError"></p>
-                            <form method="post" action="/Reservation/Room/Edit" id="frmEditRooms" onsubmit="return CheckRooms()">
-                                {{ csrf_field() }}
-                                <input type="hidden" name="ChosenRooms" id="ChosenRooms">
-                                <input type="hidden" name="r-NoOfKids" id="r-NoOfKids">
-                                <input type="hidden" name="r-NoOfAdults" id="r-NoOfAdults">
-                                <input type="hidden" name="r-CheckInDate" id="r-CheckInDate">
-                                <input type="hidden" name="r-CheckOutDate" id="r-CheckOutDate">
-                                <input type="hidden" id="r-ReservationID" name="r-ReservationID">
-                                <input type="hidden" name="r-BoatsUsed" id="r-BoatsUsed">
-                                <input type="hidden" name="r-PickUpTime" id="r-PickUpTime">
-                                <button type="button" class="btn btn-danger pull-right" style="margin-right: 50px;" onclick="HideModalEditResRoom()">Cancel</button>
-                                <button type="submit" class="btn btn-success pull-right" style="margin-right: 50px;">Save Changes</button>    
-                                <div class="clearfix"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
     </div>
 </div>
 
@@ -447,7 +357,7 @@
                                         <p id="InfoError" class="ElementError"></p>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-success pull-left" style="display:none" id="btnEditRooms" onclick="btnEditRoomsListener()">Edit Rooms</button>
+                                <button type="button" class="btn btn-success pull-left" style="display:none" id="btnEditRooms" onclick="btnEditRoomsListener()">Edit Package</button>
                                 <button type="button" class="btn btn-success pull-right" onclick="CheckInfo()">Save Changes</button>
                                 <div class="clearfix"></div>
                             </form>

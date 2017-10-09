@@ -981,7 +981,6 @@ class ViewController extends Controller
     }
     
     public function ViewEditReservation($id){
-        
         $PackageInfo = DB::table('tblAvailPackage as a')
                     ->join('tblPackage as b', 'b.strPackageID', '=', 'a.strAvailPackageID')
                     ->join ('tblPackagePrice as c', 'b.strPackageID', '=' , 'c.strPackageID')
@@ -1024,7 +1023,38 @@ class ViewController extends Controller
         $Rooms = $this->fnGetAvailableRooms($ArrivalDate, $DepartureDate);
         
         if(sizeof($PackageInfo) > 0){
-            return view('EditReservationPackage', compact('ReservationInfo', 'ChosenRooms' , 'PickUpTime', 'Rooms', 'PackageInfo'));
+            $CheckInDate = $ArrivalDate;
+            $Packages = $this->getPackages();
+            foreach($Packages as $Package){
+                
+                $CheckOutDate = carbon::parse($CheckInDate)->addDays($Package->intPackageDuration)->toDateTimeString();
+                $CheckOutDate = str_replace('-','/', $CheckOutDate);
+                
+                $Rooms = $this->fnGetAvailableRooms($CheckInDate, $CheckOutDate);
+                $RoomPackage = $this->getRoomInclusion($Package->strPackageID);
+
+                
+                
+                foreach($RoomPackage as $RPackage){
+                    $found = false;
+                    foreach($Rooms as $Room){
+                        if($RPackage->strRoomType == $Room->strRoomType){
+                            $found = true;
+                            if($RPackage->intPackageRQuantity > $Room->TotalRooms){
+                                $Package->strPackageName = "";
+                            }
+                        }
+                    }
+                    if(!($found)){
+                        $Package->strPackageName = "";
+                    }
+                }
+            }
+
+            $newPackage = $Packages->where('strPackageName', '!=', "");
+            $newPackage = $newPackage->values();
+
+            return view('EditReservationPackage', compact('ReservationInfo', 'ChosenRooms', 'PickUpTime', 'Rooms', 'PackageInfo','newPackage'));
         }
         else{
             return view('EditReservations', compact('ReservationInfo', 'ChosenRooms' , 'PickUpTime', 'Rooms'));
