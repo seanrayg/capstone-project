@@ -562,7 +562,7 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <form method="POST" action="/Reservation/Invoice" onsubmit="SetInvoiceInfo()" target="_blank">
+                                    <form method="POST" action="/Reservation/Invoice" onsubmit="return SetInvoiceInfo()" target="_blank">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="DaysOfStay" id="DaysOfStay">
                                         <input type="hidden" name="InvoiceType" value="WalkIn">

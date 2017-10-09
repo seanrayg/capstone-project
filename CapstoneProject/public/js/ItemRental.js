@@ -515,3 +515,28 @@ function SendPackageQuantityInput(field, dataType, holder){
     }
 }
 
+var CustomerID;
+
+function PrintInvoice() {
+
+    document.getElementByID("iCustomerID").value = CustomerID;
+    document.getElementByID("iItemName").value = document.getElementByID("RentItemName").value;
+    document.getElementByID("iItemQuantity").value = document.getElementByID("RentQuantity").value;
+    document.getElementByID("iItemRate").value = document.getElementByID("RentItemRate").value;
+    document.getElementByID("InvoiceForm").submit();
+
+}
+
+$(document).ready(function(){
+    
+    CustomerID = $('#SelectGuests').find(":selected").attr("id");
+
+    $(function() {
+      $('#SelectGuests').on('change',function() {
+
+        CustomerID = $(this).children(":selected").attr("id");
+
+      });
+    });
+
+});

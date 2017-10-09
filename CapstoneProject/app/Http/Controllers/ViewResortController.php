@@ -999,7 +999,8 @@ class ViewResortController extends Controller
 
         $Guests = DB::table('tblReservationDetail as a')
                         ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
-                        ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'))
+                        ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'),
+                                'b.strCustomerID')
                         ->where('a.intResDStatus', '=', '4')
                         ->orderBy('Name')
                         ->get();

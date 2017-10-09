@@ -477,3 +477,11 @@ function SendPayment(field, dataType, holder){
         
     }
 }
+
+function SetInvoiceInfo() {
+
+    alert('haha');
+
+    return false;
+
+}
