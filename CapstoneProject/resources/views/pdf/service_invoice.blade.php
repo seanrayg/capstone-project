@@ -71,6 +71,21 @@
                 <th style="width: 20%">Days of Extend</th>
                 <th style="width: 15%">Amount</th>
             </tr>
+        @elseif($InvoiceType == 'ItemRental' || $InvoiceType == 'ItemRentalExtend')
+            <tr>
+                <th style="width: 40%">Descriptions</th>
+                <th style="width: 15%">Rate</th>
+                <th style="width: 15%">Quantity</th>
+                <th style="width: 15%">Hours</th>
+                <th style="width: 15%">Amount</th>
+            </tr>
+        @elseif($InvoiceType == 'ItemRentalExcess')
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 25%">Quantity</th>
+                <th style="width: 15%">Penalty</th>
+                <th style="width: 15%">Amount</th>
+            </tr>
         @endif
 
         @if($InvoiceType == 'BoatRental')
@@ -108,6 +123,25 @@
                     <td style="text-align: center;">{{ $room->quantity }}</td>
                     <td style="text-align: center;">{{ $days }}</td>
                     <td style="text-align: right;">{{ $room->amount }}</td>
+                </tr>
+            @endforeach
+        @elseif($InvoiceType == 'ItemRental' || $InvoiceType == 'ItemRentalExtend')
+            @foreach($items as $item)
+                <tr>
+                    <td>{{ $item->name }}</td>
+                    <td style="text-align: center;">{{ $item->price }}</td>
+                    <td style="text-align: center;">{{ $item->quantity }}</td>
+                    <td style="text-align: center;">{{ $item->hours }}</td>
+                    <td style="text-align: right;">{{ $item->amount }}</td>
+                </tr>
+            @endforeach
+        @elseif($InvoiceType == 'ItemRentalExcess')
+            @foreach($items as $item)
+                <tr>
+                    <td>{{ $item->name }}</td>
+                    <td style="text-align: center;">{{ $item->quantity }}</td>
+                    <td style="text-align: center;">{{ $item->penalty }}</td>
+                    <td style="text-align: right;">{{ $item->amount }}</td>
                 </tr>
             @endforeach
         @endif

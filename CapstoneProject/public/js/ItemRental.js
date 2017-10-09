@@ -230,6 +230,14 @@ function run(event, sender){
     }
     if(sender == "Return"){
         ReturnItemInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML, cells[10].innerHTML];
+
+        document.getElementById("iReservationID").value = cells[9].innerHTML;
+        document.getElementById("ieReservationID").value = cells[9].innerHTML;
+        document.getElementById("RentedItemID").value = cells[10].innerHTML;
+        document.getElementById("eRentedItemID").value = cells[10].innerHTML;
+        document.getElementById("iItemExtendName").value = cells[0].innerHTML;
+        document.getElementById("iItemNameExcess").value = cells[0].innerHTML;
+        document.getElementById("iItemExtendRate").value = cells[7].innerHTML;
     }
     if(sender == "Broken"){
        BrokenItemInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML]; 
@@ -517,13 +525,30 @@ function SendPackageQuantityInput(field, dataType, holder){
 
 var CustomerID;
 
-function PrintInvoice() {
+function PrintInvoice(sender) {
 
-    document.getElementByID("iCustomerID").value = CustomerID;
-    document.getElementByID("iItemName").value = document.getElementByID("RentItemName").value;
-    document.getElementByID("iItemQuantity").value = document.getElementByID("RentQuantity").value;
-    document.getElementByID("iItemRate").value = document.getElementByID("RentItemRate").value;
-    document.getElementByID("InvoiceForm").submit();
+    if(sender == 'rent') {
+
+        document.getElementById("iCustomerID").value = CustomerID;
+        document.getElementById("iItemName").value = document.getElementById("RentItemName").value;
+        document.getElementById("iItemQuantity").value = document.getElementById("RentQuantity").value;
+        document.getElementById("iItemRate").value = document.getElementById("RentItemRate").value;
+        document.getElementById("iItemHours").value = document.getElementById("RentDuration").value;
+        document.getElementById("InvoiceForm").submit();
+
+    }else if(sender == 'extend') {
+
+        document.getElementById("iItemExtendQuantity").value = document.getElementById("ExtendQuantity").value;
+        document.getElementById("iItemExtendHours").value = document.getElementById("ExtendTime").value;
+        document.getElementById("InvoiceForm2").submit();
+
+    }else if(sender == 'excess') {
+
+        document.getElementById("iItemQuantityExcess").value = document.getElementById("ReturnQuantityAvailed").value;
+        document.getElementById("iItemPenalty").value = document.getElementById("ReturnTimePenalty").value;
+        document.getElementById("InvoiceForm3").submit();
+
+    }
 
 }
 
