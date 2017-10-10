@@ -326,7 +326,7 @@
                                         <div class="selectBox">
                                             <select name="SelectGuests" id="SelectGuests">
                                                 @foreach($Guests as $Guest)
-                                                    <option>{{$Guest->Name}}</option>
+                                                    <option id="{{$Guest->strCustomerID}}">{{$Guest->Name}}</option>
                                                 @endforeach
                                             </select>
                                           </div>
@@ -900,10 +900,21 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
+                                    <input type="button" class="btn btn-success pull-left push-right" value="Print Invoice" onclick="PrintInvoice('rent')" />
                                     <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
+                        </form>
+                        <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="InvoiceType" value="ItemRental">
+                            <input type="hidden" name="iCustomerID" id="iCustomerID">
+                            <input type="hidden" name="iItemName" id="iItemName">
+                            <input type="hidden" name="iItemQuantity" id="iItemQuantity">
+                            <input type="hidden" name="iItemRate" id="iItemRate">
+                            <input type="hidden" name="iItemHours" id="iItemHours">
+                            <input type="hidden" name="iItemQuantityExtend" id="iItemQuantityExtend">
+                            <input type="hidden" name="iItemHoursExtend" id="iItemQuantityExtend">
                         </form>
                     </div>
                 </div>
@@ -969,10 +980,19 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
+                                    <input type="button" class="btn btn-success pull-left push-right" value="Print Invoice" onclick="PrintInvoice('excess')" />
                                     <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
+                        </form>
+                        <form id="InvoiceForm3" method="POST" action="/Reservation/Invoice" target="_blank">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="InvoiceType" value="ItemRentalExcess">
+                            <input type="hidden" name="ieReservationID" id="ieReservationID">
+                            <input type="hidden" name="eRentedItemID" id="eRentedItemID">
+                            <input type="hidden" name="iItemNameExcess" id="iItemNameExcess">
+                            <input type="hidden" name="iItemQuantityExcess" id="iItemQuantityExcess">
+                            <input type="hidden" name="iItemPenalty" id="iItemPenalty">
                         </form>
                     </div>
                 </div>
@@ -1040,10 +1060,20 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>-
+                                    <input type="button" class="btn btn-success pull-left push-right" value="Print Invoice" onclick="PrintInvoice('extend')" />
                                     <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
+                        </form>
+                        <form id="InvoiceForm2" method="POST" action="/Reservation/Invoice" target="_blank">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="InvoiceType" value="ItemRentalExtend">
+                            <input type="hidden" name="iReservationID" id="iReservationID">
+                            <input type="hidden" name="RentedItemID" id="RentedItemID">
+                            <input type="hidden" name="iItemExtendName" id="iItemExtendName">
+                            <input type="hidden" name="iItemExtendQuantity" id="iItemExtendQuantity">
+                            <input type="hidden" name="iItemExtendRate" id="iItemExtendRate">
+                            <input type="hidden" name="iItemExtendHours" id="iItemExtendHours">
                         </form>
                     </div>
                 </div>

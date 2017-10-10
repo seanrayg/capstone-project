@@ -686,3 +686,11 @@ function RedirectCheckout(){
     var ReservationID = document.getElementById("CheckoutReservationID").value;
     window.location.href = "/Checkout/"+ReservationID;
 }
+
+function PrintInvoice() {
+
+    document.getElementById("iReservationID").value = ReservationID;
+    document.getElementById("DaysOfExtend").value = document.getElementById("ExtendNight").value;
+    document.getElementById("InvoiceForm").submit();
+
+}

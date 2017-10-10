@@ -309,6 +309,110 @@ class InvoiceController extends Controller
             $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'Fees' => $Fees])->setPaper('A6', 'portrait');
             return $pdf->stream();
 
+        }else if($strInvoiceType == 'ExtendStay') {
+
+            $ReservationID = $request->input('iReservationID');
+            $DaysOfExtend = $request->input('DaysOfExtend');
+
+            $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $ReservationID);
+
+            $rooms = DB::table('tblReservationRoom as a')
+                ->join('tblRoom as b', 'a.strResRRoomID', '=', 'b.strRoomID')
+                ->join('tblRoomType as c', 'b.strRoomTypeID', '=', 'c.strRoomTypeID')
+                ->join('tblRoomRate as d', 'c.strRoomTypeID', '=', 'd.strRoomTypeID')
+                ->select(
+                    'c.strRoomType',
+                    DB::raw('COUNT(c.strRoomType) as quantity'),
+                    'd.dblRoomRate',
+                    DB::raw('(COUNT(c.strRoomType) * d.dblRoomRate) as amount'))
+                ->where([['a.strResRReservationID', '=', $ReservationID], ['d.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = d.strRoomTypeID)")]])
+                ->groupBy('c.strRoomType', 'd.dblRoomRate')
+                ->get();
+
+            foreach ($rooms as $room) {
+                $room->strRoomType = $room->strRoomType . " Room";
+                $room->amount *= $DaysOfExtend;
+                $TableRows++;
+            }
+
+            $intTotal = $this->GetTotal($intTotal, $rooms);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'Rooms' => $rooms, 'days' => $DaysOfExtend])->setPaper('A6', 'portrait');
+            return $pdf->stream();
+
+        }else if($strInvoiceType == 'ItemRental' || $strInvoiceType == 'ItemRentalExtend') {
+
+            if($strInvoiceType == 'ItemRental') {
+
+                $CustomerID = $request->input('iCustomerID');
+                $strItemName = $request->input('iItemName');
+                $intItemQuantity = $request->input('iItemQuantity');
+                $dblItemRate = $request->input('iItemRate');
+                $intItemHours = $request->input('iItemHours');
+
+                $CustomerInfo = $this->GetCustomerInfo($CustomerID, "CustomerID");
+
+                $RentedItemID = $this->SmartCounter("tblRentedItem", "strRentedItemID");
+                $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $RentedItemID);
+
+            }else if($strInvoiceType == 'ItemRentalExtend') {
+
+                $ReservationID = $request->input('iReservationID');
+                $RentedItemID = $request->input('RentedItemID');
+                $strItemName = $request->input('iItemExtendName');
+                $intItemQuantity = $request->input('iItemExtendQuantity');
+                $dblItemRate = $request->input('iItemExtendRate');
+                $intItemHours = $request->input('iItemExtendHours');
+
+                $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
+
+                $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $RentedItemID);
+
+            }
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $RentedItem = array(
+                (object) array("name" => $strItemName, "price" => $dblItemRate, "quantity" => $intItemQuantity, "hours" => $intItemHours, "amount" => $dblItemRate * $intItemQuantity * $intItemHours)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $RentedItem);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'items' => $RentedItem])->setPaper('A6', 'portrait');
+            return $pdf->stream();
+            
+        }else if($strInvoiceType == 'ItemRentalExcess') {
+
+            $ReservationID = $request->input('ieReservationID');
+            $RentedItemID = $request->input('eRentedItemID');
+            $strItemName = $request->input('iItemNameExcess');
+            $intItemQuantity = $request->input('iItemQuantityExcess');
+            $dblItemPenalty = $request->input('iItemPenalty');
+
+            $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
+
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $RentedItemID);
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $RentedItem = array(
+                (object) array("name" => $strItemName, "quantity" => $intItemQuantity, "penalty" => $dblItemPenalty, "amount" => $intItemQuantity * $dblItemPenalty)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $RentedItem);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'items' => $RentedItem])->setPaper('A6', 'portrait');
+            return $pdf->stream();
+
         }
 
     }//End of GenerateInvoice
@@ -333,7 +437,7 @@ class InvoiceController extends Controller
         $InvoiceNumber = $dtmNow->year;
         $ID = $this->GetNumber($ID);
 
-        if($InvoiceType == 'Reservation' || 'WalkIn') {
+        if($InvoiceType == 'Reservation' || $InvoiceType == 'WalkIn') {
 
             $InvoiceNumber .= "18" . $ID;
 
@@ -354,6 +458,30 @@ class InvoiceController extends Controller
         }else if($InvoiceType == 'Fees') {
 
             $InvoiceNumber .= "6" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'ExtendStay') {
+
+            $InvoiceNumber .= "519" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'ItemRental') {
+
+            $InvoiceNumber .= "91" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'ItemRentalExtend') {
+
+            $InvoiceNumber .= "92" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'ItemRentalExcess') {
+
+            $InvoiceNumber .= "93" . $ID;
 
             return $InvoiceNumber;
 
