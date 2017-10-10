@@ -134,7 +134,8 @@ function ShowModalCheckIn(){
     var TableChecker = CheckTable('#ConfirmedReservationTable tr');
     if(TableChecker){
         var tempToday = new Date();
-        if(((tempToday.getMonth)+1) > 10){
+        var monthToday = parseInt(tempToday.getMonth())+1;
+        if(monthToday >= 10){
             var DateToday = (tempToday.getMonth() + 1) + "/" + tempToday.getDate() + "/" + tempToday.getFullYear();
         }
         else{
