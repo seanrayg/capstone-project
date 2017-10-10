@@ -583,11 +583,13 @@ class ResortController extends Controller
         }
         
         $PaymentDescription = "Extend time is:".$ExtendTime;
-        $PaymentRemarks = collect(['ExtendQuantity' => $ExtendQuantity, 'ExtendTime'=>$ExtendTime, 'ItemID' => $ItemID, 'ItemName' => $ItemName, 'RentedItemID' => $RentedItemID]);
-
-        $jsonRemarks = $PaymentRemarks->toJson();
+        
 
         if($PaymentStatus == 1){
+            $PaymentRemarks = collect(['ExtendQuantity' => $ExtendQuantity, 'ExtendTime'=>$ExtendTime, 'ItemID' => $ItemID, 'ItemName' => $ItemName, 'RentedItemID' => $RentedItemID]);
+
+            $jsonRemarks = $PaymentRemarks->toJson();
+            
             $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
 
             $data = array('strPaymentID'=>$PaymentID,
@@ -595,11 +597,15 @@ class ResortController extends Controller
                          'dblPayAmount'=>$ExtendPrice,
                          'strPayTypeID'=>15,
                          'dtePayDate'=>$DateTimeToday,
-                         'strPaymentRemarks'=>$jsonRemarks);
+                         'strPaymentRemarks'=>$RentedItemID);
 
             DB::table('tblPayment')->insert($data);
         }
         else{
+            $PaymentRemarks = collect(['ExtendQuantity' => $ExtendQuantity, 'ExtendTime'=>$ExtendTime, 'ItemID' => $ItemID, 'ItemName' => $ItemName, 'RentedItemID' => $RentedItemID]);
+
+            $jsonRemarks = $PaymentRemarks->toJson();
+
             $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
 
             $data = array('strPaymentID'=>$PaymentID,
@@ -905,7 +911,8 @@ class ResortController extends Controller
                      'strAvailBABoatID'=> null,
                      'intAvailBAQuantity'=>$AvailQuantity,
                      'intAvailBAPayment'=>$PaymentStatus,
-                     'tmsCreated'=>$DateTimeToday);
+                     'tmsCreated'=>$DateTimeToday,
+                     'intBeachAFinished' => 1);
         
             DB::table('tblavailbeachactivity')->insert($data);
             
@@ -948,7 +955,8 @@ class ResortController extends Controller
                                          'dtmBoatSPickUp'=>$DateTimeToday,
                                          'dtmBoatSDropOff'=>$DropOff,
                                          'intBoatSStatus'=>'1',
-                                         'strBoatSReservationID' => $ReservationID);
+                                         'strBoatSReservationID' => $ReservationID,
+                                         'intBoatSPayment' => 2);
             
             DB::table('tblboatschedule')->insert($InsertBoatSchedData);
         }
@@ -986,11 +994,18 @@ class ResortController extends Controller
     //activity done
     public function ActivityDone(Request $req){
         $BoatSchedID = trim($req->input('DoneBoatSchedID'));
+        $AvailID = trim($req->input('DoneAvailID'));
         $updateData = array("intBoatSStatus" => "0");   
-        
+
         DB::table('tblBoatSchedule')
             ->where('strBoatScheduleID', '=', $BoatSchedID)
             ->update($updateData);
+
+        $updateData2 = array("intBeachAFinished" => 1);
+
+        DB::table('tblavailbeachactivity')
+            ->where('strAvailBeachActivityID', '=', $AvailID)
+            ->update($updateData2);
         
         \Session::flash('flash_message','Successfully availed the beach activity!');
         

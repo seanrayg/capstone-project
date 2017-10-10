@@ -1177,13 +1177,9 @@ class ViewResortController extends Controller
         $ScheduledBoats =  DB::Select("
             SELECT strBoatSBoatID
             FROM tblBoatSchedule
-            WHERE intBoatSStatus = 1
-            AND DATE(dtmBoatSPickUp) = '$dtmDate'
-            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR))
-            OR DATE(dtmBoatSDropOff) =  '$dtmDate'
-            AND NOT '$dtmTime' >= TIME(DATE_ADD(dtmBoatSDropOff, INTERVAL 1 HOUR)) AND NOT '$dtmTime' <= TIME(DATE_SUB(dtmBoatSDropOff, INTERVAL 1 HOUR))
+            WHERE intBoatSStatus = 1;
         ");
-        
+
         $UnavailableBoats = [];
         foreach($ScheduledBoats as $Boat){
             $UnavailableBoats[sizeof($UnavailableBoats)] = $Boat->strBoatSBoatID;
@@ -1221,10 +1217,12 @@ class ViewResortController extends Controller
                          'f.strBoatName',
                          'e.dtmBoatSPickUp',
                          'e.dtmBoatSDropOff',
-                         'e.strBoatScheduleID')
-                ->where([['e.intBoatSStatus', '=', '1'], ['a.strAvailBABoatID', '!=', null]])
+                         'e.strBoatScheduleID',
+                         'strAvailBeachActivityID')
+                ->where([['a.intBeachAFinished', '=', null],['intBoatSStatus', '=', '1']])
+                ->groupBy('strAvailBeachActivityID')
                 ->get();
-        
+
         $tempPackageActivities = DB::table('tblPackageActivity as a')
                         ->join ('tblAvailPackage as b', 'a.strPackageAPackageID', '=', 'b.strAvailPackageID')
                         ->join ('tblBeachActivity as c', 'c.strBeachActivityID', '=' , 'a.strPackageABeachActivityID')
@@ -1360,6 +1358,7 @@ class ViewResortController extends Controller
             $PackageInitialPayment = 0;
             $PackageDownPayment = 0;
             $ExtendStayAmount = 0;
+            $TotalDeduction = 0;
             
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
@@ -1383,6 +1382,7 @@ class ViewResortController extends Controller
                 $DaysOfStay = 1;
             }
             
+            //compute boat
             $UsedBoats = DB::table('tblBoat as a')
                          ->join ('tblBoatRate as b', 'a.strBoatID', '=', 'b.strBoatID')
                          ->join ('tblBoatSchedule as c', 'c.strBoatSBoatID', '=', 'a.strBoatID')
@@ -1466,6 +1466,7 @@ class ViewResortController extends Controller
                                  'c.intRentedIDuration')
                         ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],['c.strRentedIReservationID',"=", $Info->strReservationID],['c.intRentedIPayment',"=", 0]])
                         ->get();
+
             
             foreach($RentedItems as $Item){
                 $TotalItem += ($Item->dblItemRate * $Item->intRentedIQuantity) * $Item->intRentedIDuration;
@@ -1519,18 +1520,44 @@ class ViewResortController extends Controller
             $ExtendBills = DB::table('tblPayment')
                             ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 10]])
                             ->get();
-            
        
             foreach($ExtendBills as $Bill){
-                $TotalExtend += $Bill->dblPayAmount;
+                $ExtendRemarks = json_decode($Bill->strPaymentRemarks);
+
+                $PaidExtendItem = DB::table('tblrentedItem')
+                                ->where([['strRentedIReservationID', '=', $Info->strReservationID],['strRentedItemID', '=',$ExtendRemarks->RentedItemID]])
+                                ->pluck('intRentedIPayment')
+                                ->first();
+              
+                if($PaidExtendItem == 1){
+                    $TotalExtend += $Bill->dblPayAmount;
+                }
             }
-            
+
             //Total Penalties
             $TotalPenalties = $TotalExtend + $BrokenPenalties + $TimePenalties;
             
-            //Compute Boat Rental
-            
+            //Bill Deductions
+            $ExtendItemDeductions = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 15]])
+                            ->get();
+
+            foreach($ExtendItemDeductions as $Item){
+                $UnpaidExtendItem = DB::table('tblrentedItem')
+                                ->where([['strRentedIReservationID', '=', $Info->strReservationID],['strRentedItemID', '=', $Item->strPaymentRemarks]])
+                                ->pluck('intRentedIPayment')
+                                ->first();
+
+                if($UnpaidExtendItem == 0){
+                    $TotalDeduction += $Item->dblPayAmount;
+                }
+            }
+
+            //dd($TotalPenalties , $TotalFee , $TotalActivity , $TotalItem , $TotalRoom , $AdditionalRoomAmount , $UpgradeRoomAmount , $PackagePayment ,$ExtendStayAmount ,$TotalBoat);
+
             $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount + $TotalBoat;
+
+            $Info->TotalBill = $Info->TotalBill - $TotalDeduction;
     
         }
 
@@ -1574,7 +1601,7 @@ class ViewResortController extends Controller
                     ->select('b.dblBeachARate',
                              'c.intAvailBAQuantity',
                              'a.strBeachAName')
-                    ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $ReservationID], ['c.intAvailBAQuantity', '=', 0]])
+                    ->where([['b.dtmBeachARateAsOf',"=", DB::raw("(SELECT max(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = a.strBeachActivityID)")],['c.strAvailBAReservationID', '=', $ReservationID], ['c.intAvailBAPayment', '=', 0]])
                     ->get();
         
         $FeeInfo = DB::table('tblFee as a')

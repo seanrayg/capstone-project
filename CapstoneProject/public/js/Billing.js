@@ -273,7 +273,6 @@ function getBillBreakdown(){
                     newCell4.innerHTML = data.ItemInfo[x].dblItemRate;
                 }
             }
-            
             if(data.ActivityInfo.length == 0){
                 document.getElementById("ActivitiesDiv").style.display = "none";
             }
