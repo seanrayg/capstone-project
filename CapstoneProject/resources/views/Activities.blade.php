@@ -132,6 +132,7 @@
                                         <th>Time Availed</th>
                                         <th>Expected Time of Return</th>
                                         <th style="display:none">Schedule ID</th>
+                                        <th style="display:none">Avail ID</th>
                                         <th>Action</th>
                                     </thead>
                                     <tbody>
@@ -143,6 +144,7 @@
                                             <td>{{Carbon\Carbon::parse($Activity -> dtmBoatSPickUp)->format('M j, Y g:i A')}}</td>  
                                             <td>{{Carbon\Carbon::parse($Activity -> dtmBoatSDropOff)->format('M j, Y g:i A')}}</td>
                                             <td style="display:none">{{$Activity -> strBoatScheduleID}}</td>
+                                            <td style="display:none">{{$Activity -> strAvailBeachActivityID}}</td>
                                             <td>
                                                 <button type="button" rel="tooltip" title="Activity Done" class="btn btn-success btn-simple btn-xs" onclick="ShowModalActivityDone()">
                                                     <i class="material-icons">done</i>
@@ -154,16 +156,11 @@
                                 </table>
                                 <form id="FormDoneActivity" method="POST" action="/Activity/Done">
                                     {{ csrf_field() }}
+                                    <input type="hidden" id="DoneAvailID" name="DoneAvailID">
                                     <input type="hidden" id="DoneBoatSchedID" name="DoneBoatSchedID">
                                 </form>
                             </div>
-                        </div>
-                        <div class = "row">
-                            <div class="col-xs-12">
-
-                                <button type="button" class="btn btn-success pull-right" onclick="ShowModalActivityDone()"><i class="material-icons">done</i> Done</button>
-                            </div> 
-                        </div>  
+                        </div> 
                     </div>
 
                     <div class="tab-pane" id="PackagedActivities">
@@ -522,7 +519,7 @@
                         <i class="material-icons">done</i>
                     </div>
                     <div class="card-content">
-                        <h4><span class="close" onclick="HideModalReservationOptions()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h4><span class="close" onclick="HideModalActivityDone()" style="color: black; font-family: Roboto Thin">X</span></h4>
                         <h3 class="title">Activity Done?</h3>
                         <br><br>
                         <div class = "row">

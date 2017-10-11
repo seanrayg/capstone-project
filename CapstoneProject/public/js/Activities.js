@@ -159,7 +159,7 @@ function run(event, sender){
     }
     
     else if(sender == "Done"){
-        DoneActivityInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML];
+        DoneActivityInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML];
         fillDoneActivity();
     }
 
@@ -296,6 +296,7 @@ function SendPayment(field, dataType, holder){
 /*-------- ACTIVITY DONE -----------*/
 
 function fillDoneActivity(){
+    document.getElementById("DoneAvailID").value = DoneActivityInfo[6];
     document.getElementById("DoneBoatSchedID").value = DoneActivityInfo[5];
 }
 
