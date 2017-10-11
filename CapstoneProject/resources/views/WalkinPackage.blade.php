@@ -562,20 +562,19 @@
                             <br><br>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <form method="POST" action="/Reservation/Invoice" onsubmit="return SetInvoiceInfo()" target="_blank">
-                                        {{ csrf_field() }}
-                                        <input type="hidden" name="DaysOfStay" id="DaysOfStay">
-                                        <input type="hidden" name="InvoiceType" value="WalkIn">
-                                        <input type="hidden" name="tblRoomInfo" id="tblRoomInfo">
-                                        <input type="hidden" name="tblFeeInfo" id="tblFeeInfo">
-                                        <input type="hidden" name="iCustomerName" id="iCustomerName">
-                                        <input type="hidden" name="iCustomerAddress" id="iCustomerAddress">
-                                        <input type="hidden" name="iTotalAdults" id="iTotalAdults">
-                                        <input type="submit" class="btn btn-success pull-left" value="Show Invoice">
-                                    </form>
+                                    <input type="button" class="btn btn-success pull-left push-right" value="Print Invoice" onclick="PrintInvoice()" />
                                     <button type="submit" class="btn btn-success pull-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                                 </div> 
                             </div>
+                        </form>
+                        <form method="POST" id="InvoiceForm" action="/Reservation/Invoice" target="_blank">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="InvoiceType" value="WalkInPackage">
+                            <input type="hidden" name="PackageName" id="PackageName">
+                            <input type="hidden" name="PackagePrice" id="PackagePrice">
+                            <input type="hidden" name="NoOfAdults" id="NoOfAdults">
+                            <input type="hidden" name="CustomerName" id="CustomerName">
+                            <input type="hidden" name="CustomerAddress" id="CustomerAddress">
                         </form>
                     </div>
                 </div>

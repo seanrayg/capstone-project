@@ -52,11 +52,11 @@
         @elseif($InvoiceType == 'UpgradeRoom')
             <tr>
                 <th style="width: 45%">Description</th>
-                <th style="width: 25%">Rate</th>
-                <th style="width: 15%">Remaining Days</th>
+                <th style="width: 15%">Rate</th>
+                <th style="width: 28%">Remaining Days</th>
                 <th style="width: 15%">Amount</th>
             </tr>
-        @elseif($InvoiceType == 'Fees')
+        @elseif($InvoiceType == 'Fees' || $InvoiceType == 'Activities')
             <tr>
                 <th style="width: 45%">Description</th>
                 <th style="width: 25%">Price</th>
@@ -69,6 +69,14 @@
                 <th style="width: 15%">Rate</th>
                 <th style="width: 15%">Quantity</th>
                 <th style="width: 20%">Days of Extend</th>
+                <th style="width: 15%">Amount</th>
+            </tr>
+        @elseif($InvoiceType == 'AddRoom')
+            <tr>
+                <th style="width: 40%">Room Name</th>
+                <th style="width: 15%">Rate</th>
+                <th style="width: 15%">Quantity</th>
+                <th style="width: 20%">Days</th>
                 <th style="width: 15%">Amount</th>
             </tr>
         @elseif($InvoiceType == 'ItemRental' || $InvoiceType == 'ItemRentalExtend')
@@ -142,6 +150,25 @@
                     <td style="text-align: center;">{{ $item->quantity }}</td>
                     <td style="text-align: center;">{{ $item->penalty }}</td>
                     <td style="text-align: right;">{{ $item->amount }}</td>
+                </tr>
+            @endforeach
+        @elseif($InvoiceType == 'AddRoom')
+            @foreach($rooms as $room)
+                <tr>
+                    <td>{{ $room->name }}</td>
+                    <td style="text-align: center;">{{ $room->price }}</td>
+                    <td style="text-align: center;">{{ $room->quantity }}</td>
+                    <td style="text-align: center;">{{ $room->days }}</td>
+                    <td style="text-align: right;">{{ $room->amount }}</td>
+                </tr>
+            @endforeach
+        @elseif($InvoiceType == 'Activities')
+            @foreach($activity as $a)
+                <tr>
+                    <td>{{ $a->name }}</td>
+                    <td style="text-align: center;">{{ $a->price }}</td>
+                    <td style="text-align: center;">{{ $a->quantity }}</td>
+                    <td style="text-align: right;">{{ $a->amount }}</td>
                 </tr>
             @endforeach
         @endif

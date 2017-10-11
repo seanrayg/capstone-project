@@ -993,6 +993,8 @@
                             <input type="hidden" name="iItemNameExcess" id="iItemNameExcess">
                             <input type="hidden" name="iItemQuantityExcess" id="iItemQuantityExcess">
                             <input type="hidden" name="iItemPenalty" id="iItemPenalty">
+                            <input type="hidden" name="iItemBrokenPenalty" id="iItemBrokenPenalty">
+                            <input type="hidden" name="iItemBrokenQuantity" id="iItemBrokenQuantity">
                         </form>
                     </div>
                 </div>

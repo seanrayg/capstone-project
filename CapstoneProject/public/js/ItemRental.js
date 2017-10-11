@@ -318,6 +318,8 @@ function ControlBrokenContent(){
         document.getElementById("ReturnBrokenQuantity").value = "0";
         document.getElementById("ReturnBrokenPenalty").value = "0";
         document.getElementById("DivBrokenItem").style.display = "none";
+
+        document.getElementById("iItemBrokenPenalty").value = 0;
     }
 }
 
@@ -546,6 +548,14 @@ function PrintInvoice(sender) {
 
         document.getElementById("iItemQuantityExcess").value = document.getElementById("ReturnQuantityAvailed").value;
         document.getElementById("iItemPenalty").value = document.getElementById("ReturnTimePenalty").value;
+
+        if(document.getElementById("ReturnBrokenPenalty").value != 0) {
+
+            document.getElementById("iItemBrokenPenalty").value = document.getElementById("ReturnBrokenPenalty").value;
+            document.getElementById("iItemBrokenQuantity").value = document.getElementById("ReturnBrokenQuantity").value;
+
+        } 
+
         document.getElementById("InvoiceForm3").submit();
 
     }

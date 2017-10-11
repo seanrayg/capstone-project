@@ -153,6 +153,9 @@ function run(event, sender){
     if(sender == "Avail"){
         AvailActivityInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML];
         fillAvailActivity();
+
+        document.getElementById("ActivityName").value = cells[1].innerHTML;
+        document.getElementById("ActivityRate").value = cells[2].innerHTML;
     }
     
     else if(sender == "Done"){
@@ -299,3 +302,17 @@ function fillDoneActivity(){
 function SubmitActivityForm(){
     document.getElementById("FormDoneActivity").submit();
 }
+
+function PrintInvoice() {
+
+    document.getElementById("InvoiceForm").submit();
+
+}
+
+$(function() {
+  $('#AvailCustomerName').on('input',function() {
+    var opt = $('option[value="'+$(this).val()+'"]');
+    
+    document.getElementById("ReservationID").value = opt.attr('id');
+  });
+});
