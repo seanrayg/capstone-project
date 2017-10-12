@@ -120,7 +120,7 @@ class ReservationController extends Controller
             $this->addFees($EntranceFeeID, $NoOfAdults, $PaymentStatus, $ReservationID);
         }
             
-        dd(Input::all());
+        return redirect('/Reservation/'.$ReservationID);
     }
 
     public function addReservationPackage(Request $req){

@@ -96,7 +96,7 @@
 	  				</tr>
 	  		  	@endforeach
 		  	@endif
-		@elseif($strInvoiceType = 'WalkIn')
+		@elseif($InvoiceType = 'WalkIn')
 		  	@foreach($rooms as $room)
 				<tr>
 					<td>{{ $room->name }}</td>
@@ -121,6 +121,7 @@
 					<td style="text-align: right;">{{ $fee->amount }}</td>
 				</tr>
 		  	@endforeach
+		@elseif($InvoiceType == 'WalkInPackage')
 		@endif
 
 		@for($i = $TableRows; $i <= 10; $i++)

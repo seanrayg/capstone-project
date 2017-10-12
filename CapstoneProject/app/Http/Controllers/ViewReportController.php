@@ -91,8 +91,6 @@ class ViewReportController extends Controller
             $GeneratedReport = $this->getRooms($IncludeDeleted);
         }else if($SelectedReport == "Room Types Only") {
             $GeneratedReport = $this->getRoomTypes($IncludeDeleted);
-        }else if($SelectedReport == "Packages") {
-            $GeneratedReport = $this->getPackages($IncludeDeleted);
         }
 
 
