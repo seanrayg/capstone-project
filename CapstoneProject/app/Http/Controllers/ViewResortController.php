@@ -1329,6 +1329,26 @@ class ViewResortController extends Controller
     
     
     /*---------------- BILLING ------------------*/
+
+    public function getBillDeductions($id, $TotalBill){
+        $tempCustomerName = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select(DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustLastName) AS Name'))
+                        ->where([['a.intResDStatus', '=', '4'],['a.strReservationID', '=', $id]])
+                        ->first();
+
+        $CustomerName = $tempCustomerName->Name;
+
+        $BillDeductions = DB::table('tblPayment')
+                        ->where([['strPayReservationID', '=', $id],['strPayTypeID', '=', 29]])
+                        ->get();
+
+        foreach($BillDeductions as $Bill){
+            $Bill->dtePayDate = Carbon::parse($Bill->dtePayDate)->format('M d, Y');
+        }
+
+        return view('Deductions', compact('CustomerName', 'TotalBill', 'id', 'BillDeductions'));
+    }
     
     public function ViewBilling(){
         $ReservationInfo = DB::table('tblReservationDetail as a')
@@ -1551,6 +1571,14 @@ class ViewResortController extends Controller
                 if($UnpaidExtendItem == 0){
                     $TotalDeduction += $Item->dblPayAmount;
                 }
+            }
+
+            $BillDeductions = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 29]])
+                            ->get();
+
+            foreach($BillDeductions as $Bill){
+                $TotalDeduction += $Bill->dblPayAmount;
             }
 
             //dd($TotalPenalties , $TotalFee , $TotalActivity , $TotalItem , $TotalRoom , $AdditionalRoomAmount , $UpgradeRoomAmount , $PackagePayment ,$ExtendStayAmount ,$TotalBoat);

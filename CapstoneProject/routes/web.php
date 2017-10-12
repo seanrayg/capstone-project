@@ -32,8 +32,6 @@ Route::get('/ItemRental', 'ViewResortController@getAvailableItems');
 
 Route::get('/Activities', 'ViewResortController@getAvailableActivities');
 
-Route::get('/Deductions', 'ViewResortController@ViewDeductions');
-
 Route::get('/Reports', function () {
     return view('Reports');
 });
@@ -430,6 +428,14 @@ Route::get('/Fee/Package', 'ViewResortController@getPackageFees');
 /*------------ BILLING ------------*/
 
 Route::get('/Billing/Info', 'ViewResortController@getBillBreakdown');
+
+Route::get('/Billing/Deductions/{id}/{Total}', 'ViewResortController@getBillDeductions');
+
+Route::post('/Billing/Deduction/Add', 'ResortController@addBillDeduction');
+
+Route::post('/Billing/Deduction/Edit', 'ResortController@editBillDeduction');
+
+Route::post('/Billing/Deduction/Delete', 'ResortController@deleteBillDeduction');
 
 
 /*------------ CUSTOMERS -----------*/
