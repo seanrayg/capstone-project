@@ -829,6 +829,16 @@ class ViewController extends Controller
         //$Packages = $this->getPackages();
         return view('BookWithPackage');
     }
+
+    public function getDownpayment(Request $req){
+        $ReservationID = trim($req->input('ReservationID'));
+        $Downpayment = DB::table('tblPayment')
+                       ->select('dblPayAmount')
+                       ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', '2']])
+                       ->get();
+
+        return response()->json($Downpayment);
+    }
     
     public function getAvailableRooms(Request $req){
         $tempArrivalDate = trim($req->input('CheckInDate'));

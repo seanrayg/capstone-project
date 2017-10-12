@@ -140,6 +140,7 @@
                                 <button type="button" class="btn btn-danger pull-right" onclick="ShowModalCancelReservation()"><i class="material-icons">highlight_off</i> Cancel</button>
                                 <button type="button" class="btn btn-primary pull-right" onclick="ShowModalReservationInfo()"><i class="material-icons">info</i> Info</button>
                                 <button type="button" class="btn btn-info pull-right" onclick="EditConfirmedReservation()"><i class="material-icons">create</i> Edit</button>
+                                <button type="button" class="btn btn-warning pull-right" onclick="ShowModalPaidDownpayment()"><i class="material-icons">monetization_on</i>Downpayment</button>
                                 <button type="button" class="btn btn-success pull-right" onclick="ShowModalCheckIn()"><i class="material-icons">class</i> Check In</button>
                             </div> 
                         </div>                             
@@ -496,7 +497,7 @@
             <div class="col-md-12">
                 <div class="card card-stats">
                     <div class="card-header" data-background-color="orange">
-                        <i class="material-icons">pages</i>
+                        <i class="material-icons">monetization_on</i>
                     </div>
                     <div class="card-content">
                         <h4><span class="close" onclick="HideModalPayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
@@ -568,6 +569,42 @@
                                     <button type="button" class="btn btn-success pull-left push-left" onclick="#"><i class="material-icons">done</i>Print Invoice</button>
                                     <button type="submit" class="btn btn-success pull-right push-right" onclick="#"><i class="material-icons">done</i>Continue</button>
                           
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalPaidDownpayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalPaidDownpayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">Downpayment</h3>
+                        <br><br>
+                        <form method="post" action="/Reservation/Downpayment/Edit" onsubmit="return CheckForm()">
+                            {{ csrf_field() }}
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group label-static" id="PaidDownpaymentError">
+                                        <label class="control-label">Paid Downpayment</label>
+                                        <input type="text" class="form-control" id="PaidDownpayment" name="PaidDownpayment" onkeyup="ValidateInput(this, 'double', '#PaidDownpaymentError')" onchange="ValidateInput(this, 'double', '#PaidDownpaymentError')" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="EditDownReservationID" id="EditDownReservationID" value="">
+                            <div class = "row">
+                                <button type="button" class="btn btn-info pull-right push-right" onclick="EditDownpayment()" id="btnEditDownPayment">Edit</button>
+                                <button type="submit" class="btn btn-success pull-right push-right" onclick="#" id="btnSaveDownPayment" style="display:none">Save</button>
+                                <button type="button" class="btn btn-success pull-left push-left" onclick="ShowModalPaidDepositSlip()">Deposit Slip</button>
                             </div>
                         </form>
                     </div>

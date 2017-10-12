@@ -3,6 +3,56 @@ var ActiveReservationInfo = [];
 var InitialBill = 0;
 
 
+function ShowModalPaidDepositSlip(){
+    HideModalPaidDownpayment();
+    $.ajax({
+        type:'get',
+        url:'/Reservation/DepositSlip',
+        data:{id:ActiveReservationInfo[0]},
+        success:function(data){
+            if(data[0].strResDDepositSlip != null){
+                document.getElementById("DepositSlip").src=data[0].strResDDepositSlip;
+                HideModalPaidReservation();
+                document.getElementById("DivModalDepositSlip").style.display = "block";
+            }
+            else{
+                HideModalPaidReservation();
+                document.getElementById("DivModalNoDepositSlip").style.display = "block";
+            }
+        },
+        error:function(response){
+            console.log(response);
+            alert(response.status);
+        }
+    });  
+}
+
+function ShowModalPaidDownpayment(){
+    var TableChecker = CheckTable('#ConfirmedReservationTable tr');
+    if(TableChecker){
+         $.ajax({
+            type:'get',
+            url:'/Reservation/Downpayment',
+            data:{ReservationID:ActiveReservationInfo[0]},
+            success:function(data){
+                document.getElementById("PaidDownpayment").value = data[0].dblPayAmount;
+                document.getElementById("DivModalPaidDownpayment").style.display = "block";
+                document.getElementById("EditDownReservationID").value = ActiveReservationInfo[0];
+
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });  
+        
+    }
+}
+
+function HideModalPaidDownpayment(){
+    document.getElementById("DivModalPaidDownpayment").style.display = "none";
+}
+
 function ShowModalPayNow(){
     HideModalPayment();
     document.getElementById("PayTotal").value = ActiveReservationInfo[9];
@@ -111,7 +161,6 @@ function ShowModalDepositSlip(){
             alert(response.status);
         }
     });  
-
 }
 
 function HideModalDepositSlip(){
@@ -451,5 +500,11 @@ function setReservationID() {
 
     }
 
+}
+
+function EditDownpayment(){
+    document.getElementById("PaidDownpayment").disabled = false;
+    document.getElementById("btnEditDownPayment").style.display = "none";
+    document.getElementById("btnSaveDownPayment").style.display = "block";
 }
 
