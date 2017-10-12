@@ -51,7 +51,7 @@
 	<hr style="clear: left;">
 
 	<table>
-		@if($InvoiceType == 'Reservation' || $InvoiceType == 'WalkIn')
+		@if($InvoiceType == 'Reservation' || $InvoiceType == 'WalkIn' || $InvoiceType == 'WalkInPackage')
 			<tr>
 				<th style="width: 60%;">Description</th>
 				<th style="width: 20%;">Price/Rate</th>
@@ -96,7 +96,7 @@
 	  				</tr>
 	  		  	@endforeach
 		  	@endif
-		@elseif($InvoiceType = 'WalkIn')
+		@elseif($InvoiceType == 'WalkIn')
 		  	@foreach($rooms as $room)
 				<tr>
 					<td>{{ $room->name }}</td>
@@ -122,6 +122,14 @@
 				</tr>
 		  	@endforeach
 		@elseif($InvoiceType == 'WalkInPackage')
+			@foreach($package as $p)
+				<tr>
+					<td>{{ $p->name }}</td>
+					<td style="text-align: center;">{{ $p->price }}</td>
+					<td style="text-align: center;">{{ $p->quantity }}</td>
+					<td style="text-align: right;">{{ $p->amount }}</td>
+				</tr>
+		  	@endforeach
 		@endif
 
 		@for($i = $TableRows; $i <= 10; $i++)

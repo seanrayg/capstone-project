@@ -569,7 +569,7 @@
                             <input type="hidden" name="InvoiceType" value="WalkInPackage">
                             <input type="hidden" name="PackageName" id="PackageName">
                             <input type="hidden" name="PackagePrice" id="PackagePrice">
-                            <input type="hidden" name="NoOfAdults" id="NoOfAdults">
+                            <input type="hidden" name="NoOfAdults" id="iNoOfAdults" value="0">
                             <input type="hidden" name="CustomerName" id="CustomerName">
                             <input type="hidden" name="CustomerAddress" id="CustomerAddress">
                         </form>

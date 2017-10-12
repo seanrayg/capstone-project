@@ -148,6 +148,10 @@
                 {{ csrf_field() }}
                 <input type="hidden" name="PrintSelectedReport" id="PrintSelectedReport" value="Accomodations">
                 <input type="hidden" name="PrintIncludeDeleted" id="PrintIncludeDeleted">
+                <input type="hidden" name="rReservationReport" id="rReservationReport">
+                <input type="hidden" name="rReservationMonth" id="rReservationMonth">
+                <input type="hidden" name="rReservationYear" id="rReservationYear">
+                <input type="hidden" name="rDailyReservation" id="rDailyReservation">
                 <button type="submit" class="btn btn-success pull-right">Print</button>
             </form>
         </div>

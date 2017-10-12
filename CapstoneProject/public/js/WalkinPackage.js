@@ -506,7 +506,13 @@ function PrintInvoice() {
 
     document.getElementById("PackageName").value = document.getElementById("p-PackageName").innerHTML;
     document.getElementById("PackagePrice").value = document.getElementById("p-PackagePrice").innerHTML;
-    document.getElementById("NoOfAdults").value = document.getElementById("p-NoOfAdults").innerHTML;
+    
+    if(document.getElementById("p-TotalEntranceFee").innerHTML != "0") {
+
+        document.getElementById("iNoOfAdults").value = document.getElementById("p-NoOfAdults").innerHTML;
+        
+    }
+
     document.getElementById("CustomerName").value = document.getElementById("i-CustomerName").innerHTML;
     document.getElementById("CustomerAddress").value = document.getElementById("i-Address").innerHTML;
     document.getElementById("InvoiceForm").submit();
