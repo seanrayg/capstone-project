@@ -1751,6 +1751,7 @@ class ViewResortController extends Controller
             $PackageInitialPayment = 0;
             $PackageDownPayment = 0;
             $ExtendStayAmount = 0;
+            $TotalDeduction = 0;
             
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
@@ -1910,14 +1911,42 @@ class ViewResortController extends Controller
             $ExtendBills = DB::table('tblPayment')
                             ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 10]])
                             ->get();
-            
        
             foreach($ExtendBills as $Bill){
-                $TotalExtend += $Bill->dblPayAmount;
+                $ExtendRemarks = json_decode($Bill->strPaymentRemarks);
+
+                $PaidExtendItem = DB::table('tblrentedItem')
+                                ->where([['strRentedIReservationID', '=', $Info->strReservationID],['strRentedItemID', '=',$ExtendRemarks->RentedItemID]])
+                                ->pluck('intRentedIPayment')
+                                ->first();
+              
+                if($PaidExtendItem == 1){
+                    $TotalExtend += $Bill->dblPayAmount;
+                }
+            }
+
+            //Total Penalties
+            $TotalPenalties = $TotalExtend + $BrokenPenalties + $TimePenalties;
+            
+            //Bill Deductions
+            $ExtendItemDeductions = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 15]])
+                            ->get();
+
+            foreach($ExtendItemDeductions as $Item){
+                $UnpaidExtendItem = DB::table('tblrentedItem')
+                                ->where([['strRentedIReservationID', '=', $Info->strReservationID],['strRentedItemID', '=', $Item->strPaymentRemarks]])
+                                ->pluck('intRentedIPayment')
+                                ->first();
+
+                if($UnpaidExtendItem == 0){
+                    $TotalDeduction += $Item->dblPayAmount;
+                }
             }
             
             //Total Penalties
             $TotalPenalties = $TotalExtend + $BrokenPenalties + $TimePenalties;
+            $TotalPenalties = $TotalPenalties - $TotalDeduction;
             
             //Compute Boat Rental
             
