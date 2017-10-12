@@ -1796,6 +1796,68 @@ class ResortController extends Controller
         return $RoomPaymentStatus;
     }
 
+    /*---------------- BILLING -----------------*/
+
+    public function addBillDeduction(Request $req){
+        $ReservationID = trim($req->input('ReservationID'));
+        $Amount = trim($req->input('DeductAmount'));
+        $Remarks = trim($req->input('Remarks'));
+
+        $DateToday = Carbon::now('Asia/Manila')->format('Y/m/d');
+        
+        $PaymentID = DB::table('tblPayment')->pluck('strPaymentID')->first();
+        if(!$PaymentID){
+            $PaymentID = "PYMT1";
+        }
+        else{
+            $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
+        }
+
+        $TransactionData = array('strPaymentID'=>$PaymentID,
+                                  'strPayReservationID'=>$ReservationID,
+                                  'dblPayAmount'=>$Amount,
+                                  'strPayTypeID'=> 29,
+                                  'dtePayDate'=>$DateToday,
+                                  'strPaymentRemarks'=>$Remarks);
+    
+        DB::table('tblPayment')->insert($TransactionData);
+
+        \Session::flash('flash_message','Successfully done!');
+        
+        return redirect('/Billing');
+    }
+
+    public function editBillDeduction(Request $req){
+        $ReservationID = trim($req->input('EditReservationID'));
+        $PaymentID = trim($req->input('EditPaymentID'));
+        $Amount = trim($req->input('EditDeductAmount'));
+        $Remarks = trim($req->input('EditRemarks'));
+
+        $updateData = array('dblPayAmount'=>$Amount,
+                            'strPaymentRemarks'=>$Remarks);
+
+        DB::table('tblPayment')
+        ->where([['strPayReservationID', $ReservationID],['strPaymentID','=', $PaymentID]])
+        ->update($updateData);
+
+        \Session::flash('flash_message','Successfully done!');
+        
+        return redirect('/Billing');
+    }
+
+    public function deleteBillDeduction(Request $req){
+        $ReservationID = trim($req->input('DeleteReservationID'));
+        $PaymentID = trim($req->input('DeletePaymentID'));
+
+        DB::table('tblPayment')
+        ->where([['strPayReservationID', $ReservationID],['strPaymentID','=', $PaymentID]])
+        ->delete();
+
+        \Session::flash('flash_message','Successfully done!');
+        
+        return redirect('/Billing');
+    }
+
 
     /*-----------------CHECKOUT------------------*/
 

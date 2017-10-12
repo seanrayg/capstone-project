@@ -16,6 +16,10 @@ function HideModalBillBreakdown(){
     document.getElementById("DivModalBillBreakdown").style.display = "none";
 }
 
+function ShowBillDeductions(ReservationID, TotalBill){
+    window.location.href = '/Billing/Deductions/'+ReservationID+'/'+TotalBill;
+}
+
 function run(event, sender){
     event = event || window.event; 
     var target = event.target || event.srcElement;

@@ -10,6 +10,25 @@
 @endsection
 
 @section('content')
+
+@if(Session::has('flash_message'))
+    <div class="row">
+        <div class="col-md-5 col-md-offset-7">
+            <div class="alert alert-success hide-automatic">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">check</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                  {{ Session::get('flash_message') }}
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <h5 id="TitlePage">Billing</h5>
 
 <div class="row">
@@ -57,6 +76,15 @@
                                 <button type="button" rel="tooltip" title="Show bill breakdown" class="btn btn-primary btn-simple btn-xs" onclick="ShowModalBillBreakdown()">
                                     <i class="material-icons">format_indent_increase</i>
                                 </button>
+                                @if($Info->TotalBill == 0)
+                                <button type="button" rel="tooltip" title="Show bill deductions" class="btn btn-warning btn-simple btn-xs" onclick="ShowBillDeductions('{{$Info->strReservationID}}','{{$Info->TotalBill}}')" disabled>
+                                    <i class="material-icons">speaker_notes_off</i>
+                                </button>
+                                @else
+                                <button type="button" rel="tooltip" title="Show bill deductions" class="btn btn-warning btn-simple btn-xs" onclick="ShowBillDeductions('{{$Info->strReservationID}}','{{$Info->TotalBill}}')">
+                                    <i class="material-icons">speaker_notes_off</i>
+                                </button>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
