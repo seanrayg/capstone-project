@@ -1222,7 +1222,7 @@ class ReservationController extends Controller
         $DateBooked = Carbon::now();
         
         $CustomerID = $this->getCustomerID($FirstName, $MiddleName, $LastName, $Birthday, $Gender);
-        dd($CustomerID);
+
         $ReservationID = $this->getReservationID();
         
         $PaymentID = $this->getPaymentID();

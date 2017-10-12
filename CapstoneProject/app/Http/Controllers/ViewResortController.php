@@ -1021,25 +1021,25 @@ class ViewResortController extends Controller
         $dtmDate = $dtmNow->toDateString();
         $dtmTime = $dtmNow->toTimeString();
 
+        $ScheduledBoats =  DB::Select("
+            SELECT strBoatSBoatID
+            FROM tblBoatSchedule
+            WHERE intBoatSStatus = 1
+            AND DATE(dtmBoatSPickUp) = '$dtmDate'
+            AND ('$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND TIME(dtmBoatSPickUp) OR '$dtmTime' BETWEEN TIME(dtmBoatSPickUp) AND TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)))
+            UNION
+            SELECT strBoatSBoatID
+            FROM tblBoatSchedule
+            WHERE intBoatSStatus = 1
+            AND DATE(dtmBoatSDropoff) = '$dtmDate'
+            AND ('$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSDropoff, INTERVAL 1 HOUR)) AND TIME(dtmBoatSDropoff) OR '$dtmTime' BETWEEN TIME(dtmBoatSDropoff) AND TIME(DATE_ADD(dtmBoatSDropoff, INTERVAL 1 HOUR)))
+        ");
+
         // $ScheduledBoats =  DB::Select("
         //     SELECT strBoatSBoatID
         //     FROM tblBoatSchedule
         //     WHERE intBoatSStatus = 1
-        //     AND DATE(dtmBoatSPickUp) = '$dtmDate'
-        //     AND ('$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND TIME(dtmBoatSPickUp) OR '$dtmTime' BETWEEN TIME(dtmBoatSPickUp) AND TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)))
-        //     UNION
-        //     SELECT strBoatSBoatID
-        //     FROM tblBoatSchedule
-        //     WHERE intBoatSStatus = 1
-        //     AND DATE(dtmBoatSDropoff) = '$dtmDate'
-        //     AND ('$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSDropoff, INTERVAL 1 HOUR)) AND TIME(dtmBoatSDropoff) OR '$dtmTime' BETWEEN TIME(dtmBoatSDropoff) AND TIME(DATE_ADD(dtmBoatSDropoff, INTERVAL 1 HOUR)))
         // ");
-
-        $ScheduledBoats =  DB::Select("
-            SELECT strBoatSBoatID
-            FROM tblBoatSchedule
-            WHERE intBoatSStatus = 1;
-        ");
 
         $UnavailableBoats = [];
         foreach($ScheduledBoats as $Boat){
