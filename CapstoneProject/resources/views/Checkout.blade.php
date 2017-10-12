@@ -145,14 +145,12 @@
                             <thead class="text-success">
                                 <th class="text-center">Title</th>
                                 <th class="text-center">Remarks</th>
-                                <th class="text-center">Amount</th>
                             </thead>
                             <tbody class="text-center">
                                 @foreach($MiscellaneousInfo as $Info)
                                     <tr>
                                         <td>{{$Info->strPaymentType}}</td>
                                         <td>{{$Info->strPaymentRemarks}}</td>
-                                        <td>{{$Info->dblPayAmount}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

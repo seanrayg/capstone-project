@@ -763,4 +763,28 @@
         </div>
     </div>
 </div>
+
+<div id="DivModalExceedGuest" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">assignment_late</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalExceedGuest()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <br><br><br>
+                        <h5 class="title text-center">The number of guests exceeds the total room capacity</h5>
+                        <br><br>
+                        <div class = "row">
+                                <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalExceedGuest()">Make Changes</button>
+                                <button type="button" class="btn btn-success pull-right push-right" onclick="ExceedContinue()">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

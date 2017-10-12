@@ -13,6 +13,14 @@ var tempTotal = 0;
 var GrandTotal = 0;
 /*---------- Modal controller -------*/ 
 
+function ShowModalExceedGuest(){
+    document.getElementById("DivModalExceedGuest").style.display = "block";
+}
+
+function HideModalExceedGuest(){
+    document.getElementById("DivModalExceedGuest").style.display = "none";    
+}
+
 function ShowModalAvailBoat(){
     document.getElementById("DivModalAvailBoat").style.display = "block";
 }
@@ -523,6 +531,7 @@ function CheckRooms(){
     }
     else if(!(TotalGuests <= TotalRoomCapacity)){
         ErrorMessage.innerHTML = "Total number of guests exceeds total capacity of selected rooms!";
+        ShowModalExceedGuest();
     }
     else{
         ErrorMessage.innerHTML = "";
@@ -533,6 +542,15 @@ function CheckRooms(){
         $('#InfoList').addClass('active');
         $('#ReservationInfo').addClass('active');
     }
+}
+
+function ExceedContinue(){
+    $('.alert').hide();
+    $('#ReservationRoom').removeClass('active');
+    $('#RoomList').removeClass('active');
+    $('#InfoList').addClass('active');
+    $('#ReservationInfo').addClass('active');
+    HideModalExceedGuest();
 }
 
 //table row clicked

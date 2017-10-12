@@ -6,6 +6,14 @@ var tempTotal = 0;
 var GrandTotal = 0;
 
 
+function ShowModalExceedGuest(){
+    document.getElementById("DivModalExceedGuest").style.display = "block";
+}
+
+function HideModalExceedGuest(){
+    document.getElementById("DivModalExceedGuest").style.display = "none";    
+}
+
 function ShowModalNoBoats(){
     document.getElementById("DivModalNoBoats").style.display = "block";
 }
@@ -376,11 +384,23 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
                                 $('.alert').show();
                             }
                             else{
-                                $(sender).removeClass("active");
-                                $(newSender).addClass("active");
-                                $(pageSender).removeClass("active");
-                                $(newPageSender).addClass("active");
-                                $('.alert').hide();
+                                var NoOfAdults = parseInt(document.getElementById("NoOfAdults").value);
+                                var NoOfKids = parseInt(document.getElementById("NoOfKids").value);
+                                
+                                var TotalGuests = NoOfKids + NoOfAdults;
+                                
+                                if(parseInt(PackageInfo[3]) >= parseInt(TotalGuests)){
+                                    $(sender).removeClass("active");
+                                    $(newSender).addClass("active");
+                                    $(pageSender).removeClass("active");
+                                    $(newPageSender).addClass("active");
+                                    $('.alert').hide();
+                                }
+                                else{
+                                    $('.alert').hide();
+                                    ShowModalExceedGuest();
+                                }
+                                
                             }
                         }
                     },
@@ -414,6 +434,14 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
 
 }
 
+function ExceedContinue(){
+    $('.alert').hide();
+    $('#ReservationInfo').removeClass('active');
+    $('#InfoList').removeClass('active');
+    $('#BillList').addClass('active');
+    $('#ReservationBill').addClass('active');
+    HideModalExceedGuest();
+}
 function getAvailableBoats(){
     var CheckInDate = document.getElementById("CheckInDate").value;
     var CheckOutDate = document.getElementById("CheckOutDate").value;
@@ -641,17 +669,12 @@ function ValidateGuests(field, dataType, holder){
                 var TotalGuests = NoOfKids + NoOfAdults;
                 
                 if(parseInt(PackageInfo[3]) >= parseInt(TotalGuests)){
-                    $('#NoOfKidsError').removeClass('has-warning');
-                    $('#NoOfAdultsError').removeClass('has-warning');
                     var x = document.getElementsByClassName("ErrorLabel");
                     for(var i = 0; i < x.length; i++){
                         x[i].innerText="";
                     }
                 }
                 else{
-                    $('#NoOfKidsError').addClass('has-warning');
-                    $('#NoOfAdultsError').addClass('has-warning');
-                    
                     var x = document.getElementsByClassName("ErrorLabel");
                     for(var i = 0; i < x.length; i++){
                         x[i].innerText="Number of guests exceeds pax of the package";
