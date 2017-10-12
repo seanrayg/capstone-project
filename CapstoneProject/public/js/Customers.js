@@ -398,6 +398,8 @@ function run(event, sender){
         ArrivalDate = ResortInfo[7];
         DepartureDate = ResortInfo[8];
 
+        document.getElementById("aReservationID").value = ReservationID;
+
         getAvailableRooms();
     }
     
@@ -687,10 +689,57 @@ function RedirectCheckout(){
     window.location.href = "/Checkout/"+ReservationID;
 }
 
-function PrintInvoice() {
+function PrintInvoice(sender) {
 
-    document.getElementById("iReservationID").value = ReservationID;
-    document.getElementById("DaysOfExtend").value = document.getElementById("ExtendNight").value;
-    document.getElementById("InvoiceForm").submit();
+    if(sender == 'extend') {
+
+        document.getElementById("iReservationID").value = ReservationID;
+        document.getElementById("DaysOfExtend").value = document.getElementById("ExtendNight").value;
+        document.getElementById("InvoiceForm").submit();
+
+    }else if(sender == 'addroom') {
+
+        var tblRoomInfo = GetTableInfo("tblChosenRooms");
+
+        $('#tblRoomInfo').val(JSON.stringify(tblRoomInfo));
+
+        document.getElementById("InvoiceForm2").submit();
+
+    }
+
+}
+
+function GetTableInfo(TableName) {
+
+    var tblInfo = [];
+
+    //gets table
+    var oTable = document.getElementById(TableName);
+
+    //gets rows of table
+    var rowLength = oTable.rows.length;
+
+    //loops through rows    
+    for (i = 0; i < rowLength; i++){
+
+        tblInfo[i] = [];
+
+       //gets cells of current row
+       var oCells = oTable.rows.item(i).cells;
+
+       //gets amount of cells of current row
+       var cellLength = oCells.length;
+
+       //loops through each cell in current row
+       for(var j = 0; j < cellLength; j++){
+          /* get your cell info here */
+          /* var cellVal = oCells.item(j).innerHTML; */
+
+          tblInfo[i][j] = oCells.item(j).innerHTML;
+
+       }
+    }
+
+    return tblInfo;
 
 }

@@ -193,6 +193,28 @@ class InvoiceController extends Controller
             $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $strCustomerName, 'CustomerAddress' => $strCustomerAddress, 'days' => $intDaysOfStay, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'TableRows' => $TableRows, 'rooms' => $rooms, 'fees' => $fees, 'EntranceFee' => $EntranceFee]);
             return $pdf->stream();
 
+        }else if($strInvoiceType == 'WalkInPackage') {
+
+            $strPackageName = $request->input('PackageName');
+            $dblPackagePrice = $request->input('PackagePrice');
+            $intNoOfAdults = $request->input('NoOfAdults');
+            $strCustomerName = $request->input('CustomerName');
+            $strCustomerAddress = $request->input('CustomerAddress');
+
+            $ReservationID = $this->SmartCounter("tblReservationDetail", "strReservationID");
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $ReservationID);
+
+            $Package = array(
+                (object) array("name" => $strPackageName, "price" => $dblPackagePrice, "quantity" => 1, "amount" => $dblPackagePrice * 1),
+                (object) array("name" => "Entrance Fee", "price" => 100, "quantity" => $intNoOfAdults, "amount" => 100 * $intNoOfAdults)
+            );
+            $TableRows +=  2;
+
+            $intTotal = $this->GetTotal($intTotal, $Package);
+
+            $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $strCustomerName, 'CustomerAddress' => $strCustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'TableRows' => $TableRows, 'package' => $Package]);
+            return $pdf->stream();
+
         }else if($strInvoiceType == 'BoatRental') {
 
             $name = "Boat Rental";
@@ -395,6 +417,7 @@ class InvoiceController extends Controller
             $strItemName = $request->input('iItemNameExcess');
             $intItemQuantity = $request->input('iItemQuantityExcess');
             $dblItemPenalty = $request->input('iItemPenalty');
+            $dblItemBrokenPenalty = $request->input('iItemBrokenPenalty');
 
             $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
 
@@ -404,13 +427,79 @@ class InvoiceController extends Controller
             $CustomerName = $CustomerInfo[1];
 
             $RentedItem = array(
-                (object) array("name" => $strItemName, "quantity" => $intItemQuantity, "penalty" => $dblItemPenalty, "amount" => $intItemQuantity * $dblItemPenalty)
+                (object) array("name" => 'Overtime ' . $strItemName, "quantity" => $intItemQuantity, "penalty" => $dblItemPenalty, "amount" => $intItemQuantity * $dblItemPenalty)
             );
             $TableRows++;
+
+            if($dblItemBrokenPenalty > 0) {
+
+                $intItemBrokenQuantity = $request->input('iItemBrokenQuantity');
+
+                array_push($RentedItem, (object) ["name" => 'Broken ' . $strItemName, "quantity" => $intItemBrokenQuantity, "penalty" => $dblItemBrokenPenalty, "amount" => $intItemBrokenQuantity * $dblItemBrokenPenalty]);
+                $TableRows++;
+
+            }
 
             $intTotal = $this->GetTotal($intTotal, $RentedItem);
 
             $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'items' => $RentedItem])->setPaper('A6', 'portrait');
+            return $pdf->stream();
+
+        }else if($strInvoiceType == 'AddRoom') {
+
+            $ReservationID = $request->input('aReservationID');
+            $tblRoomInfo = $request->input('tblRoomInfo');
+
+            $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
+
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $ReservationID);
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $days = DB::table('tblReservationDetail')
+                ->select(DB::raw("TIMESTAMPDIFF(DAY,dtmResDArrival,dtmResDDeparture) as days"))
+                ->where('strReservationID', '=', $ReservationID)
+                ->first();
+
+            $tblRoomInfo = json_decode($tblRoomInfo);
+
+            $rooms = array();
+
+            for ($i = 1; $i < count($tblRoomInfo); $i++) {
+
+                array_push($rooms, (object) ['name' => $tblRoomInfo[$i][0], 'price' => $tblRoomInfo[$i][2], 'quantity' => $tblRoomInfo[$i][3], 'days' => $days->days, 'amount' => $tblRoomInfo[$i][2] * $tblRoomInfo[$i][3] * $days->days]);
+                $TableRows++;
+
+            }
+
+            $intTotal = $this->GetTotal($intTotal, $rooms);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'rooms' => $rooms])->setPaper('A6', 'portrait');
+            return $pdf->stream();
+
+        }else if($strInvoiceType == 'Activities') {
+
+            $ReservationID = $request->input('ReservationID');var_dump($ReservationID);
+            $strBeachActivityName = $request->input('ActivityName');
+            $dblBeachActivityRate = $request->input('ActivityRate');
+
+            $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
+
+            $AvailBeachActivityID = $this->SmartCounter("tblAvailBeachActivity", "strAvailBeachActivityID");
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $AvailBeachActivityID);
+
+            $CustomerAddress = $CustomerInfo[0];
+            $CustomerName = $CustomerInfo[1];
+
+            $BeachActivity = array(
+                (object) array("name" => $strBeachActivityName, "price" => $dblBeachActivityRate, "quantity" => 1, "amount" => $dblBeachActivityRate)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $BeachActivity);
+
+            $pdf = PDF::loadview('pdf.service_invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'TableRows' => $TableRows, 'activity' => $BeachActivity])->setPaper('A6', 'portrait');
             return $pdf->stream();
 
         }
@@ -482,6 +571,12 @@ class InvoiceController extends Controller
         }else if($InvoiceType == 'ItemRentalExcess') {
 
             $InvoiceNumber .= "93" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'Activities') {
+
+            $InvoiceNumber .= "1" . $ID;
 
             return $InvoiceNumber;
 

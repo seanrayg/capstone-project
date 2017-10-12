@@ -33,7 +33,6 @@
 				<br>
 				<label class="parent">Days of Stay:</label>
 				<label id="CustomerName">
-					{{ $days }}
 				</label>
 			</div>
 		</div>
