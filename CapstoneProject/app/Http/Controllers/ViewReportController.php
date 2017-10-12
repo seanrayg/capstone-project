@@ -63,6 +63,13 @@ class ViewReportController extends Controller
         $SelectedReport = $request->input('PrintSelectedReport');
         $IncludeDeleted = $request->input('PrintIncludeDeleted');
 
+        $ReservationReport = trim($request->input('rReservationReport'));
+        $ReservationMonth = trim($request->input('rReservationMonth'));
+        $ReservationYear = trim($request->input('rReservationYear'));
+        $DailyReservation = trim($request->input('rDailyReservation'));
+
+        var_dump($ReservationReport);
+
         if($SelectedReport == "Accomodations") {
             $GeneratedReport = $this->getAccomodations($IncludeDeleted);
         }else if($SelectedReport == "Beach Activities") {
@@ -84,7 +91,7 @@ class ViewReportController extends Controller
         }else if($SelectedReport == "Rental Items") {
             $GeneratedReport = $this->getItems($IncludeDeleted);
         }else if($SelectedReport == "Reservations") {
-            $GeneratedReport = $this->getReservations($IncludeDeleted);
+            $GeneratedReport = $this->getReservations($ReservationReport, $ReservationMonth, $ReservationYear, $DailyReservation);
         }else if($SelectedReport == "Rooms & Cottages") {
             $GeneratedReport = $this->getRoomsCottages($IncludeDeleted);
         }else if($SelectedReport == "Rooms Only") {
@@ -569,8 +576,71 @@ class ViewReportController extends Controller
         return $Items;
     }
     
-    public function getReservations($IncludeDeleted){
-        
+    public function getReservations($one, $two, $three, $four){
+        $ReservationReport = $one;
+        $ReservationMonth = $two;
+        $ReservationYear = $three;
+        $DailyReservation = $four;
+
+        if($ReservationReport == "Daily"){
+            $DailyReservation = Carbon::parse($DailyReservation)->format('Y-m-d');
+            $ReservationInfo = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select('a.strReservationID',
+                                 DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustMiddleName , " " , b.strCustLastName) AS Name'),
+                                 'a.intResDNoOfAdults',
+                                 'a.intResDNoOfKids',
+                                 'a.dtmResDArrival',
+                                 'a.dtmResDDeparture',
+                                 'b.strCustContact',
+                                 'b.strCustEmail',
+                                 'b.strCustAddress',
+                                 'a.intResDStatus')
+                        ->where(DB::raw('Date(a.dtmResDArrival)'), '=', $DailyReservation)
+                        ->get();
+        }
+
+        else{
+            $ReservationMonth = Carbon::parse($ReservationMonth)->format('m');
+            $ReservationInfo = DB::table('tblReservationDetail as a')
+                        ->join ('tblCustomer as b', 'a.strResDCustomerID', '=' , 'b.strCustomerID')
+                        ->select('a.strReservationID',
+                                 DB::raw('CONCAT(b.strCustFirstName , " " , b.strCustMiddleName , " " , b.strCustLastName) AS Name'),
+                                 'a.intResDNoOfAdults',
+                                 'a.intResDNoOfKids',
+                                 'a.dtmResDArrival',
+                                 'a.dtmResDDeparture',
+                                 'b.strCustContact',
+                                 'b.strCustEmail',
+                                 'b.strCustAddress',
+                                 'a.intResDStatus')
+                        ->whereMonth('dtmResDArrival', '=', $ReservationMonth)
+                        ->whereYear('dtmResDArrival', '=', $ReservationYear)
+                        ->get();
+        }
+
+        foreach($ReservationInfo as $Info){
+            $Info->dtmResDArrival = Carbon::parse($Info->dtmResDArrival)->format('M j, Y');
+            $Info->dtmResDDeparture = Carbon::parse($Info->dtmResDDeparture)->format('M j, Y');
+            if($Info->intResDStatus == 1){
+                $Info->intResDStatus = "Pending Reservation";
+            }
+            else if($Info->intResDStatus == 2){
+                $Info->intResDStatus = "Confirmed Reservation";
+            }
+            else if($Info->intResDStatus == 3){
+                $Info->intResDStatus = "Cancelled Reservation";
+            }
+            else if($Info->intResDStatus == 4){
+                $Info->intResDStatus = "Currently in resort";
+            }
+            else if($Info->intResDStatus == 5){
+                $Info->intResDStatus = "Reservation Finished";
+            }
+        }
+
+        return $ReservationInfo;
+
     }
     
     // get Rooms Cottages

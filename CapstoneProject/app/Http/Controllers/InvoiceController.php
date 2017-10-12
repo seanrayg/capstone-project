@@ -205,12 +205,18 @@ class InvoiceController extends Controller
             $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $ReservationID);
 
             $Package = array(
-                (object) array("name" => $strPackageName, "price" => $dblPackagePrice, "quantity" => 1, "amount" => $dblPackagePrice * 1),
-                (object) array("name" => "Entrance Fee", "price" => 100, "quantity" => $intNoOfAdults, "amount" => 100 * $intNoOfAdults)
+                (object) array("name" => $strPackageName, "price" => $dblPackagePrice, "quantity" => 1, "amount" => $dblPackagePrice * 1)
             );
-            $TableRows +=  2;
+            $TableRows++;
 
-            $intTotal = $this->GetTotal($intTotal, $Package);
+            if($intNoOfAdults != 0) {
+
+                array_push($Package, (object) ["name" => "Entrance Fee", "price" => 100, "quantity" => $intNoOfAdults, "amount" => 100 * $intNoOfAdults]);
+                $TableRows++;
+
+            }
+
+                $intTotal = $this->GetTotal($intTotal, $Package);
 
             $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $strCustomerName, 'CustomerAddress' => $strCustomerAddress, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'TableRows' => $TableRows, 'package' => $Package]);
             return $pdf->stream();
@@ -526,9 +532,15 @@ class InvoiceController extends Controller
         $InvoiceNumber = $dtmNow->year;
         $ID = $this->GetNumber($ID);
 
-        if($InvoiceType == 'Reservation' || $InvoiceType == 'WalkIn') {
+        if($InvoiceType == 'Reservation') {
 
             $InvoiceNumber .= "18" . $ID;
+
+            return $InvoiceNumber;
+
+        }else if($InvoiceType == 'WalkIn' || $InvoiceType == 'WalkInPackage') {
+
+            $InvoiceNumber .= "23" . $ID;
 
             return $InvoiceNumber;
 

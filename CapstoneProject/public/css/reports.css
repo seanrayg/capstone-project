@@ -67,6 +67,7 @@ td {
     font-size: 12px;
     height: 15px;
     border: none;
+    text-align: center;
 }
 
 tr:nth-child(even) {

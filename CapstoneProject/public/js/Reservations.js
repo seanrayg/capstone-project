@@ -490,7 +490,7 @@ function setReservationID() {
 
     document.getElementById("ReservationID").value = document.getElementById("i-ReservationID").innerHTML;
 
-    if(document.getElementById("i-PackageAvailed").innerHTML == 'None') {
+    if(document.getElementById("i-PackageAvailed").innerHTML == 'None' || document.getElementById("i-PackageAvailed").innerHTML == '') {
 
         document.getElementById("IsPackaged").value = 0;
 

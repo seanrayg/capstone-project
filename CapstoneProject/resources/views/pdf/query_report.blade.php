@@ -329,6 +329,90 @@
             echo "
             </table>
             ";
+        }else if($name == "Inoperational Dates") {
+            echo "
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>";
+                foreach ($queries as $query) {
+                    echo "
+                    <tr>
+                        <td>$query->strDateID</td>
+                        <td>$query->strDateTitle</td>
+                        <td>$query->dteStartDate</td>
+                        <td>$query->dteEndDate</td>
+                        <td>$query->intDateStatus</td>
+                        <td>$query->strDateDescription</td>
+                    </tr>
+                    ";
+                }
+            echo "
+            </table>
+            ";
+        }else if($name == "Packages") {
+            echo "
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                    <th>Pax</th>
+                    <th>Transportation Fee</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                </tr>";
+                foreach ($queries as $query) {
+                    echo "
+                    <tr>
+                        <td>$query->strPackageID</td>
+                        <td>$query->strPackageName</td>
+                        <td>$query->strPackageStatus</td>
+                        <td>$query->intPackageDuration</td>
+                        <td>$query->intPackagePax</td>
+                        <td>$query->intBoatFee</td>
+                        <td>$query->strPackageDescription</td>
+                        <td>$query->dblPackagePrice</td>
+                    </tr>
+                    ";
+                }
+            echo "
+            </table>
+            ";
+        }else if($name == "Reservations") {
+            echo "
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                </tr>";
+                foreach ($queries as $query) {
+                    echo "
+                    <tr>
+                        <td>$query->Name</td>
+                        <td>$query->strCustAddress</td>
+                        <td>$query->strCustContact</td>
+                        <td>$query->strCustEmail</td>
+                        <td>$query->dtmResDArrival</td>
+                        <td>$query->dtmResDDeparture</td>
+                        <td>$query->intResDStatus</td>
+                    </tr>
+                    ";
+                }
+            echo "
+            </table>
+            ";
         }
     ?>
 </body>
