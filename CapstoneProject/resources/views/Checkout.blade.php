@@ -138,7 +138,7 @@
                     @endif
                   </div>
                <div class="row"> 
-                    @if(sizeof($MiscellaneousInfo) > 0)
+                    @if((sizeof($MiscellaneousInfo) > 0) && ($TotalPenalties != 0))
                     <div class="col-md-12">
                         <h4 class="title text-success">Miscellaneous</h4><br>
                         <table class="table table-responsive">
@@ -245,6 +245,25 @@
                     @endif
                 </div>
                 <div class="row">
+                    @if(sizeof($BillDeductionsInfo) > 0)
+                    <div class="col-md-12">
+                        <h4 class="title text-success">Deductions</h4><br>
+                        <table class="table table-responsive">
+                            <thead class="text-success">
+                                <th class="text-center">Remarks</th>
+                                <th class="text-center">Amount</th>
+                            </thead>
+                            <tbody class="text-center">
+                                @foreach($BillDeductionsInfo as $Info)
+                                    <tr>
+                                        <td>{{$Info->strPaymentRemarks}}</td>
+                                        <td>{{$Info->dblPayAmount}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
                 </div><br>
                 <div class="row">
                     <div class = "col-md-10">
@@ -268,6 +287,8 @@
                         <p class="paragraphText text-success">Total Upgrade Rooms:</p> <p class="paragraphText">{{$UpgradeRoomAmount}}</p><br>
 
                         <p class="paragraphText text-success">Total Extend Days:</p> <p class="paragraphText">{{$ExtendStayAmount}}</p><br>
+
+                        <p class="paragraphText text-success">Total Deductions:</p> <p class="paragraphText">{{$TotalDeductionInfo}}</p><br>
                         
                         @foreach($ReservationInfo as $Info)
                             <strong><h4 class="paragraphText text-success">Grand Total</h4></strong><strong><h4>{{$Info->TotalBill}}</h4></strong>

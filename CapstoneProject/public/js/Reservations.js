@@ -268,7 +268,14 @@ function ProcessDownPayment(){
     if((!($(".form-group").hasClass("has-warning"))) && (document.getElementById("DownpaymentAmount").value != "")){
         var DownPayment = parseInt(document.getElementById("DownpaymentAmount").value);
         var RequiredAmount = Math.ceil(parseFloat(InitialBill) * .20);
-        if(DownPayment >= RequiredAmount){
+        if(DownPayment > InitialBill){
+            $("#DownPaymentError").addClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Downpayment exceeds the initial bill";
+            }
+        }
+        else if(DownPayment >= RequiredAmount){
             /*--- Check here if there is an existing deposit slip ----*/
             //HideModalPaidReservation();
             //ShowModalNoDepositSlip();
