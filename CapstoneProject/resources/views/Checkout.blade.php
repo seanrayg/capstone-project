@@ -47,7 +47,7 @@
                     @if(sizeof($RoomInfo) > 0)
                         <div class="col-lg-12">
                             <h4 class="title text-success">Reserved Rooms</h4><br>
-                            <table class="table table-responsive">
+                            <table id="tblRoomInfo" class="table table-responsive">
                                 <thead class="text-success">
                                     <th class="text-center">Type</th>
                                     <th class="text-center">Name</th>
@@ -70,7 +70,7 @@
                     @if(sizeof($ItemInfo) > 0)
                     <div class="col-lg-12">
                         <h4 class="title text-success">Rented Items</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblItemInfo" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Item</th>
                                 <th class="text-center">Quantity</th>
@@ -95,7 +95,7 @@
                     @if(sizeof($ActivityInfo) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Availed Activities</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblActivityInfo" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Activity</th>
                                 <th class="text-center">Quantity</th>
@@ -118,7 +118,7 @@
                     @if(sizeof($FeeInfo) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Fees</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblFeeInfo" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Fee</th>
                                 <th class="text-center">Quantity</th>
@@ -141,7 +141,7 @@
                     @if(sizeof($MiscellaneousInfo) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Miscellaneous</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblMiscellaneousInfo" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Title</th>
                                 <th class="text-center">Remarks</th>
@@ -162,7 +162,7 @@
                     @if(sizeof($AdditionalRooms) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Additional Rooms</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblAdditionalRooms" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Type</th>
                                 <th class="text-center">Name</th>
@@ -185,7 +185,7 @@
                     @if(sizeof($UpgradeRooms) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Upgrade Rooms</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblUpgradeRooms" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Room</th>
                                 <th class="text-center">Amount</th>
@@ -206,7 +206,7 @@
                     @if(sizeof($ExtendStay) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Extend Stay</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblExtendStay" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Days Extended</th>
                                 <th class="text-center">Amount</th>
@@ -227,7 +227,7 @@
                     @if(sizeof($BoatInfo) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Rented Boats</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblBoatInfo" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Boat Name</th>
                                 <th class="text-center">Rate</th>
@@ -316,11 +316,25 @@
                             </div>
                             <div class = "row">
                                 <div class="col-xs-12">
-                                    <button type="button" class="btn btn-success pull-left push-left"><i class="material-icons">done</i>Print Invoice</button>
+                                    <input type="button" class="btn btn-success pull-left push-right" value="Print Invoice" onclick="PrintInvoice()" />
                                     <button type="submit" class="btn btn-success pull-right push-right"><i class="material-icons">done</i>Proceed</button>
                                 </div> 
                             </div>
                         </div>
+                    </form>
+                    <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="InvoiceType" value="CheckOut">
+                        <input type="hidden" name="tblRoomInfo" id="itblRoomInfo">
+                        <input type="hidden" name="tblItemInfo" id="itblItemInfo">
+                        <input type="hidden" name="tblActivityInfo" id="itblActivityInfo">
+                        <input type="hidden" name="tblFeeInfo" id="itblFeeInfo">
+                        <input type="hidden" name="tblMiscellaneousInfo" id="itblMiscellaneousInfo">
+                        <input type="hidden" name="tblAdditionalRooms" id="itblAdditionalRooms">
+                        <input type="hidden" name="tblUpgradeRooms" id="itblUpgradeRooms">
+                        <input type="hidden" name="tblExtendStay" id="itblExtendStay">
+                        <input type="hidden" name="tblBoatInfo" id="itblBoatInfo">
+                        <input type="hidden" name="iReservationID" id="iReservationID">
                     </form>
                 </div>
             </div>

@@ -1006,6 +1006,7 @@
                             <input type="hidden" name="InvoiceType" value="AddRoom">
                             <input type="hidden" name="aReservationID" id="aReservationID">
                             <input type="hidden" name="tblRoomInfo" id="tblRoomInfo">
+                            <input type="hidden" name="iAmountTendered" id="addAmountTendered">
                         </form>
                     </div>
                 </div>

@@ -707,6 +707,7 @@
                         <input type="hidden" name="iCustomerName" id="iCustomerName">
                         <input type="hidden" name="iCustomerAddress" id="iCustomerAddress">
                         <input type="hidden" name="iTotalAdults" id="iTotalAdults">
+                        <input type="hidden" name="iAmountTendered" id="iAmountTendered">
                         <input type="submit" class="btn btn-success pull-left" value="Show Invoice">
                     </form>
                     <button type="button" class="btn btn-success pull-right" onclick="SaveReservation()">Continue</button>

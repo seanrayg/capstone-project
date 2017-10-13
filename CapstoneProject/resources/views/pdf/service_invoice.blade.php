@@ -94,6 +94,11 @@
                 <th style="width: 15%">Penalty</th>
                 <th style="width: 15%">Amount</th>
             </tr>
+        @elseif($InvoiceType == 'CheckIn')
+            <tr>
+                <th style="width: 50%">Description</th>
+                <th style="width: 25%">Amount</th>
+            </tr>
         @endif
 
         @if($InvoiceType == 'BoatRental')
@@ -171,21 +176,47 @@
                     <td style="text-align: right;">{{ $a->amount }}</td>
                 </tr>
             @endforeach
+        @elseif($InvoiceType == 'CheckIn')
+            @foreach($bill as $b)
+                <tr>
+                    <td>{{ $b->name }}</td>
+                    <td style="text-align: right;">{{ $b->price }}</td>
+                </tr>
+            @endforeach
         @endif
 
-        @for($i = $TableRows; $i <= 5; $i++)
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        @endfor
+        @if($InvoiceType == 'CheckIn')
+            @for($i = $TableRows; $i <= 5; $i++)
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @endfor
+        @else
+            @for($i = $TableRows; $i <= 5; $i++)
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @endfor
+        @endif
     </table>
 
     <label class="total-amount">{{ $total }}</label>
     <label class="total">TOTAL Due:</label>
+
+    <br style="clear: both;">
+
+    <label class="total-amount">{{ $dblAmountTendered }}</label>
+    <label class="payment">Amount Tendered:</label>
+
+    <hr style="margin-left: 200px; margin-right: 20px; background-color: black;">
+
+    <label class="total-amount">{{ $dblAmountTendered - $total }}</label>
+    <label class="change">Change:</label>
 
     <div class="footer">
         <p class="greetings">Thankyou for your business</p>

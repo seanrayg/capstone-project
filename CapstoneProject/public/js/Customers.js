@@ -703,6 +703,8 @@ function PrintInvoice(sender) {
 
         $('#tblRoomInfo').val(JSON.stringify(tblRoomInfo));
 
+        document.getElementById("addAmountTendered").value = document.getElementById("addPayPayment").value;
+
         document.getElementById("InvoiceForm2").submit();
 
     }

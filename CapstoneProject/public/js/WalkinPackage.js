@@ -83,6 +83,7 @@ function run(event){
     }
 
     PackageInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML];
+    document.getElementById("intDaysOfStay").value = cells[4].innerHTML;
 
     $.ajax({
         type:'get',
@@ -515,6 +516,7 @@ function PrintInvoice() {
 
     document.getElementById("CustomerName").value = document.getElementById("i-CustomerName").innerHTML;
     document.getElementById("CustomerAddress").value = document.getElementById("i-Address").innerHTML;
+    document.getElementById("iAmountTendered").value = document.getElementById("PayPayment").value;
     document.getElementById("InvoiceForm").submit();
 
 }

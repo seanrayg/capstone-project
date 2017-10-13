@@ -211,6 +211,7 @@ function run(event, sender){
     else if(sender == "Active"){
         document.getElementById("CheckInError").innerHTML = "";
         ActiveReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML];
+        document.getElementById("iReservationID").value = cells[0].innerHTML;
     }
 
 }
@@ -450,6 +451,13 @@ function setReservationID() {
         document.getElementById("IsPackaged").value = 1;
 
     }
+
+}
+
+function PrintInvoice() {
+
+    document.getElementById("iTotalAmount").value = document.getElementById("PayTotal").value;
+    document.getElementById("InvoiceForm").submit();
 
 }
 

@@ -572,6 +572,8 @@
                             <input type="hidden" name="NoOfAdults" id="iNoOfAdults" value="0">
                             <input type="hidden" name="CustomerName" id="CustomerName">
                             <input type="hidden" name="CustomerAddress" id="CustomerAddress">
+                            <input type="hidden" name="intDaysOfStay" id="intDaysOfStay">
+                            <input type="hidden" name="iAmountTendered" id="iAmountTendered">
                         </form>
                     </div>
                 </div>

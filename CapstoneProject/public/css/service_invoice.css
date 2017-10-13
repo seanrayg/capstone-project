@@ -68,7 +68,7 @@ tr:nth-child(even) {
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
     font-size: 15px;
     font-weight: bold;
-    padding-left: 240px;
+    padding-left: 205px;
 }
 
 .total-amount {
@@ -79,7 +79,7 @@ tr:nth-child(even) {
 }
 
 .footer {
-    padding-top: 80px;
+    padding-top: 20px;
     width: 100%;
 }
 
@@ -88,4 +88,16 @@ tr:nth-child(even) {
     font-size: 12px;
     text-align: center;
     font-style: italic;
+}
+
+.payment {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 15px;
+    padding-left: 205px;
+}
+
+.change {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 15px;
+    padding-left: 205px;
 }

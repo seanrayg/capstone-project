@@ -8,13 +8,14 @@
 <body>
 	<div class="header">
 		<div class="column-left">
-			<p class="title">INVOICE</p>
+			<img src="..\public\images\logo.png" alt="Mountain View" style="width:150px;height:115px; margin-left: 10px;">
 		</div>
 		<div class="column-right">
 			<p class="resort">
 				Il Sogno Beach Resort<br>
 				Nagkaan Locloc, Bauan, Batangas<br>
-				OLIVIA R. VILLANUEVA - Prop.
+				OLIVIA R. VILLANUEVA - Prop.<br>
+				Contact: 0939 715 5946
 			</p>
 		</div>
 	</div>
@@ -31,7 +32,7 @@
 				</label>
 				<br>
 				<br>
-				<label class="parent">Days of Stay:</label>
+				<label class="parent">Days of Stay: {{ $days }}</label>
 				<label id="CustomerName">
 				</label>
 			</div>
@@ -56,6 +57,14 @@
 				<th style="width: 60%;">Description</th>
 				<th style="width: 20%;">Price/Rate</th>
 				<th style="width: 20%;">Quantity</th>
+				<th style="width: 20%;">Amount</th>
+			</tr>
+		@elseif($InvoiceType == 'CheckOut')
+			<tr>
+				<th style="width: 60%;">Description</th>
+				<th style="width: 20%;">Price/Rate</th>
+				<th style="width: 20%;">Quantity</th>
+				<th style="width: 20%;">Days/Hours</th>
 				<th style="width: 20%;">Amount</th>
 			</tr>
 		@endif
@@ -130,23 +139,57 @@
 					<td style="text-align: right;">{{ $p->amount }}</td>
 				</tr>
 		  	@endforeach
+		@elseif($InvoiceType == 'CheckOut')
+			@foreach($bill as $b)
+				<tr>
+					<td>{{ $b->name }}</td>
+					<td style="text-align: center;">{{ $b->price }}</td>
+					<td style="text-align: center;">{{ $b->quantity }}</td>
+					<td style="text-align: center;">{{ $b->days }}</td>
+					<td style="text-align: right;">{{ $b->amount }}</td>
+				</tr>
+		  	@endforeach
 		@endif
 
-		@for($i = $TableRows; $i <= 10; $i++)
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-		@endfor
+		@if($InvoiceType == 'CheckOut')
+			@for($i = $TableRows; $i <= 11; $i++)
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			@endfor
+		@else
+			@for($i = $TableRows; $i <= 11; $i++)
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			@endfor
+		@endif
 	</tbody>
 	</table>
 
-	<label class="total-amount">{{ $total }}</label>
 	<label class="total">TOTAL Due:</label>
+	<label class="amount">{{ $total }}</label>
 
-	<table style="width: 60%">
+	<br style="clear: both;">
+
+	<label class="payment">Amount Tendered:</label>
+	<label class="amount">{{ $payment }}</label>
+
+	<hr style="margin-left: 470px; margin-right: 20px; background-color: black;">
+
+	<label class="change">Change:</label>
+	<label class="amount">{{ $payment - $total }}</label>
+
+	<br style="clear: both;">
+
+	<table class="comments" style="width: 60%">
 		<tr>
 			<th>Other Comments</th>
 		</tr>

@@ -1047,6 +1047,7 @@ function SetInvoiceInfo() {
     document.getElementById("iCustomerName").value = document.getElementById("i-FullName").innerHTML;
     document.getElementById("iCustomerAddress").value = document.getElementById("i-Address").innerHTML;
     document.getElementById("iTotalAdults").value = document.getElementById("b-TotalAdults").innerHTML;
+    document.getElementById("iAmountTendered").value = document.getElementById("AmountTendered").value;
 
 }
 
