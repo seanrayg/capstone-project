@@ -264,6 +264,19 @@ function run(event, sender){
 
 }
 
+function ManageRooms(){
+    var TableChecker = CheckTable('#PendingReservationTable tr');
+    var TableChecker2 = CheckTable('#ConfirmedReservationTable tr');
+    if(TableChecker){
+        localStorage.setItem("ReservationID", PendingReservationInfo[0]);
+        window.location.href = '/ChooseRooms/'+PendingReservationInfo[0];
+    }
+    else if(TableChecker2){
+        localStorage.setItem("ReservationID", ActiveReservationInfo[0]);
+        window.location.href = '/ChooseRooms/'+ActiveReservationInfo[0];
+    }
+}
+
 function ProcessDownPayment(){
     if((!($(".form-group").hasClass("has-warning"))) && (document.getElementById("DownpaymentAmount").value != "")){
         var DownPayment = parseInt(document.getElementById("DownpaymentAmount").value);

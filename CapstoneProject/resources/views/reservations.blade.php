@@ -402,7 +402,9 @@
                                     <tbody>
 
                                     </tbody>
-                                </table><br><br>
+                                </table>
+                                <button type="button" class="btn btn-success btn-sm pull-right push-right" onclick="ManageRooms()">Manage Rooms</button>
+                                <br><br>
                                 <small><h4>Reserved Boat(s):</h4></small>
                                 <div class="row"></div>
                                 <table class="table" id="tblChosenBoats" style="font-family: 'Roboto'">
