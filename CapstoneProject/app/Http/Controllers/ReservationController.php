@@ -930,6 +930,18 @@ class ReservationController extends Controller
         
     }
     
+    //Edit downpayment
+    public function editDownpayment(Request $req){
+        $ReservationID = trim($req->input('EditDownReservationID'));
+        $NewAmount = trim($req->input('PaidDownpayment'));
+
+        DB::table('tblPayment')
+            ->where([['strPayReservationID', $ReservationID],['strPayTypeID', '=', 2]])
+            ->update(['dblPayAmount' => $NewAmount]);
+
+        \Session::flash('flash_message','Process successfully done!');
+        return redirect('/Reservations');
+    }
     
     //Save Downpayment
     

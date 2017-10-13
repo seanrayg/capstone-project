@@ -3,6 +3,56 @@ var ActiveReservationInfo = [];
 var InitialBill = 0;
 
 
+function ShowModalPaidDepositSlip(){
+    HideModalPaidDownpayment();
+    $.ajax({
+        type:'get',
+        url:'/Reservation/DepositSlip',
+        data:{id:ActiveReservationInfo[0]},
+        success:function(data){
+            if(data[0].strResDDepositSlip != null){
+                document.getElementById("DepositSlip").src=data[0].strResDDepositSlip;
+                HideModalPaidReservation();
+                document.getElementById("DivModalDepositSlip").style.display = "block";
+            }
+            else{
+                HideModalPaidReservation();
+                document.getElementById("DivModalNoDepositSlip").style.display = "block";
+            }
+        },
+        error:function(response){
+            console.log(response);
+            alert(response.status);
+        }
+    });  
+}
+
+function ShowModalPaidDownpayment(){
+    var TableChecker = CheckTable('#ConfirmedReservationTable tr');
+    if(TableChecker){
+         $.ajax({
+            type:'get',
+            url:'/Reservation/Downpayment',
+            data:{ReservationID:ActiveReservationInfo[0]},
+            success:function(data){
+                document.getElementById("PaidDownpayment").value = data[0].dblPayAmount;
+                document.getElementById("DivModalPaidDownpayment").style.display = "block";
+                document.getElementById("EditDownReservationID").value = ActiveReservationInfo[0];
+
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });  
+        
+    }
+}
+
+function HideModalPaidDownpayment(){
+    document.getElementById("DivModalPaidDownpayment").style.display = "none";
+}
+
 function ShowModalPayNow(){
     HideModalPayment();
     document.getElementById("PayTotal").value = ActiveReservationInfo[9];
@@ -111,7 +161,6 @@ function ShowModalDepositSlip(){
             alert(response.status);
         }
     });  
-
 }
 
 function HideModalDepositSlip(){
@@ -216,11 +265,31 @@ function run(event, sender){
 
 }
 
+function ManageRooms(){
+    var TableChecker = CheckTable('#PendingReservationTable tr');
+    var TableChecker2 = CheckTable('#ConfirmedReservationTable tr');
+    if(TableChecker){
+        localStorage.setItem("ReservationID", PendingReservationInfo[0]);
+        window.location.href = '/ChooseRooms/'+PendingReservationInfo[0];
+    }
+    else if(TableChecker2){
+        localStorage.setItem("ReservationID", ActiveReservationInfo[0]);
+        window.location.href = '/ChooseRooms/'+ActiveReservationInfo[0];
+    }
+}
+
 function ProcessDownPayment(){
     if((!($(".form-group").hasClass("has-warning"))) && (document.getElementById("DownpaymentAmount").value != "")){
         var DownPayment = parseInt(document.getElementById("DownpaymentAmount").value);
         var RequiredAmount = Math.ceil(parseFloat(InitialBill) * .20);
-        if(DownPayment >= RequiredAmount){
+        if(DownPayment > InitialBill){
+            $("#DownPaymentError").addClass("has-warning");
+            var x = document.getElementsByClassName("ErrorLabel");
+            for(var i = 0; i < x.length; i++){
+                x[i].innerText="Downpayment exceeds the initial bill";
+            }
+        }
+        else if(DownPayment >= RequiredAmount){
             /*--- Check here if there is an existing deposit slip ----*/
             //HideModalPaidReservation();
             //ShowModalNoDepositSlip();
@@ -454,10 +523,17 @@ function setReservationID() {
 
 }
 
+<<<<<<< HEAD
 function PrintInvoice() {
 
     document.getElementById("iTotalAmount").value = document.getElementById("PayTotal").value;
     document.getElementById("InvoiceForm").submit();
 
+=======
+function EditDownpayment(){
+    document.getElementById("PaidDownpayment").disabled = false;
+    document.getElementById("btnEditDownPayment").style.display = "none";
+    document.getElementById("btnSaveDownPayment").style.display = "block";
+>>>>>>> b88b15fdf54bb98ce3889ed061615f6a3fdff745
 }
 

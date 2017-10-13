@@ -252,6 +252,12 @@ Route::post('/Reservation/Add', 'ReservationController@addReservation');
 //Book Reservation with package
 Route::post('/Reservation/Add/Package', 'ReservationController@addReservationPackage');
 
+//Get Downpayment
+Route::get('/Reservation/Downpayment', 'ViewController@getDownpayment');
+
+//Edit Downpayment
+Route::post('/Reservation/Downpayment/Edit', 'ReservationController@editDownpayment');
+
 //Cancel Reservation
 
 Route::post('/Reservation/Cancel', 'ReservationController@cancelReservation');

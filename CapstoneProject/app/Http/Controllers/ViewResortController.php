@@ -1177,8 +1177,22 @@ class ViewResortController extends Controller
         $ScheduledBoats =  DB::Select("
             SELECT strBoatSBoatID
             FROM tblBoatSchedule
-            WHERE intBoatSStatus = 1;
+            WHERE intBoatSStatus = 1
+            AND DATE(dtmBoatSPickUp) = '$dtmDate'
+            AND ('$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSPickUp, INTERVAL 1 HOUR)) AND TIME(dtmBoatSPickUp) OR '$dtmTime' BETWEEN TIME(dtmBoatSPickUp) AND TIME(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)))
+            UNION
+            SELECT strBoatSBoatID
+            FROM tblBoatSchedule
+            WHERE intBoatSStatus = 1
+            AND DATE(dtmBoatSDropoff) = '$dtmDate'
+            AND ('$dtmTime' BETWEEN TIME(DATE_SUB(dtmBoatSDropoff, INTERVAL 1 HOUR)) AND TIME(dtmBoatSDropoff) OR '$dtmTime' BETWEEN TIME(dtmBoatSDropoff) AND TIME(DATE_ADD(dtmBoatSDropoff, INTERVAL 1 HOUR)))
         ");
+
+        // $ScheduledBoats =  DB::Select("
+        //     SELECT strBoatSBoatID
+        //     FROM tblBoatSchedule
+        //     WHERE intBoatSStatus = 1
+        // ");
 
         $UnavailableBoats = [];
         foreach($ScheduledBoats as $Boat){
@@ -1379,6 +1393,7 @@ class ViewResortController extends Controller
             $PackageDownPayment = 0;
             $ExtendStayAmount = 0;
             $TotalDeduction = 0;
+            $Downpayment = 0;
             
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
@@ -1581,12 +1596,20 @@ class ViewResortController extends Controller
                 $TotalDeduction += $Bill->dblPayAmount;
             }
 
+            $Downpayment = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 2]])
+                            ->pluck('dblPayAmount')
+                            ->first();
+                            
             //dd($TotalPenalties , $TotalFee , $TotalActivity , $TotalItem , $TotalRoom , $AdditionalRoomAmount , $UpgradeRoomAmount , $PackagePayment ,$ExtendStayAmount ,$TotalBoat);
 
             $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount + $TotalBoat;
 
             $Info->TotalBill = $Info->TotalBill - $TotalDeduction;
-    
+
+            if($Downpayment != null){
+                $Info->TotalBill = $Info->TotalBill - $Downpayment;
+            }
         }
 
         return view('Billing', compact('ReservationInfo'));
@@ -1780,6 +1803,7 @@ class ViewResortController extends Controller
             $PackageDownPayment = 0;
             $ExtendStayAmount = 0;
             $TotalDeduction = 0;
+            $TotalBillDeduction = 0;
             
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
@@ -1971,14 +1995,25 @@ class ViewResortController extends Controller
                     $TotalDeduction += $Item->dblPayAmount;
                 }
             }
+
             
             //Total Penalties
-            $TotalPenalties = $TotalExtend + $BrokenPenalties + $TimePenalties;
             $TotalPenalties = $TotalPenalties - $TotalDeduction;
+
+
+            $BillDeductions = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 29]])
+                            ->get();
+
+            foreach($BillDeductions as $Bill){
+                $TotalBillDeduction += $Bill->dblPayAmount;
+            }
             
             //Compute Boat Rental
             
             $Info->TotalBill = $TotalPenalties + $TotalFee + $TotalActivity + $TotalItem + $TotalRoom + $AdditionalRoomAmount + $UpgradeRoomAmount + $PackagePayment + $ExtendStayAmount + $TotalBoat;
+
+            $Info->TotalBill = $Info->TotalBill - $TotalBillDeduction;
             
         }
         
@@ -2168,8 +2203,15 @@ class ViewResortController extends Controller
                 $Info->intPackagePax = $PackagePayment;
             }
         }
-        
-        return view('Checkout', compact('ReservationInfo', 'RoomInfo', 'ItemInfo', 'ActivityInfo', 'FeeInfo', 'MiscellaneousInfo', 'AdditionalRooms', 'UpgradeRooms', 'ExtendStay', 'PackageInfo', 'DaysOfStay', 'Payment', 'DownPayment', 'InitialBill' ,'InitialPayment', 'TotalPenalties', 'TotalFee', 'TotalActivity', 'TotalItem', 'TotalRoom', 'AdditionalRoomAmount', 'UpgradeRoomAmount', 'PackagePayment', 'ExtendStayAmount', 'BoatInfo', 'TotalBoat'));
+        $TotalDeductionInfo = 0;
+        $BillDeductionsInfo = DB::table('tblPayment')
+                            ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID', '=', 29]])
+                            ->get();
+
+        foreach($BillDeductionsInfo as $Bill){
+            $TotalDeductionInfo += $Bill->dblPayAmount;
+        } 
+        return view('Checkout', compact('ReservationInfo', 'RoomInfo', 'ItemInfo', 'ActivityInfo', 'FeeInfo', 'MiscellaneousInfo', 'AdditionalRooms', 'UpgradeRooms', 'ExtendStay', 'PackageInfo', 'DaysOfStay', 'Payment', 'DownPayment', 'InitialBill' ,'InitialPayment', 'TotalPenalties', 'TotalFee', 'TotalActivity', 'TotalItem', 'TotalRoom', 'AdditionalRoomAmount', 'UpgradeRoomAmount', 'PackagePayment', 'ExtendStayAmount', 'BoatInfo', 'TotalBoat', 'BillDeductionsInfo', 'TotalDeductionInfo'));
     }
     
 }
