@@ -265,7 +265,7 @@ function CheckInfo(){
                 }
                 if(!dataError){
                     $("#InfoError").hide();
-                    document.getElementById("InfoMessage").innerHTML = "";
+                    document.getElementById("InfoErrorMessage").innerHTML = "";
                     $("#ReservationInfo").removeClass("active");
                     $("#ReservationBill").addClass("active");
                     $("#InfoList").removeClass("active");
