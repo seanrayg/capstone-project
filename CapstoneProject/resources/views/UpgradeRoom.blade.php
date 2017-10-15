@@ -145,7 +145,7 @@
                     <div class="card-content">
                         <div class="row">
                             <p class="category"></p>
-                            <h3 class="title">Extend Rent<span class="close" onclick="HideModalPayNow()">X</span></h3>
+                            <h3 class="title">Upgrade Room<span class="close" onclick="HideModalPayNow()">X</span></h3>
                         </div>
                         <form method="POST" action="/Upgrade/Pay" onsubmit="return CheckForm()">
                             {{ csrf_field() }}
