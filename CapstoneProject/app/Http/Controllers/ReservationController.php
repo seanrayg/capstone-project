@@ -462,6 +462,34 @@ class ReservationController extends Controller
     
     //Edit Reservation
     
+
+    //Edit Reservation Boat
+    public function updateReservationBoat(Request $req){
+
+        $ReservationID = trim($req->input('BoatReservationID'));
+        $CheckInDate = trim($req->input('BoatCheckInDate'));
+        $CheckOutDate = trim($req->input('BoatCheckOutDate'));
+        $PickUpTime = trim($req->input('BoatPickUpTime'));
+        $PickUpTime2 = $PickUpTime;
+        $BoatID = trim($req->input('EditBoatID'));
+
+        $BoatsUsed = DB::table('tblBoat')
+                    ->where('strBoatID', '=', $BoatID)
+                    ->pluck('strBoatName')
+                    ->first();
+
+        $BoatsUsed .= ",";
+
+        DB::table('tblreservationboat')->where('strResBReservationID', '=', $ReservationID)->delete();
+        DB::table('tblboatschedule')->where('strBoatSReservationID', '=', $ReservationID)->delete();
+
+        $CheckInDate = Carbon::parse($CheckInDate)->format('Y-m-d');
+        $CheckOutDate = Carbon::parse($CheckOutDate)->format('Y-m-d');
+        $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);
+
+        \Session::flash('flash_message','Reservation successfully updated!');
+         return redirect('/Reservations');
+    }
     
     //Edit Reservation Info
     

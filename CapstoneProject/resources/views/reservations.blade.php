@@ -636,8 +636,8 @@
                                     <h3 class="title">Available Boats<span class="close" onclick="HideModalManageBoats()">X</span></h3>
                                 </div>
                                 <br>
-                                <table class="table table-hover" onclick="run(event, 'AvailableBoats')" style="font-family: Roboto" id="tblAvailableBoats">
-                                <thead class="text-warning">
+                                <table class="table" onclick="run(event, 'AvailableBoats')" style="font-family: Roboto" id="tblAvailableBoats">
+                                <thead class="text-info">
                                     <th class="text-center">Boat ID</th>
                                     <th class="text-center">Name</th>   
                                     <th class="text-center">Capacity</th>
@@ -647,7 +647,16 @@
                                 <tbody class="text-center">
 
                                 </tbody>
-                            </table>
+                            </table><br><br>
+                            <form method="POST" action="Reservation/Boat/Edit" id="ChangeBoatForm">
+                                {{ csrf_field() }}
+                                <input type="hidden" id="EditBoatID" name="EditBoatID">
+                                <input type="hidden" id="BoatReservationID" name="BoatReservationID">
+                                <input type="hidden" id="BoatCheckInDate" name="BoatCheckInDate">
+                                <input type="hidden" id="BoatCheckOutDate" name="BoatCheckOutDate">
+                                <input type="hidden" id="BoatPickUpTime" name="BoatPickUpTime">
+                            </form>
+                            <button type="button" class="btn btn-success pull-right push-right" onclick="SaveBoat()">Choose Boat</button>
                         </div>
                     </div>
                 </div>
