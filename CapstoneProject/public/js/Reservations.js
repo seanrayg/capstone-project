@@ -523,17 +523,14 @@ function setReservationID() {
 
 }
 
-<<<<<<< HEAD
 function PrintInvoice() {
-
     document.getElementById("iTotalAmount").value = document.getElementById("PayTotal").value;
+    document.getElementById("checkinAmountTendered").value = document.getElementById("PayPayment").value;
     document.getElementById("InvoiceForm").submit();
-
-=======
+}
 function EditDownpayment(){
     document.getElementById("PaidDownpayment").disabled = false;
     document.getElementById("btnEditDownPayment").style.display = "none";
     document.getElementById("btnSaveDownPayment").style.display = "block";
->>>>>>> b88b15fdf54bb98ce3889ed061615f6a3fdff745
 }
 

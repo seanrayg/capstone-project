@@ -82,6 +82,7 @@ function PrintInvoice() {
 
     }
 
+    document.getElementById("checkoutAmountTendered").value = document.getElementById("PayPayment").value;
     document.getElementById("InvoiceForm").submit();
 
 }

@@ -465,7 +465,7 @@ class InvoiceController extends Controller
             $CustomerName = $CustomerInfo[1];
 
             $days = DB::table('tblReservationDetail')
-                ->select(DB::raw("TIMESTAMPDIFF(DAY,dtmResDArrival,dtmResDDeparture) as days"))
+                ->select(DB::raw("TIMESTAMPDIFF(DAY,NOW(),dtmResDDeparture) as days"))
                 ->where('strReservationID', '=', $ReservationID)
                 ->first();
 
@@ -475,7 +475,7 @@ class InvoiceController extends Controller
 
             for ($i = 1; $i < count($tblRoomInfo); $i++) {
 
-                array_push($rooms, (object) ['name' => $tblRoomInfo[$i][0], 'price' => $tblRoomInfo[$i][2], 'quantity' => $tblRoomInfo[$i][3], 'days' => $days->days, 'amount' => $tblRoomInfo[$i][2] * $tblRoomInfo[$i][3] * $days->days]);
+                array_push($rooms, (object) ['name' => $tblRoomInfo[$i][0], 'price' => $tblRoomInfo[$i][2], 'quantity' => $tblRoomInfo[$i][3], 'days' => $days->days + 1, 'amount' => $tblRoomInfo[$i][2] * $tblRoomInfo[$i][3] * ($days->days + 1)]);
                 $TableRows++;
 
             }
@@ -552,7 +552,7 @@ class InvoiceController extends Controller
             $CustomerName = $CustomerInfo[1];
 
             $days = DB::table('tblReservationDetail')
-                ->select(DB::raw("TIMESTAMPDIFF(DAY,dtmResDArrival,dtmResDDeparture) as days"))
+                ->select(DB::raw("TIMESTAMPDIFF(DAY,NOW(),dtmResDDeparture) as days"))
                 ->where('strReservationID', '=', $ReservationID)
                 ->first();
             $intDaysOfStay = $days->days;
@@ -565,7 +565,7 @@ class InvoiceController extends Controller
 
                 for ($i = 1; $i < count($tblRoomInfo); $i++) {
 
-                    array_push($bills, (object) ['name' => $tblRoomInfo[$i][1], 'price' => $tblRoomInfo[$i][2], 'quantity' => 1, 'days' => $intDaysOfStay, 'amount' => $tblRoomInfo[$i][2] * $intDaysOfStay]);
+                    array_push($bills, (object) ['name' => $tblRoomInfo[$i][1], 'price' => $tblRoomInfo[$i][2], 'quantity' => 1, 'days' => $intDaysOfStay + 1, 'amount' => $tblRoomInfo[$i][2] * ($intDaysOfStay + 1)]);
                     $TableRows++;
 
                 }
@@ -628,6 +628,14 @@ class InvoiceController extends Controller
 
                 $tblAdditionalRooms = json_decode($tblAdditionalRooms);
 
+                $intDaysOfStay += 1;
+
+                if($tblExtendStay != '') {
+
+                    $intDaysOfStay--;
+
+                }
+
                 for ($i = 1; $i < count($tblAdditionalRooms); $i++) {
 
                     array_push($bills, (object) ['name' => "Additional Room: " . $tblAdditionalRooms[$i][1], 'price' => $tblAdditionalRooms[$i][2], 'quantity' => 1, 'days' => $intDaysOfStay, 'amount' => $tblAdditionalRooms[$i][2] * 1 * $intDaysOfStay]);
@@ -656,7 +664,7 @@ class InvoiceController extends Controller
 
                 for ($i = 1; $i < count($tblExtendStay); $i++) {
 
-                    array_push($bills, (object) ['name' => "Extend Stay", 'price' => $tblExtendStay[$i][1], 'quantity' => '-', 'days' => $tblExtendStay[$i][0], 'amount' => $tblExtendStay[$i][1] * $tblExtendStay[$i][0]]);
+                    array_push($bills, (object) ['name' => "Extend Stay", 'price' => $tblExtendStay[$i][1], 'quantity' => '-', 'days' => $tblExtendStay[$i][0], 'amount' => $tblExtendStay[$i][1]]);
                     $TableRows++;
 
                 }

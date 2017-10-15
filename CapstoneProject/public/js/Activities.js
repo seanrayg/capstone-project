@@ -306,6 +306,7 @@ function SubmitActivityForm(){
 
 function PrintInvoice() {
 
+    document.getElementById("actAmountTendered").value = document.getElementById("ActivityPayment").value;
     document.getElementById("InvoiceForm").submit();
 
 }

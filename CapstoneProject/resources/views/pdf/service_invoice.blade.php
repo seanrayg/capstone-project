@@ -210,12 +210,12 @@
 
     <br style="clear: both;">
 
-    <label class="total-amount">{{ $dblAmountTendered }}</label>
+    <label class="total-amount">{{ $payment }}</label>
     <label class="payment">Amount Tendered:</label>
 
     <hr style="margin-left: 200px; margin-right: 20px; background-color: black;">
 
-    <label class="total-amount">{{ $dblAmountTendered - $total }}</label>
+    <label class="total-amount">{{ $payment - $total }}</label>
     <label class="change">Change:</label>
 
     <div class="footer">

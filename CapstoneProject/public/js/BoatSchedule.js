@@ -93,6 +93,7 @@ function PrintInvoice() {
     document.getElementById("Hours").value = document.getElementById("PickUpTime").value;
     document.getElementById("Rate").value = document.getElementById("BoatRate").value;
     document.getElementById("iCustomerID").value = document.getElementById("CustomerID").value;
+    document.getElementById("boatAmountTendered").value = document.getElementById("ActivityPayment").value;
     document.getElementById("InvoiceForm").submit();
 
 }

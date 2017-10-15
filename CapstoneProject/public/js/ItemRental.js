@@ -536,12 +536,14 @@ function PrintInvoice(sender) {
         document.getElementById("iItemQuantity").value = document.getElementById("RentQuantity").value;
         document.getElementById("iItemRate").value = document.getElementById("RentItemRate").value;
         document.getElementById("iItemHours").value = document.getElementById("RentDuration").value;
+        document.getElementById("rentAmountTendered").value = document.getElementById("RentPayPayment").value;
         document.getElementById("InvoiceForm").submit();
 
     }else if(sender == 'extend') {
 
         document.getElementById("iItemExtendQuantity").value = document.getElementById("ExtendQuantity").value;
         document.getElementById("iItemExtendHours").value = document.getElementById("ExtendTime").value;
+        document.getElementById("extendAmountTendered").value = document.getElementById("ExtendPayPayment").value;
         document.getElementById("InvoiceForm2").submit();
 
     }else if(sender == 'excess') {
@@ -554,7 +556,9 @@ function PrintInvoice(sender) {
             document.getElementById("iItemBrokenPenalty").value = document.getElementById("ReturnBrokenPenalty").value;
             document.getElementById("iItemBrokenQuantity").value = document.getElementById("ReturnBrokenQuantity").value;
 
-        } 
+        }
+
+        document.getElementById("excessAmountTendered").value = document.getElementById("ReturnPayPayment").value;
 
         document.getElementById("InvoiceForm3").submit();
 

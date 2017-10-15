@@ -1,0 +1,105 @@
+.header {
+    background-color: #9494b8;
+    width: 100%;
+    height: 110px;
+}
+
+p.title {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 50px;
+    color: white;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 40px;
+}
+
+p.resort {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: white;
+    font-size: 12px;
+    padding-top: 15px;
+}
+
+.column-left {
+    float: left; width: 50%;
+}
+.column-right {
+    float: right; width: 30%;
+}
+
+.column-right-date {
+    float: right; width: 15%;
+}
+
+label.parent {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: gray;
+    font-size: 13px;
+}
+
+label {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border: 1px solid #CCC;
+    border-collapse: collapse;
+    width: 100%;
+    padding: 20px;
+}
+
+td, th {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    text-align: center;
+    background-color: #9494b8;
+    color: #ffffff;
+    font-size: 14px;
+    border: none;
+}
+
+td {
+    font-size: 12px;
+    height: 15px;
+    border: none;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.amount {
+    font-family: arial, sans-serif;
+    font-size: 18px;
+    float: right;
+    margin-right: 25px;
+}
+
+.total {
+    font-family: arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    padding-left: 475px;
+}
+
+.payment {
+    font-family: arial, sans-serif;
+    font-size: 15px;
+    padding-left: 475px;
+}
+
+.change {
+    font-family: arial, sans-serif;
+    font-size: 15px;
+    padding-left: 475px;
+}
+
+.comments {
+    position: fixed;
+    margin-top: 700px;
+}
