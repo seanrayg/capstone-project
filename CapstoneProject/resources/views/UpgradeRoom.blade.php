@@ -199,6 +199,7 @@
                             <input type="hidden" name="iOrigRoomType" id="iOrigRoomType">
                             <input type="hidden" name="iRoomType" id="iRoomType">
                             <input type="hidden" name="Amount" id="Amount">
+                            <input type="hidden" name="iAmountTendered" id="upgradeAmountTendered">
                         </form>
                     </div>
                 </div>

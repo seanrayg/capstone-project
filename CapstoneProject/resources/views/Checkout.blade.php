@@ -356,6 +356,7 @@
                         <input type="hidden" name="tblExtendStay" id="itblExtendStay">
                         <input type="hidden" name="tblBoatInfo" id="itblBoatInfo">
                         <input type="hidden" name="iReservationID" id="iReservationID">
+                        <input type="hidden" name="iAmountTendered" id="checkoutAmountTendered">
                     </form>
                 </div>
             </div>

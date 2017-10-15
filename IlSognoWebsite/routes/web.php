@@ -70,3 +70,5 @@ Route::get('/Reservation/{id}', 'ViewController@getReservation');
 Route::get('/ReservationPackage', function () {
     return view('ReservationPackage');
 });
+
+Route::post('/Reservation/Invoice', 'InvoiceController@GenerateInvoice');

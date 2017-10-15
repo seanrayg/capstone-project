@@ -915,6 +915,7 @@
                             <input type="hidden" name="iItemHours" id="iItemHours">
                             <input type="hidden" name="iItemQuantityExtend" id="iItemQuantityExtend">
                             <input type="hidden" name="iItemHoursExtend" id="iItemQuantityExtend">
+                            <input type="hidden" name="iAmountTendered" id="rentAmountTendered">
                         </form>
                     </div>
                 </div>
@@ -995,6 +996,7 @@
                             <input type="hidden" name="iItemPenalty" id="iItemPenalty">
                             <input type="hidden" name="iItemBrokenPenalty" id="iItemBrokenPenalty">
                             <input type="hidden" name="iItemBrokenQuantity" id="iItemBrokenQuantity">
+                            <input type="hidden" name="iAmountTendered" id="excessAmountTendered">
                         </form>
                     </div>
                 </div>
@@ -1076,6 +1078,7 @@
                             <input type="hidden" name="iItemExtendQuantity" id="iItemExtendQuantity">
                             <input type="hidden" name="iItemExtendRate" id="iItemExtendRate">
                             <input type="hidden" name="iItemExtendHours" id="iItemExtendHours">
+                            <input type="hidden" name="iAmountTendered" id="extendAmountTendered">
                         </form>
                     </div>
                 </div>

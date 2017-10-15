@@ -618,17 +618,15 @@ function setReservationID() {
 
 }
 
-
 function PrintInvoice() {
-
     document.getElementById("iTotalAmount").value = document.getElementById("PayTotal").value;
+    document.getElementById("checkinAmountTendered").value = document.getElementById("PayPayment").value;
     document.getElementById("InvoiceForm").submit();
-
 }
+
 function EditDownpayment(){
     document.getElementById("PaidDownpayment").disabled = false;
     document.getElementById("btnEditDownPayment").style.display = "none";
     document.getElementById("btnSaveDownPayment").style.display = "block";
-
 }
 

@@ -501,6 +501,7 @@
                                 <input type="hidden" name="ReservationID" id="ReservationID">
                                 <input type="hidden" name="ActivityName" id="ActivityName">
                                 <input type="hidden" name="ActivityRate" id="ActivityRate">
+                                <input type="hidden" name="iAmountTendered" id="actAmountTendered">
                             </form>
                         </div>
 

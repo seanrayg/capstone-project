@@ -150,6 +150,7 @@ function PrintInvoice() {
     document.getElementById("iOrigRoomType").value = RoomType;
     document.getElementById("iRoomType").value = UpgradeRoomType;
     document.getElementById("Amount").value = document.getElementById("PayTotal").value;
+    document.getElementById("upgradeAmountTendered").value = document.getElementById("PayPayment").value;
     document.getElementById("InvoiceForm").submit();
 
 }

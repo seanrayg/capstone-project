@@ -695,6 +695,7 @@ function PrintInvoice(sender) {
 
         document.getElementById("iReservationID").value = ReservationID;
         document.getElementById("DaysOfExtend").value = document.getElementById("ExtendNight").value;
+        document.getElementById("extendstayAmountTendered").value = document.getElementById("ExtendPayPayment").value;
         document.getElementById("InvoiceForm").submit();
 
     }else if(sender == 'addroom') {
@@ -703,7 +704,7 @@ function PrintInvoice(sender) {
 
         $('#tblRoomInfo').val(JSON.stringify(tblRoomInfo));
 
-        document.getElementById("addAmountTendered").value = document.getElementById("addPayPayment").value;
+        document.getElementById("addAmountTendered").value = document.getElementById("AddPayPayment").value;
 
         document.getElementById("InvoiceForm2").submit();
 

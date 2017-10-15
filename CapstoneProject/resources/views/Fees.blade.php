@@ -364,6 +364,7 @@
                                 <input type="hidden" name="Quantity" id="Quantity">
                                 <input type="hidden" name="Amount" id="Amount">
                                 <input type="hidden" name="iReservationID" id="iReservationID">
+                                <input type="hidden" name="iAmountTendered" id="feeAmountTendered">
                             </form>
                         </div>
 

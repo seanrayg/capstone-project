@@ -360,11 +360,12 @@
                                                         <p class="description-margin"><i class="fa fa-check-circle text-primary"></i>Accredited Bank(s):</p>
                                                     </div>
                                                 </div>
+                                                <form method="post" action="/Reservation/Add/Package">
                                                 <div class="row">
                                                     <div class="col-md-2 text-center">
                                                         <button class="btn btn-primary" onclick="GoBack('#ReservationBill', '#ReservationInfo', '#BillList', 'InfoList')">Make Changes</button>
                                                     </div>
-                                                    <form method="post" action="/Reservation/Add/Package">
+                                                  
                                                         {{ csrf_field() }}
                                                         <input type="hidden" name="s-CheckInDate" id="s-CheckInDate" value = "">
                                                         <input type="hidden" name="s-CheckOutDate" id="s-CheckOutDate" value = "">
@@ -387,10 +388,19 @@
                                                         <div class="col-md-8 text-center pull-right">
                                                             <button type="submit" class="btn btn-primary btn-lg">BOOK RESERVATION</button>
                                                         </div>
-                                                    </form>
+                                                 
+                                                    <div class="col-md-2 text-center">
+                                                        <button class="btn btn-primary" onclick="return PrintInvoice()">Print Invoice</button>
+                                                    </div>
                                                     
                                                     
                                                 </div>
+                                               </form>
+                                               <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+                                                    {{ csrf_field() }}
+                                                    <input type="hidden" name="DaysOfStay" id="DaysOfStay">
+                                                    <input type="hidden" name="InvoiceType" value="BookPackage">
+                                                </form>
                                             </div>
                                         </div>
                                     </div>

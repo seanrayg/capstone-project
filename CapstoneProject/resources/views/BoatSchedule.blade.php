@@ -470,6 +470,7 @@
                                     <input type="hidden" name="Hours" id="Hours">
                                     <input type="hidden" name="Rate" id="Rate">
                                     <input type="hidden" name="CustomerID" id="iCustomerID">
+                                    <input type="hidden" name="iAmountTendered" id="boatAmountTendered">
                                 </form>
                             </div>
 

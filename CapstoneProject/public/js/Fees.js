@@ -190,6 +190,7 @@ function PrintInvoice() {
     document.getElementById("Amount").value = document.getElementById("TotalFeePrice").value;
     document.getElementById("iReservationID").value = FeeInfo[1];
     document.getElementById("FeeID").value = FeeID;
+    document.getElementById("feeAmountTendered").value = document.getElementById("FeePayment").value;
     document.getElementById("InvoiceForm").submit();
 
 }

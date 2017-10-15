@@ -803,3 +803,61 @@ function SaveReservation(){
     document.getElementById("s-InitialBill").value = parseInt(document.getElementById("MiscellaneousFee").innerHTML) + parseInt(document.getElementById("AccomodationFee").innerHTML);
     return true;
 }
+
+function PrintInvoice() {
+
+    var tblRoomInfo = GetTableInfo("tblBill");
+
+    document.getElementById("DaysOfStay").value = document.getElementById("b-DaysOfStay").innerHTML;
+    $('#tblRoomInfo').val(JSON.stringify(tblRoomInfo));
+    document.getElementById("iCustomerName").value = document.getElementById("i-GuestName").innerHTML;
+    document.getElementById("iCustomerAddress").value = document.getElementById("i-Address").innerHTML;
+    document.getElementById("iTotalAdults").value = document.getElementById("i-NoOfAdults").innerHTML;
+
+    if(document.getElementById("TransportationFee").innerHTML != '0') {
+
+        document.getElementById("iBoats").value = document.getElementById("BoatsUsed").innerHTML;
+        document.getElementById("iBoatsAmount").value = document.getElementById("TransportationFee").innerHTML;
+
+    }
+
+    document.getElementById("InvoiceForm").submit();
+
+    return false;
+
+}
+
+function GetTableInfo(TableName) {
+
+    var tblInfo = [];
+
+    //gets table
+    var oTable = document.getElementById(TableName);
+
+    //gets rows of table
+    var rowLength = oTable.rows.length;
+
+    //loops through rows    
+    for (i = 0; i < rowLength; i++){
+
+        tblInfo[i] = [];
+
+       //gets cells of current row
+       var oCells = oTable.rows.item(i).cells;
+
+       //gets amount of cells of current row
+       var cellLength = oCells.length;
+
+       //loops through each cell in current row
+       for(var j = 0; j < cellLength; j++){
+          /* get your cell info here */
+          /* var cellVal = oCells.item(j).innerHTML; */
+
+          tblInfo[i][j] = oCells.item(j).innerHTML;
+
+       }
+    }
+
+    return tblInfo;
+
+}

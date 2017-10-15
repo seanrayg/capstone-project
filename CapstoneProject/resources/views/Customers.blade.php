@@ -904,6 +904,7 @@
                             <input type="hidden" name="InvoiceType" value="ExtendStay">
                             <input type="hidden" name="DaysOfExtend" id="DaysOfExtend">
                             <input type="hidden" name="iReservationID" id="iReservationID">
+                            <input type="hidden" name="iAmountTendered" id="extendstayAmountTendered">
                         </form>
                     </div>
                 </div>

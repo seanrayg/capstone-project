@@ -579,6 +579,7 @@
                             <input type="hidden" name="InvoiceType" value="CheckIn">
                             <input type="hidden" name="iReservationID" id="iReservationID">
                             <input type="hidden" name="iTotalAmount" id="iTotalAmount">
+                            <input type="hidden" name="iAmountTendered" id="checkinAmountTendered">
                         </form>
                     </div>
                 </div>

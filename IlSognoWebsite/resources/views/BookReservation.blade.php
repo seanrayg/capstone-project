@@ -448,10 +448,24 @@
                                                             <div class="col-md-8 text-center">
                                                                 <button type="submit" class="btn btn-primary btn-lg">BOOK RESERVATION</button>
                                                             </div>
+                                                            <div class="col-md-2 text-center">
+                                                                <button class="btn btn-primary" onclick="return PrintInvoice()">Print Invoice</button>
+                                                            </div>
 
 
 
                                                     </div>
+                                                </form>
+                                                <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
+                                                    {{ csrf_field() }}
+                                                    <input type="hidden" name="DaysOfStay" id="DaysOfStay">
+                                                    <input type="hidden" name="InvoiceType" value="BookReservation">
+                                                    <input type="hidden" name="tblRoomInfo" id="tblRoomInfo">
+                                                    <input type="hidden" name="iCustomerName" id="iCustomerName">
+                                                    <input type="hidden" name="iCustomerAddress" id="iCustomerAddress">
+                                                    <input type="hidden" name="iTotalAdults" id="iTotalAdults">
+                                                    <input type="hidden" name="iBoats" id="iBoats" value="0">
+                                                    <input type="hidden" name="iBoatsAmount" id="iBoatsAmount">
                                                 </form>
                                             </div>
                                         </div>
