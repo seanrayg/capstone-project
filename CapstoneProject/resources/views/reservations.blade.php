@@ -414,7 +414,8 @@
                                     <tbody>
 
                                     </tbody>
-                                </table><br><br>
+                                </table>
+                                <button type="button" class="btn btn-success btn-sm pull-right push-right" onclick="ManageBoats()">Manage Boats</button><br><br>
                                 <small><h4>Bill Information</h4></small>
                                 <p class="paragraphText text-primary">Initial Bill:</p> <p class="paragraphText" id="i-InitialBill"></p><br>
                                 <p class="paragraphText text-primary">Required Downpayment:</p> <p class="paragraphText" id="i-RequiredDownpayment"></p><br>
@@ -618,6 +619,38 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalManageBoats" class="modal">
+    <div class="Modal-content">
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="card card-stats">
+                            <div class="card-header" data-background-color="blue">
+                                <i class="material-icons">directions_boat</i>
+                            </div>
+                            <div class="card-content">
+                                <div class="row">
+                                    <h3 class="title">Available Boats<span class="close" onclick="HideModalManageBoats()">X</span></h3>
+                                </div>
+                                <br>
+                                <table class="table table-hover" onclick="run(event, 'AvailableBoats')" style="font-family: Roboto" id="tblAvailableBoats">
+                                <thead class="text-warning">
+                                    <th class="text-center">Boat ID</th>
+                                    <th class="text-center">Name</th>   
+                                    <th class="text-center">Capacity</th>
+                                    <th class="text-center">Rate</th>
+                                    <th class="text-center">Description</th>
+                                </thead>
+                                <tbody class="text-center">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 </div>

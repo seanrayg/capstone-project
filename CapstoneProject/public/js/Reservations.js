@@ -1,7 +1,16 @@
 var PendingReservationInfo = [];
 var ActiveReservationInfo = [];
+var AvailableBoatInfo = [];
 var InitialBill = 0;
 
+
+function ShowModalManageBoats(){
+    document.getElementById("DivModalManageBoats").style.display = "block";
+}
+
+function HideModalManageBoats(){
+    document.getElementById("DivModalManageBoats").style.display = "none";
+}
 
 function ShowModalPaidDepositSlip(){
     HideModalPaidDownpayment();
@@ -262,7 +271,9 @@ function run(event, sender){
         ActiveReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML];
         document.getElementById("iReservationID").value = cells[0].innerHTML;
     }
+    else if(sender == "AvailableBoats"){
 
+    }
 }
 
 function ManageRooms(){
@@ -275,6 +286,12 @@ function ManageRooms(){
     else if(TableChecker2){
         localStorage.setItem("ReservationID", ActiveReservationInfo[0]);
         window.location.href = '/ChooseRooms/'+ActiveReservationInfo[0];
+    }
+}
+
+function ManageBoats(){
+    if(parseInt(document.getElementById("tblChosenBoats").rows.length) != 1){
+        ShowModalManageBoats();
     }
 }
 
@@ -387,13 +404,6 @@ function getReservationInfo(){
                 }
             }
 
-            else{
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-                var newCell1  = newRow.insertCell(0);
-
-                newCell1.innerHTML = "None";
-            }
         },
         error:function(response){
             console.log(response);
@@ -523,17 +533,17 @@ function setReservationID() {
 
 }
 
-<<<<<<< HEAD
+
 function PrintInvoice() {
 
     document.getElementById("iTotalAmount").value = document.getElementById("PayTotal").value;
     document.getElementById("InvoiceForm").submit();
 
-=======
+}
 function EditDownpayment(){
     document.getElementById("PaidDownpayment").disabled = false;
     document.getElementById("btnEditDownPayment").style.display = "none";
     document.getElementById("btnSaveDownPayment").style.display = "block";
->>>>>>> b88b15fdf54bb98ce3889ed061615f6a3fdff745
+
 }
 

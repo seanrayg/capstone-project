@@ -718,9 +718,8 @@ function CheckRooms(){
           }          
         }
         
-        if(includeBoats){
-            document.getElementById("r-BoatsUsed").value = document.getElementById("info-BoatsUsed").value;
-            document.getElementById("r-PickUpTime").value = document.getElementById("info-PickUpTime").value;
+        if(BoatsUsed != null){
+            document.getElementById("r-BoatsUsed").value = BoatsUsed;
         }
         
         if(includeDate){
