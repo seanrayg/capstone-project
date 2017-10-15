@@ -877,7 +877,7 @@ class ViewController extends Controller
                      'a.strBoatStatus',
                      'a.strBoatDescription')
             ->whereNotIn('a.strBoatID', [DB::raw("(SELECT strBoatSBoatID FROM tblBoatSchedule WHERE intBoatSStatus = 1 AND (date(dtmBoatSPickUp) = '".$ArrivalDate."') AND '".$PickUpTime."' BETWEEN time(dtmBoatSPickUp) AND time(DATE_ADD(dtmBoatSPickUp, INTERVAL 1 HOUR)))")])
-            ->where([['a.strBoatStatus', "=", 'Available'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")]])
+            ->where([['a.strBoatStatus', "=", 'Available'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")], ['intBoatCapacity', '>=', $TotalGuests]])
             ->orderBy('a.intBoatCapacity')
             ->get();
         
@@ -894,7 +894,27 @@ class ViewController extends Controller
         
         return response()->json($Fees);
     }
-    
+
+    public function getReservationDates(Request $req){
+        $ReservationID = trim($req->input('ReservationID'));
+
+        $ReservationInfo = DB::table('tblReservationDetail')
+                          ->select('dtmResDArrival',
+                                   'dtmResDDeparture',
+                                   'intResDNoOfAdults',
+                                   'intResDNoOfKids',
+                                   DB::raw('strReservationCode AS PickUpTime'))
+                          ->where('strReservationID', '=', $ReservationID)
+                          ->get();
+
+        foreach($ReservationInfo as $Dates){
+            $Dates->PickUpTime = Carbon::parse($Dates->dtmResDArrival)->format("h:i:s");
+            $Dates->dtmResDArrival = Carbon::parse($Dates->dtmResDArrival)->format('m/d/Y');
+            $Dates->dtmResDDeparture = Carbon::parse($Dates->dtmResDDeparture)->format('m/d/Y');
+        }
+
+        return response()->json($ReservationInfo);
+    }    
     public function getReservationInfo(Request $req){
         
         $ReservationID = trim($req->input('id'));

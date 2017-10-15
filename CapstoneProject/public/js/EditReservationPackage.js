@@ -407,7 +407,7 @@ function CheckReservedAmenities(){
                     
                     else if(!data.errorBoat && data.errorRoom){
                         document.getElementById("ErrorMessage").innerHTML = "Selected package is not available based on the given date.";
-                        document.getElementById("btnEditReschedRooms").style.display = "block";
+                        //document.getElementById("btnEditReschedRooms").style.display = "block";
                         
                     }
                     
@@ -441,13 +441,13 @@ function CheckReservedAmenities(){
                 else{
                     if(data.errorRoom){
                         document.getElementById("ErrorMessage").innerHTML = "Selected package is not available based on the given date.";
-                        document.getElementById("btnEditReschedRooms").style.display = "block";
+                        //document.getElementById("btnEditReschedRooms").style.display = "block";
                     }
                     else{
                         document.getElementById("d-ReservationID").value = document.getElementById("info-ReservationID").value;
                         //ShowModalReschedulePayment(TotalRoomAmount, OrigRoomAmount);
                         document.getElementById("tempCheckOutDate").value = document.getElementById("CheckOutDate").value;
-                        document.getElementById("frmReschedule").submit();
+                        //document.getElementById("frmReschedule").submit();
                     }
                 }
                 
@@ -729,6 +729,7 @@ function RescheduleReservation(){
         ShowModalEditResRoom("date");
     }
     if(includeBoats && !includeRooms){
+        document.getElementById("tempCheckOutDate").value = document.getElementById("CheckOutDate").value;
         document.getElementById("d-ReservationID").value = document.getElementById("info-ReservationID").value;
         document.getElementById("frmReschedule").submit();
     }

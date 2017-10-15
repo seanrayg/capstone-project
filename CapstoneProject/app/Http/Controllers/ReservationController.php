@@ -462,6 +462,34 @@ class ReservationController extends Controller
     
     //Edit Reservation
     
+
+    //Edit Reservation Boat
+    public function updateReservationBoat(Request $req){
+
+        $ReservationID = trim($req->input('BoatReservationID'));
+        $CheckInDate = trim($req->input('BoatCheckInDate'));
+        $CheckOutDate = trim($req->input('BoatCheckOutDate'));
+        $PickUpTime = trim($req->input('BoatPickUpTime'));
+        $PickUpTime2 = $PickUpTime;
+        $BoatID = trim($req->input('EditBoatID'));
+
+        $BoatsUsed = DB::table('tblBoat')
+                    ->where('strBoatID', '=', $BoatID)
+                    ->pluck('strBoatName')
+                    ->first();
+
+        $BoatsUsed .= ",";
+
+        DB::table('tblreservationboat')->where('strResBReservationID', '=', $ReservationID)->delete();
+        DB::table('tblboatschedule')->where('strBoatSReservationID', '=', $ReservationID)->delete();
+
+        $CheckInDate = Carbon::parse($CheckInDate)->format('Y-m-d');
+        $CheckOutDate = Carbon::parse($CheckOutDate)->format('Y-m-d');
+        $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);
+
+        \Session::flash('flash_message','Reservation successfully updated!');
+         return redirect('/Reservations');
+    }
     
     //Edit Reservation Info
     
@@ -498,6 +526,7 @@ class ReservationController extends Controller
     //Edit Reservation Room
     
     public function updateReservationRoom(Request $req){
+        dd(Input::all());
         $tempCheckInDate = trim($req->input('r-CheckInDate'));
         $tempCheckOutDate = trim($req->input('r-CheckOutDate'));
         $ChosenRooms = trim($req->input('ChosenRooms'));
@@ -700,6 +729,7 @@ class ReservationController extends Controller
     //Edit Reservation Date
     
     public function updateReservationDate(Request $req){
+        dd(Input::all());
         $tempCheckInDate = trim($req->input('CheckInDate'));
         $tempCheckOutDate = trim($req->input('CheckOutDate'));
         $PickUpHour = trim($req->input('SelectHour'));
@@ -708,6 +738,7 @@ class ReservationController extends Controller
         $ReservationID = trim($req->input('d-ReservationID'));
         $TotalRoomAmount = trim($req->input('TotalRoomAmount'));
         $OrigRoomAmount = trim($req->input('OrigRoomAmount'));
+        $BoatsUsed = trim($req->input('d-BoatsUsed'));
    
         $tempCheckInDate2 = explode('/', $tempCheckInDate);
         $tempCheckOutDate2 = explode('/', $tempCheckOutDate);
@@ -730,16 +761,33 @@ class ReservationController extends Controller
         DB::table('tblReservationDetail')
             ->where('strReservationID', $ReservationID)
             ->update($updateData);
-        
+
         $ChosenBoats = DB::table('tblReservationBoat')->where('strResBReservationID', "=", $ReservationID)->pluck('strResBBoatID');
-        if(count($ChosenBoats) != 0){
+
+        if($BoatsUsed != null){
+            $arrBoatsUsed = explode(',',$BoatsUsed);
+            array_pop($arrBoatsUsed);
+            $PickUpTime2 = $PickUpTime;
+            DB::table('tblBoatSchedule')
+            ->where([['strBoatSReservationID','=',$ReservationID],['strBoatSPurpose', '=', 'Reservation']])
+            ->delete();
+
+            DB::table('tblReservationBoat')
+            ->where('strResBReservationID','=',$ReservationID)
+            ->delete();
+
+            $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);
+        }
+        else if(count($ChosenBoats) != 0){
             $boatSchedData = array("dtmBoatSPickUp" => $CheckInDate." ".$PickUpTime, 
                                    'dtmBoatSDropoff' => $CheckOutDate." ".$PickUpTime); 
             
             DB::table('tblBoatSchedule')
             ->where([['strBoatSReservationID', $ReservationID],['strBoatSPurpose', 'Reservation']])
             ->update($boatSchedData);
+            
         }
+
         if($TotalRoomAmount != null && $OrigRoomAmount != null){
             if($TotalRoomAmount != $OrigRoomAmount){
                 $InitialPayment = DB::table('tblPayment')

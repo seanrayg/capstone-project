@@ -1,7 +1,83 @@
 var PendingReservationInfo = [];
 var ActiveReservationInfo = [];
+var AvailableBoatInfo = [];
 var InitialBill = 0;
+var bReservationID;
+var bCheckInDate;
+var bCheckOutDate;
+var bPickUpTime; 
+var bTotalGuests = 0;
+var bNoOfKids = 0;
+var bNoOfAdults = 0;
 
+function ShowModalManageBoats(){
+    
+
+    var TableChecker = CheckTable('#PendingReservationTable tr');
+    var TableChecker2 = CheckTable('#ConfirmedReservationTable tr');
+    if(TableChecker){
+        bReservationID = PendingReservationInfo[0];
+    }
+    else if(TableChecker2){
+        bReservationID = ActiveReservationInfo[0];
+    }
+    $.ajax({
+        type:'get',
+        url:'/Reservation/Dates',
+        data:{ReservationID:bReservationID},
+        success:function(data){
+            bPickUpTime = data[0].PickUpTime;
+            bCheckInDate = data[0].dtmResDArrival;
+            bCheckOutDate = data[0].dtmResDDeparture;
+            bNoOfKids = data[0].intResDNoOfKids;
+            bNoOfAdults = data[0].intResDNoOfAdults;
+            bTotalGuests = parseInt(bNoOfKids) + parseInt(bNoOfAdults);
+            $.ajax({
+                type:'get',
+                url:'/Reservation/Boats',
+                data:{CheckInDate:bCheckInDate,
+                      CheckOutDate:bCheckOutDate,
+                      TotalGuests:bTotalGuests,
+                      PickUpTime:bPickUpTime},
+                success:function(data){
+
+                    $('#tblAvailableBoats tbody').empty();
+
+                    var tableRef = document.getElementById('tblAvailableBoats').getElementsByTagName('tbody')[0];
+
+                    for(var x = 0; x < data.length; x++){
+                        var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+                        var newCell1  = newRow.insertCell(0);
+                        var newCell2  = newRow.insertCell(1);
+                        var newCell3  = newRow.insertCell(2);
+                        var newCell4  = newRow.insertCell(3);
+                        var newCell5  = newRow.insertCell(4);
+
+                        newCell1.innerHTML = data[x].strBoatID;
+                        newCell2.innerHTML = data[x].strBoatName;
+                        newCell3.innerHTML = data[x].intBoatCapacity;
+                        newCell4.innerHTML = data[x].dblBoatRate;
+                        newCell5.innerHTML = data[x].strBoatDescription;
+                    }
+                },
+                error:function(response){
+                    console.log(response);
+                    alert(response.status);
+                }
+            }); 
+        },
+        error:function(response){
+            console.log(response);
+            alert(response.status);
+        }
+    }); 
+    document.getElementById("DivModalManageBoats").style.display = "block";
+}
+
+function HideModalManageBoats(){
+    document.getElementById("DivModalManageBoats").style.display = "none";
+}
 
 function ShowModalPaidDepositSlip(){
     HideModalPaidDownpayment();
@@ -262,7 +338,9 @@ function run(event, sender){
         ActiveReservationInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML, cells[7].innerHTML, cells[8].innerHTML, cells[9].innerHTML];
         document.getElementById("iReservationID").value = cells[0].innerHTML;
     }
-
+    else if(sender == "AvailableBoats"){
+       AvailableBoatInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML];
+    }
 }
 
 function ManageRooms(){
@@ -277,6 +355,30 @@ function ManageRooms(){
         window.location.href = '/ChooseRooms/'+ActiveReservationInfo[0];
     }
 }
+
+function ManageBoats(){
+    if(parseInt(document.getElementById("tblChosenBoats").rows.length) != 1){
+        ShowModalManageBoats();
+    }
+}
+
+function SaveBoat(){
+    var TableChecker = CheckTable('#PendingReservationTable tr');
+    if(TableChecker){
+        document.getElementById("EditBoatID").value = AvailableBoatInfo[0];
+        document.getElementById("BoatReservationID").value = bReservationID;
+        document.getElementById("BoatCheckInDate").value = bCheckInDate;
+        document.getElementById("BoatCheckOutDate").value = bCheckOutDate;
+        document.getElementById("BoatPickUpTime").value = bPickUpTime;
+        document.getElementById("ChangeBoatForm").submit();
+    }
+}
+//Table row clicked
+$(document).ready(function(){
+    $('#tblAvailableBoats').on('click', 'tbody tr', function(){
+        HighlightRow(this);
+    });
+});
 
 function ProcessDownPayment(){
     if((!($(".form-group").hasClass("has-warning"))) && (document.getElementById("DownpaymentAmount").value != "")){
@@ -387,13 +489,6 @@ function getReservationInfo(){
                 }
             }
 
-            else{
-                var newRow   = tableRef.insertRow(tableRef.rows.length);
-
-                var newCell1  = newRow.insertCell(0);
-
-                newCell1.innerHTML = "None";
-            }
         },
         error:function(response){
             console.log(response);
@@ -528,6 +623,7 @@ function PrintInvoice() {
     document.getElementById("checkinAmountTendered").value = document.getElementById("PayPayment").value;
     document.getElementById("InvoiceForm").submit();
 }
+
 function EditDownpayment(){
     document.getElementById("PaidDownpayment").disabled = false;
     document.getElementById("btnEditDownPayment").style.display = "none";

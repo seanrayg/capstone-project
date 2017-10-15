@@ -280,6 +280,9 @@ Route::post('/Reservation/Date/Edit', 'ReservationController@updateReservationDa
 //Edit Reservation Package
 Route::post('/Reservation/Package/Edit', 'ReservationController@updateReservationPackage');
 
+//Edit Reservation Boat
+Route::post('/Reservation/Boat/Edit', 'ReservationController@updateReservationBoat');
+
 //RESERVATION EDIT AJAX
 
 Route::get('/Reservation/Info/View', 'ViewController@getReservationInclusion');
@@ -304,6 +307,8 @@ Route::get('/Reservation/Boats', 'ViewController@getAvailableBoats');
 Route::get('/Reservation/Fees', 'ViewController@getReservationFees');
 
 Route::get('/Reservation/Info', 'ViewController@getReservationInfo');
+
+Route::get('/Reservation/Dates', 'ViewController@getReservationDates');
 
 Route::get('/Reservation/Packages/Availability', 'ViewController@getAvailablePackages');
 
