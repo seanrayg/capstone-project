@@ -873,7 +873,7 @@ class ViewResortController extends Controller
                 ->where([['b.dtmItemRateAsOf',"=", DB::raw("(SELECT max(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = a.strItemID)")],
                         ['a.intItemDeleted',"=", "1"], ['a.intItemQuantity', "!=", 0]])
                 ->get();
-        
+
         $RentedItems = DB::table('tblRentedItem as a')
                 ->join ('tblItem as b', 'b.strItemID', '=' , 'a.strRentedIItemID')
                 ->join ('tblReservationDetail as c', 'c.strReservationID', '=' , 'a.strRentedIReservationID')
@@ -934,10 +934,8 @@ class ViewResortController extends Controller
                 }   
             }
         }
-        
-        $PackageItems = $tempPackageItems->where('intPackageIQuantity' ,"!=", 0);
 
-        dd($PackageItems);
+
         $DateTimeToday = Carbon::now('HongKong');
         foreach($RentedItems as $Items){
             $Items->tmsCreated = Carbon::parse($Items->tmsCreated)->format('M j, Y g:i A');
@@ -996,6 +994,16 @@ class ViewResortController extends Controller
                 }
             }
         }
+
+        foreach($tempPackageItems as $Package){
+            foreach($RentalItems as $Rental){
+                if($Package->strItemID == $Rental->strItemID){
+                    $Package->intItemQuantity = $Rental->intItemQuantity;
+                }
+            }
+        }
+        
+        $PackageItems = $tempPackageItems->where('intPackageIQuantity' ,"!=", 0);
       
 
         $Guests = DB::table('tblReservationDetail as a')
