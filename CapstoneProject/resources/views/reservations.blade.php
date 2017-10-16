@@ -600,7 +600,7 @@
                         <h4><span class="close" onclick="HideModalPaidDownpayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
                         <h3 class="title">Downpayment</h3>
                         <br><br>
-                        <form method="post" action="/Reservation/Downpayment/Edit" onsubmit="return CheckForm()">
+                        <form method="post" action="/Reservation/Downpayment/Edit" onsubmit="return CheckDownpayment()">
                             {{ csrf_field() }}
                             <div class="row">
                                 <div class="col-xs-12">
@@ -611,9 +611,15 @@
                                 </div>
                             </div>
                             <input type="hidden" name="EditDownReservationID" id="EditDownReservationID" value="">
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="Col-md-6">
+                                    <p class="ElementError" id="EditDownpaymentError"></p>
+                                </div>
+                            </div>
                             <div class = "row">
                                 <button type="button" class="btn btn-info pull-right push-right" onclick="EditDownpayment()" id="btnEditDownPayment">Edit</button>
-                                <button type="submit" class="btn btn-success pull-right push-right" onclick="#" id="btnSaveDownPayment" style="display:none">Save</button>
+                                <button type="submit" class="btn btn-success pull-right push-right" id="btnSaveDownPayment" style="display:none">Save</button>
                                 <button type="button" class="btn btn-success pull-left push-left" onclick="ShowModalPaidDepositSlip()">Deposit Slip</button>
                             </div>
                         </form>

@@ -125,7 +125,7 @@
                             <td>{{$Info -> strPackageName}}</td>
                             <td>{{$Info -> intPackagePax}}</td>
                             <td>{{$Info -> intPackageDuration}}</td>
-                            <td>{{$Info -> dblPackagePrice}}</td>
+                            <td id="OldPackagePrice">{{$Info -> dblPackagePrice}}</td>
                             <td>{{$Info -> strPackageDescription}}</td>
                         </tr>
                     @endforeach
@@ -272,7 +272,7 @@
                                 </table>
                                 <div class="row">
                                     <p class="ErrorLabel" id="RoomError"></p>
-                                    <form method="post" action="/Reservation/Package/Edit" id="frmEditRooms" onsubmit="return CheckRooms()">
+                                    <form method="post" action="/Reservation/Package/Edit" id="frmEditPackage">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="r-Package" id="r-Package">
                                         <input type="hidden" name="ChosenRooms" id="ChosenRooms">
@@ -283,8 +283,10 @@
                                         <input type="hidden" id="r-ReservationID" name="r-ReservationID">
                                         <input type="hidden" name="r-BoatsUsed" id="r-BoatsUsed">
                                         <input type="hidden" name="r-PickUpTime" id="r-PickUpTime">
+                                        <input type="hidden" name="r-OldPackagePrice" id="r-OldPackagePrice">
+                                        <input type="hidden" name="r-NewPackagePrice" id="r-NewPackagePrice">
                                         <button type="button" class="btn btn-danger pull-right" style="margin-right: 50px;" onclick="HideModalEditResRoom()">Cancel</button>
-                                        <button type="submit" class="btn btn-success pull-right" style="margin-right: 50px;">Choose Package</button>    
+                                        <button type="button" class="btn btn-success pull-right" style="margin-right: 50px;" onclick="CheckRooms()">Choose Package</button>    
                                         <div class="clearfix"></div>
                                     </form>
                                 </div>
@@ -517,6 +519,79 @@
     </div>
 </div>
 
+<div id="DivModalChangePackagePayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalChangePackagePayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">New Payment</h3>
+                        <br>
+                        <p class="category text-center" style="font-family: Roboto; color:black" id="ChangePackageAmount"></p>
+                        <br><br>
+                        <div class = "row">
+                            <button type="button" class="btn btn-success pull-right push-right" onclick="#">Continue</button>
+                            <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalChangePackagePayment()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalExceedGuest" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">assignment_late</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalExceedPackage()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <br><br><br>
+                        <h5 class="title text-center">The number of guests exceeds the pax of the package</h5>
+                        <br><br>
+                        <div class = "row">
+                                <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalExceedPackage()">Make Changes</button>
+                                <button type="button" class="btn btn-success pull-right push-right" onclick="ExceedContinue()">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalPackagePayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalPackagePayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">New Payment</h3>
+                        <br>
+                        <p class="category text-center" style="font-family: Roboto; color:black" id="NewPackageAmount"></p>
+                        <br><br>
+                        <div class = "row">
+                            <button type="button" class="btn btn-success pull-right push-right" onclick="SubmitEditPackageForm()">Continue</button>
+                            <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalPackagePayment()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!----- Modal for reschedule payment ----->
 <div id="DivModalReschedulePayment" class="modal">

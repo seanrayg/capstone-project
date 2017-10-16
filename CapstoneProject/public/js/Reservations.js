@@ -9,6 +9,7 @@ var bPickUpTime;
 var bTotalGuests = 0;
 var bNoOfKids = 0;
 var bNoOfAdults = 0;
+var bPaidDownPayment = 0;
 
 function ShowModalManageBoats(){
     
@@ -111,6 +112,7 @@ function ShowModalPaidDownpayment(){
             url:'/Reservation/Downpayment',
             data:{ReservationID:ActiveReservationInfo[0]},
             success:function(data){
+                bPaidDownPayment = data[0].dblPayAmount;
                 document.getElementById("PaidDownpayment").value = data[0].dblPayAmount;
                 document.getElementById("DivModalPaidDownpayment").style.display = "block";
                 document.getElementById("EditDownReservationID").value = ActiveReservationInfo[0];
@@ -616,6 +618,31 @@ function setReservationID() {
 
     }
 
+}
+
+function CheckDownpayment(){
+    if($('#PaidDownpaymentError').hasClass('has-warning')){
+        return false;
+    }
+    else{
+        var RemainingBill = ActiveReservationInfo[9];
+        var TotalBill = parseInt(bPaidDownPayment) + parseInt(RemainingBill);
+
+        var RequiredDownpayment = Math.ceil(parseFloat(TotalBill) * .20);
+        var NewDownpayment = parseInt(document.getElementById("PaidDownpayment").value);
+        if(NewDownpayment > TotalBill){
+            document.getElementById("EditDownpaymentError").innerHTML = "Downpayment exceeds the total initial bill";
+            return false;
+        }
+        else if(NewDownpayment < RequiredDownpayment){
+            document.getElementById("EditDownpaymentError").innerHTML = "Downpayment must be 20% of the total bill (PHP" + RequiredDownpayment + ")";
+            return false;
+        }
+        else{
+            document.getElementById("EditDownpaymentError").innerHTML = "";
+            return true;
+        }
+    }
 }
 
 function PrintInvoice() {

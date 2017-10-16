@@ -43,6 +43,7 @@
                                     <option>Rooms &amp; Cottages</option>
                                     <option>Rooms Only</option>
                                     <option>Room Types Only</option>
+                                    <option>Availed Amenities</option>
                                 </select>
                               </div>
                         </div>
@@ -55,6 +56,98 @@
                                 <input type="checkbox" id="CheckIncludeDeleted">
                                 Included deleted records?
                             </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="AmenitiesReport" style = "display:none">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group label-static">
+                                <label class="control-label">Amenity</label>
+                                <div class="selectBox">
+                                    <select name="SelectAmenityType" id="SelectAmenityType" onchange="GenerateAmenity()">
+                                        <option>Rooms/Cottages</option>
+                                        <option>Items</option>
+                                        <option>Activities</option>
+                                        <option>Packages</option>
+                                        <option>Boats</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group label-static">
+                                <label class="control-label">Please Choose</label>
+                                <div class="selectBox">
+                                    <select name="GeneratedAmenity" id="GeneratedAmenity">
+
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group label-static">
+                                <label class="control-label">Report</label>
+                                <div class="selectBox">
+                                    <select name="SelectAmenityReport" id="SelectAmenityReport" onchange="DisplayAmenityFields(this)">
+                                        <option>Daily</option>
+                                        <option>Monthly</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="DailyAmenityReport">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Date</label>
+                                    <input type="text" class="datepicker form-control" id="DailyAmenity" readonly/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="MonthlyAmenityReport" style="display: none">
+                        <div class = "row">
+                            <div class="col-md-6">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Month</label>
+                                    <div class="selectBox">
+                                        <select id="AmenityMonth">
+                                            <option>January</option>
+                                            <option>February</option>
+                                            <option>March</option>
+                                            <option>April</option>
+                                            <option>May</option>
+                                            <option>June</option>
+                                            <option>July</option>
+                                            <option>August</option>
+                                            <option>September</option>
+                                            <option>October</option>
+                                            <option>November</option>
+                                            <option>December</option>
+                                        </select>
+                                      </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-static">
+                                    <label class="control-label">Year</label>
+                                    <div class="selectBox">
+                                        <select id="AmenityMonthlyYear">
+                                        </select>
+                                      </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

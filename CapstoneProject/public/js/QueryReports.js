@@ -1,9 +1,21 @@
 function DisplayFields(field){
-   document.getElementById("DailyReport").style.display = "none";
-   document.getElementById("MonthlyReport").style.display = "none";
-   
-   var chosenReport = field.value+"Report";
-   document.getElementById(chosenReport).style.display = "block";
+    document.getElementById("DailyReport").style.display = "none";
+    document.getElementById("MonthlyReport").style.display = "none";
+
+    var chosenReport = field.value+"Report";
+    document.getElementById(chosenReport).style.display = "block";
+}
+
+function DisplayAmenityFields(field){
+    if(field.value == "Daily"){
+        document.getElementById("DailyAmenityReport").style.display = "block";
+        document.getElementById("MonthlyAmenityReport").style.display = "none";
+    }
+    else{
+        document.getElementById("DailyAmenityReport").style.display = "none";
+        document.getElementById("MonthlyAmenityReport").style.display = "block";
+    }
+    
 }
 
 window.onload = function(){
@@ -16,6 +28,33 @@ window.onload = function(){
         option.text = y;
         x.add(option);
     }
+    x = document.getElementById("AmenityMonthlyYear");
+    for(var y = yearNow; y < (yearNow+50); y++){
+        var option = document.createElement("option");
+        option.text = y;
+        x.add(option);
+    }
+}
+
+function GenerateAmenity(){
+    $.ajax({
+        type:'get',
+        url:'/Reports/Query/Amenities',
+        data:{selectedAmenity: document.getElementById("SelectAmenityType").value},
+        success:function(data){
+            $('#GeneratedAmenity').empty();
+            x = document.getElementById("GeneratedAmenity");
+            for(var y = 0; y < data.length; y++){
+                var option = document.createElement("option");
+                option.text = data[y].AmenityName;
+                x.add(option);
+            }
+        },
+        error:function(response){
+            console.log(response);
+            alert(response.status);
+        }
+    });  
 }
 
 function GenerateReport(){
@@ -33,6 +72,31 @@ function GenerateReport(){
                   ReservationMonth: ReservationMonth,
                   ReservationYear: ReservationYear,
                   DailyReservation: DailyReservation},
+            success:function(data){
+                fillTable(data, SelectedReport);
+            },
+            error:function(response){
+                console.log(response);
+                alert(response.status);
+            }
+        });  
+    }
+    if(SelectedReport == "Availed Amenities"){
+        var AmenityType = document.getElementById("SelectAmenityType").value;
+        var ChosenAmenity = document.getElementById("GeneratedAmenity").value;
+        var ReportAmenity = document.getElementById("SelectAmenityReport").value;
+        var ChosenDate = document.getElementById("DailyAmenity").value;
+        var ChosenMonth = document.getElementById("AmenityMonth").value;
+        var ChosenYear = document.getElementById("AmenityMonthlyYear").value;
+        $.ajax({
+            type:'get',
+            url:'/Reports/Query/Amenity/Generate',
+            data:{AmenityType:AmenityType,
+                  ChosenAmenity:ChosenAmenity,
+                  ReportAmenity:ReportAmenity,
+                  ChosenDate:ChosenDate,
+                  ChosenMonth:ChosenMonth,
+                  ChosenYear:ChosenYear},
             success:function(data){
                 fillTable(data, SelectedReport);
             },
@@ -67,7 +131,73 @@ function GenerateReport(){
 
 function fillTable(data, SelectedReport){
     $('#QueryTable tr').remove();
-    if(SelectedReport == "Reservations"){
+    if(SelectedReport == "Availed Amenities"){
+        if(document.getElementById("SelectAmenityType").value == "Rooms/Cottages" || document.getElementById("SelectAmenityType").value == "Packages"){
+            var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
+            var newRow = tableRef.insertRow(tableRef.rows.length);
+
+            var newCell1  = newRow.insertCell(0);
+            var newCell2  = newRow.insertCell(1);
+            var newCell3  = newRow.insertCell(2);
+            var newCell4 = newRow.insertCell(3);
+            var newCell5  = newRow.insertCell(4);
+
+            newCell1.innerHTML = "Name";
+            newCell2.innerHTML = "Check In Date";
+            newCell3.innerHTML = "Check Out Date";
+            newCell4.innerHTML = "Contact Number";
+            newCell5.innerHTML = "Email";
+            
+            tableRef = document.getElementById('QueryTable').getElementsByTagName('tbody')[0];
+            for(var x = 0; x < data.length; x++){
+               
+                newRow = tableRef.insertRow(tableRef.rows.length);
+
+                newCell1  = newRow.insertCell(0);
+                newCell2  = newRow.insertCell(1);
+                newCell3  = newRow.insertCell(2);
+                newCell4 = newRow.insertCell(3);
+                newCell5  = newRow.insertCell(4);
+
+                newCell1.innerHTML = data[x].Name;
+                newCell2.innerHTML = data[x].dtmResDArrival;
+                newCell3.innerHTML = data[x].dtmResDDeparture;
+                newCell4.innerHTML = data[x].strCustContact;
+                newCell5.innerHTML = data[x].strCustEmail;
+            }
+        }
+        else{
+            var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
+            var newRow = tableRef.insertRow(tableRef.rows.length);
+
+            var newCell1  = newRow.insertCell(0);
+            var newCell2  = newRow.insertCell(1);
+            var newCell3 = newRow.insertCell(2);
+            var newCell4  = newRow.insertCell(3);
+
+            newCell1.innerHTML = "Name";
+            newCell2.innerHTML = "Date Availed";
+            newCell3.innerHTML = "Contact Number";
+            newCell4.innerHTML = "Email";
+            
+            tableRef = document.getElementById('QueryTable').getElementsByTagName('tbody')[0];
+            for(var x = 0; x < data.length; x++){
+               
+                newRow = tableRef.insertRow(tableRef.rows.length);
+
+                newCell1  = newRow.insertCell(0);
+                newCell2  = newRow.insertCell(1);
+                newCell3 = newRow.insertCell(2);
+                newCell4  = newRow.insertCell(3);
+
+                newCell1.innerHTML = data[x].Name;
+                newCell2.innerHTML = data[x].DateAvailed;
+                newCell3.innerHTML = data[x].strCustContact;
+                newCell4.innerHTML = data[x].strCustEmail;
+            }
+        }
+    }
+    else if(SelectedReport == "Reservations"){
         var tableRef = document.getElementById('QueryTable').getElementsByTagName('thead')[0];
         var newRow = tableRef.insertRow(tableRef.rows.length);
 

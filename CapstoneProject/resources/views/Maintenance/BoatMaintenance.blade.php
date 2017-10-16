@@ -69,12 +69,31 @@
                        {{ Session::get('error_message') }}<br>
                        <?php 
                             $ReservedBoats = Session::get('ReservedBoats');
-                            foreach($ReservedBoats as $Detail){
-                                echo "<li>" .$Detail->Name. "</li>";
-                            }
+
                         ?>
                    </ul>
                    <button class="btn btn-simple pull-right" style="color: white" onclick="ShowModalGuestInfo()">Show Guest Info</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+<!-- Delete Error -->
+@if(Session::has('error_message2'))
+    <div class="row">
+        <div class="col-md-7 col-md-offset-5">
+            <div class="alert alert-danger hide-on-click">
+                <div class="container-fluid">
+                  <div class="alert-icon">
+                    <i class="material-icons">warning</i>
+                  </div>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                  </button>
+                   <ul>
+                       {{ Session::get('error_message2') }}<br>
+                   </ul>
                 </div>
             </div>
         </div>
@@ -411,6 +430,7 @@
                                         <tbody>
                                             <?php 
                                                 $ReservedBoats = Session::get('ReservedBoats');
+
                                                 foreach($ReservedBoats as $Detail){
                                                     echo "<tr>";
                                                     echo "<td>" .$Detail->Name. "</td>";
@@ -432,7 +452,7 @@
                                 <em class="description-text" style="font-family: Roboto">Please notify the guest using the given email/contact number before changing their boat(s)!</em>
                                 <br>
                                 <button type="submit" class="btn btn-danger pull-right" onclick="HideModalGuestInfo()">Cancel</button>
-                                <button type="submit" class="btn btn-success pull-right" rel="tooltip" title="Please notify the guest using the given email/contact number before changing their boat(s)!">Change Boat</button>
+                                <a href="/Reservations"><button type="submit" class="btn btn-success pull-right" rel="tooltip" title="Please notify the guest using the given email/contact number before changing their boat(s)!">Change Boat</button></a>
                             </div>
                         </div>
                     </div>
