@@ -904,6 +904,7 @@ function AddFee(){
                 document.getElementById("TotalMiscellaneousFee").innerHTML = TotalMiscellaneousFee;
                 var GrandTotal = parseInt(document.getElementById("GrandTotal").innerHTML);
                 GrandTotal += parseInt(FeeAmount) * parseInt(FeeQuantity);
+                document.getElementById("MiscellaneousFee").innerHTML = TotalMiscellaneousFee;
                 document.getElementById("GrandTotal").innerHTML = GrandTotal;
 
                 if(SelectedFee == "Other"){
