@@ -19,6 +19,14 @@ var dateSender = false;
 
 /*---------- Modal controller -------*/
 
+function ShowModalChangeRoomPayment(){
+    document.getElementById("DivModalChangeRoomPayment").style.display = "block";
+}
+
+function HideModalChangeRoomPayment(){
+    document.getElementById("DivModalChangeRoomPayment").style.display = "none";
+}
+
 function ShowModalReschedulePayment(TotalRoomAmount, OrigRoomAmount){
     document.getElementById("RescheduleAmount").innerHTML = "The total price of room(s) will be PHP" + TotalRoomAmount + " instead of " + OrigRoomAmount;
     document.getElementById("TotalRoomAmount").value = TotalRoomAmount;
@@ -765,14 +773,36 @@ function CheckRooms(){
         
         document.getElementById("r-ReservationID").value = document.getElementById("h-ReservationID").value;
         document.getElementById("ChosenRooms").value = ChosenRooms;
-        return true;
+
+        var date1 = new Date(document.getElementById("r-CheckInDate").value);
+        var date2 = new Date(document.getElementById("r-CheckOutDate").value);
+        var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+
+        if(diffDays == 0){
+            diffDays = 1;
+        }
+
+        var tempAmountTotal = 0;
+        $("#tblChosenRooms tr").each(function(){
+           if($(this).find("td:nth-child(2)").text() != "" && $(this).find("td:nth-child(4)").text() != ""){
+              tempAmountTotal += parseInt($(this).find("td:nth-child(3)").text()) * parseInt($(this).find("td:nth-child(4)").text()); 
+           }
+        });
+
+        var AmountTotal = parseInt(tempAmountTotal) * parseInt(diffDays);
+        document.getElementById("newEditRoomAmount").value = AmountTotal;
+        document.getElementById("ChangeRoomAmount").innerHTML = "Accommodation bill will be PHP" + AmountTotal + ".";
+        ShowModalChangeRoomPayment();
     }
     else{
         document.getElementById("RoomError").innerHTML = "Total number of guests exceed total capacity of room(s)";
-        return false;
     }
 }
 
+function SubmitChangeRoomForm(){
+    document.getElementById("frmEditRooms").submit();
+}
 
 /*--------- Reservation Date ----------*/
 

@@ -349,7 +349,7 @@
                     <div class="card-content">
                         <div class="row">
                             <p class="ErrorLabel" id="RoomError"></p>
-                            <form method="post" action="/Reservation/Room/Edit" id="frmEditRooms" onsubmit="return CheckRooms()">
+                            <form method="post" action="/Reservation/Room/Edit" id="frmEditRooms">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="ChosenRooms" id="ChosenRooms">
                                 <input type="hidden" name="r-NoOfKids" id="r-NoOfKids">
@@ -359,8 +359,9 @@
                                 <input type="hidden" id="r-ReservationID" name="r-ReservationID">
                                 <input type="hidden" name="r-BoatsUsed" id="r-BoatsUsed">
                                 <input type="hidden" name="r-PickUpTime" id="r-PickUpTime">
+                                <input type="hidden" name="newEditRoomAmount" id="newEditRoomAmount">
                                 <button type="button" class="btn btn-danger pull-right" style="margin-right: 50px;" onclick="HideModalEditResRoom()">Cancel</button>
-                                <button type="submit" class="btn btn-success pull-right" style="margin-right: 50px;">Save Changes</button>    
+                                <button type="button" class="btn btn-success pull-right" style="margin-right: 50px;" onclick="CheckRooms()">Save Changes</button>    
                                 <div class="clearfix"></div>
                             </form>
                         </div>
@@ -591,8 +592,31 @@
     </div>
 </div>
 
+<div id="DivModalExceedGuest" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">assignment_late</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalExceedGuest()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <br><br><br>
+                        <h5 class="title text-center">The number of guests exceeds the total room capacity</h5>
+                        <br><br>
+                        <div class = "row">
+                                <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalExceedGuest()">Make Changes</button>
+                                <button type="button" class="btn btn-success pull-right push-right" onclick="ExceedContinue()">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!----- Modal for reschedule payment ----->
+
 <div id="DivModalReschedulePayment" class="modal">
     <div class="Modal-contentChoice">
         <div class="row">
@@ -610,6 +634,31 @@
                         <div class = "row">
                             <button type="button" class="btn btn-success pull-right push-right" onclick="SubmitRescheduleForm()">Continue</button>
                             <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalReschedulePayment()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="DivModalChangeRoomPayment" class="modal">
+    <div class="Modal-contentChoice">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">monetization_on</i>
+                    </div>
+                    <div class="card-content">
+                        <h4><span class="close" onclick="HideModalChangeRoomPayment()" style="color: black; font-family: Roboto Thin">X</span></h4>
+                        <h3 class="title">New Payment</h3>
+                        <br>
+                        <p class="category text-center" style="font-family: Roboto; color:black" id="ChangeRoomAmount"></p>
+                        <br><br>
+                        <div class = "row">
+                            <button type="button" class="btn btn-success pull-right push-right" onclick="SubmitChangeRoomForm()">Continue</button>
+                            <button type="button" class="btn btn-success pull-left push-left" onclick="HideModalChangeRoomPayment()">Cancel</button>
                         </div>
                     </div>
                 </div>

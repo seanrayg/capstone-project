@@ -936,7 +936,8 @@ class ViewResortController extends Controller
         }
         
         $PackageItems = $tempPackageItems->where('intPackageIQuantity' ,"!=", 0);
- 
+
+        dd($PackageItems);
         $DateTimeToday = Carbon::now('HongKong');
         foreach($RentedItems as $Items){
             $Items->tmsCreated = Carbon::parse($Items->tmsCreated)->format('M j, Y g:i A');

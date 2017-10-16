@@ -41,7 +41,7 @@ class ReservationController extends Controller
     //Book Reservation
     
     public function addReservation(Request $req){
-        
+
         // Prepares data to be saved
         $tempCheckInDate = trim($req->input('s-CheckInDate'));
         $tempCheckOutDate = trim($req->input('s-CheckOutDate'));
@@ -526,7 +526,7 @@ class ReservationController extends Controller
     //Edit Reservation Room
     
     public function updateReservationRoom(Request $req){
-
+      
         $tempCheckInDate = trim($req->input('r-CheckInDate'));
         $tempCheckOutDate = trim($req->input('r-CheckOutDate'));
         $ChosenRooms = trim($req->input('ChosenRooms'));
@@ -535,6 +535,8 @@ class ReservationController extends Controller
         $NoOfKids = trim($req->input('r-NoOfKids'));
         $BoatsUsed = trim($req->input('r-BoatsUsed'));
         $PickUpTime = trim($req->input('r-PickUpTime'));
+        $NewRoomTotal = trim($req->input('newEditRoomAmount'));
+        $NewTotal = 0;
         $PickOutTime;
         
         if($tempCheckInDate == $tempCheckOutDate){
@@ -618,7 +620,42 @@ class ReservationController extends Controller
             }
             
         }
+        $ChosenBoats = DB::table('tblReservationBoat')->where('strResBReservationID', "=", $ReservationID)->pluck('strResBBoatID');
+    
+        if(count($ChosenBoats) != 0){
+            $BoatRate = DB::table('tblBoat as a')
+            ->join ('tblBoatRate as b', 'a.strBoatID', '=' , 'b.strBoatID')
+            ->where([['a.strBoatStatus', "=", 'Available'], ['b.dtmBoatRateAsOf',"=", DB::raw("(SELECT max(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = a.strBoatID)")], ['a.strBoatID', '=', $ChosenBoats]])
+            ->pluck('b.dblBoatRate')
+            ->first();
+            $NewTotal += $BoatRate;
+
+        }
         
+        $EntranceFeeQuantity = DB::table('tblreservationfee as a')
+                            ->join('tblfee as b', 'a.strResFFeeID', '=', 'b.strFeeID')
+                            ->where([['b.strFeeStatus', '!=', 'deleted'], ['b.strFeeName', '=', 'Entrance Fee'],['a.strResFReservationID', '=', $ReservationID]])
+                            ->pluck('intResFQuantity')
+                            ->first();
+
+        $EntranceFeeAmount = DB::table('tblFee as a')
+                ->join ('tblFeeAmount as b', 'a.strFeeID', '=' , 'b.strFeeID')
+                ->where([['b.dtmFeeAmountAsOf',"=", DB::raw("(SELECT max(dtmFeeAmountAsOf) FROM tblFeeAmount WHERE strFeeID = a.strFeeID)")],['a.strFeeStatus', '!=', 'deleted'], ['a.strFeeName', '=', 'Entrance Fee']])
+                ->pluck('dblFeeAmount')
+                ->first();
+
+        $NewTotalEntrance = (int)$EntranceFeeQuantity * (int)$EntranceFeeAmount;
+
+        $NewTotal += $NewTotalEntrance;
+
+        $NewTotal += $NewRoomTotal;
+
+        $updateAmountData = array('dblPayAmount' => $NewTotal);  
+
+        DB::table('tblPayment')
+                ->where([['strPayReservationID', $ReservationID], ['strPayTypeID', 1]])
+                ->update($updateAmountData);
+
         \Session::flash('flash_message','Reservation successfully updated!');
         return redirect('/Reservations');
     }
@@ -631,6 +668,8 @@ class ReservationController extends Controller
         $CheckInDate = trim($req->input('r-CheckInDate'));
         $CheckOutDate = trim($req->input('r-CheckOutDate'));
         $PickUpTime = trim($req->input('r-PickUpTime'));
+        $OldPackagePrice = trim($req->input('r-OldPackagePrice'));
+        $NewPackagePrice = trim($req->input('r-NewPackagePrice'));
         $tempCheckInDate = $CheckInDate;
         $tempCheckOutDate = $CheckOutDate;
         $CheckInDate = $CheckInDate . " " . $PickUpTime;
@@ -722,6 +761,21 @@ class ReservationController extends Controller
             
         }
 
+        $InitialBill = DB::table('tblPayment')
+                    ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID','=',1]])
+                    ->pluck('dblPayAmount')
+                    ->first();
+
+        $InitialBill = $InitialBill - $OldPackagePrice;
+        $InitialBill = $InitialBill + $NewPackagePrice;
+
+        $packageUpdateData = array("dblPayAmount" => $InitialBill);
+
+        DB::table('tblPayment')
+                ->where([['strPayReservationID', '=', $ReservationID],['strPayTypeID','=',1]])
+                ->update($packageUpdateData);
+
+
         \Session::flash('flash_message','Reservation successfully updated!');
          return redirect('/Reservations');
     }
@@ -808,6 +862,7 @@ class ReservationController extends Controller
             }
         }
         
+        $ChosenBoats = DB::table('tblReservationBoat')->where('strResBReservationID', "=", $ReservationID)->pluck('strResBBoatID');
         
         \Session::flash('flash_message','Reservation successfully updated!');
          return redirect('/Reservations');

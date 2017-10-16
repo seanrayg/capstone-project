@@ -13,6 +13,27 @@ var dateSender = false;
 
 /*--------- MODAL CONTROLLER -------*/
 
+function ShowModalPackagePayment(){
+    HideModalExceedPackage();
+    var NewPackagePrice = PackageInfo[3];
+    var OldPackagePrice = document.getElementById("OldPackagePrice").innerHTML;
+    document.getElementById("NewPackageAmount").innerHTML = "Package bill will be PHP" + NewPackagePrice + " instead of PHP" + OldPackagePrice +".";
+    document.getElementById("DivModalPackagePayment").style.display = "block";
+    
+}
+
+function HideModalPackagePayment(){
+    document.getElementById("DivModalPackagePayment").style.display = "none";
+}
+
+function ShowModalExceedPackage(){
+    document.getElementById("DivModalExceedGuest").style.display = "block";
+}
+
+function HideModalExceedPackage(){
+    document.getElementById("DivModalExceedGuest").style.display = "none";    
+}
+
 function HideModalReschedulePayment(){
     document.getElementById("DivModalReschedulePayment").style.display = "none";
 }
@@ -481,6 +502,60 @@ function run(event, sender){
     
 }
 
+function ExceedContinue(){
+    ShowModalPackagePayment();
+}
+
+function SubmitEditPackageForm(){
+    document.getElementById("r-NewPackagePrice").value = PackageInfo[3];
+    document.getElementById("r-OldPackagePrice").value = document.getElementById("OldPackagePrice").innerHTML;
+    if(includeBoats){
+        document.getElementById("r-BoatsUsed").value = document.getElementById("info-BoatsUsed").value;
+        document.getElementById("r-PickUpTime").value = document.getElementById("info-PickUpTime").value;
+    }
+
+    if(includeDate){
+        document.getElementById("r-CheckInDate").value = document.getElementById("CheckInDate").value;
+        document.getElementById("r-CheckOutDate").value = document.getElementById("CheckOutDate").value;
+        
+        var PickUpHour = document.getElementById("SelectHour").value;
+        var PickUpMinute = document.getElementById("SelectMinute").value;
+        var PickUpMerridean = document.getElementById("SelectMerridean").value;
+        
+        var PickUpTime = "";
+        
+        if(PickUpMerridean == "PM"){
+            PickUpTime = (parseInt(PickUpHour) + 12) + ":" + PickUpMinute + ":00";
+        }
+        else{
+            PickUpTime = PickUpHour + ":" + PickUpMinute + ":00";
+        }
+        
+        
+        document.getElementById("r-PickUpTime").value = PickUpTime;
+    }
+    
+    if(!includeDate){
+        
+        document.getElementById("r-CheckInDate").value = document.getElementById("h-CheckInDate").value;
+        document.getElementById("r-CheckOutDate").value = document.getElementById("h-CheckOutDate").value;
+        var tempPickUpTime = document.getElementById("i-PickUpTime").innerHTML;
+        var arrPickUpTime = tempPickUpTime.split(" ");
+        var arrTimeDetails = arrPickUpTime[0].split(":");
+        if(arrPickUpTime[1] == "PM"){
+            PickUpTime = (parseInt(arrTimeDetails[0]) + 12) + ":" + arrTimeDetails[1] + ":" + arrTimeDetails[2];
+        }
+        else{
+            PickUpTime = arrPickUpTime[0];
+        }
+        
+        document.getElementById("r-PickUpTime").value = PickUpTime;
+    }
+    document.getElementById("r-ReservationID").value = document.getElementById("info-ReservationID").value;
+    document.getElementById("r-Package").value = PackageInfo[0];
+    document.getElementById("frmEditPackage").submit();
+}
+
 //submit rooms
 function CheckRooms(){
 
@@ -492,57 +567,12 @@ function CheckRooms(){
 
     if(!(PackagePax >= TotalGuests)){
         document.getElementById("RoomError").innerHTML = "Total number of guests exceed pax included in the package";
-        return false;
+        ShowModalExceedPackage();
     }
     else{
-        if(includeBoats){
-            document.getElementById("r-BoatsUsed").value = document.getElementById("info-BoatsUsed").value;
-            document.getElementById("r-PickUpTime").value = document.getElementById("info-PickUpTime").value;
-        }
-
-        if(includeDate){
-            document.getElementById("r-CheckInDate").value = document.getElementById("CheckInDate").value;
-            document.getElementById("r-CheckOutDate").value = document.getElementById("CheckOutDate").value;
-            
-            var PickUpHour = document.getElementById("SelectHour").value;
-            var PickUpMinute = document.getElementById("SelectMinute").value;
-            var PickUpMerridean = document.getElementById("SelectMerridean").value;
-            
-            var PickUpTime = "";
-            
-            if(PickUpMerridean == "PM"){
-                PickUpTime = (parseInt(PickUpHour) + 12) + ":" + PickUpMinute + ":00";
-            }
-            else{
-                PickUpTime = PickUpHour + ":" + PickUpMinute + ":00";
-            }
-            
-            
-            document.getElementById("r-PickUpTime").value = PickUpTime;
-        }
-        
-        if(!includeDate){
-            
-            document.getElementById("r-CheckInDate").value = document.getElementById("h-CheckInDate").value;
-            document.getElementById("r-CheckOutDate").value = document.getElementById("h-CheckOutDate").value;
-            var tempPickUpTime = document.getElementById("i-PickUpTime").innerHTML;
-            var arrPickUpTime = tempPickUpTime.split(" ");
-            var arrTimeDetails = arrPickUpTime[0].split(":");
-            if(arrPickUpTime[1] == "PM"){
-                PickUpTime = (parseInt(arrTimeDetails[0]) + 12) + ":" + arrTimeDetails[1] + ":" + arrTimeDetails[2];
-            }
-            else{
-                PickUpTime = arrPickUpTime[0];
-            }
-            
-            document.getElementById("r-PickUpTime").value = PickUpTime;
-        }
-        document.getElementById("r-ReservationID").value = document.getElementById("info-ReservationID").value;
-        document.getElementById("r-Package").value = PackageInfo[0];
-        return true;
+        SubmitEditPackageForm();
     }
 
-    
 }
 
 function btnEditReschedRoomsListener(){
