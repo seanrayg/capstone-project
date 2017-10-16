@@ -381,6 +381,10 @@ Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
 Route::get('/Reports/Query/Reservation', 'ViewReportController@getReservationReport');
 
+Route::get('/Reports/Query/Amenities', 'ViewReportController@getAmenities');
+
+Route::get('/Reports/Query/Amenity/Generate', 'ViewReportController@getAmenityReport');
+
 // Sales Report AJAX
 Route::get("/Reports/Sales", 'ViewReportController@getSalesReport');
 

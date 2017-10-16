@@ -1244,7 +1244,6 @@ class MaintenanceController extends Controller
          \Session::flash('flash_message','Successfully updated!');
 
           return redirect('Maintenance/Room');
-
     }
     
     //Delete Room

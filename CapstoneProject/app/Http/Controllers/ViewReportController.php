@@ -185,6 +185,264 @@ class ViewReportController extends Controller
 
     }
 
+    public function getAmenities(Request $req){
+        $SelectedAmenity = trim($req->input('selectedAmenity'));
+        if($SelectedAmenity == "Rooms/Cottages"){
+            $GeneratedReport = DB::table('tblRoom')
+                               ->select(DB::raw('strRoomName as AmenityName'))
+                               ->where('strRoomStatus', '!=', 'deleted')
+                               ->get();
+        }
+        else if($SelectedAmenity == "Room/Cottage Type"){
+            $GeneratedReport = DB::table('tblRoomType')
+                               ->select(DB::raw('strRoomType as AmenityName'))
+                               ->where('intRoomTDeleted', '=', '1')
+                               ->get();
+        }
+        else if($SelectedAmenity == "Items"){
+            $GeneratedReport = DB::table('tblItem')
+                               ->select(DB::raw('strItemName as AmenityName'))
+                               ->where('intItemDeleted', '=', '1')
+                               ->get();
+        }
+        else if($SelectedAmenity == "Activities"){
+            $GeneratedReport = DB::table('tblBeachActivity')
+                               ->select(DB::raw('strBeachAName as AmenityName'))
+                               ->where('strBeachAStatus', '!=', 'deleted')
+                               ->get();
+            
+        }
+        else if($SelectedAmenity == "Fees"){
+            $GeneratedReport = DB::table('tblFee')
+                               ->select(DB::raw('strFeeName as AmenityName'))
+                               ->where('strFeeStatus', '!=', 'deleted')
+                               ->get();
+            
+        }
+        else if($SelectedAmenity == "Packages"){
+            $GeneratedReport = DB::table('tblPackage')
+                               ->select(DB::raw('strPackageName as AmenityName'))
+                               ->where('strPackageStatus', '!=', 'deleted')
+                               ->get();
+        }
+        else if($SelectedAmenity == "Boats"){
+            $GeneratedReport = DB::table('tblBoat')
+                               ->select(DB::raw('strBoatName as AmenityName'))
+                               ->where('strBoatStatus', '!=', 'deleted')
+                               ->get();
+        }
+
+        return response()->json($GeneratedReport);
+    }
+
+    public function getAmenityReport(Request $req){
+        $SelectedAmenity = trim($req->input('AmenityType'));
+        $ChosenAmenity = trim($req->input('ChosenAmenity'));
+        $ReportAmenity = trim($req->input('ReportAmenity'));
+        $ChosenDate = trim($req->input('ChosenDate'));
+        $ChosenMonth = trim($req->input('ChosenMonth'));
+        $ChosenYear = trim($req->input('ChosenYear'));
+        $ChosenDate = Carbon::parse($ChosenDate)->format('Y-m-d');
+        $ChosenMonth = Carbon::parse($ChosenMonth)->format('m');
+        $Accommodation = false;
+        if($ReportAmenity == "Daily"){
+
+            if($SelectedAmenity == "Rooms/Cottages"){
+                $Accommodation = true;
+                $RoomID = DB::table('tblRoom')->where([['strRoomStatus', '!=', 'deleted'],['strRoomName', '=', $ChosenAmenity]])->pluck('strRoomID')->first();
+                $GeneratedReport = DB::table('tblReservationRoom as a')
+                                   ->join('tblReservationDetail as b', 'a.strResRReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblRoom as d', 'd.strRoomID', '=', 'a.strResRRoomID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         'b.dtmResDArrival',
+                                         'b.dtmResDDeparture',
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where([['a.strResRRoomID', '=', $RoomID],[DB::raw('Date(b.dtmResDArrival)'), '<=', $ChosenDate],[DB::raw('Date(b.dtmResDDeparture)'), '>=', $ChosenDate]])
+                                   ->orderBy('Name')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Items"){
+                $ItemID = DB::table('tblItem')->where([['intItemDeleted', '=', '1'],['strItemName', '=', $ChosenAmenity]])->pluck('strItemID')->first();
+
+                $GeneratedReport = DB::table('tblRentedItem as a')
+                                   ->join('tblReservationDetail as b', 'a.strRentedIReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblItem as d', 'd.strItemID', '=', 'a.strRentedIItemID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         DB::raw('a.tmsCreated as DateAvailed'),
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where([['a.strRentedIItemID', '=', $ItemID],[DB::raw('Date(a.tmsCreated)'), '=', $ChosenDate]])
+                                   ->orderBy('Name')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Activities"){
+                $ActivityID = DB::table('tblBeachActivity')->where([['strBeachAStatus', '!=', 'deleted'],['strBeachAName', '=', $ChosenAmenity]])->pluck('strBeachActivityID')->first();
+
+                $GeneratedReport = DB::table('tblAvailBeachActivity as a')
+                                   ->join('tblReservationDetail as b', 'a.strAvailBAReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblBeachActivity as d', 'd.strBeachActivityID', '=', 'a.strAvailBABeachActivityID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         DB::raw('a.tmsCreated as DateAvailed'),
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where([['a.strAvailBABeachActivityID', '=', $ActivityID],[DB::raw('Date(a.tmsCreated)'), '=', $ChosenDate]])
+                                   ->orderBy('Name')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Packages"){
+                $Accommodation = true;
+                $PackageID = DB::table('tblPackage')->where([['strPackageStatus', '!=', 'deleted'],['strPackageName', '=', $ChosenAmenity]])->pluck('strPackageID')->first();
+
+                $GeneratedReport = DB::table('tblAvailPackage as a')
+                                   ->join('tblReservationDetail as b', 'a.strAvailPReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblPackage as d', 'd.strPackageID', '=', 'a.strAvailPackageID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         'b.dtmResDArrival',
+                                         'b.dtmResDDeparture',
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where([['a.strAvailPackageID', '=', $PackageID],[DB::raw('Date(b.dtmResDArrival)'), '=', $ChosenDate]])
+                                   ->orderBy('Name')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Boats"){
+                $BoatID = DB::table('tblBoat')->where([['strBoatStatus', '!=', 'deleted'],['strBoatName', '=', $ChosenAmenity]])->pluck('strBoatID')->first();
+
+                $GeneratedReport = DB::table('tblBoatSchedule as a')
+                                   ->join('tblReservationDetail as b', 'a.strBoatSReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblBoat as d', 'd.strBoatID', '=', 'a.strBoatSBoatID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         DB::raw('a.dtmBoatSPickUp as DateAvailed'),
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where([['a.strBoatSBoatID', '=', $BoatID],[DB::raw('Date(a.dtmBoatSPickUp)'), '=', $ChosenDate]])
+                                   ->orderBy('Name')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+
+        }
+        else if($ReportAmenity == "Monthly"){
+            if($SelectedAmenity == "Rooms/Cottages"){
+                $Accommodation = true;
+                $RoomID = DB::table('tblRoom')->where([['strRoomStatus', '!=', 'deleted'],['strRoomName', '=', $ChosenAmenity]])->pluck('strRoomID')->first();
+                $GeneratedReport = DB::table('tblReservationRoom as a')
+                                   ->join('tblReservationDetail as b', 'a.strResRReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblRoom as d', 'd.strRoomID', '=', 'a.strResRRoomID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         'b.dtmResDArrival',
+                                         'b.dtmResDDeparture',
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where('a.strResRRoomID', '=', $RoomID)
+                                   ->whereMonth('dtmResDArrival', '=', $ChosenMonth)
+                                   ->whereYear('dtmResDArrival', '=', $ChosenYear)
+                                   ->orderBy('dtmResDArrival')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Items"){
+                $ItemID = DB::table('tblItem')->where([['intItemDeleted', '=', '1'],['strItemName', '=', $ChosenAmenity]])->pluck('strItemID')->first();
+
+                $GeneratedReport = DB::table('tblRentedItem as a')
+                                   ->join('tblReservationDetail as b', 'a.strRentedIReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblItem as d', 'd.strItemID', '=', 'a.strRentedIItemID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         DB::raw('a.tmsCreated as DateAvailed'),
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where('a.strRentedIItemID', '=', $ItemID)
+                                   ->whereMonth('a.tmsCreated', '=', $ChosenMonth)
+                                   ->whereYear('a.tmsCreated', '=', $ChosenYear)
+                                   ->orderBy('a.tmsCreated')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Activities"){
+                $ActivityID = DB::table('tblBeachActivity')->where([['strBeachAStatus', '!=', 'deleted'],['strBeachAName', '=', $ChosenAmenity]])->pluck('strBeachActivityID')->first();
+
+                $GeneratedReport = DB::table('tblAvailBeachActivity as a')
+                                   ->join('tblReservationDetail as b', 'a.strAvailBAReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblBeachActivity as d', 'd.strBeachActivityID', '=', 'a.strAvailBABeachActivityID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         DB::raw('a.tmsCreated as DateAvailed'),
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where('a.strAvailBABeachActivityID', '=', $ActivityID)
+                                   ->whereMonth('a.tmsCreated', '=', $ChosenMonth)
+                                   ->whereYear('a.tmsCreated', '=', $ChosenYear)
+                                   ->orderBy('a.tmsCreated')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Packages"){
+                $Accommodation = true;
+                $PackageID = DB::table('tblPackage')->where([['strPackageStatus', '!=', 'deleted'],['strPackageName', '=', $ChosenAmenity]])->pluck('strPackageID')->first();
+
+                $GeneratedReport = DB::table('tblAvailPackage as a')
+                                   ->join('tblReservationDetail as b', 'a.strAvailPReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblPackage as d', 'd.strPackageID', '=', 'a.strAvailPackageID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         'b.dtmResDArrival',
+                                         'b.dtmResDDeparture',
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where('a.strAvailPackageID', '=', $PackageID)
+                                   ->whereMonth('dtmResDArrival', '=', $ChosenMonth)
+                                   ->whereYear('dtmResDArrival', '=', $ChosenYear)
+                                   ->orderBy('dtmResDArrival')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+            else if($SelectedAmenity == "Boats"){
+                $BoatID = DB::table('tblBoat')->where([['strBoatStatus', '!=', 'deleted'],['strBoatName', '=', $ChosenAmenity]])->pluck('strBoatID')->first();
+
+                $GeneratedReport = DB::table('tblBoatSchedule as a')
+                                   ->join('tblReservationDetail as b', 'a.strBoatSReservationID', '=', 'b.strReservationID')
+                                   ->join('tblCustomer as c', 'c.strCustomerID', '=', 'b.strResDCustomerID')
+                                   ->join('tblBoat as d', 'd.strBoatID', '=', 'a.strBoatSBoatID')
+                                   ->select(DB::raw('CONCAT(c.strCustFirstName , " " , c.strCustMiddleName , " " , c.strCustLastName) AS Name'),
+                                         DB::raw('a.dtmBoatSPickUp as DateAvailed'),
+                                         'c.strCustContact',
+                                         'c.strCustEmail')
+                                   ->where('a.strBoatSBoatID', '=', $BoatID)
+                                   ->whereMonth('dtmBoatSPickUp', '=', $ChosenMonth)
+                                   ->whereYear('dtmBoatSPickUp', '=', $ChosenYear)
+                                   ->orderBy('dtmBoatSPickUp')
+                                   ->groupBy('Name')
+                                   ->get();
+            }
+        }
+
+        if($Accommodation == true){
+            foreach($GeneratedReport as $Report){
+                $Report->dtmResDArrival = Carbon::parse($Report->dtmResDArrival)->format('M j,Y');
+                $Report->dtmResDDeparture = Carbon::parse($Report->dtmResDDeparture)->format('M j,Y');
+            }
+        }
+        else{
+            foreach($GeneratedReport as $Report){
+                $Report->DateAvailed = Carbon::parse($Report->DateAvailed)->format('M j,Y');
+            }
+        }
+        return response()->json($GeneratedReport);
+
+    }
+
     public function getReservationReport(Request $req){
         $ReservationReport = trim($req->input('ReservationReport'));
         $ReservationMonth = trim($req->input('ReservationMonth'));
