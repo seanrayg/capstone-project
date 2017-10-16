@@ -95,8 +95,7 @@ function LoginCheckCode(){
             },
             success: function(data) {
                 if(data != 2){
-
-                    alert('Code matched');
+                    
                     window.location.href = '/Reservation/' + data;
 
                 }else if(data == 2){

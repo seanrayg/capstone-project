@@ -567,7 +567,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-success pull-right" onclick="">Send</button>
+                        <button type="button" class="btn btn-success pull-right" onclick="SendEmail()">Send</button>
                     </div>
                 </div>
             </div>
