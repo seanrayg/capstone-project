@@ -62,6 +62,21 @@
                     <p class="category">Please fill out all the fields</p>
                     <h3 class="title">Sales Report</h3>
                 </div>
+
+                <div class = "row">
+                    <div class="col-md-12">
+                        <div class="form-group label-static">
+                            <label class="control-label">Type</label>
+                            <div class="selectBox">
+                                <select id="ReportType" onchange="SwitchTotalSalesPanel()">
+                                    <option>Payment Summary</option>
+                                    <option>Breakdown</option>
+                                </select>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class = "row">
                     <div class="col-md-12">
                         <div class="form-group label-static">
@@ -170,6 +185,75 @@
                 <button type="button" class="btn btn-success pull-right" onclick="GenerateReport()">Generate Report</button>
             </div>
         </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card card-stats">
+            <div class="card-header" data-background-color="green">
+                <i class="material-icons">assignments</i>
+            </div>
+            <div class="card-content" style="height: 370px;">
+                <div class="row">
+                    <p class="category"></p>
+                    <h3 class="title">Total Sales</h3>
+                </div>
+
+                <div id="s-total" class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group label-static">
+                            <label class="control-label">TOTAL</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group label-static">
+                            <label class="control-label" style="font-size: 40px;" id="s-totalamount">₱ &nbsp;</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="b-total" class="row" style="display: none;">
+                    <div class="col-sm-6">
+                        <div class="form-group label-static">
+                            <label class="control-label">Rooms</label>
+                            <input type="text" id="roomtypesales" class="form-control" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group label-static">
+                            <label class="control-label">Items</label>
+                            <input type="text" id="itemsales" class="form-control" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group label-static">
+                            <label class="control-label">Beach Activities</label>
+                            <input type="text" id="beachactivitysales" class="form-control" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group label-static">
+                            <label class="control-label">Boats</label>
+                            <input type="text" id="boatsales" class="form-control" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group label-static">
+                            <label class="control-label">TOTAL</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group label-static">
+                            <label class="control-label" style="font-size: 40px;" id="b-totalamount">₱ &nbsp;</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div> 
 </div>
 
@@ -188,7 +272,43 @@
                     <tbody>
                     
                     </tbody>
-                </table>    
+                </table>
+                <br>
+                <table class="table" id="RoomTable">
+                    <thead class="text-info">
+
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <br>
+                <table class="table" id="ItemTable">
+                    <thead class="text-info">
+
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table> 
+                <br>
+                <table class="table" id="BeachActivityTable">
+                    <thead class="text-info">
+
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+                <br>
+                <table class="table" id="BoatTable">
+                    <thead class="text-info">
+
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table> 
             </div>
             <form method="POST" action="/QueryReports/Print" target="_blank" onsubmit="IncludeDeleted()">
                 {{ csrf_field() }}

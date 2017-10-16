@@ -66,7 +66,7 @@ class ReservationController extends Controller
         $Birthday = $tempDateOfBirth2[2] ."/". $tempDateOfBirth2[0] ."/". $tempDateOfBirth2[1];
         $CheckInDate = $tempCheckInDate2[2] ."/". $tempCheckInDate2[0] ."/". $tempCheckInDate2[1];
         $CheckOutDate = $tempCheckOutDate2[2] ."/". $tempCheckOutDate2[0] ."/". $tempCheckOutDate2[1];
-        $DateBooked = Carbon::now();
+        $DateBooked = Carbon::now('Asia/Manila');
         $Gender;
         $Remarks;
         $PickOutTime;

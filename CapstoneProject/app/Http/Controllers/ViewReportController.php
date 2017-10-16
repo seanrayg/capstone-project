@@ -11,53 +11,640 @@ class ViewReportController extends Controller
 {
     public function getSalesReport(Request $request) {
 
-        $SalesReportTimeRange = $request->input('SalesReportTimeRange');
-        $GeneratedSalesReport;
-        $data = array();
-        $PaymentTypes = array(2, 3, 25, 23, 21, 9, 19, 12, 17);
+        $ReportType = $request->input('ReportType');
 
-        if($SalesReportTimeRange == 'Daily') {
+        if($ReportType == 'Payment Summary') {
 
-            $dtmDailyDate = $request->input('dtmDailyDate');
-            $date = explode('/', $dtmDailyDate);
-            $dtmDailyDate = $date[2] . '-' . $date[0] . '-' . $date[1];
+            $SalesReportTimeRange = $request->input('SalesReportTimeRange');
+            $GeneratedSalesReport;
+            $data = array();
+            $PaymentTypes = array(2, 3, 25, 23, 21, 9, 19, 12, 15, 13, 17, 28);
 
-            for($i = 0; $i < count($PaymentTypes) ; $i++) {
+            if($SalesReportTimeRange == 'Daily') {
 
-                $sales = $this->getDailySales($dtmDailyDate, $PaymentTypes[$i]);
-                array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+                $dtmDailyDate = $request->input('dtmDailyDate');
+                $date = explode('/', $dtmDailyDate);
+                $dtmDailyDate = $date[2] . '-' . $date[0] . '-' . $date[1];
+
+                for($i = 0; $i < count($PaymentTypes) ; $i++) {
+
+                    $sales = $this->getDailySales($dtmDailyDate, $PaymentTypes[$i]);
+                    array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+
+                }
+
+            }else if($SalesReportTimeRange == 'Monthly') {
+
+                $intMonth = $request->input('intMonthlyMonth');
+                $intYear = $request->input('intMonthlyYear');
+
+                for($i = 0; $i < count($PaymentTypes) ; $i++) {
+
+                    $sales = $this->getMonthlySales($intMonth, $intYear, $PaymentTypes[$i]);
+                    array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+
+                }
+
+            }else if($SalesReportTimeRange == 'Quarterly') {
+
+                $intQuarter = $request->input('intQuarter');
+                $intQuarterYear = $request->input('intQuarterYear');
+
+                for($i = 0; $i < count($PaymentTypes) ; $i++) {
+
+                    $sales = $this->getQuarterlySales($intQuarter, $intQuarterYear, $PaymentTypes[$i]);
+                    array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+
+                }
+
+            }else if($SalesReportTimeRange == 'Annually') {
+
+                $intYearlyYear = $request->input('intYearlyYear');
+
+                for($i = 0; $i < count($PaymentTypes) ; $i++) {
+
+                    $sales = $this->getAnnualSales($intYearlyYear, $PaymentTypes[$i]);
+                    array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+
+                }
 
             }
 
-        }else if($SalesReportTimeRange == 'Monthly') {
+            return $data;
 
-            $intMonth = $request->input('intMonthlyMonth');
-            $intYear = $request->input('intMonthlyYear');
+        }else if($ReportType == 'Breakdown') {
 
-            for($i = 0; $i < count($PaymentTypes) ; $i++) {
+            $SalesReportTimeRange = $request->input('SalesReportTimeRange');
+            $GeneratedSalesReport;
 
-                $sales = $this->getMonthlySales($intMonth, $intYear, $PaymentTypes[$i]);
-                array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+            if($SalesReportTimeRange == 'Annually') {
 
+                $intYearlyYear = $request->input('intYearlyYear');
 
-            }
+                $roomtype = $this->getRoomTypeAnnualSales($intYearlyYear);
+                $item = $this->getItemAnnualSales($intYearlyYear);
+                $beachactivity = $this->getBeachActivityAnnualSales($intYearlyYear);
+                $boat = $this->getBoatAnnualSales($intYearlyYear);
 
-        }else if($SalesReportTimeRange == 'Quarterly') {
+                return [$roomtype, $item, $beachactivity, $boat];
 
-            $intQuarter = $request->input('intQuarter');
-            $intQuarterYear = $request->input('intQuarterYear');
+            }else if($SalesReportTimeRange == 'Quarterly') {
 
-            for($i = 0; $i < count($PaymentTypes) ; $i++) {
+                $intQuarter = $request->input('intQuarter');
+                $intQuarterYear = $request->input('intQuarterYear');
 
-                $sales = $this->getQuarterlySales($intQuarter, $intQuarterYear, $PaymentTypes[$i]);
-                array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+                $start;
+                $end;
 
+                if($intQuarter == 1) {
+
+                    $start = 1;
+                    $end = 3;
+
+                }if($intQuarter == 2) {
+
+                    $start = 4;
+                    $end = 6;
+
+                }if($intQuarter == 3) {
+
+                    $start = 7;
+                    $end = 9;
+
+                }if($intQuarter == 4) {
+
+                    $start = 10;
+                    $end = 12;
+
+                }
+
+                $roomtype = $this->getRoomTypeQuarterlySales($intQuarterYear, $start, $end);
+                $item = $this->getItemQuarterlySales($intQuarterYear, $start, $end);
+                $beachactivity = $this->getBeachActivityQuarterlySales($intQuarterYear, $start, $end);
+                $boat = $this->getBoatQuarterlySales($intQuarterYear, $start, $end);
+
+                return [$roomtype, $item, $beachactivity, $boat];
+
+            }else if($SalesReportTimeRange == 'Monthly') {
+
+                $intMonth = $request->input('intMonthlyMonth');
+                $intYear = $request->input('intMonthlyYear');
+
+                $roomtype = $this->getRoomTypeMonthlySales($intMonth, $intYear);
+                $item = $this->getItemMonthlySales($intMonth, $intYear);
+                $beachactivity = $this->getBeachActivityMonthlySales($intMonth, $intYear);
+                $boat = $this->getBoatMonthlySales($intMonth, $intYear);
+
+                return [$roomtype, $item, $beachactivity, $boat];
+
+            }else if($SalesReportTimeRange == 'Daily') {
+
+                $dtmDailyDate = $request->input('dtmDailyDate');
+                $date = explode('/', $dtmDailyDate);
+                $dtmDailyDate = $date[2] . '-' . $date[0] . '-' . $date[1];
+
+                $roomtype = $this->getRoomTypeDailySales($dtmDailyDate);
+                $item = $this->getItemDailySales($dtmDailyDate);
+                $beachactivity = $this->getBeachActivityDailySales($dtmDailyDate);
+                $boat = $this->getBoatDailySales($dtmDailyDate);
+
+                return [$roomtype, $item, $beachactivity, $boat];
 
             }
 
         }
 
-        return $data;
+    }
+
+    public function getBoatDailySales($date) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblBoatSchedule as b', 'a.strReservationID', '=', 'b.strBoatSReservationID')
+                ->join('tblBoat as c', 'b.strBoatSBoatID', '=', 'c.strBoatID')
+                ->join('tblBoatRate as d', 'c.strBoatID', '=', 'd.strBoatID')
+                ->select(
+                    'c.strBoatName as description',
+                    DB::raw("COUNT(c.strBoatName) as quantity"),
+                    'd.dblBoatRate as rate',
+                    DB::raw("(COUNT(c.strBoatName) * d.dblBoatRate) as total")
+                )
+                ->where([
+                    ['d.dtmBoatRateAsOf', '=', DB::raw("(SELECT MAX(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = d.strBoatID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("DATE(dteResDBooking)"), '=', $date]
+                ])
+                ->groupBy('c.strBoatName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+        
+    }
+
+    public function getBeachActivityDailySales($date) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblAvailBeachActivity as b', 'a.strReservationID', '=', 'b.strAvailBAReservationID')
+                ->join('tblBeachActivity as c', 'b.strAvailBABeachActivityID', '=', 'c.strBeachActivityID')
+                ->join('tblBeachActivityRate as d', 'c.strBeachActivityID', '=', 'd.strBeachActivityID')
+                ->select(
+                    'c.strBeachAName as description',
+                    DB::raw("COUNT(c.strBeachAName) as quantity"),
+                    'd.dblBeachARate as rate',
+                    DB::raw("(COUNT(c.strBeachAName) * d.dblBeachARate) as total")
+                )
+                ->where([
+                    ['d.dtmBeachARateAsOf', '=', DB::raw("(SELECT MAX(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = d.strBeachActivityID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("DATE(dteResDBooking)"), '=', $date]
+                ])
+                ->groupBy('c.strBeachAName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+        
+    }
+
+    public function getItemDailySales($date) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblRentedItem as b', 'a.strReservationID', '=', 'b.strRentedIReservationID')
+                ->join('tblItem as c', 'b.strRentedIItemID', '=', 'c.strItemID')
+                ->join('tblItemRate as d', 'c.strItemID', '=', 'd.strItemID')
+                ->select(
+                    'c.strItemName as description',
+                    DB::raw("COUNT(c.strItemName) as quantity"),
+                    'd.dblItemRate as rate',
+                    DB::raw("(COUNT(c.strItemName) * d.dblItemRate) as total")
+                )
+                ->where([
+                    ['d.dtmItemRateAsOf', '=', DB::raw("(SELECT MAX(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = d.strItemID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("DATE(dteResDBooking)"), '=', $date]
+                ])
+                ->groupBy('c.strItemName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+        
+    }
+
+    public function getRoomTypeDailySales($date) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblReservationRoom as b', 'a.strReservationID', '=', 'b.strResRReservationID')
+                ->join('tblRoom as c', 'b.strResRRoomID', '=', 'c.strRoomID')
+                ->join('tblRoomType as d', 'c.strRoomTypeID', '=', 'd.strRoomTypeID')
+                ->join('tblRoomRate as e', 'd.strRoomTypeID', '=', 'e.strRoomTypeID')
+                ->select(
+                    'd.strRoomType as description',
+                    DB::raw("COUNT(d.strRoomType) as quantity"),
+                    'e.dblRoomRate as rate',
+                    DB::raw("(COUNT(d.strRoomType) * e.dblRoomRate) as total")
+                )
+                ->where([
+                    ['e.dtmRoomRateAsOf', '=', DB::raw("(SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = e.strRoomTypeID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("DATE(dteResDBooking)"), '=', $date]
+                ])
+                ->groupBy('d.strRoomType')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getBoatMonthlySales($month, $year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblBoatSchedule as b', 'a.strReservationID', '=', 'b.strBoatSReservationID')
+                ->join('tblBoat as c', 'b.strBoatSBoatID', '=', 'c.strBoatID')
+                ->join('tblBoatRate as d', 'c.strBoatID', '=', 'd.strBoatID')
+                ->select(
+                    'c.strBoatName as description',
+                    DB::raw("COUNT(c.strBoatName) as quantity"),
+                    'd.dblBoatRate as rate',
+                    DB::raw("(COUNT(c.strBoatName) * d.dblBoatRate) as total")
+                )
+                ->where([
+                    ['d.dtmBoatRateAsOf', '=', DB::raw("(SELECT MAX(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = d.strBoatID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year],
+                    [DB::raw("MONTH(dteResDBooking)"), '=', $month]
+                ])
+                ->groupBy('c.strBoatName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+        
+    }
+
+    public function getBeachActivityMonthlySales($month, $year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblAvailBeachActivity as b', 'a.strReservationID', '=', 'b.strAvailBAReservationID')
+                ->join('tblBeachActivity as c', 'b.strAvailBABeachActivityID', '=', 'c.strBeachActivityID')
+                ->join('tblBeachActivityRate as d', 'c.strBeachActivityID', '=', 'd.strBeachActivityID')
+                ->select(
+                    'c.strBeachAName as description',
+                    DB::raw("COUNT(c.strBeachAName) as quantity"),
+                    'd.dblBeachARate as rate',
+                    DB::raw("(COUNT(c.strBeachAName) * d.dblBeachARate) as total")
+                )
+                ->where([
+                    ['d.dtmBeachARateAsOf', '=', DB::raw("(SELECT MAX(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = d.strBeachActivityID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year],
+                    [DB::raw("MONTH(dteResDBooking)"), '=', $month]
+                ])
+                ->groupBy('c.strBeachAName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+        
+    }
+
+    public function getItemMonthlySales($month, $year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblRentedItem as b', 'a.strReservationID', '=', 'b.strRentedIReservationID')
+                ->join('tblItem as c', 'b.strRentedIItemID', '=', 'c.strItemID')
+                ->join('tblItemRate as d', 'c.strItemID', '=', 'd.strItemID')
+                ->select(
+                    'c.strItemName as description',
+                    DB::raw("COUNT(c.strItemName) as quantity"),
+                    'd.dblItemRate as rate',
+                    DB::raw("(COUNT(c.strItemName) * d.dblItemRate) as total")
+                )
+                ->where([
+                    ['d.dtmItemRateAsOf', '=', DB::raw("(SELECT MAX(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = d.strItemID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year],
+                    [DB::raw("MONTH(dteResDBooking)"), '=', $month]
+                ])
+                ->groupBy('c.strItemName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+        
+    }
+
+    public function getRoomTypeMonthlySales($month, $year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblReservationRoom as b', 'a.strReservationID', '=', 'b.strResRReservationID')
+                ->join('tblRoom as c', 'b.strResRRoomID', '=', 'c.strRoomID')
+                ->join('tblRoomType as d', 'c.strRoomTypeID', '=', 'd.strRoomTypeID')
+                ->join('tblRoomRate as e', 'd.strRoomTypeID', '=', 'e.strRoomTypeID')
+                ->select(
+                    'd.strRoomType as description',
+                    DB::raw("COUNT(d.strRoomType) as quantity"),
+                    'e.dblRoomRate as rate',
+                    DB::raw("(COUNT(d.strRoomType) * e.dblRoomRate) as total")
+                )
+                ->where([
+                    ['e.dtmRoomRateAsOf', '=', DB::raw("(SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = e.strRoomTypeID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year],
+                    [DB::raw("MONTH(dteResDBooking)"), '=', $month]
+                ])
+                ->groupBy('d.strRoomType')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getBoatQuarterlySales($year, $start, $end) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblBoatSchedule as b', 'a.strReservationID', '=', 'b.strBoatSReservationID')
+                ->join('tblBoat as c', 'b.strBoatSBoatID', '=', 'c.strBoatID')
+                ->join('tblBoatRate as d', 'c.strBoatID', '=', 'd.strBoatID')
+                ->select(
+                    'c.strBoatName as description',
+                    DB::raw("COUNT(c.strBoatName) as quantity"),
+                    'd.dblBoatRate as rate',
+                    DB::raw("(COUNT(c.strBoatName) * d.dblBoatRate) as total")
+                )
+                ->where([
+                    ['d.dtmBoatRateAsOf', '=', DB::raw("(SELECT MAX(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = d.strBoatID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->whereBetween(DB::raw("MONTH(dteResDBooking)"), [$start, $end])
+                ->groupBy('c.strBoatName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getBeachActivityQuarterlySales($year, $start, $end) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblAvailBeachActivity as b', 'a.strReservationID', '=', 'b.strAvailBAReservationID')
+                ->join('tblBeachActivity as c', 'b.strAvailBABeachActivityID', '=', 'c.strBeachActivityID')
+                ->join('tblBeachActivityRate as d', 'c.strBeachActivityID', '=', 'd.strBeachActivityID')
+                ->select(
+                    'c.strBeachAName as description',
+                    DB::raw("COUNT(c.strBeachAName) as quantity"),
+                    'd.dblBeachARate as rate',
+                    DB::raw("(COUNT(c.strBeachAName) * d.dblBeachARate) as total")
+                )
+                ->where([
+                    ['d.dtmBeachARateAsOf', '=', DB::raw("(SELECT MAX(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = d.strBeachActivityID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->whereBetween(DB::raw("MONTH(dteResDBooking)"), [$start, $end])
+                ->groupBy('c.strBeachAName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getItemQuarterlySales($year, $start, $end) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblRentedItem as b', 'a.strReservationID', '=', 'b.strRentedIReservationID')
+                ->join('tblItem as c', 'b.strRentedIItemID', '=', 'c.strItemID')
+                ->join('tblItemRate as d', 'c.strItemID', '=', 'd.strItemID')
+                ->select(
+                    'c.strItemName as description',
+                    DB::raw("COUNT(c.strItemName) as quantity"),
+                    'd.dblItemRate as rate',
+                    DB::raw("(COUNT(c.strItemName) * d.dblItemRate) as total")
+                )
+                ->where([
+                    ['d.dtmItemRateAsOf', '=', DB::raw("(SELECT MAX(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = d.strItemID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->whereBetween(DB::raw("MONTH(dteResDBooking)"), [$start, $end])
+                ->groupBy('c.strItemName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getRoomTypeQuarterlySales($year, $start, $end) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblReservationRoom as b', 'a.strReservationID', '=', 'b.strResRReservationID')
+                ->join('tblRoom as c', 'b.strResRRoomID', '=', 'c.strRoomID')
+                ->join('tblRoomType as d', 'c.strRoomTypeID', '=', 'd.strRoomTypeID')
+                ->join('tblRoomRate as e', 'd.strRoomTypeID', '=', 'e.strRoomTypeID')
+                ->select(
+                    'd.strRoomType as description',
+                    DB::raw("COUNT(d.strRoomType) as quantity"),
+                    'e.dblRoomRate as rate',
+                    DB::raw("(COUNT(d.strRoomType) * e.dblRoomRate) as total")
+                )
+                ->where([
+                    ['e.dtmRoomRateAsOf', '=', DB::raw("(SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = e.strRoomTypeID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->whereBetween(DB::raw("MONTH(dteResDBooking)"), [$start, $end])
+                ->groupBy('d.strRoomType')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getRoomTypeAnnualSales($year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblReservationRoom as b', 'a.strReservationID', '=', 'b.strResRReservationID')
+                ->join('tblRoom as c', 'b.strResRRoomID', '=', 'c.strRoomID')
+                ->join('tblRoomType as d', 'c.strRoomTypeID', '=', 'd.strRoomTypeID')
+                ->join('tblRoomRate as e', 'd.strRoomTypeID', '=', 'e.strRoomTypeID')
+                ->select(
+                    'd.strRoomType as description',
+                    DB::raw("COUNT(d.strRoomType) as quantity"),
+                    'e.dblRoomRate as rate',
+                    DB::raw("(COUNT(d.strRoomType) * e.dblRoomRate) as total")
+                )
+                ->where([
+                    ['e.dtmRoomRateAsOf', '=', DB::raw("(SELECT MAX(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = e.strRoomTypeID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->groupBy('d.strRoomType')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getItemAnnualSales($year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblRentedItem as b', 'a.strReservationID', '=', 'b.strRentedIReservationID')
+                ->join('tblItem as c', 'b.strRentedIItemID', '=', 'c.strItemID')
+                ->join('tblItemRate as d', 'c.strItemID', '=', 'd.strItemID')
+                ->select(
+                    'c.strItemName as description',
+                    DB::raw("COUNT(c.strItemName) as quantity"),
+                    'd.dblItemRate as rate',
+                    DB::raw("(COUNT(c.strItemName) * d.dblItemRate) as total")
+                )
+                ->where([
+                    ['d.dtmItemRateAsOf', '=', DB::raw("(SELECT MAX(dtmItemRateAsOf) FROM tblItemRate WHERE strItemID = d.strItemID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->groupBy('c.strItemName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getBeachActivityAnnualSales($year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblAvailBeachActivity as b', 'a.strReservationID', '=', 'b.strAvailBAReservationID')
+                ->join('tblBeachActivity as c', 'b.strAvailBABeachActivityID', '=', 'c.strBeachActivityID')
+                ->join('tblBeachActivityRate as d', 'c.strBeachActivityID', '=', 'd.strBeachActivityID')
+                ->select(
+                    'c.strBeachAName as description',
+                    DB::raw("COUNT(c.strBeachAName) as quantity"),
+                    'd.dblBeachARate as rate',
+                    DB::raw("(COUNT(c.strBeachAName) * d.dblBeachARate) as total")
+                )
+                ->where([
+                    ['d.dtmBeachARateAsOf', '=', DB::raw("(SELECT MAX(dtmBeachARateAsOf) FROM tblBeachActivityRate WHERE strBeachActivityID = d.strBeachActivityID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->groupBy('c.strBeachAName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
+
+    }
+
+    public function getBoatAnnualSales($year) {
+
+        try {
+
+            $result = DB::table('tblReservationDetail as a')
+                ->join('tblBoatSchedule as b', 'a.strReservationID', '=', 'b.strBoatSReservationID')
+                ->join('tblBoat as c', 'b.strBoatSBoatID', '=', 'c.strBoatID')
+                ->join('tblBoatRate as d', 'c.strBoatID', '=', 'd.strBoatID')
+                ->select(
+                    'c.strBoatName as description',
+                    DB::raw("COUNT(c.strBoatName) as quantity"),
+                    'd.dblBoatRate as rate',
+                    DB::raw("(COUNT(c.strBoatName) * d.dblBoatRate) as total")
+                )
+                ->where([
+                    ['d.dtmBoatRateAsOf', '=', DB::raw("(SELECT MAX(dtmBoatRateAsOf) FROM tblBoatRate WHERE strBoatID = d.strBoatID)")],
+                    ['a.intResDStatus', '!=', 3],
+                    [DB::raw("YEAR(dteResDBooking)"), '=', $year]
+                ])
+                ->groupBy('c.strBoatName')
+                ->get();
+
+        } catch(\Illuminate\Database\QueryException $ex){ 
+            return $ex->getMessage();
+        }
+
+        return $result;
 
     }
 
@@ -81,6 +668,55 @@ class ViewReportController extends Controller
                 DB::raw("COUNT(strPayReservationID) as quantity"),
                 DB::raw("SUM(dblPayAmount) as total"))
             ->where([['strPayTypeID', '=', $PaymentType], [DB::raw("MONTH(tmsCreated)"), '=', $month], [DB::raw("YEAR(tmsCreated)"), '=', $year]])
+            ->first();
+
+        return $result;
+
+    }
+
+    public function getQuarterlySales($quarter, $year, $PaymentType) {
+
+        if($quarter == 1) {
+
+            $start = 1;
+            $end = 3;
+
+        }if($quarter == 2) {
+
+            $start = 4;
+            $end = 6;
+
+        }if($quarter == 3) {
+
+            $start = 7;
+            $end = 9;
+
+        }if($quarter == 4) {
+
+            $start = 10;
+            $end = 12;
+
+        }
+
+        $result = DB::table('tblPayment')
+            ->select(
+                DB::raw("COUNT(strPayReservationID) as quantity"),
+                DB::raw("SUM(dblPayAmount) as total"))
+            ->where([['strPayTypeID', '=', $PaymentType], [DB::raw("YEAR(tmsCreated)"), '=', $year]])
+            ->whereBetween(DB::raw("MONTH(tmsCreated)"), [$start, $end])
+            ->first();
+
+        return $result;
+
+    }
+
+    public function getAnnualSales($year, $PaymentType) {
+
+        $result = DB::table('tblPayment')
+            ->select(
+                DB::raw("COUNT(strPayReservationID) as quantity"),
+                DB::raw("SUM(dblPayAmount) as total"))
+            ->where([['strPayTypeID', '=', $PaymentType], [DB::raw("YEAR(tmsCreated)"), '=', $year]])
             ->first();
 
         return $result;
