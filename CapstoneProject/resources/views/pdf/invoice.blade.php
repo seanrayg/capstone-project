@@ -8,7 +8,7 @@
 <body>
 	<div class="header">
 		<div class="column-left">
-			<img src="..\public\images\logo.png" alt="Mountain View" style="width:150px;height:115px; margin-left: 10px;">
+			<p class="title">INVOICE</p>
 		</div>
 		<div class="column-right">
 			<p class="resort">
@@ -179,13 +179,15 @@
 
 	<br style="clear: both;">
 
-	<label class="payment">Amount Tendered:</label>
-	<label class="amount">{{ $payment }}</label>
+	@if($InvoiceType == 'CheckOut')
+		<label class="payment">Amount Tendered:</label>
+		<label class="amount">{{ $payment }}</label>
 
-	<hr style="margin-left: 470px; margin-right: 20px; background-color: black;">
+		<hr style="margin-left: 470px; margin-right: 20px; background-color: black;">
 
-	<label class="change">Change:</label>
-	<label class="amount">{{ $payment - $total }}</label>
+		<label class="change">Change:</label>
+		<label class="amount">{{ $payment - $total }}</label>
+	@endif
 
 	<br style="clear: both;">
 

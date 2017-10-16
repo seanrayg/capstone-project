@@ -157,3 +157,9 @@ function getAge(dateString) {
     }
     return age;
 }
+
+function SendEmail() {
+
+    alert('haha');
+
+}

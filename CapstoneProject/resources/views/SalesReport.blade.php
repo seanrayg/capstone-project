@@ -45,6 +45,7 @@
 
     </script>
     <script src="js/reports.js" type="text/javascript"></script>
+    <script src="js/SalesReport.js" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -82,7 +83,7 @@
                         <div class="col-sm-12">
                             <div class="form-group label-static">
                                 <label class="control-label">Date</label>
-                                <input type="text" class="datepicker form-control" readonly/>
+                                <input type="text" id="DailyDate" class="datepicker form-control" readonly/>
                             </div>
                         </div>
                     </div>
@@ -94,19 +95,19 @@
                             <div class="form-group label-static">
                                 <label class="control-label">Month</label>
                                 <div class="selectBox">
-                                    <select>
-                                        <option>January</option>
-                                        <option>February</option>
-                                        <option>March</option>
-                                        <option>April</option>
-                                        <option>May</option>
-                                        <option>June</option>
-                                        <option>July</option>
-                                        <option>August</option>
-                                        <option>September</option>
-                                        <option>October</option>
-                                        <option>November</option>
-                                        <option>December</option>
+                                    <select id="Month">
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
                                     </select>
                                   </div>
                             </div>
@@ -127,13 +128,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group label-static">
-                                <label class="control-label">Year</label>
+                                <label class="control-label">Quarter</label>
                                 <div class="selectBox">
-                                    <select>
-                                        <option>1st Quarter (January - March)</option>
-                                        <option>2nd Quarter (April - June)</option>
-                                        <option>3rd Quarter (July - September)</option>
-                                        <option>4th Quarter (October - December)</option>
+                                    <select id="Quarter">
+                                        <option value="1">1st Quarter (January - March)</option>
+                                        <option value="2">2nd Quarter (April - June)</option>
+                                        <option value="3">3rd Quarter (July - September)</option>
+                                        <option value="4">4th Quarter (October - December)</option>
                                     </select>
                                   </div>
                             </div>

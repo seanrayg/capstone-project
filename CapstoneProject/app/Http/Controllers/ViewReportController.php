@@ -9,7 +9,83 @@ use PDF;
 
 class ViewReportController extends Controller
 {
-    //
+    public function getSalesReport(Request $request) {
+
+        $SalesReportTimeRange = $request->input('SalesReportTimeRange');
+        $GeneratedSalesReport;
+        $data = array();
+        $PaymentTypes = array(2, 3, 25, 23, 21, 9, 19, 12, 17);
+
+        if($SalesReportTimeRange == 'Daily') {
+
+            $dtmDailyDate = $request->input('dtmDailyDate');
+            $date = explode('/', $dtmDailyDate);
+            $dtmDailyDate = $date[2] . '-' . $date[0] . '-' . $date[1];
+
+            for($i = 0; $i < count($PaymentTypes) ; $i++) {
+
+                $sales = $this->getDailySales($dtmDailyDate, $PaymentTypes[$i]);
+                array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+
+            }
+
+        }else if($SalesReportTimeRange == 'Monthly') {
+
+            $intMonth = $request->input('intMonthlyMonth');
+            $intYear = $request->input('intMonthlyYear');
+
+            for($i = 0; $i < count($PaymentTypes) ; $i++) {
+
+                $sales = $this->getMonthlySales($intMonth, $intYear, $PaymentTypes[$i]);
+                array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+
+
+            }
+
+        }else if($SalesReportTimeRange == 'Quarterly') {
+
+            $intQuarter = $request->input('intQuarter');
+            $intQuarterYear = $request->input('intQuarterYear');
+
+            for($i = 0; $i < count($PaymentTypes) ; $i++) {
+
+                $sales = $this->getQuarterlySales($intQuarter, $intQuarterYear, $PaymentTypes[$i]);
+                array_push($data, (object) ["quantity" => $sales->quantity, "total" => $sales->total]);
+
+
+            }
+
+        }
+
+        return $data;
+
+    }
+
+    public function getDailySales($date, $PaymentType) {
+
+        $result = DB::table('tblPayment')
+            ->select(
+                DB::raw("COUNT(strPayReservationID) as quantity"),
+                DB::raw("SUM(dblPayAmount) as total"))
+            ->where([['strPayTypeID', '=', $PaymentType], [DB::raw("DATE(tmsCreated)"), '=', $date]])
+            ->first();
+
+        return $result;
+
+    }
+
+    public function getMonthlySales($month, $year, $PaymentType) {
+
+        $result = DB::table('tblPayment')
+            ->select(
+                DB::raw("COUNT(strPayReservationID) as quantity"),
+                DB::raw("SUM(dblPayAmount) as total"))
+            ->where([['strPayTypeID', '=', $PaymentType], [DB::raw("MONTH(tmsCreated)"), '=', $month], [DB::raw("YEAR(tmsCreated)"), '=', $year]])
+            ->first();
+
+        return $result;
+
+    }
     
     public function getQueryReport(Request $req){
         $SelectedReport = trim($req->input('SelectedReport'));

@@ -31,6 +31,12 @@ class InvoiceController extends Controller
             $intTotalAdults = $request->input("iTotalAdults");
             $BoatsUsed = $request->input("iBoats");
 
+            if($intDaysOfStay == 0) {
+
+                $intDaysOfStay = 1;
+
+            }
+
             $ReservationID = $this->SmartCounter("tblReservationDetail", "strReservationID");
             $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $ReservationID);
 
@@ -60,7 +66,7 @@ class InvoiceController extends Controller
 
             $Boats = array();
 
-            if($BoatsUsed != '') {
+            if($BoatsUsed != '0') {
 
                 $dblBoatPrice = $request->input('iBoatsAmount');
 

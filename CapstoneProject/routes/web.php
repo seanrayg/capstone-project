@@ -381,6 +381,9 @@ Route::get("/Reports/Query", 'ViewReportController@getQueryReport');
 
 Route::get('/Reports/Query/Reservation', 'ViewReportController@getReservationReport');
 
+// Sales Report AJAX
+Route::get("/Reports/Sales", 'ViewReportController@getSalesReport');
+
 
 /*----------- ITEM RENTAL -------------*/
 

@@ -38,10 +38,10 @@ class SessionsController extends Controller
 						->where('strCustEmail', $CustomerEmail)
 						->update(['strConfirmationCode' => $LoginCode]);
 
-					// Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
-			  //           $message->to($CustomerEmail);
-			  //           $message->subject('Verify Login');
-			  //       });
+					Mail::send('emails.verify', ['LoginCode' => $LoginCode], function($message) use ($CustomerEmail){
+			            $message->to($CustomerEmail);
+			            $message->subject('Verify Login');
+			        });
 
 			        echo 1;
 
