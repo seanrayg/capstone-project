@@ -38,8 +38,6 @@ function ShowModalUpgradeRoom(){
                 if(diffDays == 0){
                     diffDays = 1;
                 }
-
-                alert(date1 + " " + date2);
                 var OriginalRoomTotal = parseFloat(OriginalRoomPrice) * diffDays;
 
                 var UpgradeRoomTotal = parseFloat(UpgradeRoomPrice) * diffDays;

@@ -526,7 +526,7 @@ class ReservationController extends Controller
     //Edit Reservation Room
     
     public function updateReservationRoom(Request $req){
-        dd(Input::all());
+
         $tempCheckInDate = trim($req->input('r-CheckInDate'));
         $tempCheckOutDate = trim($req->input('r-CheckOutDate'));
         $ChosenRooms = trim($req->input('ChosenRooms'));
@@ -729,7 +729,7 @@ class ReservationController extends Controller
     //Edit Reservation Date
     
     public function updateReservationDate(Request $req){
-        dd(Input::all());
+
         $tempCheckInDate = trim($req->input('CheckInDate'));
         $tempCheckOutDate = trim($req->input('CheckOutDate'));
         $PickUpHour = trim($req->input('SelectHour'));

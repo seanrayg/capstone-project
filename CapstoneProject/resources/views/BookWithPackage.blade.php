@@ -188,7 +188,6 @@
                                                     <thead class="text-success">
                                                         <th onclick="sortTable(0, 'tblIncludedRooms', 'string')">Room</th>
                                                         <th onclick="sortTable(1, 'tblIncludedRooms', 'int')">Quantity</th>
-                                                        <th onclick="sortTable(2, 'tblIncludedRooms', 'double')">Price</th>
                                                     </thead>
                                                     <tbody>
 
@@ -215,7 +214,6 @@
                                                         <th onclick="sortTable(0, 'tblIncludedItems', 'string')">Item</th>
                                                         <th onclick="sortTable(1, 'tblIncludedItems', 'int')">Quantity</th>
                                                         <th onclick="sortTable(2, 'tblIncludedItems', 'int')">Duration(hours)</th>
-                                                        <th onclick="sortTable(3, 'tblIncludedItems', 'double')">Price</th>
                                                     </thead>
                                                     <tbody>
 
@@ -244,7 +242,6 @@
                                                     <thead class="text-success">
                                                         <th onclick="sortTable(0, 'tblIncludedActivities', 'string')">Activity</th>
                                                         <th onclick="sortTable(1, 'tblIncludedActivities', 'int')">Quantity</th>
-                                                        <th onclick="sortTable(2, 'tblIncludedActivities', 'double')">Price</th>
                                                     </thead>
                                                     <tbody>
 

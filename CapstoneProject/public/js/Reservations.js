@@ -505,7 +505,7 @@ function getConfirmedReservationInfo(){
         success:function(data){
             var PickUpTime = "";
             var tempPickUpTime = data.ReservationInfo[0].dtmResDArrival.split(" ");
-            alert(tempPickUpTime);
+
             var arrPickUpTime = tempPickUpTime[1].split(":");
             if(parseInt(arrPickUpTime[0]) > 12){
                 arrPickUpTime[0] = parseInt(arrPickUpTime[0]) - 12;
