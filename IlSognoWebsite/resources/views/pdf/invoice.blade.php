@@ -52,7 +52,7 @@
 	<hr style="clear: left;">
 
 	<table>
-		@if($InvoiceType == 'BookReservation' || $InvoiceType == 'BookPackages')
+		@if($InvoiceType == 'BookReservation' || $InvoiceType == 'BookPackage')
 			<tr>
 				<th style="width: 60%;">Description</th>
 				<th style="width: 20%;">Price/Rate</th>
@@ -86,7 +86,7 @@
   					<td style="text-align: right;">{{ $boat->amount }}</td>
   				</tr>
   		  	@endforeach
-		@elseif($InvoiceType == 'WalkInPackage')
+		@elseif($InvoiceType == 'BookPackage')
 			@foreach($package as $p)
 				<tr>
 					<td>{{ $p->name }}</td>

@@ -82,7 +82,28 @@ class InvoiceController extends Controller
             $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $strCustomerName, 'CustomerAddress' => $strCustomerAddress, 'days' => $intDaysOfStay, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'TableRows' => $TableRows, 'rooms' => $rooms, 'EntranceFee' => $EntranceFee, 'boats' => $Boats]);
             return $pdf->stream();
 
-		}
+		}else if($strInvoiceType == 'BookPackage') {
+
+            $intDaysOfStay = $request->input("DaysOfStay");
+            $strPackageName = $request->input("PackageName");
+            $dblPackagePrice = $request->input("PackagePrice");
+            $strCustomerName = $request->input("iCustomerName");
+            $strCustomerAddress = $request->input("iCustomerAddress");
+
+            $ReservationID = $this->SmartCounter("tblReservationDetail", "strReservationID");
+            $InvoiceNumber = $this->GetInvoiceNumber($strInvoiceType, $ReservationID);
+
+            $package = array(
+                (object) array("name" => $strPackageName, "price" => $dblPackagePrice, "quantity" => 1, "amount" => $dblPackagePrice)
+            );
+            $TableRows++;
+
+            $intTotal = $this->GetTotal($intTotal, $package);
+
+            $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $strCustomerName, 'CustomerAddress' => $strCustomerAddress, 'days' => $intDaysOfStay, 'date' => $dateNow, 'total' => $intTotal, 'InvoiceType' => $strInvoiceType, 'TableRows' => $TableRows, 'package' => $package]);
+            return $pdf->stream();
+
+        }
 
 	}
 
@@ -106,7 +127,7 @@ class InvoiceController extends Controller
         $InvoiceNumber = $dtmNow->year;
         $ID = $this->GetNumber($ID);
 
-        if($InvoiceType == 'BookReservation') {
+        if($InvoiceType == 'BookReservation' || $InvoiceType == 'BookPackage') {
 
             $InvoiceNumber .= "18" . $ID;
 

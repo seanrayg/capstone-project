@@ -310,10 +310,21 @@
                     </tbody>
                 </table> 
             </div>
-            <form method="POST" action="/QueryReports/Print" target="_blank" onsubmit="IncludeDeleted()">
+            <form method="POST" action="/SalesReport/Print" target="_blank" onsubmit="return SetSalesReportData()">
                 {{ csrf_field() }}
-                <input type="hidden" name="PrintSelectedReport" id="PrintSelectedReport" value="Accomodations">
-                <input type="hidden" name="PrintIncludeDeleted" id="PrintIncludeDeleted">
+                <input type="hidden" name="SalesReportType" id="SalesReportType" value="1">
+                <input type="hidden" name="sSalesReportTimeRange" id="sSalesReportTimeRange">
+                <input type="hidden" name="PaymentSummary" id="PaymentSummary">
+                <input type="hidden" name="tblRoomInfo" id="tblRoomInfo">
+                <input type="hidden" name="tblItemInfo" id="tblItemInfo">
+                <input type="hidden" name="tblBeachActivityInfo" id="tblBeachActivityInfo">
+                <input type="hidden" name="tblBoatInfo" id="tblBoatInfo">
+                <input type="hidden" name="sDailyDate" id="sDailyDate">
+                <input type="hidden" name="sMonthlyMonth" id="sMonthlyMonth">
+                <input type="hidden" name="sMonthlyYear" id="sMonthlyYear">
+                <input type="hidden" name="sQuarterlyQuarter" id="sQuarterlyQuarter">
+                <input type="hidden" name="sQuarterlyYear" id="sQuarterlyYear">
+                <input type="hidden" name="sAnnualYear" id="sAnnualYear">
                 <button type="submit" class="btn btn-success pull-right">Print</button>
             </form>
         </div>
