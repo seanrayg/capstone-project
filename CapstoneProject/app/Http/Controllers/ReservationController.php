@@ -240,7 +240,12 @@ class ReservationController extends Controller
         
         //Save Reserved Boats
         if($BoatsUsed != null){
-               $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);          
+               $this->saveReservedBoats($ReservationID, $CheckInDate, $CheckOutDate, $PickUpTime, $PickUpTime2, $BoatsUsed);
+               $updateData = array('intBoatSStatus' => 1);
+
+               DB::table('tblBoatSchedule')
+               ->where('strBoatSReservationID', '=', $ReservationID)
+               ->update($updateData);         
         }
         
         //save reservation transaction payment
