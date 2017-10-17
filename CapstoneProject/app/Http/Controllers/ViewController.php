@@ -827,7 +827,11 @@ class ViewController extends Controller
     
     public function ViewReservationPackages(){
         //$Packages = $this->getPackages();
-        return view('BookWithPackage');
+        $Dates = DB::table('tblInoperationalDate')
+                ->where('intDateStatus','=','1')
+                ->get();
+
+        return view('BookWithPackage', compact('Dates'));
     }
 
     public function getDownpayment(Request $req){

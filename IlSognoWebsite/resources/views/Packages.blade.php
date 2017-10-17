@@ -108,7 +108,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <h4 class="title">{{$Package->strPackageName}}</h4>
-                                    <p class="description">Sed at tortor ut eros suscipit tincidunt. Sed blandit massa arcu, nec mattis mi commodo sit amet.</p>
+                                    <p class="description"></p>
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <label class="text-primary">Package Pax:</label> <p class="description-text">{{$Package->intPackagePax}}</p><br>

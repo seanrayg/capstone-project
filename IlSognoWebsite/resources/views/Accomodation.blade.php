@@ -55,7 +55,7 @@
                                     <div class="col-sm-12">
                                         <h4 class="title">{{$RoomType -> strRoomType}}</h4>
                                         <p class="category text-primary">{{$RoomType -> intRoomTCategory}}</p>
-                                        <p class="description">Sed at tortor ut eros suscipit tincidunt. Sed blandit massa arcu, nec mattis mi commodo sit amet.</p>
+                                        <p class="description"></p>
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <label class="text-primary">Capacity:</label> <p class="description-text">{{$RoomType -> intRoomTCapacity}}</p><br>

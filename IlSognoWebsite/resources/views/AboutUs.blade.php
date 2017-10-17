@@ -65,7 +65,7 @@
                                     <div class="card-block">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h3>
+                                                <h3>A short description of the resort...</h3>
                                                 <p>Please don't see
 Just a boy caught up in dreams and fantasies
 Please see me

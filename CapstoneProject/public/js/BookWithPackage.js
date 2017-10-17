@@ -14,6 +14,14 @@ function HideModalExceedGuest(){
     document.getElementById("DivModalExceedGuest").style.display = "none";    
 }
 
+function ShowModalInoperationalDates(){
+    document.getElementById("DivModalInoperationalDates").style.display = "block";
+}
+
+function HideModalInoperationalDates(){
+    document.getElementById("DivModalInoperationalDates").style.display = "none ";
+}
+
 function ShowModalNoBoats(){
     document.getElementById("DivModalNoBoats").style.display = "block";
 }
@@ -179,6 +187,46 @@ function CheckDate(tempDate){
     
 }
 
+function CheckOperationalDates(selectedDate){
+    var DateFound = false;
+    $("#tblInoperationalDates tbody tr").each(function(){
+        var dateFrom = $(this).find("td:nth-child(6)").text();
+        var dateTo = $(this).find("td:nth-child(7)").text();
+        var d1 = dateFrom.split("/");
+        var d2 = dateTo.split("/");
+        var c = selectedDate.split("/");
+
+        var from = new Date(d1[2], parseInt(d1[1])-1, d1[0]);  // -1 because months are from 0 to 11
+        var to   = new Date(d2[2], parseInt(d2[1])-1, d2[0]);
+        var check = new Date(c[2], parseInt(c[1])-1, c[0]);
+        
+        if(check >= from && check <= to){
+            DateFound = true;
+            return false;
+        }
+    });
+    
+    return DateFound;
+}
+
+function InoperationalChecker(){
+    
+    var startDate = new Date(document.getElementById("CheckInDate").value);
+    var stopDate = new Date(document.getElementById("CheckOutDate").value);
+    var dateArray = new Array();
+    var currentDate = startDate;
+    while (currentDate <= stopDate) {
+        dateArray.push( new Date (currentDate) )
+        currentDate.setDate( currentDate.getDate()  + 1);
+    }
+    
+    for(var x = 0; x < dateArray.length; x++){
+        dateArray[x] = (parseInt(dateArray[x].getMonth()) + 1) +"/"+ dateArray[x].getDate() +"/"+ dateArray[x].getFullYear();
+    }
+    
+    return dateArray;
+}
+
 function run(event){
     event = event || window.event; 
     var target = event.target || event.srcElement;
@@ -322,7 +370,27 @@ function ChangeClass(sender, pageSender, newSender, newPageSender, action){
                     getAvailableBoats();
                 }
                 else{
-                    switchTab = true;
+                    var lastError = false;
+                    var dateArray = InoperationalChecker();
+                    for(var x = 0; x < dateArray.length; x++){
+                        var DateOperationError = CheckOperationalDates(dateArray[x]);
+                        if(DateOperationError){
+                            lastError = true;
+                            break;
+                        }
+                    }
+                    if(lastError){
+                        $('.alert').show();
+                        $('#CheckInDateError').addClass("has-warning");
+                        $('#CheckOutDateError').addClass("has-warning");
+                        document.getElementById("ErrorMessage").innerHTML = "Resort is closed on that range of days.";
+                    }
+                    else{
+                        $('.alert').hide();
+                        $('#CheckInDateError').removeClass("has-warning");
+                        $('#CheckOutDateError').removeClass("has-warning");
+                        switchTab = true;
+                    }
                 }
             }
             else{
@@ -554,11 +622,29 @@ function switchTab(GuestChoice){
     HideModalNoMultipleBoats();
     HideModalMultipleBoats();
     HideModalNoBoats();
-    $('.alert').hide();
-    $('#ReservationDate').removeClass('active');
-    $('#DateList').removeClass('active');
-    $('#InfoList').addClass('active');
-    $('#ReservationInfo').addClass('active');
+    var lastError = false;
+    var dateArray = InoperationalChecker();
+    for(var x = 0; x < dateArray.length; x++){
+        var DateOperationError = CheckOperationalDates(dateArray[x]);
+        if(DateOperationError){
+            lastError = true;
+            break;
+        }
+    }
+    if(lastError){
+        $('.alert').show();
+        document.getElementById("ErrorMessage").innerHTML = "Resort is closed on that range of days.";
+    }
+    else{
+        $('.alert').hide();
+        $('#ReservationDate').removeClass('active');
+        $('#DateList').removeClass('active');
+        $('#InfoList').addClass('active');
+        $('#ReservationInfo').addClass('active');
+        switchTab = true;
+    }
+    
+    
 }
 
 function getEntranceFee(){

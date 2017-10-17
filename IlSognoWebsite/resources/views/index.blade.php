@@ -57,7 +57,7 @@
                 @endforeach
                         <div class="card text-center place-on-top">
                             <div class="description-center">
-                                <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h3>
+                                <h3>Il Sogno Beach Resort...</h3>
                                 @foreach($HomePageContents as $Content)
                                 <p>{{$Content->strBodyDescription}}</p>
                                 @endforeach

@@ -1403,6 +1403,7 @@ class ViewResortController extends Controller
             $ExtendStayAmount = 0;
             $TotalDeduction = 0;
             $Downpayment = 0;
+            $RoomDeduction = 0;
             
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
@@ -1415,6 +1416,7 @@ class ViewResortController extends Controller
             
             for($x = 0; $x < sizeof($ReservedRooms); $x++){
                 $TotalRoom += $ReservedRooms[$x];
+                $RoomDeduction += $ReservedRooms[$x];
             }
             
             $ArrivalDate = Carbon::parse($Info->dtmResDArrival);
@@ -1487,20 +1489,34 @@ class ViewResortController extends Controller
             $UpgradeRoomBills = DB::table('tblPayment')
                             ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 22]])
                             ->get();
-            
+            $UpgradeAdditional = 0;
             foreach($UpgradeRoomBills as $Bill){
                 $UpgradeRoomAmount += $Bill->dblPayAmount;
+                $UpgradeRoomRemarks = json_decode($Bill->strPaymentRemarks);
+                $UpgradeAdditional = DB::table('tblRoom as a')
+                            ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
+                            ->join ('tblRoomRate as c', 'a.strRoomTypeID', '=' , 'c.strRoomTypeID')
+                             ->where([['a.strRoomStatus','=','Available'],['c.dtmRoomRateAsOf',"=", DB::raw("(SELECT max(dtmRoomRateAsOf) FROM tblRoomRate WHERE strRoomTypeID = a.strRoomTypeID)")], ['a.strRoomName', '=', $UpgradeRoomRemarks->OriginalRoom], ['a.strRoomStatus', '!=', 'deleted']])
+                             ->pluck('c.dblRoomRate')
+                             ->first();
+
+                $TotalRoom = $UpgradeAdditional;
             }
-            
+
+
+         
             //Days Extend
             $ExtendStayBills = DB::table('tblPayment')
                             ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 24]])
                             ->get();
-            
+       
             foreach($ExtendStayBills as $Bill){
                 $ExtendStayAmount += $Bill->dblPayAmount;
             }
-                
+            if($ExtendStayAmount != 0){
+                $ExtendStayAmount = $ExtendStayAmount - $RoomDeduction;
+            }
+
             //Compute Item
             $RentedItems = DB::table('tblItem as a')
                         ->join ('tblItemRate as b', 'a.strItemID', '=' , 'b.strItemID')
@@ -1813,7 +1829,7 @@ class ViewResortController extends Controller
             $ExtendStayAmount = 0;
             $TotalDeduction = 0;
             $TotalBillDeduction = 0;
-            
+            $RoomDeduction = 0;
             //Compute Rooms
             $ReservedRooms = DB::table('tblRoom as a')
                             ->join ('tblRoomType as b', 'a.strRoomTypeID', '=' , 'b.strRoomTypeID')
@@ -1825,6 +1841,7 @@ class ViewResortController extends Controller
             
             for($x = 0; $x < sizeof($ReservedRooms); $x++){
                 $TotalRoom += $ReservedRooms[$x];
+                $RoomDeduction += $ReservedRooms[$x];
             }
             
             $ArrivalDate = Carbon::parse($Info->dtmResDArrival);
@@ -1890,6 +1907,7 @@ class ViewResortController extends Controller
             foreach($AdditionalRoomBills as $Bill){
                 $AdditionalRoomAmount += $Bill->dblPayAmount;
             }
+
             
             
             //Upgrade Rooms
@@ -1908,6 +1926,9 @@ class ViewResortController extends Controller
             
             foreach($ExtendStayBills as $Bill){
                 $ExtendStayAmount += $Bill->dblPayAmount;
+            }
+            if($ExtendStayAmount != 0){
+                $ExtendStayAmount = $ExtendStayAmount - $RoomDeduction;
             }
                 
             //Compute Item

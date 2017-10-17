@@ -8,11 +8,6 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        FAQ
-                    </a>
-                </li>
-                <li>
                     <a href="/ContactUs">
                         Contact Us
                     </a>

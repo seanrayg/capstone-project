@@ -7,7 +7,7 @@
                     <div class="card-block">
                         <div class="team-player">
                             <h4 class="title text-default">Book Now!</h4>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lobortis turpis ligula, a egestas lectus maximus eu.</p>
+                            <p>What are you waiting for? Book now! More exciting adventures are waiting for you</p>
                             <button class="btn btn-primary" data-toggle="modal" data-target="#ReservationModal">Book a reservation</button>
                         </div>
                     </div>
@@ -19,7 +19,7 @@
                     <div class="card-block">
                         <div class="team-player">
                             <h4 class="title text-default">Already have a reservation?</h4>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lobortis turpis ligula, a egestas lectus maximus eu.</p>
+                            <p>Click here to manage or view your reservation</p>
                             <a href="/Login"><button class="btn btn-primary">Click Here</button></a>
                         </div>
                     </div>
