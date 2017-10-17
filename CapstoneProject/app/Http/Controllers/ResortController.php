@@ -1344,6 +1344,7 @@ class ResortController extends Controller
     }
     
     public function saveExtendStay(Request $req){
+        
         $ReservationID = trim($req->input('ExtendLaterReservationID'));
         $ExtendTotal = trim($req->input('ExtendLaterNight'));
         $TotalAmount = trim($req->input('ExtendLaterAmount'));
@@ -1884,7 +1885,14 @@ class ResortController extends Controller
 
         DB::table('tblPayment')->insert($TransactionData);
 
-        $updateData = array("intResDStatus" => "5");   
+        $ReservationDates = DB::table('tblReservationDetail')->select('dtmResDArrival','dtmResDDeparture')->where('strReservationID', '=', $ReservationID)->first();
+
+        $CheckInYear = Carbon::parse($ReservationDates->dtmResDArrival)->addYear();
+        $CheckOutYear = Carbon::parse($ReservationDates->dtmResDArrival)->addYear();
+
+        $updateData = array("intResDStatus" => "5",
+                            "dtmResDArrival" => $CheckInYear,
+                            "dtmResDDeparture" => $CheckOutYear);   
         
         DB::table('tblReservationDetail')
             ->where('strReservationID', '=', $ReservationID)
