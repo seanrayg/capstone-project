@@ -41,20 +41,12 @@ function ShowModalUpgradeRoom(){
                 var OriginalRoomTotal = parseFloat(OriginalRoomPrice) * diffDays;
 
                 var UpgradeRoomTotal = parseFloat(UpgradeRoomPrice) * diffDays;
-                
+          
                 if(parseInt(data.RoomPaymentStatus[0].intResRPayment) % 2 == 0){
-                    if(OriginalRoomTotal != 0){
-                        var AmountPaid = UpgradeRoomTotal - OriginalRoomTotal;
-                        var RemainingAmount = Math.abs(AmountPaid);
-          
-                        var AdditionalPayment = RemainingAmount;
-                    }
-                    else{
-                        var AmountPaid = UpgradeRoomTotal - OriginalRoomTotal;
-                        var RemainingAmount = Math.abs(OriginalRoomTotal + AmountPaid);
-          
-                        var AdditionalPayment = RemainingAmount;  
-                    }
+                    var AmountPaid = UpgradeRoomTotal - OriginalRoomTotal;
+                    var RemainingAmount = Math.abs(OriginalRoomTotal + AmountPaid);
+      
+                    var AdditionalPayment = RemainingAmount;
                 }
                 else{
                     var AdditionalPayment = UpgradeRoomTotal - OriginalRoomTotal;

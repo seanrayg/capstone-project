@@ -1601,7 +1601,7 @@ class ResortController extends Controller
             $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
         }
         $NewRoomID = DB::table('tblRoom')->where([['strRoomName', '=', $NewRoomName],['strRoomStatus','=','Available']])->pluck("strRoomID")->first();
-        if($OriginalPaymentStatus == 1){
+        /*if($OriginalPaymentStatus == 1 || $OriginalPaymentStatus == 3  || $OriginalPaymentStatus == 7){
             
             $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
 
@@ -1615,9 +1615,9 @@ class ResortController extends Controller
                                       'strPaymentRemarks'=>$jsonRemarks);
 
             DB::table('tblPayment')->insert($TransactionData);
-        }
+        }*/
         
-        if($OriginalPaymentStatus == 0){
+        //if($OriginalPaymentStatus == 0 || $OriginalPaymentStatus == 2  || $OriginalPaymentStatus == 6){
 
             $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
 
@@ -1631,7 +1631,7 @@ class ResortController extends Controller
                                       'strPaymentRemarks'=>$jsonRemarks);
             
             DB::table('tblPayment')->insert($TransactionData);
-        }
+        //}
         
         \Session::flash('flash_message','Successfully upgraded the room!');
         
@@ -1703,8 +1703,8 @@ class ResortController extends Controller
         else{
             $PaymentID = $this->SmartCounter('tblPayment', 'strPaymentID');
         }
-        
-        if($OriginalPaymentStatus == 1){
+      
+        //if($OriginalPaymentStatus == 1){
 
             $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
 
@@ -1718,9 +1718,9 @@ class ResortController extends Controller
                                       'strPaymentRemarks'=>$jsonRemarks);
 
             DB::table('tblPayment')->insert($TransactionData);
-        }
+       // }
         
-        if($OriginalPaymentStatus == 0){
+       /* if($OriginalPaymentStatus == 0 || $OriginalPaymentStatus == 2){
 
             $PaymentRemarks = collect(['DateUpgraded' => $DateTimeToday, 'ArrivalDate' => $ArrivalDate, 'DepartureDate' => $DepartureDate, 'OriginalRoom' => $RoomName, 'UpgradeRoom' => $NewRoomName, 'NewRoomID' => $NewRoomID]);
 
@@ -1734,7 +1734,7 @@ class ResortController extends Controller
                                       'strPaymentRemarks'=>$jsonRemarks);
             
             DB::table('tblPayment')->insert($TransactionData);
-        }
+        }*/
         
         
         \Session::flash('flash_message','Successfully upgraded the room!');
