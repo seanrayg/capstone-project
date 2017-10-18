@@ -567,7 +567,12 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-success pull-right" onclick="SendEmail()">Send</button>
+                        <form action="/SendEmail" method="POST" onsubmit="return SetCustomerEmail()">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="CustomerEmail" id="CustomerEmail">
+                            <input type="hidden" name="EmailMessage" id="EmailMessage">
+                            <input class="btn btn-success pull-right" type="submit" value="send">
+                        </form>
                     </div>
                 </div>
             </div>

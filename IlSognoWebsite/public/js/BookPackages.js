@@ -135,6 +135,9 @@ function run(event){
     }
 
     PackageInfo = [cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML];
+
+    document.getElementById("DaysOfStay").value = cells[3].innerHTML;
+
     $('#PackageError').hide();
     Date.prototype.addDays = function(days) {
       var dat = new Date(this.valueOf());
@@ -403,4 +406,18 @@ function fillReservationSummary(data){
     document.getElementById("s-NoOfKids").value = document.getElementById("NoOfKids").value;
     document.getElementById("s-NoOfAdults").value = document.getElementById("NoOfAdults").value;
     document.getElementById("s-PackageName").value = PackageInfo[0];
+}
+
+function PrintInvoice() {
+
+    document.getElementById("PackageName").value = document.getElementById("p-PackageName").innerHTML;
+    document.getElementById("PackagePrice").value = document.getElementById("p-PackagePrice").innerHTML;
+
+    document.getElementById("iCustomerName").value = document.getElementById("i-GuestName").innerHTML;
+    document.getElementById("iCustomerAddress").value = document.getElementById("i-Address").innerHTML;
+
+    document.getElementById("InvoiceForm").submit();
+
+    return false;
+
 }

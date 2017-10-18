@@ -399,6 +399,10 @@
                                                <form id="InvoiceForm" method="POST" action="/Reservation/Invoice" target="_blank">
                                                     {{ csrf_field() }}
                                                     <input type="hidden" name="DaysOfStay" id="DaysOfStay">
+                                                    <input type="hidden" name="PackageName" id="PackageName">
+                                                    <input type="hidden" name="PackagePrice" id="PackagePrice">
+                                                    <input type="hidden" name="iCustomerName" id="iCustomerName">
+                                                    <input type="hidden" name="iCustomerAddress" id="iCustomerAddress">
                                                     <input type="hidden" name="InvoiceType" value="BookPackage">
                                                 </form>
                                             </div>

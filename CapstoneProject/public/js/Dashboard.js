@@ -158,8 +158,9 @@ function getAge(dateString) {
     return age;
 }
 
-function SendEmail() {
+function SetCustomerEmail() {
 
-    alert('haha');
+    document.getElementById("CustomerEmail").value = document.getElementById("MessageEmail").value;
+    document.getElementById("EmailMessage").value =document.getElementById("MessageBody").value;
 
 }

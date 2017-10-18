@@ -821,6 +821,105 @@ class ViewReportController extends Controller
 
     }
 
+    public function PrintSalesReport(Request $request) {
+
+        $SalesReportType = $request->input('SalesReportType');
+
+        $sSalesReportTimeRange = $request->input('sSalesReportTimeRange');
+        $SalesReportDateInfo;
+
+        if($sSalesReportTimeRange == 'Daily') {
+
+            $SalesReportDateInfo = "Daily Sales Report: " . $request->input('sDailyDate');
+
+        }else if($sSalesReportTimeRange == 'Monthly') {
+
+            $SalesReportDateInfo = "Monthly Sales Report: " . $request->input('sMonthlyMonth') . ' ' . $request->input('sMonthlyYear');
+
+        }else if($sSalesReportTimeRange == 'Quarterly') {
+
+            $SalesReportDateInfo = "Quarterly Sales Report: " . $request->input('sQuarterlyQuarter') . ' ' . $request->input('sQuarterlyYear');
+
+        }else if($sSalesReportTimeRange == 'Annually') {
+
+            $SalesReportDateInfo = "Yearly Sales Report: " . $request->input('sAnnualYear');
+
+        }
+
+        $dtmNow = Carbon::now('Asia/Manila');
+        $dateNow = $dtmNow->toFormattedDateString();
+
+        $dblTotalSales = 0;
+
+        if($SalesReportType == 1) {
+
+            $tblPaymentSummary = $request->input('PaymentSummary');
+            $tblPaymentSummary = json_decode($tblPaymentSummary);
+
+            $table = array();
+
+            for ($i = 1; $i < count($tblPaymentSummary); $i++) {
+
+                array_push($table, (object) ['category' => $tblPaymentSummary[$i][0], 'quantity' => $tblPaymentSummary[$i][1], 'amount' => $tblPaymentSummary[$i][2]]);
+
+                $dblTotalSales += $tblPaymentSummary[$i][2];
+
+            }
+
+            $pdf = PDF::loadview('pdf.sales_report', ['mode' => $SalesReportType, 'salesreportdate' => $SalesReportDateInfo, 'date' => $dateNow, 'total' => $dblTotalSales, 'sales' => $table])->setPaper('letter', 'landscape');
+            return $pdf->stream();
+
+        }else {
+
+            $tblRoomInfo = json_decode($request->input('tblRoomInfo'));
+            $tblItemInfo = json_decode($request->input('tblItemInfo'));
+            $tblBeachActivityInfo = json_decode($request->input('tblBeachActivityInfo'));
+            $tblBoatInfo = json_decode($request->input('tblBoatInfo'));
+
+            $rooms = array();
+            $items = array();
+            $beachactivities = array();
+            $boats = array();
+
+            for ($i = 1; $i < count($tblRoomInfo); $i++) {
+
+                array_push($rooms, (object) ['name' => $tblRoomInfo[$i][0], 'quantity' => $tblRoomInfo[$i][1], 'rate' => $tblRoomInfo[$i][2], 'amount' => $tblRoomInfo[$i][3]]);
+
+                $dblTotalSales += $tblRoomInfo[$i][3];
+
+            }
+
+            for ($i = 1; $i < count($tblItemInfo); $i++) {
+
+                array_push($items, (object) ['name' => $tblItemInfo[$i][0], 'quantity' => $tblItemInfo[$i][1], 'rate' => $tblItemInfo[$i][2], 'amount' => $tblItemInfo[$i][3]]);
+
+                $dblTotalSales += $tblItemInfo[$i][3];
+
+            }
+
+            for ($i = 1; $i < count($tblBeachActivityInfo); $i++) {
+
+                array_push($beachactivities, (object) ['name' => $tblBeachActivityInfo[$i][0], 'quantity' => $tblBeachActivityInfo[$i][1], 'rate' => $tblBeachActivityInfo[$i][2], 'amount' => $tblBeachActivityInfo[$i][3]]);
+
+                $dblTotalSales += $tblBeachActivityInfo[$i][3];
+
+            }
+
+            for ($i = 1; $i < count($tblBoatInfo); $i++) {
+
+                array_push($boats, (object) ['name' => $tblBoatInfo[$i][0], 'quantity' => $tblBoatInfo[$i][1], 'rate' => $tblBoatInfo[$i][2], 'amount' => $tblBoatInfo[$i][3]]);
+
+                $dblTotalSales += $tblBoatInfo[$i][3];
+
+            }
+
+            $pdf = PDF::loadview('pdf.sales_report', ['mode' => $SalesReportType, 'salesreportdate' => $SalesReportDateInfo, 'date' => $dateNow, 'total' => $dblTotalSales, 'rooms' => $rooms, 'items' => $items, 'beachactivities' => $beachactivities, 'boats' => $boats])->setPaper('letter', 'landscape');
+            return $pdf->stream();
+
+        }
+
+    }
+
     public function getAmenities(Request $req){
         $SelectedAmenity = trim($req->input('selectedAmenity'));
         if($SelectedAmenity == "Rooms/Cottages"){

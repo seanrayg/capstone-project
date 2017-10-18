@@ -335,6 +335,8 @@ function SwitchTotalSalesPanel() {
 		document.getElementById("s-total").style.display = 'block';
 		document.getElementById("b-total").style.display = 'none';
 
+		document.getElementById("SalesReportType").value = 1;
+
 	}else {
 
 		document.getElementById("b-totalamount").innerHTML = '₱';
@@ -346,6 +348,72 @@ function SwitchTotalSalesPanel() {
 		document.getElementById("s-total").style.display = 'none';
 		document.getElementById("b-total").style.display = 'block';
 
+		document.getElementById("SalesReportType").value = 2;
+
 	}
+
+}
+
+function SetSalesReportData() {
+
+	var tblPaymentSummary = GetTableInfo("QueryTable");
+
+	var tblRoomInfo = GetTableInfo("RoomTable");
+    var tblItemInfo = GetTableInfo("ItemTable");
+	var tblBeachActivityInfo = GetTableInfo("BeachActivityTable");
+    var tblBoatInfo = GetTableInfo("BoatTable");
+
+    $('#PaymentSummary').val(JSON.stringify(tblPaymentSummary));
+
+    $('#tblRoomInfo').val(JSON.stringify(tblRoomInfo));
+    $('#tblItemInfo').val(JSON.stringify(tblItemInfo));
+    $('#tblBeachActivityInfo').val(JSON.stringify(tblBeachActivityInfo));
+    $('#tblBoatInfo').val(JSON.stringify(tblBoatInfo));
+
+    document.getElementById("sSalesReportTimeRange").value = document.getElementById("SelectQuery").value;
+
+    document.getElementById("sDailyDate").value = document.getElementById("DailyDate").value;
+    var e = document.getElementById("Month");
+    document.getElementById("sMonthlyMonth").value = e.options[e.selectedIndex].text;
+    document.getElementById("sMonthlyYear").value = document.getElementById("SelectMonthlyYear").value;
+    var x = document.getElementById("Quarter");
+    document.getElementById("sQuarterlyQuarter").value = x.options[e.selectedIndex].text;
+    document.getElementById("sQuarterlyYear").value = document.getElementById("SelectQuarterlyYear").value;
+    document.getElementById("sAnnualYear").value = document.getElementById("SelectAnnuallyYear").value;
+
+}
+
+function GetTableInfo(TableName) {
+
+    var tblInfo = [];
+
+    //gets table
+    var oTable = document.getElementById(TableName);
+
+    //gets rows of table
+    var rowLength = oTable.rows.length;
+
+    //loops through rows    
+    for (i = 0; i < rowLength; i++){
+
+        tblInfo[i] = [];
+
+       //gets cells of current row
+       var oCells = oTable.rows.item(i).cells;
+
+       //gets amount of cells of current row
+       var cellLength = oCells.length;
+
+       //loops through each cell in current row
+       for(var j = 0; j < cellLength; j++){
+          /* get your cell info here */
+          /* var cellVal = oCells.item(j).innerHTML; */
+
+          tblInfo[i][j] = oCells.item(j).innerHTML;
+
+       }
+    }
+
+    return tblInfo;
 
 }

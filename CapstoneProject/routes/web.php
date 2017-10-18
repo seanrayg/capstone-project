@@ -526,6 +526,8 @@ Route::get('SystemUsers/Restrictions', 'ViewUtilitiesController@getUserRestricti
 
 Route::post('/QueryReports/Print', 'ViewReportController@PrintQueryReport');
 
+Route::post('/SalesReport/Print', 'ViewReportController@PrintSalesReport');
+
 Route::post('/Reservation/Invoice', 'InvoiceController@GenerateInvoice');
 
 /*----------- CHECKOUT ----------*/
@@ -540,3 +542,5 @@ Route::get('/Dashboard/Booking', 'ViewDashboardController@getBookingFrequency');
 Route::get('/Dashboard/Reservation', 'ViewDashboardController@getMonthlyReservation');
 
 Route::get('/Dashboard/Income', 'ViewDashboardController@getWeeklyIncome');
+
+Route::post('/SendEmail', 'EmailController@sendWarningEmail');
