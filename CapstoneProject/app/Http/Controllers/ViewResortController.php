@@ -1449,14 +1449,14 @@ class ViewResortController extends Controller
                                     ->pluck('dblPayAmount')
                                     ->first();
                 
-                $PackageDownPayment = DB::table('tblPayment')
+                /*$PackageDownPayment = DB::table('tblPayment')
                                     ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 2]])
                                     ->pluck('dblPayAmount')
                                     ->first();
                 
                 if($PackageDownPayment != null){
                     $PackageInitialBill = (int)$PackageInitialBill - (int)$PackageDownPayment;
-                }
+                }*/
                 
                 $PackageInitialPayment = DB::table('tblPayment')
                                     ->where([['strPayReservationID', '=', $Info->strReservationID],['strPayTypeID', '=', 3]])
