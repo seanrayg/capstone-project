@@ -1539,7 +1539,6 @@ class ResortController extends Controller
     //Upgrade Rooms
     
     public function saveUpgradeRoom(Request $req){
-
         $ReservationID = trim($req->input('ReservationID'));
         $RoomName = trim($req->input('RoomName'));
         $NewRoomName = trim($req->input('NewRoomName'));
@@ -1640,7 +1639,6 @@ class ResortController extends Controller
     }
     
     public function saveUpgradeRoomPayment(Request $req){
-   
         $ReservationID = trim($req->input('PayReservationID'));
         $RoomName = trim($req->input('PayRoomName'));
         $NewRoomName = trim($req->input('PayNewRoomName'));
