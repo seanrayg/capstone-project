@@ -269,7 +269,7 @@
                     @if(sizeof($BillDeductionsInfo) > 0)
                     <div class="col-md-12">
                         <h4 class="title text-success">Deductions</h4><br>
-                        <table class="table table-responsive">
+                        <table id="tblDeductions" class="table table-responsive">
                             <thead class="text-success">
                                 <th class="text-center">Remarks</th>
                                 <th class="text-center">Amount</th>
@@ -293,7 +293,7 @@
                         <p class="paragraphText text-success">Total Package Amount:</p> <p class="paragraphText">{{$PackagePayment}}</p><br>
                         @endif
                         @if($TotalPenalties != 0)
-                        <p class="paragraphText text-success">Total Miscellaneous Fee:</p> <p class="paragraphText">{{$TotalPenalties}}</p><br>
+                        <p class="paragraphText text-success">Total Miscellaneous Fee:</p> <p class="paragraphText" id="miscfee">{{$TotalPenalties}}</p><br>
                         @endif
                         @if($TotalFee != 0)
                         <p class="paragraphText text-success">Total Fees:</p> <p class="paragraphText">{{$TotalFee}}</p><br>
@@ -387,8 +387,10 @@
                         <input type="hidden" name="tblUpgradeRooms" id="itblUpgradeRooms">
                         <input type="hidden" name="tblExtendStay" id="itblExtendStay">
                         <input type="hidden" name="tblBoatInfo" id="itblBoatInfo">
+                        <input type="hidden" name="tblDeductions" id="itblDeductions">
                         <input type="hidden" name="iReservationID" id="iReservationID">
                         <input type="hidden" name="iAmountTendered" id="checkoutAmountTendered">
+                        <input type="hidden" name="mfee" id="mfee">
                     </form>
                 </div>
             </div>

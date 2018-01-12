@@ -27,6 +27,7 @@ function PrintInvoice() {
     var tblUpgradeRooms = GetTableInfo("tblUpgradeRooms");
     var tblExtendStay = GetTableInfo("tblExtendStay");
     var tblBoatInfo = GetTableInfo("tblBoatInfo");
+    var tblDeductions = GetTableInfo("tblDeductions");
 
     if(tblRoomInfo != null) {
 
@@ -55,6 +56,7 @@ function PrintInvoice() {
     if(tblMiscellaneousInfo != null) {
 
         $('#itblMiscellaneousInfo').val(JSON.stringify(tblMiscellaneousInfo));
+        document.getElementById("mfee").value = document.getElementById("miscfee").innerHTML;
 
     }
 
@@ -79,6 +81,12 @@ function PrintInvoice() {
     if(tblBoatInfo != null) {
 
         $('#itblBoatInfo').val(JSON.stringify(tblBoatInfo));
+
+    }
+
+    if (tblDeductions != null) {
+
+        $('#itblDeductions').val(JSON.stringify(tblDeductions));
 
     }
 

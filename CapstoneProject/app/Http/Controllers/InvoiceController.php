@@ -543,6 +543,7 @@ class InvoiceController extends Controller
             $tblUpgradeRooms = $request->input('tblUpgradeRooms');
             $tblExtendStay = $request->input('tblExtendStay');
             $tblBoatInfo = $request->input('tblBoatInfo');
+            $tblDeductions = $request->input('tblDeductions');
 
             $CustomerInfo = $this->GetCustomerInfo($ReservationID, "ReservationID");
 
@@ -552,7 +553,7 @@ class InvoiceController extends Controller
             $CustomerName = $CustomerInfo[1];
 
             $days = DB::table('tblReservationDetail')
-                ->select(DB::raw("TIMESTAMPDIFF(DAY,NOW(),dtmResDDeparture) as days"))
+                ->select(DB::raw("TIMESTAMPDIFF(DAY,dtmResDArrival,dtmResDDeparture) as days"))
                 ->where('strReservationID', '=', $ReservationID)
                 ->first();
             $intDaysOfStay = $days->days;
@@ -565,7 +566,7 @@ class InvoiceController extends Controller
 
                 for ($i = 1; $i < count($tblRoomInfo); $i++) {
 
-                    array_push($bills, (object) ['name' => $tblRoomInfo[$i][1], 'price' => $tblRoomInfo[$i][2], 'quantity' => 1, 'days' => $intDaysOfStay + 1, 'amount' => $tblRoomInfo[$i][2] * ($intDaysOfStay + 1)]);
+                    array_push($bills, (object) ['name' => $tblRoomInfo[$i][1], 'price' => $tblRoomInfo[$i][2], 'quantity' => 1, 'days' => $intDaysOfStay, 'amount' => $tblRoomInfo[$i][2] * ($intDaysOfStay)]);
                     $TableRows++;
 
                 }
@@ -613,14 +614,12 @@ class InvoiceController extends Controller
 
             if($tblMiscellaneousInfo != '') {
 
+                $miscfee = $request->input('mfee');
+
                 $tblMiscellaneousInfo = json_decode($tblMiscellaneousInfo);
 
-                for ($i = 1; $i < count($tblMiscellaneousInfo); $i++) {
-
-                    array_push($bills, (object) ['name' => $tblMiscellaneousInfo[$i][0], 'price' => $tblMiscellaneousInfo[$i][2], 'quantity' => $tblMiscellaneousInfo[$i][1], 'days' => "-", 'amount' => $tblMiscellaneousInfo[$i][2] * $tblMiscellaneousInfo[$i][1]]);
-                    $TableRows++;
-
-                }
+                array_push($bills, (object) ['name' => 'Miscellaneous Fee', 'price' => $miscfee, 'quantity' => '-', 'days' => "-", 'amount' => $miscfee]);
+                $TableRows++;
 
             }
 
@@ -651,7 +650,7 @@ class InvoiceController extends Controller
 
                 for ($i = 1; $i < count($tblUpgradeRooms); $i++) {
 
-                    array_push($bills, (object) ['name' => "Upgrade Room: " . $tblUpgradeRooms[$i][0], 'price' => $tblUpgradeRooms[$i][1], 'quantity' => 1, 'days' => $intDaysOfStay, 'amount' => $tblUpgradeRooms[$i][1] * 1 * $intDaysOfStay]);
+                    array_push($bills, (object) ['name' => "Upgrade Room: " . $tblUpgradeRooms[$i][0], 'price' => $tblUpgradeRooms[$i][1], 'quantity' => 1, 'days' => '-', 'amount' => $tblUpgradeRooms[$i][1] * 1]);
                     $TableRows++;
 
                 }
@@ -683,10 +682,24 @@ class InvoiceController extends Controller
                 }
 
             }
+                
+            $deductions = 0;
+
+            if($tblDeductions != '') {
+
+                $tblDeductions = json_decode($tblDeductions);
+
+                for ($i = 1; $i < count($tblDeductions); $i++) {
+
+                    $deductions += $tblDeductions[$i][1];
+
+                }
+
+            }
 
             $intTotal = $this->GetTotal($intTotal, $bills);
 
-            $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'payment' => $dblAmountTendered, 'TableRows' => $TableRows, 'days' => $intDaysOfStay, 'bill' => $bills]);
+            $pdf = PDF::loadview('pdf.invoice', ['InvoiceNumber' => $InvoiceNumber, 'CustomerName' => $CustomerName, 'CustomerAddress' => $CustomerAddress, 'date' => $dateNow, 'InvoiceType' => $strInvoiceType, 'total' => $intTotal, 'payment' => $dblAmountTendered, 'TableRows' => $TableRows, 'days' => $intDaysOfStay, 'bill' => $bills, 'deductions' => $deductions]);
             return $pdf->stream();
 
         }

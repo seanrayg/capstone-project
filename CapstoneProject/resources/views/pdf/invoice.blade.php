@@ -174,8 +174,23 @@
 	</tbody>
 	</table>
 
-	<label class="total">TOTAL Due:</label>
-	<label class="amount">{{ $total }}</label>
+	@if($deductions == 0)
+		<label class="total">TOTAL Due:</label>
+		<label class="amount">{{ $total }}</label>
+	@else
+		<label class="total">subtotal:</label>
+		<label class="amount">{{ $total }}</label>
+
+		<br style="clear: both;">
+
+		<label class="total">deductions:</label>
+		<label class="amount">{{ $deductions }}</label>
+
+		<br style="clear: both;">
+
+		<label class="total">TOTAL Due:</label>
+		<label class="amount">{{ $total - $deductions }}</label>
+	@endif
 
 	<br style="clear: both;">
 
@@ -186,7 +201,7 @@
 		<hr style="margin-left: 470px; margin-right: 20px; background-color: black;">
 
 		<label class="change">Change:</label>
-		<label class="amount">{{ $payment - $total }}</label>
+		<label class="amount">{{ $payment - ($total - $deductions) }}</label>
 	@endif
 
 	<br style="clear: both;">
