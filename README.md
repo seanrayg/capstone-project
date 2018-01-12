@@ -1,4 +1,4 @@
-# how-to-do-this-shit
+# basic-git
 
 INSTALL GIT
 
